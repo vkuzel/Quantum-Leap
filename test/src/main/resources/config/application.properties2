@@ -1,0 +1,17 @@
+#spring.datasource.driverClassName = org.postgresql.Driver
+spring.datasource.url = jdbc:postgresql://127.0.0.1:5432/quantumleap
+spring.datasource.username = quantumleap
+spring.datasource.password = quantumleap
+
+# JPA configuration...
+spring.jpa.database = POSTGRESQL
+spring.datasource.platform = postgres
+# TODO Only for development purposes.
+#hibernate.dialect = com.vkuzel.quantumleap.core.jpa.ExtendedPostgreSQL9Dialect
+spring.jpa.database-platform=com.github.vkuzel.hibernate.dialect.PostgreSQL9ExtendedDialect
+spring.jpa.show-sql = true
+#spring.jpa.hibernate.ddl-auto = create-drop
+
+
+theme.name = custom
+spring.thymeleaf.cache = false

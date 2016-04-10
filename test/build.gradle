@@ -1,0 +1,22 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        maven { url "https://jitpack.io" }
+    }
+    dependencies {
+        classpath "com.github.vkuzel:Gradle-Spring-Boot-Multi-Project-Plugin:1.1.0"
+    }
+}
+
+apply plugin: 'spring-boot-multi-project'
+
+dependencies {
+    compile project('core')
+    compile project('test_module')
+    testCompile('org.springframework.boot:spring-boot-starter-test')
+}
+
+jar {
+    baseName = 'test'
+    version = '0.0.1-SNAPSHOT'
+}
