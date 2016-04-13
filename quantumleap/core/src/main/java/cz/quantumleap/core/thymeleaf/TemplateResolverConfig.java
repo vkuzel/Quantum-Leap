@@ -20,7 +20,7 @@ import java.util.Set;
 @Configuration
 public class TemplateResolverConfig {
 
-    public static final String DEFAULT_THEME_NAME = "default";
+    private static final String DEFAULT_THEME_NAME = "default";
 
     @Value("${theme.name}") // TODO Default value null ... read about SPEL one more time.
     private String themeName = null;
@@ -83,6 +83,8 @@ public class TemplateResolverConfig {
         protected String computeResourceName(TemplateProcessingParameters templateProcessingParameters) {
             // TODO Implement localization processing into this template...
             checkInitialized();
+            // TODO Template resolver using ResourceManager.findFirstSpecificFromClasspathOrWorkingDir method.
+            // Found templates seems to be cached so there shouldn't be any major performance flaws.
 
             final String templateName = templateProcessingParameters.getTemplateName();
 

@@ -1,20 +1,20 @@
 package cz.quantumleap.core.common;
 
 import com.github.vkuzel.gradle_dependency_graph.Node;
-import com.sun.istack.internal.Nullable;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ResourceUtils;
 
 import javax.annotation.PostConstruct;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Null;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
 
 @Component
 public class ResourceManager {
@@ -61,17 +61,6 @@ public class ResourceManager {
             return classpathResources.get(classpathResources.size() - 1);
         }
         return null;
-    }
-
-    public List<Resource> getFromClasspathOrWorkingDir(String locationPattern) {
-        List<Resource> classpathResources = findOnClasspath(locationPattern);
-        try {
-            Resource[] fileResources = resourceResolver.getResources("file:" + locationPattern);
-            Collections.addAll(classpathResources, fileResources);
-        } catch (IOException e) {
-            throw new IllegalStateException(e);
-        }
-        return classpathResources;
     }
 
     private int getProjectIndex(URL resourceUrl) {
