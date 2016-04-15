@@ -1,10 +1,12 @@
-package cz.quantumleap.core;
+package cz.quantumleap.cli;
 
-import cz.quantumleap.core.common.ResourceManager;
+import cz.quantumleap.common.ResourceManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
 import org.springframework.jdbc.datasource.SingleConnectionDataSource;
@@ -14,13 +16,12 @@ import javax.sql.DataSource;
 import java.io.IOException;
 import java.util.List;
 
-//@Configuration
-public class EnvironmentCreator implements CommandLineRunner {
+@Configuration
+@ComponentScan(basePackages = {"cz.quantumleap.cli", "cz.quantumleap.common"})
+public class CommandLine implements CommandLineRunner {
 
-    @Bean
-    public ResourceManager resourceManager() {
-        return new ResourceManager();
-    }
+    @Autowired
+    private ResourceManager resourceManager;
 
     @Autowired
     private Environment environment;
@@ -36,7 +37,7 @@ public class EnvironmentCreator implements CommandLineRunner {
     }
 
     public static void main(String[] args) throws IOException {
-        SpringApplication application = new SpringApplication(EnvironmentCreator.class);
+        SpringApplication application = new SpringApplication(CommandLine.class);
         application.setWebEnvironment(false);
         application.run(args);
     }
@@ -46,7 +47,7 @@ public class EnvironmentCreator implements CommandLineRunner {
         // TODO drush ... cz.quantumleap.server, cz.quantumleap.cli
         ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
         // TODO Sort resources by name!
-        List<Resource> scripts = resourceManager().findOnClasspath("db/scripts/*_*.sql");
+        List<Resource> scripts = resourceManager.findOnClasspath("db/scripts/*_*.sql");
         // TODO Add support for Postgres functions and procedures.
         scripts.forEach(populator::addScript);
         populator.execute(dataSource());

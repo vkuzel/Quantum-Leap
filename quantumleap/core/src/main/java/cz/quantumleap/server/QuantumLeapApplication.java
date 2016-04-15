@@ -1,4 +1,4 @@
-package cz.quantumleap.core;
+package cz.quantumleap.server;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -8,7 +8,7 @@ import java.io.IOException;
 
 @SpringBootApplication
 // @EnableAutoConfiguration(exclude = {DataSourceAutoConfiguration.class})
-@ComponentScan(basePackages = "cz.quantumleap")
+@ComponentScan(basePackages = {"cz.quantumleap.server", "cz.quantumleap.common"})
 public class QuantumLeapApplication {
 
     public static void main(String[] args) throws IOException {

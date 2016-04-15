@@ -1,4 +1,4 @@
-package cz.quantumleap.core.common;
+package cz.quantumleap.common;
 
 import com.github.vkuzel.gradle_dependency_graph.Node;
 import org.springframework.core.io.Resource;
