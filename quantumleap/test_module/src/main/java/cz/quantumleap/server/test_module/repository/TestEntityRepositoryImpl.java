@@ -1,4 +1,4 @@
-package cz.quantumleap.test_module.repository;
+package cz.quantumleap.server.test_module.repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;

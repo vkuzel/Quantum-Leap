@@ -1,4 +1,4 @@
-include 'core'
+include 'server'
 include 'test_module'
 
 rootProject.children.each { project ->

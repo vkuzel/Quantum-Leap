@@ -1,6 +1,6 @@
-package cz.quantumleap.test_module.repository;
+package cz.quantumleap.server.test_module.repository;
 
-import cz.quantumleap.test_module.domain.TestEntity;
+import cz.quantumleap.server.test_module.domain.TestEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;

@@ -1,7 +1,7 @@
-package cz.quantumleap.test_module;
+package cz.quantumleap.server.test_module;
 
-import cz.quantumleap.core.common.ResourceManager;
-import cz.quantumleap.test_module.repository.TestEntityRepository;
+import cz.quantumleap.common.ResourceManager;
+import cz.quantumleap.server.test_module.repository.TestEntityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Controller;

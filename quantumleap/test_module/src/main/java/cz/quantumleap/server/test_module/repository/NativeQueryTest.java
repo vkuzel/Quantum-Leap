@@ -1,4 +1,4 @@
-package cz.quantumleap.test_module.repository;
+package cz.quantumleap.server.test_module.repository;
 
 public interface NativeQueryTest {
 

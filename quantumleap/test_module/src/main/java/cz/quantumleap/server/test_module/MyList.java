@@ -1,4 +1,4 @@
-package cz.quantumleap.test_module;
+package cz.quantumleap.server.test_module;
 
 import java.io.Serializable;
 import java.util.ArrayList;

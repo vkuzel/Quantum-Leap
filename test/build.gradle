@@ -11,7 +11,7 @@ buildscript {
 apply plugin: 'spring-boot-multi-project'
 
 dependencies {
-    compile project('core')
+    compile project('server')
     compile project('test_module')
     testCompile('org.springframework.boot:spring-boot-starter-test')
 }
