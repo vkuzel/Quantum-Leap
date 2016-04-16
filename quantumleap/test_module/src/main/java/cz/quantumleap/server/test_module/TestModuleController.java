@@ -1,6 +1,6 @@
 package cz.quantumleap.server.test_module;
 
-import cz.quantumleap.common.ResourceManager;
+import cz.quantumleap.server.common.ResourceManager;
 import cz.quantumleap.server.test_module.repository.TestEntityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -79,10 +79,10 @@ public class TestModuleController {
             System.out.println("Exception! " + e.getMessage());
         }
         System.out.println("--------------------------------------------------");
-        List<Resource> scripts = resourceManager.findOnClasspath("db/scripts/*.sql");
+        List<ResourceManager.ProjectResource> scripts = resourceManager.findOnClasspath("db/scripts/*.sql");
         scripts.forEach(script -> {
             try {
-                System.out.println("script: " + script.getURL().toString());
+                System.out.println("script: " + script.getResource().getURL().toString());
             } catch (IOException e) {
                 System.out.println("Exception! " + e.getMessage());
             }

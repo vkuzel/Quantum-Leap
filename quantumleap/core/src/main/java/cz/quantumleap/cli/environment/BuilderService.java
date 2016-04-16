@@ -1,8 +1,10 @@
 package cz.quantumleap.cli.environment;
 
-import cz.quantumleap.common.ResourceManager;
+import cz.quantumleap.server.autoincrement.IncrementsManager;
+import cz.quantumleap.server.autoincrement.repository.IncrementRepositoryImpl;
+import cz.quantumleap.server.common.ProjectDependencyManager;
+import cz.quantumleap.server.common.ResourceManager;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.stereotype.Service;
 
@@ -13,23 +15,33 @@ import java.util.List;
 @Service
 public class BuilderService {
 
+    private static final String SCRIPTS_LOCATION_PATTERN = "db/scripts/*_*.sql";
+
     // language=SQL
     private static final String DROP_SCHEMA_QUERY = "DROP SCHEMA public CASCADE;\n" +
             "CREATE SCHEMA public;";
 
     @Autowired
+    ProjectDependencyManager projectDependencyManager;
+
+    @Autowired
     private ResourceManager resourceManager;
+
+    @Autowired
+    private IncrementsManager incrementsManager;
 
     @Autowired
     private DataSource dataSource;
 
     public void buildEnvironment() {
         ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
-        // TODO Sort resources by project, name!
-        List<Resource> scripts = resourceManager.findOnClasspath("db/scripts/*_*.sql");
+        List<ResourceManager.ProjectResource> scripts = resourceManager.findOnClasspath(SCRIPTS_LOCATION_PATTERN);
         // TODO Add support for Postgres functions and procedures.
-        scripts.forEach(populator::addScript);
+        scripts.forEach(script -> populator.addScript(script.getResource()));
         populator.execute(dataSource);
+
+        incrementsManager.getLatestIncrementVersionForProjects().forEach((projectName, version) ->
+                IncrementRepositoryImpl.insertEmptyIncrement(dataSource, projectName, version));
     }
 
     public void dropEnvironment() {

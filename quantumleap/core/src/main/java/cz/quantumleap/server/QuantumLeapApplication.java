@@ -8,7 +8,7 @@ import java.io.IOException;
 
 @SpringBootApplication
 // @EnableAutoConfiguration(exclude = {DataSourceAutoConfiguration.class})
-@ComponentScan(basePackages = {"cz.quantumleap.server", "cz.quantumleap.common"})
+@ComponentScan(basePackages = "cz.quantumleap.server")
 public class QuantumLeapApplication {
 
     public static void main(String[] args) throws IOException {

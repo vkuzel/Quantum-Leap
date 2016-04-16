@@ -1,5 +1,8 @@
-package cz.quantumleap.cli.persistence;
+package cz.quantumleap.cli.config;
 
+import cz.quantumleap.server.autoincrement.IncrementsManager;
+import cz.quantumleap.server.common.ProjectDependencyManager;
+import cz.quantumleap.server.common.ResourceManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,10 +12,25 @@ import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 import javax.sql.DataSource;
 
 @Configuration
-public class PersistenceConfiguration {
+public class CliContext {
 
     @Autowired
     private Environment environment;
+
+    @Bean
+    public ProjectDependencyManager projectDependencyManager() {
+        return new ProjectDependencyManager();
+    }
+
+    @Bean
+    public ResourceManager resourceManager() {
+        return new ResourceManager();
+    }
+
+    @Bean
+    public IncrementsManager incrementsManager() {
+        return new IncrementsManager();
+    }
 
     @Bean
     public DataSource dataSource() {

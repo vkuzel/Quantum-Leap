@@ -3,12 +3,10 @@ package cz.quantumleap.server.test_module.repository;
 import cz.quantumleap.server.test_module.domain.TestEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Map;
 
-@Repository // TODO Maybe not necessary...
 public interface TestEntityRepository extends JpaRepository<TestEntity, Long>, NativeQueryTest {
 //    TestEntity findByComment(String comment);
 
