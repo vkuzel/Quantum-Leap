@@ -1,20 +1,31 @@
 package cz.quantumleap.server.autoincrement.domain;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
 public class Increment {
 
     @Id
-    private long id;
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "increment_seq_gen") // TODO Really? Commont this annotation mess? There must be some interceptor or default values!
+    @SequenceGenerator(name = "increment_seq_gen", sequenceName = "increment_id_seq")
+    private Long id;
     private String module;
     private int version;
     private String fileName;
-    private LocalDateTime createdAt;
+//    @CreationTimestamp TODO Create an listener for this
+    private LocalDateTime createdAt = LocalDateTime.now();
 
-    public long getId() {
+    public Increment() {
+    }
+
+    public Increment(String module, int version, String fileName) {
+        this.module = module;
+        this.version = version;
+        this.fileName = fileName;
+    }
+
+    public Long getId() {
         return id;
     }
 
