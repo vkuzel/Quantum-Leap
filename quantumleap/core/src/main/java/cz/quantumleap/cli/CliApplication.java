@@ -1,6 +1,6 @@
 package cz.quantumleap.cli;
 
-import cz.quantumleap.cli.environment.BuilderService;
+import cz.quantumleap.cli.environment.EnvironmentBuilderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -12,7 +12,7 @@ import java.io.IOException;
 public class CliApplication implements CommandLineRunner {
 
     @Autowired
-    private BuilderService builderService;
+    private EnvironmentBuilderService environmentBuilderService;
 
     public static void main(String[] args) throws IOException {
         SpringApplication application = new SpringApplication(CliApplication.class);
@@ -25,9 +25,9 @@ public class CliApplication implements CommandLineRunner {
         String firstArg = args.length > 0 ? args[0] : "";
         switch (firstArg) {
             case "rebuild":
-                builderService.dropEnvironment();
+                environmentBuilderService.dropEnvironment();
             case "build":
-                builderService.buildEnvironment();
+                environmentBuilderService.buildEnvironment();
                 break;
             default:
                 throw new IllegalArgumentException("Unknown command " + firstArg + "!");

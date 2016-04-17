@@ -22,7 +22,7 @@ public class IncrementsRunner {
     private static final Logger log = LoggerFactory.getLogger(IncrementsRunner.class);
 
     @Autowired
-    IncrementsManager incrementsManager;
+    IncrementsService incrementsService;
 
     @Autowired
     IncrementRepository incrementRepository;
@@ -35,20 +35,20 @@ public class IncrementsRunner {
     public void runAutoIncrements() {
         Map<String, Integer> lastIncrements = incrementRepository.loadLastIncrementVersionForModules();
 
-        List<IncrementsManager.IncrementResource> incrementResources = incrementsManager.loadAllIncrements();
+        List<IncrementsService.IncrementResource> incrementResources = incrementsService.loadAllIncrements();
         incrementResources.stream().filter(incrementResource -> {
             int lastIncrementVersion = lastIncrements.getOrDefault(incrementResource.getModuleName(), 0);
             return incrementResource.getIncrementVersion() > lastIncrementVersion;
         }).collect(Collectors.groupingBy(
                 incrementResource -> Pair.of(incrementResource.getModuleName(), incrementResource.getIncrementVersion()),
-                Collectors.mapping(IncrementsManager.IncrementResource::getResource, Collectors.toList())
+                Collectors.mapping(IncrementsService.IncrementResource::getResource, Collectors.toList())
         )).forEach((moduleVersion, resources) ->
                 runOneIncrement(moduleVersion.getLeft(), moduleVersion.getRight(), resources)
         );
     }
 
     // TODO This should be in transaction...
-    private void runOneIncrement(String moduleName, int version, List<Resource> resources) {
+    void runOneIncrement(String moduleName, int version, List<Resource> resources) {
         log.info("Executing increment {} for module {}.", version, moduleName);
 
         ResourceDatabasePopulator populator = new ResourceDatabasePopulator();

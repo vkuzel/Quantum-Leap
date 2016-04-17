@@ -1,6 +1,6 @@
 package cz.quantumleap.cli.config;
 
-import cz.quantumleap.server.autoincrement.IncrementsManager;
+import cz.quantumleap.server.autoincrement.IncrementsService;
 import cz.quantumleap.server.common.ModuleDependencyManager;
 import cz.quantumleap.server.common.ResourceManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,8 +28,8 @@ public class CliContext {
     }
 
     @Bean
-    public IncrementsManager incrementsManager() {
-        return new IncrementsManager();
+    public IncrementsService incrementsManager() {
+        return new IncrementsService();
     }
 
     @Bean

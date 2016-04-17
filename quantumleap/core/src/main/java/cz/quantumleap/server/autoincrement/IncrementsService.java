@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Component
-public class IncrementsManager {
+public class IncrementsService {
 
     private static final String INCREMENTS_LOCATION_PATTERN = "db/inc/v*/*.sql";
     private static final Pattern INCREMENT_VERSION_PATTERN = Pattern.compile("db/inc/v([0-9]+)/.*.sql$");
