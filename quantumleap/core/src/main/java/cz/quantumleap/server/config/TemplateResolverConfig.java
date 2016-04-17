@@ -1,4 +1,4 @@
-package cz.quantumleap.server.thymeleaf;
+package cz.quantumleap.server.config;
 
 import com.google.common.collect.ImmutableSet;
 import nz.net.ultraq.thymeleaf.LayoutDialect;
