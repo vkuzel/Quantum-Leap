@@ -15,29 +15,29 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
-public class ProjectDependencyManager {
+public class ModuleDependencyManager {
 
-    private static final String PROJECT_DEPENDENCY_GRAPH_PATH = "/projectDependencyGraph.ser";
+    private static final String MODULE_DEPENDENCY_GRAPH_PATH = "/projectDependencyGraph.ser";
     private final PathMatchingResourcePatternResolver resourceResolver = new PathMatchingResourcePatternResolver();
 
-    private final List<Node.Project> independentProjectsFirst = new ArrayList<>();
-    final Comparator<Node.Project> INDEPENDENT_PROJECT_FIRST = (project1, project2) ->
-            Integer.compare(independentProjectsFirst.indexOf(project1), independentProjectsFirst.indexOf(project2));
+    private final List<Node.Project> independentModulesFirst = new ArrayList<>();
+    final Comparator<Node.Project> INDEPENDENT_MODULE_FIRST = (module1, module2) ->
+            Integer.compare(independentModulesFirst.indexOf(module1), independentModulesFirst.indexOf(module2));
 
-    public List<Node.Project> getIndependentProjectsFirst() {
-        return independentProjectsFirst;
+    public List<Node.Project> getIndependentModulesFirst() {
+        return independentModulesFirst;
     }
 
-    public List<String> getProjectNames() {
-        return independentProjectsFirst.stream()
+    public List<String> getModuleNames() {
+        return independentModulesFirst.stream()
                 .map(Node.Project::getName).collect(Collectors.toList());
     }
 
     @PostConstruct
-    private void loadProjectDependencies() {
-        Resource resource = resourceResolver.getResource("classpath:" + PROJECT_DEPENDENCY_GRAPH_PATH);
+    private void loadModuleDependencies() {
+        Resource resource = resourceResolver.getResource("classpath:" + MODULE_DEPENDENCY_GRAPH_PATH);
         if (!resource.exists()) {
-            throw new IllegalStateException("Project dependency graph file " + PROJECT_DEPENDENCY_GRAPH_PATH + " is not found." +
+            throw new IllegalStateException("Module dependency graph file " + MODULE_DEPENDENCY_GRAPH_PATH + " is not found." +
                     " Make sure that `gradle generateDependencyGraph` task has been executed and dependencyGraphPath build property is properly configured.");
         }
 
@@ -51,18 +51,18 @@ public class ProjectDependencyManager {
             throw new IllegalStateException(e);
         }
 
-        buildProjectList(dependencyGraph);
+        buildModuleList(dependencyGraph);
     }
 
-    private void buildProjectList(Node dependencyGraph) {
-        Node.Project project = dependencyGraph.getProject();
-        independentProjectsFirst.remove(project);
+    private void buildModuleList(Node dependencyGraph) {
+        Node.Project module = dependencyGraph.getProject();
+        independentModulesFirst.remove(module);
 
         int furtherChildPosition = dependencyGraph.getChildren().stream()
-                .mapToInt(node -> independentProjectsFirst.indexOf(node.getProject())).max().orElse(-1);
+                .mapToInt(node -> independentModulesFirst.indexOf(node.getProject())).max().orElse(-1);
 
-        independentProjectsFirst.add(furtherChildPosition + 1, project);
+        independentModulesFirst.add(furtherChildPosition + 1, module);
 
-        dependencyGraph.getChildren().forEach(this::buildProjectList);
+        dependencyGraph.getChildren().forEach(this::buildModuleList);
     }
 }

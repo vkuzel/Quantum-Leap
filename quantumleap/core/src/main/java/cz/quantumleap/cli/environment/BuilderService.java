@@ -2,7 +2,7 @@ package cz.quantumleap.cli.environment;
 
 import cz.quantumleap.server.autoincrement.IncrementsManager;
 import cz.quantumleap.server.autoincrement.repository.IncrementRepositoryImpl;
-import cz.quantumleap.server.common.ProjectDependencyManager;
+import cz.quantumleap.server.common.ModuleDependencyManager;
 import cz.quantumleap.server.common.ResourceManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
@@ -22,7 +22,7 @@ public class BuilderService {
             "CREATE SCHEMA public;";
 
     @Autowired
-    ProjectDependencyManager projectDependencyManager;
+    ModuleDependencyManager moduleDependencyManager;
 
     @Autowired
     private ResourceManager resourceManager;
@@ -35,13 +35,13 @@ public class BuilderService {
 
     public void buildEnvironment() {
         ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
-        List<ResourceManager.ProjectResource> scripts = resourceManager.findOnClasspath(SCRIPTS_LOCATION_PATTERN);
+        List<ResourceManager.ModuleResource> scripts = resourceManager.findOnClasspath(SCRIPTS_LOCATION_PATTERN);
         // TODO Add support for Postgres functions and procedures.
         scripts.forEach(script -> populator.addScript(script.getResource()));
         populator.execute(dataSource);
 
-        incrementsManager.getLatestIncrementVersionForProjects().forEach((projectName, version) ->
-                IncrementRepositoryImpl.insertEmptyIncrement(dataSource, projectName, version));
+        incrementsManager.getLatestIncrementVersionForModules().forEach((moduleName, version) ->
+                IncrementRepositoryImpl.insertEmptyIncrement(dataSource, moduleName, version));
     }
 
     public void dropEnvironment() {

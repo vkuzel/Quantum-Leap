@@ -33,23 +33,23 @@ public class IncrementsRunner {
     @PostConstruct
     // TODO Transaction
     public void runAutoIncrements() {
-        Map<String, Integer> lastIncrements = incrementRepository.loadLastIncrementVersionForProjects();
+        Map<String, Integer> lastIncrements = incrementRepository.loadLastIncrementVersionForModules();
 
         List<IncrementsManager.IncrementResource> incrementResources = incrementsManager.loadAllIncrements();
         incrementResources.stream().filter(incrementResource -> {
-            int lastIncrementVersion = lastIncrements.getOrDefault(incrementResource.getProjectName(), 0);
+            int lastIncrementVersion = lastIncrements.getOrDefault(incrementResource.getModuleName(), 0);
             return incrementResource.getIncrementVersion() > lastIncrementVersion;
         }).collect(Collectors.groupingBy(
-                incrementResource -> Pair.of(incrementResource.getProjectName(), incrementResource.getIncrementVersion()),
+                incrementResource -> Pair.of(incrementResource.getModuleName(), incrementResource.getIncrementVersion()),
                 Collectors.mapping(IncrementsManager.IncrementResource::getResource, Collectors.toList())
-        )).forEach((projectVersion, resources) ->
-                runOneIncrement(projectVersion.getLeft(), projectVersion.getRight(), resources)
+        )).forEach((moduleVersion, resources) ->
+                runOneIncrement(moduleVersion.getLeft(), moduleVersion.getRight(), resources)
         );
     }
 
     // TODO This should be in transaction...
-    private void runOneIncrement(String projectName, int version, List<Resource> resources) {
-        log.info("Executing increment {} for module {}.", version, projectName);
+    private void runOneIncrement(String moduleName, int version, List<Resource> resources) {
+        log.info("Executing increment {} for module {}.", version, moduleName);
 
         ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
         resources.forEach(populator::addScript);
@@ -57,7 +57,7 @@ public class IncrementsRunner {
 
         resources.forEach(resource -> {
             Increment increment = new Increment(
-                    projectName,
+                    moduleName,
                     version,
                     resource.getFilename()
             );

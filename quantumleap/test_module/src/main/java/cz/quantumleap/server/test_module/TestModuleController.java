@@ -79,7 +79,7 @@ public class TestModuleController {
             System.out.println("Exception! " + e.getMessage());
         }
         System.out.println("--------------------------------------------------");
-        List<ResourceManager.ProjectResource> scripts = resourceManager.findOnClasspath("db/scripts/*.sql");
+        List<ResourceManager.ModuleResource> scripts = resourceManager.findOnClasspath("db/scripts/*.sql");
         scripts.forEach(script -> {
             try {
                 System.out.println("script: " + script.getResource().getURL().toString());

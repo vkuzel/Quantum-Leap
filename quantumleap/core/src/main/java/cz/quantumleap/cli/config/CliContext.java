@@ -1,7 +1,7 @@
 package cz.quantumleap.cli.config;
 
 import cz.quantumleap.server.autoincrement.IncrementsManager;
-import cz.quantumleap.server.common.ProjectDependencyManager;
+import cz.quantumleap.server.common.ModuleDependencyManager;
 import cz.quantumleap.server.common.ResourceManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -18,8 +18,8 @@ public class CliContext {
     private Environment environment;
 
     @Bean
-    public ProjectDependencyManager projectDependencyManager() {
-        return new ProjectDependencyManager();
+    public ModuleDependencyManager moduleDependencyManager() {
+        return new ModuleDependencyManager();
     }
 
     @Bean

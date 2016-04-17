@@ -1,6 +1,6 @@
 package cz.quantumleap.server.autoincrement;
 
-import cz.quantumleap.server.common.ProjectDependencyManager;
+import cz.quantumleap.server.common.ModuleDependencyManager;
 import cz.quantumleap.server.common.ResourceManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -20,15 +20,15 @@ public class IncrementsManager {
     private static final Pattern INCREMENT_VERSION_PATTERN = Pattern.compile("db/inc/v([0-9]+)/.*.sql$");
 
     @Autowired
-    ProjectDependencyManager projectDependencyManager;
+    ModuleDependencyManager moduleDependencyManager;
 
     @Autowired
     ResourceManager resourceManager;
 
-    public Map<String, Integer> getLatestIncrementVersionForProjects() {
-        Map<String, Integer> latestIncrementForProjects = new HashMap<>();
+    public Map<String, Integer> getLatestIncrementVersionForModules() {
+        Map<String, Integer> latestIncrementForModules = new HashMap<>();
         loadAllIncrements().forEach(increment ->
-                latestIncrementForProjects.compute(increment.getProjectName(), (projectName, version) -> {
+                latestIncrementForModules.compute(increment.getModuleName(), (moduleName, version) -> {
                     Matcher matcher = INCREMENT_VERSION_PATTERN.matcher(increment.getResourcePath());
                     if (matcher.find()) {
                         int incrementVersion = Integer.parseInt(matcher.group(1));
@@ -38,40 +38,40 @@ public class IncrementsManager {
                 })
         );
 
-        projectDependencyManager.getProjectNames().forEach(projectName -> {
-            if (!latestIncrementForProjects.containsKey(projectName)) {
-                latestIncrementForProjects.put(projectName, 0);
+        moduleDependencyManager.getModuleNames().forEach(moduleName -> {
+            if (!latestIncrementForModules.containsKey(moduleName)) {
+                latestIncrementForModules.put(moduleName, 0);
             }
         });
 
-        return latestIncrementForProjects;
+        return latestIncrementForModules;
     }
 
     public List<IncrementResource> loadAllIncrements() {
         return resourceManager.findOnClasspath(INCREMENTS_LOCATION_PATTERN).stream()
-                .map(projectResource -> {
-                    Matcher matcher = INCREMENT_VERSION_PATTERN.matcher(projectResource.getResourcePath());
+                .map(moduleResource -> {
+                    Matcher matcher = INCREMENT_VERSION_PATTERN.matcher(moduleResource.getResourcePath());
                     if (matcher.find()) {
                         int incrementVersion = Integer.parseInt(matcher.group(1));
-                        return new IncrementResource(projectResource, incrementVersion);
+                        return new IncrementResource(moduleResource, incrementVersion);
                     } else {
-                        throw new IllegalStateException("Unknown increment file path " + projectResource.getResourcePath() + "!");
+                        throw new IllegalStateException("Unknown increment file path " + moduleResource.getResourcePath() + "!");
                     }
                 })
                 .collect(Collectors.toList());
     }
 
     public static class IncrementResource {
-        private final ResourceManager.ProjectResource projectResource;
+        private final ResourceManager.ModuleResource moduleResource;
         private final int incrementVersion;
 
-        public IncrementResource(ResourceManager.ProjectResource projectResource, int incrementVersion) {
-            this.projectResource = projectResource;
+        public IncrementResource(ResourceManager.ModuleResource moduleResource, int incrementVersion) {
+            this.moduleResource = moduleResource;
             this.incrementVersion = incrementVersion;
         }
 
-        public String getProjectName() {
-            return this.projectResource.getProjectName();
+        public String getModuleName() {
+            return this.moduleResource.getModuleName();
         }
 
         public int getIncrementVersion() {
@@ -79,15 +79,15 @@ public class IncrementsManager {
         }
 
         public Resource getResource() {
-            return projectResource.getResource();
+            return moduleResource.getResource();
         }
 
         public String getResourcePath() {
-            return projectResource.getResourcePath();
+            return moduleResource.getResourcePath();
         }
 
         public String getResourceFileName() {
-            return projectResource.getResourceFileName();
+            return moduleResource.getResourceFileName();
         }
     }
 }

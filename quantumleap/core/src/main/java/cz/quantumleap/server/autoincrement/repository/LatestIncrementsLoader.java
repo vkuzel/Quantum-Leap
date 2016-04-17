@@ -4,6 +4,6 @@ import java.util.Map;
 
 public interface LatestIncrementsLoader {
 
-    Map<String, Integer> loadLastIncrementVersionForProjects();
+    Map<String, Integer> loadLastIncrementVersionForModules();
 
 }

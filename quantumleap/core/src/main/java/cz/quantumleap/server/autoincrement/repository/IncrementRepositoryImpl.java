@@ -16,7 +16,7 @@ public class IncrementRepositoryImpl implements LatestIncrementsLoader {
 
     @Override
     @SuppressWarnings("unchecked")
-    public Map<String, Integer> loadLastIncrementVersionForProjects() {
+    public Map<String, Integer> loadLastIncrementVersionForModules() {
         String query = "SELECT module, MAX(version) AS version FROM increment GROUP BY module";
         List<Object[]> resultList = entityManager.createNativeQuery(query).getResultList();
         return resultList.stream().collect(Collectors.toMap(
