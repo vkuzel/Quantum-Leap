@@ -18,6 +18,9 @@ import java.util.List;
 public class EnvironmentBuilderService {
 
     private static final Logger log = LoggerFactory.getLogger(EnvironmentBuilderService.class);
+    // TODO Environment property or application.property or other configuration (context dependent property with defaults...)
+    // TODO Test profile for application-test.properties
+    // TODO ProjectDependencyGraph for tests...
     private static final String SCRIPTS_LOCATION_PATTERN = "db/scripts/*_*.sql";
 
     // language=SQL

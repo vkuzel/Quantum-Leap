@@ -48,9 +48,13 @@ public class IncrementsService {
     }
 
     public List<IncrementResource> loadAllIncrements() {
-        return resourceManager.findOnClasspath(INCREMENTS_LOCATION_PATTERN).stream()
+        return findAllIncrements(INCREMENTS_LOCATION_PATTERN, INCREMENT_VERSION_PATTERN);
+    }
+
+    List<IncrementResource> findAllIncrements(String locationPattern, Pattern versionPattern) {
+        return resourceManager.findOnClasspath(locationPattern).stream()
                 .map(moduleResource -> {
-                    Matcher matcher = INCREMENT_VERSION_PATTERN.matcher(moduleResource.getResourcePath());
+                    Matcher matcher = versionPattern.matcher(moduleResource.getResourcePath());
                     if (matcher.find()) {
                         int incrementVersion = Integer.parseInt(matcher.group(1));
                         return new IncrementResource(moduleResource, incrementVersion);

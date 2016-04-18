@@ -75,11 +75,11 @@ public class ResourceManager {
                 }
             }
 
-            if (path.contains("/" + module.getDir() + "/") || path.contains("/" + module.getDir() + ".jar")) { // FIXME Search for whole path components
+            if (path.contains("/quantumleap/" + module.getDir() + "/") || path.contains("/" + module.getDir() + ".jar")) { // FIXME Search for whole path components
                 if (moduleResource != null) {
                     throw new IllegalStateException("Two modules (" + moduleResource.getModuleName() + " and " + module.getName() +
                             ") has been found for resource " + resourceUrl.toString() + "!" +
-                            " Please check the name of each module is unique!");
+                            " The name of each module has to be unique!");
                 }
                 moduleResource = new ModuleResource(module, resource);
             }

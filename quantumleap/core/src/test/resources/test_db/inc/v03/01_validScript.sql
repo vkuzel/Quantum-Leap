@@ -1,0 +1,1 @@
+INSERT INTO inc_test_entity (message) VALUES ('should not be inserted');

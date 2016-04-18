@@ -32,10 +32,14 @@ public class IncrementsRunner {
 
     @PostConstruct
     // TODO Transaction
-    public void runAutoIncrements() {
+    public void runIncrements() {
         Map<String, Integer> lastIncrements = incrementRepository.loadLastIncrementVersionForModules();
-
         List<IncrementsService.IncrementResource> incrementResources = incrementsService.loadAllIncrements();
+
+        runIncrements(lastIncrements, incrementResources);
+    }
+
+    void runIncrements(Map<String, Integer> lastIncrements, List<IncrementsService.IncrementResource> incrementResources) {
         incrementResources.stream().filter(incrementResource -> {
             int lastIncrementVersion = lastIncrements.getOrDefault(incrementResource.getModuleName(), 0);
             return incrementResource.getIncrementVersion() > lastIncrementVersion;
@@ -47,8 +51,8 @@ public class IncrementsRunner {
         );
     }
 
-    // TODO This should be in transaction...
-    void runOneIncrement(String moduleName, int version, List<Resource> resources) {
+    // TODO This should run in transaction...
+    private void runOneIncrement(String moduleName, int version, List<Resource> resources) {
         log.info("Executing increment {} for module {}.", version, moduleName);
 
         ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
