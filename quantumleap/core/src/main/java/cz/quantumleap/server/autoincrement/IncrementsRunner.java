@@ -2,6 +2,7 @@ package cz.quantumleap.server.autoincrement;
 
 import cz.quantumleap.server.autoincrement.domain.Increment;
 import cz.quantumleap.server.autoincrement.repository.IncrementRepository;
+import cz.quantumleap.server.common.TransactionExecutor;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,9 +13,10 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Component
 public class IncrementsRunner {
@@ -28,10 +30,12 @@ public class IncrementsRunner {
     IncrementRepository incrementRepository;
 
     @Autowired
+    private TransactionExecutor transactionExecutor;
+
+    @Autowired
     DataSource dataSource;
 
     @PostConstruct
-    // TODO Transaction
     public void runIncrements() {
         Map<String, Integer> lastIncrements = incrementRepository.loadLastIncrementVersionForModules();
         List<IncrementsService.IncrementResource> incrementResources = incrementsService.loadAllIncrements();
@@ -40,32 +44,47 @@ public class IncrementsRunner {
     }
 
     void runIncrements(Map<String, Integer> lastIncrements, List<IncrementsService.IncrementResource> incrementResources) {
-        incrementResources.stream().filter(incrementResource -> {
+        Map<Pair<String, Integer>, List<Resource>> moduleVersionResources = new LinkedHashMap<>();
+
+        for (IncrementsService.IncrementResource incrementResource : incrementResources) {
             int lastIncrementVersion = lastIncrements.getOrDefault(incrementResource.getModuleName(), 0);
-            return incrementResource.getIncrementVersion() > lastIncrementVersion;
-        }).collect(Collectors.groupingBy(
-                incrementResource -> Pair.of(incrementResource.getModuleName(), incrementResource.getIncrementVersion()),
-                Collectors.mapping(IncrementsService.IncrementResource::getResource, Collectors.toList())
-        )).forEach((moduleVersion, resources) ->
-                runOneIncrement(moduleVersion.getLeft(), moduleVersion.getRight(), resources)
-        );
+            if (incrementResource.getIncrementVersion() <= lastIncrementVersion) {
+                continue;
+            }
+
+            Pair<String, Integer> moduleVersion = Pair.of(incrementResource.getModuleName(), incrementResource.getIncrementVersion());
+            moduleVersionResources.compute(moduleVersion, (mv, resources) -> {
+                if (resources == null) {
+                    resources = new ArrayList<>();
+                }
+
+                resources.add(incrementResource.getResource());
+                return resources;
+            });
+        }
+
+        moduleVersionResources.forEach((moduleVersion, resources) ->
+                runOneIncrement(moduleVersion.getLeft(), moduleVersion.getRight(), resources));
     }
 
-    // TODO This should run in transaction...
     private void runOneIncrement(String moduleName, int version, List<Resource> resources) {
         log.info("Executing increment {} for module {}.", version, moduleName);
 
         ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
         resources.forEach(populator::addScript);
-        populator.execute(dataSource);
 
-        resources.forEach(resource -> {
-            Increment increment = new Increment(
-                    moduleName,
-                    version,
-                    resource.getFilename()
-            );
-            incrementRepository.save(increment);
+        // TODO Just try to use transactional on this method ... what if it'll work inside of service?
+        transactionExecutor.execute(() -> {
+            populator.execute(dataSource);
+
+            resources.forEach(resource -> {
+                Increment increment = new Increment(
+                        moduleName,
+                        version,
+                        resource.getFilename()
+                );
+                incrementRepository.save(increment);
+            });
         });
     }
 }
