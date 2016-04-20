@@ -47,17 +47,17 @@ public class IncrementsService {
         return latestIncrementForModules;
     }
 
-    public List<IncrementResource> loadAllIncrements() {
+    public List<IncrementScript> loadAllIncrements() {
         return findAllIncrements(INCREMENTS_LOCATION_PATTERN, INCREMENT_VERSION_PATTERN);
     }
 
-    List<IncrementResource> findAllIncrements(String locationPattern, Pattern versionPattern) {
+    List<IncrementScript> findAllIncrements(String locationPattern, Pattern versionPattern) {
         return resourceManager.findOnClasspath(locationPattern).stream()
                 .map(moduleResource -> {
                     Matcher matcher = versionPattern.matcher(moduleResource.getResourcePath());
                     if (matcher.find()) {
                         int incrementVersion = Integer.parseInt(matcher.group(1));
-                        return new IncrementResource(moduleResource, incrementVersion);
+                        return new IncrementScript(moduleResource, incrementVersion);
                     } else {
                         throw new IllegalStateException("Unknown increment file path " + moduleResource.getResourcePath() + "!");
                     }
@@ -65,11 +65,11 @@ public class IncrementsService {
                 .collect(Collectors.toList());
     }
 
-    public static class IncrementResource {
+    public static class IncrementScript {
         private final ResourceManager.ModuleResource moduleResource;
         private final int incrementVersion;
 
-        public IncrementResource(ResourceManager.ModuleResource moduleResource, int incrementVersion) {
+        public IncrementScript(ResourceManager.ModuleResource moduleResource, int incrementVersion) {
             this.moduleResource = moduleResource;
             this.incrementVersion = incrementVersion;
         }
@@ -82,7 +82,7 @@ public class IncrementsService {
             return incrementVersion;
         }
 
-        public Resource getResource() {
+        public Resource getScript() {
             return moduleResource.getResource();
         }
 

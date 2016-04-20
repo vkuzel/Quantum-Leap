@@ -10,8 +10,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.jdbc.BadSqlGrammarException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.datasource.init.ScriptStatementFailedException;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.jdbc.JdbcTestUtils;
@@ -44,16 +44,17 @@ public class IncrementsRunnerTest {
         JdbcTestUtils.deleteFromTables(jdbcTemplate, "increment");
 
         Map<String, Integer> lastIncrements = ImmutableMap.of("core", 0);
-        List<IncrementsService.IncrementResource> incrementResources = incrementsService.findAllIncrements(locationPattern, versionPattern);
+        List<IncrementsService.IncrementScript> incrementScripts = incrementsService.findAllIncrements(locationPattern, versionPattern);
 
         try {
-            incrementsRunner.runIncrements(lastIncrements, incrementResources);
-        } catch (ScriptStatementFailedException e) {
+            incrementsRunner.runIncrements(lastIncrements, incrementScripts);
+        } catch (BadSqlGrammarException e) {
             log.debug(e.getMessage());
         }
 
-        // TODO Assert on function created...
         Assert.assertEquals(2, JdbcTestUtils.countRowsInTable(jdbcTemplate, "increment"));
-        Assert.assertEquals(0, JdbcTestUtils.countRowsInTable(jdbcTemplate, "inc_test_entity"));
+        Assert.assertEquals(0, JdbcTestUtils.countRowsInTable(jdbcTemplate, "test_entity"));
+        Assert.assertEquals(0, JdbcTestUtils.countRowsInTable(jdbcTemplate, "related_test_entity"));
+        Assert.assertEquals(2, (int) jdbcTemplate.queryForObject("SELECT increment(1)", Integer.class));
     }
 }

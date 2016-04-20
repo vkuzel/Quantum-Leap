@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 @Component
 public class ModuleDependencyManager {
 
+    // TODO Each module is going to have it's own dependency file.
     private static final String MODULE_DEPENDENCY_GRAPH_PATH = "/projectDependencyGraph.ser";
     private final PathMatchingResourcePatternResolver resourceResolver = new PathMatchingResourcePatternResolver();
 

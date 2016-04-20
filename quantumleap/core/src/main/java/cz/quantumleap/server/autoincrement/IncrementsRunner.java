@@ -3,16 +3,16 @@ package cz.quantumleap.server.autoincrement;
 import cz.quantumleap.server.autoincrement.domain.Increment;
 import cz.quantumleap.server.autoincrement.repository.IncrementRepository;
 import cz.quantumleap.server.common.TransactionExecutor;
+import cz.quantumleap.server.common.Utils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
-import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import javax.sql.DataSource;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -24,67 +24,64 @@ public class IncrementsRunner {
     private static final Logger log = LoggerFactory.getLogger(IncrementsRunner.class);
 
     @Autowired
-    IncrementsService incrementsService;
+    private IncrementsService incrementsService;
 
     @Autowired
-    IncrementRepository incrementRepository;
+    private IncrementRepository incrementRepository;
 
     @Autowired
     private TransactionExecutor transactionExecutor;
 
     @Autowired
-    DataSource dataSource;
+    private JdbcTemplate jdbcTemplate;
 
     @PostConstruct
     public void runIncrements() {
         Map<String, Integer> lastIncrements = incrementRepository.loadLastIncrementVersionForModules();
-        List<IncrementsService.IncrementResource> incrementResources = incrementsService.loadAllIncrements();
+        List<IncrementsService.IncrementScript> incrementScripts = incrementsService.loadAllIncrements();
 
-        runIncrements(lastIncrements, incrementResources);
+        runIncrements(lastIncrements, incrementScripts);
     }
 
-    void runIncrements(Map<String, Integer> lastIncrements, List<IncrementsService.IncrementResource> incrementResources) {
-        Map<Pair<String, Integer>, List<Resource>> moduleVersionResources = new LinkedHashMap<>();
+    void runIncrements(Map<String, Integer> lastIncrements, List<IncrementsService.IncrementScript> incrementScripts) {
+        Map<Pair<String, Integer>, List<Resource>> moduleVersionScripts = new LinkedHashMap<>();
 
-        for (IncrementsService.IncrementResource incrementResource : incrementResources) {
-            int lastIncrementVersion = lastIncrements.getOrDefault(incrementResource.getModuleName(), 0);
-            if (incrementResource.getIncrementVersion() <= lastIncrementVersion) {
+        for (IncrementsService.IncrementScript incrementScript : incrementScripts) {
+            int lastIncrementVersion = lastIncrements.getOrDefault(incrementScript.getModuleName(), 0);
+            if (incrementScript.getIncrementVersion() <= lastIncrementVersion) {
                 continue;
             }
 
-            Pair<String, Integer> moduleVersion = Pair.of(incrementResource.getModuleName(), incrementResource.getIncrementVersion());
-            moduleVersionResources.compute(moduleVersion, (mv, resources) -> {
-                if (resources == null) {
-                    resources = new ArrayList<>();
+            Pair<String, Integer> moduleVersion = Pair.of(incrementScript.getModuleName(), incrementScript.getIncrementVersion());
+            moduleVersionScripts.compute(moduleVersion, (mv, scripts) -> {
+                if (scripts == null) {
+                    scripts = new ArrayList<>();
                 }
 
-                resources.add(incrementResource.getResource());
-                return resources;
+                scripts.add(incrementScript.getScript());
+                return scripts;
             });
         }
 
-        moduleVersionResources.forEach((moduleVersion, resources) ->
-                runOneIncrement(moduleVersion.getLeft(), moduleVersion.getRight(), resources));
+        moduleVersionScripts.forEach((moduleVersion, scripts) ->
+                runOneIncrement(moduleVersion.getLeft(), moduleVersion.getRight(), scripts));
     }
 
-    private void runOneIncrement(String moduleName, int version, List<Resource> resources) {
+    private void runOneIncrement(String moduleName, int version, List<Resource> scripts) {
         log.info("Executing increment {} for module {}.", version, moduleName);
 
-        ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
-        resources.forEach(populator::addScript);
+        transactionExecutor.execute(() ->
+                scripts.forEach(script -> {
+                    String sql = Utils.resourceToString(script);
+                    // TODO Use this in Factorify ocasionaly.
+                    jdbcTemplate.execute(sql);
 
-        // TODO Just try to use transactional on this method ... what if it'll work inside of service?
-        transactionExecutor.execute(() -> {
-            populator.execute(dataSource);
-
-            resources.forEach(resource -> {
-                Increment increment = new Increment(
-                        moduleName,
-                        version,
-                        resource.getFilename()
-                );
-                incrementRepository.save(increment);
-            });
-        });
+                    Increment increment = new Increment(
+                            moduleName,
+                            version,
+                            script.getFilename()
+                    );
+                    incrementRepository.save(increment);
+                }));
     }
 }

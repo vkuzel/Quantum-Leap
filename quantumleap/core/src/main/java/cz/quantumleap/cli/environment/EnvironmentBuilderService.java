@@ -4,11 +4,11 @@ import cz.quantumleap.server.autoincrement.IncrementsService;
 import cz.quantumleap.server.autoincrement.repository.IncrementRepositoryImpl;
 import cz.quantumleap.server.common.ModuleDependencyManager;
 import cz.quantumleap.server.common.ResourceManager;
+import cz.quantumleap.server.common.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,11 +41,12 @@ public class EnvironmentBuilderService {
     @Transactional
     public void buildEnvironment() {
         log.info("Building new environment.");
-        ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
+
         List<ResourceManager.ModuleResource> scripts = resourceManager.findOnClasspath(SCRIPTS_LOCATION_PATTERN);
-        // TODO Add support for Postgres functions and procedures.
-        scripts.forEach(script -> populator.addScript(script.getResource()));
-        populator.execute(jdbcTemplate.getDataSource());
+        scripts.forEach(script -> {
+            String sql = Utils.resourceToString(script.getResource());
+            jdbcTemplate.execute(sql);
+        });
 
         incrementsService.getLatestIncrementVersionForModules().forEach((moduleName, version) ->
                 IncrementRepositoryImpl.insertEmptyIncrement(jdbcTemplate.getDataSource(), moduleName, version));
