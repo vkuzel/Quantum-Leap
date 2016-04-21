@@ -7,7 +7,6 @@ import org.springframework.context.annotation.ComponentScan;
 import java.io.IOException;
 
 @SpringBootApplication
-// @EnableAutoConfiguration(exclude = {DataSourceAutoConfiguration.class})
 @ComponentScan(basePackages = "cz.quantumleap.server")
 public class QuantumLeapApplication {
 

@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 
 import javax.sql.DataSource;
@@ -34,12 +35,18 @@ public class CliContext {
 
     @Bean
     public DataSource dataSource() {
-        // TODO Test autocommit behaviour! Especially committing on DDL.
-        return new SingleConnectionDataSource(
+        SingleConnectionDataSource dataSource = new SingleConnectionDataSource(
                 environment.getProperty("spring.datasource.url"),
                 environment.getProperty("spring.datasource.username"),
                 environment.getProperty("spring.datasource.password"),
                 false
         );
+        dataSource.setAutoCommit(environment.getProperty("spring.datasource.defaultAutoCommit", Boolean.class));
+        return dataSource;
+    }
+
+    @Bean
+    public JdbcTemplate jdbcTemplate() {
+        return new JdbcTemplate(dataSource());
     }
 }
