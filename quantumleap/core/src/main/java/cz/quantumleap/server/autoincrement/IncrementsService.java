@@ -48,34 +48,30 @@ public class IncrementsService {
     }
 
     public List<IncrementScript> loadAllIncrements() {
-        return findAllIncrements(INCREMENTS_LOCATION_PATTERN, INCREMENT_VERSION_PATTERN);
-    }
-
-    List<IncrementScript> findAllIncrements(String locationPattern, Pattern versionPattern) {
-        return resourceManager.findOnClasspath(locationPattern).stream()
-                .map(moduleResource -> {
-                    Matcher matcher = versionPattern.matcher(moduleResource.getResourcePath());
+        return resourceManager.findOnClasspath(INCREMENTS_LOCATION_PATTERN).stream()
+                .map(resourceWithModule -> {
+                    Matcher matcher = INCREMENT_VERSION_PATTERN.matcher(resourceWithModule.getResourcePath());
                     if (matcher.find()) {
                         int incrementVersion = Integer.parseInt(matcher.group(1));
-                        return new IncrementScript(moduleResource, incrementVersion);
+                        return new IncrementScript(resourceWithModule, incrementVersion);
                     } else {
-                        throw new IllegalStateException("Unknown increment file path " + moduleResource.getResourcePath() + "!");
+                        throw new IllegalStateException("Unknown increment file path " + resourceWithModule.getResourcePath() + "!");
                     }
                 })
                 .collect(Collectors.toList());
     }
 
     public static class IncrementScript {
-        private final ResourceManager.ModuleResource moduleResource;
+        private final ResourceManager.ResourceWithModule resourceWithModule;
         private final int incrementVersion;
 
-        public IncrementScript(ResourceManager.ModuleResource moduleResource, int incrementVersion) {
-            this.moduleResource = moduleResource;
+        public IncrementScript(ResourceManager.ResourceWithModule resourceWithModule, int incrementVersion) {
+            this.resourceWithModule = resourceWithModule;
             this.incrementVersion = incrementVersion;
         }
 
         public String getModuleName() {
-            return this.moduleResource.getModuleName();
+            return this.resourceWithModule.getModuleName();
         }
 
         public int getIncrementVersion() {
@@ -83,15 +79,11 @@ public class IncrementsService {
         }
 
         public Resource getScript() {
-            return moduleResource.getResource();
+            return resourceWithModule.getResource();
         }
 
         public String getResourcePath() {
-            return moduleResource.getResourcePath();
-        }
-
-        public String getResourceFileName() {
-            return moduleResource.getResourceFileName();
+            return resourceWithModule.getResourcePath();
         }
     }
 }

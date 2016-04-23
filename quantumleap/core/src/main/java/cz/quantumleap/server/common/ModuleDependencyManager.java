@@ -1,69 +1,113 @@
 package cz.quantumleap.server.common;
 
-import com.github.vkuzel.gradle_dependency_graph.Node;
+import com.github.vkuzel.gradle_project_dependencies.ProjectDependencies;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.stereotype.Component;
+import org.springframework.util.ResourceUtils;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Component
 public class ModuleDependencyManager {
 
     // TODO Each module is going to have it's own dependency file.
-    private static final String MODULE_DEPENDENCY_GRAPH_PATH = "/projectDependencyGraph.ser";
+    private static final String PROJECT_DEPENDENCIES_FILE = "/projectDependencies.ser";
     private final PathMatchingResourcePatternResolver resourceResolver = new PathMatchingResourcePatternResolver();
 
-    private final List<Node.Project> independentModulesFirst = new ArrayList<>();
-    final Comparator<Node.Project> INDEPENDENT_MODULE_FIRST = (module1, module2) ->
+    private final List<Dependencies> independentModulesFirst = new ArrayList<>();
+    final Comparator<Dependencies> INDEPENDENT_MODULE_FIRST = (module1, module2) ->
             Integer.compare(independentModulesFirst.indexOf(module1), independentModulesFirst.indexOf(module2));
 
-    public List<Node.Project> getIndependentModulesFirst() {
+    public List<Dependencies> getIndependentModulesFirst() {
         return independentModulesFirst;
     }
 
     public List<String> getModuleNames() {
         return independentModulesFirst.stream()
-                .map(Node.Project::getName).collect(Collectors.toList());
+                .map(Dependencies::getModuleName).collect(Collectors.toList());
     }
 
     @PostConstruct
-    private void loadModuleDependencies() {
-        Resource resource = resourceResolver.getResource("classpath:" + MODULE_DEPENDENCY_GRAPH_PATH);
-        if (!resource.exists()) {
-            throw new IllegalStateException("Module dependency graph file " + MODULE_DEPENDENCY_GRAPH_PATH + " is not found." +
-                    " Make sure that `gradle generateDependencyGraph` task has been executed and dependencyGraphPath build property is properly configured.");
-        }
-
-        Node dependencyGraph;
-        try (
-                InputStream inputStream = resource.getInputStream();
-                ObjectInputStream objectInputStream = new ObjectInputStream(inputStream)
-        ) {
-            dependencyGraph = (Node) objectInputStream.readObject();
-        } catch (IOException | ClassNotFoundException e) {
+    private void loadProjectDependencies() {
+        Resource[] dependenciesFiles;
+        try {
+            dependenciesFiles = resourceResolver.getResources("classpath*:" + PROJECT_DEPENDENCIES_FILE);
+        } catch (IOException e) {
             throw new IllegalStateException(e);
         }
 
-        buildModuleList(dependencyGraph);
+        for (Resource dependenciesFile : dependenciesFiles) {
+            Dependencies dependencies = deserializeDependencies(dependenciesFile);
+
+            independentModulesFirst.remove(dependencies);
+
+            int furtherChildPosition = dependencies.getDependencies().stream()
+                    .mapToInt(this::getProjectIndex).max().orElse(-1);
+
+            independentModulesFirst.add(furtherChildPosition + 1, dependencies);
+        }
     }
 
-    private void buildModuleList(Node dependencyGraph) {
-        Node.Project module = dependencyGraph.getProject();
-        independentModulesFirst.remove(module);
+    private int getProjectIndex(String projectName) {
+        for (Dependencies dependencies : independentModulesFirst) {
+            if (Objects.equals(dependencies.getModuleName(), projectName)) {
+                return independentModulesFirst.indexOf(dependencies);
+            }
+        }
+        return -1;
+    }
 
-        int furtherChildPosition = dependencyGraph.getChildren().stream()
-                .mapToInt(node -> independentModulesFirst.indexOf(node.getProject())).max().orElse(-1);
+    private Dependencies deserializeDependencies(Resource dependenciesFile) {
+        try (
+                InputStream inputStream = dependenciesFile.getInputStream();
+                ObjectInputStream objectInputStream = new ObjectInputStream(inputStream)
+        ) {
+            return new Dependencies(dependenciesFile, (ProjectDependencies) objectInputStream.readObject());
+        } catch (IOException | ClassNotFoundException e) {
+            throw new IllegalStateException(e);
+        }
+    }
 
-        independentModulesFirst.add(furtherChildPosition + 1, module);
+    public static class Dependencies {
+        private final ProjectDependencies projectDependencies;
+        private final String projectPath;
 
-        dependencyGraph.getChildren().forEach(this::buildModuleList);
+        private Dependencies(Resource dependenciesFile, ProjectDependencies projectDependencies) {
+            this.projectDependencies = projectDependencies;
+            try {
+                String dependenciesFileName = dependenciesFile.getFilename();
+                String dependenciesFilePath = dependenciesFile.getURL().getPath();
+                projectPath = dependenciesFilePath.substring(0, dependenciesFilePath.lastIndexOf(dependenciesFileName));
+            } catch (IOException e) {
+                throw new IllegalArgumentException(e);
+            }
+        }
+
+        public String getModuleName() {
+            return projectDependencies.getName();
+        }
+
+        public boolean isInModule(URL resourceUrl) {
+            String resourcePath = resourceUrl.getPath();
+            if (resourcePath.startsWith(projectPath)) {
+                String withoutProjectPath = resourcePath.substring(projectPath.length());
+                return !withoutProjectPath.contains(ResourceUtils.JAR_URL_SEPARATOR);
+            }
+            return false;
+        }
+
+        private List<String> getDependencies() {
+            return projectDependencies.getDependencies();
+        }
     }
 }

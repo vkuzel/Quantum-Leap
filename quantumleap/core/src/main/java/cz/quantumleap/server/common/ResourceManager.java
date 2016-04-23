@@ -1,11 +1,9 @@
 package cz.quantumleap.server.common;
 
-import com.github.vkuzel.gradle_dependency_graph.Node;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.stereotype.Component;
-import org.springframework.util.ResourceUtils;
 
 import java.io.IOException;
 import java.net.URL;
@@ -22,22 +20,22 @@ public class ResourceManager {
     @Autowired
     private ModuleDependencyManager moduleDependencyManager;
 
-    private final Comparator<ModuleResource> INDEPENDENT_MODULE_RESOURCES_FIRST = (mr1, mr2) ->
+    private final Comparator<ResourceWithModule> INDEPENDENT_MODULE_RESOURCES_FIRST = (mr1, mr2) ->
             moduleDependencyManager.INDEPENDENT_MODULE_FIRST.compare(mr1.module, mr2.module);
 
-    public List<ModuleResource> findOnClasspath(String locationPattern) {
-        List<ModuleResource> moduleResources;
+    public List<ResourceWithModule> findOnClasspath(String locationPattern) {
+        List<ResourceWithModule> resourceWithModules;
 
         try {
-            moduleResources = Arrays.stream(resourceResolver.getResources("classpath*:" + locationPattern))
-                    .map(this::createModuleResource).collect(Collectors.toList());
+            resourceWithModules = Arrays.stream(resourceResolver.getResources("classpath*:" + locationPattern))
+                    .map(this::createResourceWithModule).collect(Collectors.toList());
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }
 
-        moduleResources.sort(INDEPENDENT_MODULE_RESOURCES_FIRST);
+        resourceWithModules.sort(INDEPENDENT_MODULE_RESOURCES_FIRST);
 
-        return moduleResources;
+        return resourceWithModules;
     }
 
     public Resource findFirstSpecificFromClasspathOrWorkingDir(String locationPattern) {
@@ -49,15 +47,15 @@ public class ResourceManager {
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }
-        List<ModuleResource> classpathModuleResources = findOnClasspath(locationPattern);
-        if (classpathModuleResources.size() > 0) {
-            return classpathModuleResources.get(classpathModuleResources.size() - 1).getResource();
+        List<ResourceWithModule> classpathResourceWithModules = findOnClasspath(locationPattern);
+        if (classpathResourceWithModules.size() > 0) {
+            return classpathResourceWithModules.get(classpathResourceWithModules.size() - 1).getResource();
         }
         return null;
     }
 
-    private ModuleResource createModuleResource(Resource resource) {
-        ModuleResource moduleResource = null;
+    private ResourceWithModule createResourceWithModule(Resource resource) {
+        ResourceWithModule resourceWithModule = null;
 
         final URL resourceUrl;
         try {
@@ -65,43 +63,34 @@ public class ResourceManager {
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }
-        for (Node.Project module : moduleDependencyManager.getIndependentModulesFirst()) {
-            String path = resourceUrl.getFile();
-            if (ResourceUtils.isJarURL(resourceUrl)) {
-                int separatorIndex = path.substring(0, path.lastIndexOf(ResourceUtils.JAR_URL_SEPARATOR))
-                        .lastIndexOf(ResourceUtils.JAR_URL_SEPARATOR);
-                if (separatorIndex != -1) {
-                    path = path.substring(separatorIndex);
-                }
-            }
-
-            if (path.contains("/quantumleap/" + module.getDir() + "/") || path.contains("/" + module.getDir() + ".jar")) { // FIXME Search for whole path components
-                if (moduleResource != null) {
-                    throw new IllegalStateException("Two modules (" + moduleResource.getModuleName() + " and " + module.getName() +
+        for (ModuleDependencyManager.Dependencies module : moduleDependencyManager.getIndependentModulesFirst()) {
+            if (module.isInModule(resourceUrl)) {
+                if (resourceWithModule != null) {
+                    throw new IllegalStateException("Two modules (" + resourceWithModule.getModuleName() + " and " + module.getModuleName() +
                             ") has been found for resource " + resourceUrl.toString() + "!" +
                             " The name of each module has to be unique!");
                 }
-                moduleResource = new ModuleResource(module, resource);
+                resourceWithModule = new ResourceWithModule(module, resource);
             }
         }
-        if (moduleResource == null) {
-            throw new IllegalStateException("Module for resource " + resourceUrl.toString() + " wasn't found in module dependency graph!" +
-                    " Please make sure that gradle generateDependencyGraph task has been executed.");
+        if (resourceWithModule == null) {
+            throw new IllegalStateException("No module has not been found for resource " + resourceUrl.toString() +
+                    " Please make sure that gradle discoverProjectDependencies task has been executed.");
         }
-        return moduleResource;
+        return resourceWithModule;
     }
 
-    public static class ModuleResource {
-        private final Node.Project module;
+    public static class ResourceWithModule {
+        private final ModuleDependencyManager.Dependencies module;
         private final Resource resource;
 
-        private ModuleResource(Node.Project module, Resource resource) {
+        public ResourceWithModule(ModuleDependencyManager.Dependencies module, Resource resource) {
             this.module = module;
             this.resource = resource;
         }
 
         public String getModuleName() {
-            return module != null ? module.getName() : null;
+            return module.getModuleName();
         }
 
         public Resource getResource() {

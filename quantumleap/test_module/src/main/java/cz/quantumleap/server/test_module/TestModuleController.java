@@ -31,9 +31,6 @@ public class TestModuleController {
     @RequestMapping(value = "/")
 //    @Transactional
     public String index() {
-
-        // TODO ResourceDatabasePopulator and others DatabasePopulator* classes...
-
 //        TestEntity entity = new TestEntity();
 //        entity.setId(1L);
 ////        entity.setComment("treti entita");
@@ -79,7 +76,7 @@ public class TestModuleController {
             System.out.println("Exception! " + e.getMessage());
         }
         System.out.println("--------------------------------------------------");
-        List<ResourceManager.ModuleResource> scripts = resourceManager.findOnClasspath("db/scripts/*.sql");
+        List<ResourceManager.ResourceWithModule> scripts = resourceManager.findOnClasspath("db/scripts/*.sql");
         scripts.forEach(script -> {
             try {
                 System.out.println("script: " + script.getResource().getURL().toString());
