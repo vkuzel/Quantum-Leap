@@ -17,7 +17,6 @@ import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.jdbc.BadSqlGrammarException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.jdbc.JdbcTestUtils;
 
@@ -25,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ActiveProfiles("test")
 @SpringApplicationConfiguration({QuantumLeapApplication.class, TestEnvironmentContext.class})
 public class IncrementsRunnerTest {
 
@@ -37,7 +35,7 @@ public class IncrementsRunnerTest {
     private IncrementsRunner incrementsRunner;
 
     @Autowired
-    private JdbcTemplate jdbcTemplate; // TODO Why is there no-beans error message? Spring boot creates this Bean for us...
+    private JdbcTemplate jdbcTemplate;
 
     @Test
     public void runIncrementTest() {
