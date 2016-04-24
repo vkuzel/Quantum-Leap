@@ -1,6 +1,9 @@
 package cz.quantumleap.server.common;
 
 import com.github.vkuzel.gradle_project_dependencies.ProjectDependencies;
+import cz.quantumleap.server.autoincrement.IncrementsRunner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.stereotype.Component;
@@ -20,7 +23,8 @@ import java.util.stream.Collectors;
 @Component
 public class ModuleDependencyManager {
 
-    // TODO Each module is going to have it's own dependency file.
+    private static final Logger log = LoggerFactory.getLogger(ModuleDependencyManager.class);
+
     private static final String PROJECT_DEPENDENCIES_FILE = "/projectDependencies.ser";
     private final PathMatchingResourcePatternResolver resourceResolver = new PathMatchingResourcePatternResolver();
 
@@ -48,6 +52,7 @@ public class ModuleDependencyManager {
 
         for (Resource dependenciesFile : dependenciesFiles) {
             Dependencies dependencies = deserializeDependencies(dependenciesFile);
+            log.info("Registering project module: {}", dependencies.getModuleName());
 
             independentModulesFirst.remove(dependencies);
 

@@ -23,7 +23,7 @@ public class ResourceManager {
     private final Comparator<ResourceWithModule> INDEPENDENT_MODULE_RESOURCES_FIRST = (mr1, mr2) ->
             moduleDependencyManager.INDEPENDENT_MODULE_FIRST.compare(mr1.module, mr2.module);
 
-    public List<ResourceWithModule> findOnClasspath(String locationPattern) {
+    public List<ResourceWithModule> findInClasspath(String locationPattern) {
         List<ResourceWithModule> resourceWithModules;
 
         try {
@@ -38,16 +38,16 @@ public class ResourceManager {
         return resourceWithModules;
     }
 
-    public Resource findFirstSpecificFromClasspathOrWorkingDir(String locationPattern) {
+    public Resource findMostSpecificInClasspathOrWorkingDir(String locationPattern) {
         try {
             Resource[] fileResources = resourceResolver.getResources("file:" + locationPattern);
-            if (fileResources.length > 0) {
+            if (fileResources.length > 0 && fileResources[0].exists()) {
                 return fileResources[0];
             }
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }
-        List<ResourceWithModule> classpathResourceWithModules = findOnClasspath(locationPattern);
+        List<ResourceWithModule> classpathResourceWithModules = findInClasspath(locationPattern);
         if (classpathResourceWithModules.size() > 0) {
             return classpathResourceWithModules.get(classpathResourceWithModules.size() - 1).getResource();
         }
@@ -103,10 +103,6 @@ public class ResourceManager {
             } catch (IOException e) {
                 throw new IllegalStateException(e);
             }
-        }
-
-        public String getResourceFileName() {
-            return resource.getFilename();
         }
     }
 }

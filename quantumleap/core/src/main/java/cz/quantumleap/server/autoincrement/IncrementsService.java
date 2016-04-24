@@ -48,7 +48,7 @@ public class IncrementsService {
     }
 
     public List<IncrementScript> loadAllIncrements() {
-        return resourceManager.findOnClasspath(INCREMENTS_LOCATION_PATTERN).stream()
+        return resourceManager.findInClasspath(INCREMENTS_LOCATION_PATTERN).stream()
                 .map(resourceWithModule -> {
                     Matcher matcher = INCREMENT_VERSION_PATTERN.matcher(resourceWithModule.getResourcePath());
                     if (matcher.find()) {
