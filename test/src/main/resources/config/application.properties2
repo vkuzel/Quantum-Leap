@@ -3,6 +3,7 @@ spring.datasource.url = jdbc:postgresql://127.0.0.1:5432/quantumleap
 spring.datasource.username = quantumleap
 spring.datasource.password = quantumleap
 
+# TODO What's wrong with this application.properties file?
 # JPA configuration...
 spring.jpa.database = POSTGRESQL
 spring.datasource.platform = postgres

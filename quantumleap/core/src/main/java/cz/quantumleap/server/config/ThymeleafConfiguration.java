@@ -25,10 +25,13 @@ public class ThymeleafConfiguration {
     @Autowired
     private ResourceManager resourceManager;
 
+    @Autowired
+    private ThymeleafProperties thymeleafProperties;
+
     @Bean
     public SpringTemplateEngine thymeleafTemplateEngine() {
         SpringTemplateEngine engine = new SpringTemplateEngine();
-        engine.setTemplateResolver(new ThemeTemplateResolver(resourceManager));
+        engine.setTemplateResolver(new ThemeTemplateResolver(thymeleafProperties, resourceManager));
         engine.addDialect(new LayoutDialect());
         return engine;
     }
@@ -42,17 +45,16 @@ public class ThymeleafConfiguration {
 
         private static final Logger log = LoggerFactory.getLogger(ThemeTemplateResolver.class);
 
-        private static final ThymeleafProperties PROPERTIES = new ThymeleafProperties();
-        private static final String TEMPLATES_DIR = "/templates/";
+        private static final String TEMPLATES_DIR = "templates/";
 
-        private ThemeTemplateResolver(ResourceManager resourceManager) {
+        private ThemeTemplateResolver(ThymeleafProperties properties, ResourceManager resourceManager) {
             super();
-            setSuffix(PROPERTIES.getSuffix());
-            setTemplateMode(PROPERTIES.getMode());
-            if (PROPERTIES.getEncoding() != null) {
-                setCharacterEncoding(PROPERTIES.getEncoding().name());
+            setSuffix(properties.getSuffix());
+            setTemplateMode(properties.getMode());
+            if (properties.getEncoding() != null) {
+                setCharacterEncoding(properties.getEncoding().name());
             }
-            setCacheable(PROPERTIES.isCache()); // TODO Verify this!
+            setCacheable(properties.isCache());
             setResourceResolver(new IResourceResolver() {
                 @Override
                 public String getName() {
@@ -81,11 +83,9 @@ public class ThymeleafConfiguration {
 
         @Override
         protected String computeResourceName(TemplateProcessingParameters templateProcessingParameters) {
-            // TODO Implement localization processing into the template...nooo it should be part of resource resolver...probably
             checkInitialized();
 
             final String templateName = templateProcessingParameters.getTemplateName();
-
             Validate.notNull(templateName, "Template name cannot be null");
 
             String unaliasedName = this.getTemplateAliases().get(templateName);

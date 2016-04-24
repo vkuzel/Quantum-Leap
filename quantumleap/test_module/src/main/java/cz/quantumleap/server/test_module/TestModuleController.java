@@ -69,14 +69,14 @@ public class TestModuleController {
 //        List<Integer> rec = testEntityRepository.array();
 
         System.out.println("#################### resource ####################");
-        Resource s = resourceManager.findFirstSpecificFromClasspathOrWorkingDir("db/scripts/*.sql");
+        Resource s = resourceManager.findMostSpecificInClasspathOrWorkingDir("db/scripts/*.sql");
         try {
             System.out.println("script: " + s.getURL().toString());
         } catch (IOException e) {
             System.out.println("Exception! " + e.getMessage());
         }
         System.out.println("--------------------------------------------------");
-        List<ResourceManager.ResourceWithModule> scripts = resourceManager.findOnClasspath("db/scripts/*.sql");
+        List<ResourceManager.ResourceWithModule> scripts = resourceManager.findInClasspath("db/scripts/*.sql");
         scripts.forEach(script -> {
             try {
                 System.out.println("script: " + script.getResource().getURL().toString());
