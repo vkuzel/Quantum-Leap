@@ -19,7 +19,6 @@ public class EnvironmentBuilderService {
 
     private static final Logger log = LoggerFactory.getLogger(EnvironmentBuilderService.class);
 
-    // TODO ProjectDependencyGraph for tests...
     private static final String SCRIPTS_LOCATION_PATTERN = "db/scripts/*_*.sql";
 
     // language=SQL

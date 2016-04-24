@@ -73,7 +73,6 @@ public class IncrementsRunner {
         transactionExecutor.execute(() ->
                 scripts.forEach(script -> {
                     String sql = Utils.resourceToString(script);
-                    // TODO Use this in Factorify ocasionaly.
                     jdbcTemplate.execute(sql);
 
                     Increment increment = new Increment(
