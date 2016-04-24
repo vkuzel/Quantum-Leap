@@ -1,5 +1,7 @@
 package cz.quantumleap.server.autoincrement.domain;
 
+import cz.quantumleap.server.persistence.hibernate.CreatedAt;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
@@ -7,13 +9,13 @@ import java.time.LocalDateTime;
 public class Increment {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "increment_seq_gen") // TODO Really? Commont this annotation mess? There must be some interceptor or default values!
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "increment_seq_gen")
     @SequenceGenerator(name = "increment_seq_gen", sequenceName = "increment_id_seq")
     private Long id;
     private String module;
     private int version;
     private String fileName;
-//    @CreationTimestamp
+    @CreatedAt
     private LocalDateTime createdAt;
 
     public Increment() {

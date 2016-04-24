@@ -1,23 +1,28 @@
 package cz.quantumleap.server.test_module.domain;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import java.time.LocalDate;
+import cz.quantumleap.server.persistence.hibernate.CreatedAt;
+import cz.quantumleap.server.persistence.hibernate.CreatedBy;
+import cz.quantumleap.server.persistence.hibernate.UpdatedAt;
+import cz.quantumleap.server.persistence.hibernate.UpdatedBy;
+
+import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.List;
-import java.util.Map;
 
 @Entity
 public class TestEntity {
     @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "test_entity_seq_gen")
+    @SequenceGenerator(name = "test_entity_seq_gen", sequenceName = "test_entity_id_seq")
     private long id;
-    private List<Integer> flatArray;
-    private List<List<Integer>> multidimensionalArray;
-    private LocalDate date;
-    private LocalTime time;
-    private LocalDateTime dateTime;
-    private Map<String, Object> json; // TODO Don't forget to specify generic type (for String)
+    private String comment;
+    @CreatedAt
+    private LocalDateTime createdAt;
+    @CreatedBy
+    private long createdBy;
+    @UpdatedAt
+    private LocalDateTime updatedAt;
+    @UpdatedBy
+    private Long updatedBy;
 
     public long getId() {
         return id;
@@ -27,64 +32,43 @@ public class TestEntity {
         this.id = id;
     }
 
-    public List<Integer> getFlatArray() {
-        return flatArray;
+    public String getComment() {
+        return comment;
     }
 
-    public void setFlatArray(List<Integer> flatArray) {
-        this.flatArray = flatArray;
+    public void setComment(String comment) {
+        this.comment = comment;
     }
 
-    public List<List<Integer>> getMultidimensionalArray() {
-        return multidimensionalArray;
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 
-    public void setMultidimensionalArray(List<List<Integer>> multidimensionalArray) {
-        this.multidimensionalArray = multidimensionalArray;
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 
-    public LocalDate getDate() {
-        return date;
+    public long getCreatedBy() {
+        return createdBy;
     }
 
-    public LocalTime getTime() {
-        return time;
+    public void setCreatedBy(long createdBy) {
+        this.createdBy = createdBy;
     }
 
-    public void setTime(LocalTime time) {
-        this.time = time;
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
     }
 
-    public LocalDateTime getDateTime() {
-        return dateTime;
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
-    public void setDateTime(LocalDateTime dateTime) {
-        this.dateTime = dateTime;
+    public Long getUpdatedBy() {
+        return updatedBy;
     }
 
-    public void setDate(LocalDate date) {
-        this.date = date;
-    }
-
-    public Map<String, Object> getJson() {
-        return json;
-    }
-
-    public void setJson(Map<String, Object> json) {
-        this.json = json;
-    }
-
-    @Override
-    public String toString() {
-        return "TestEntity{" +
-                "id=" + id +
-                ", arr=" + flatArray +
-                ", multiArr=" + multidimensionalArray +
-                ", date=" + date +
-                ", time=" + time +
-                ", dateTime=" + dateTime +
-                ", json=" + json +
-                '}';
+    public void setUpdatedBy(Long updatedBy) {
+        this.updatedBy = updatedBy;
     }
 }

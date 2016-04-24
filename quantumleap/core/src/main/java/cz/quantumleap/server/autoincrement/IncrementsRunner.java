@@ -2,8 +2,8 @@ package cz.quantumleap.server.autoincrement;
 
 import cz.quantumleap.server.autoincrement.domain.Increment;
 import cz.quantumleap.server.autoincrement.repository.IncrementRepository;
-import cz.quantumleap.server.common.TransactionExecutor;
 import cz.quantumleap.server.common.Utils;
+import cz.quantumleap.server.persistence.TransactionExecutor;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

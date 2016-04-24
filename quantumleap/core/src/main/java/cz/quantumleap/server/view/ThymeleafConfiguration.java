@@ -1,4 +1,4 @@
-package cz.quantumleap.server.config;
+package cz.quantumleap.server.view;
 
 import cz.quantumleap.server.common.ResourceManager;
 import nz.net.ultraq.thymeleaf.LayoutDialect;

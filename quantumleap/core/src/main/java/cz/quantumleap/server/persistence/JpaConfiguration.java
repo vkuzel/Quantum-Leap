@@ -1,4 +1,4 @@
-package cz.quantumleap.server.config;
+package cz.quantumleap.server.persistence;
 
 import org.springframework.boot.orm.jpa.EntityScan;
 import org.springframework.context.annotation.Configuration;

@@ -1,11 +1,8 @@
 CREATE TABLE test_entity (
-  id      BIGSERIAL PRIMARY KEY,
-  comment VARCHAR
+  id         BIGSERIAL PRIMARY KEY,
+  comment    VARCHAR,
+  created_at TIMESTAMP NOT NULL,
+  created_by BIGINT    NOT NULL,
+  updated_at TIMESTAMP,
+  updated_by BIGINT
 );
-
--- CREATE OR REPLACE FUNCTION process_text(input VARCHAR)
---   RETURNS VARCHAR AS $$
--- BEGIN
---   RETURN 'processed: ' || input;
--- END;
--- $$ LANGUAGE plpgsql;

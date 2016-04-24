@@ -1,4 +1,4 @@
-package cz.quantumleap.server.common;
+package cz.quantumleap.server.persistence;
 
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
