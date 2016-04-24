@@ -13,8 +13,8 @@ public class Increment {
     private String module;
     private int version;
     private String fileName;
-//    @CreationTimestamp TODO Create an listener for this
-    private LocalDateTime createdAt = LocalDateTime.now();
+//    @CreationTimestamp
+    private LocalDateTime createdAt;
 
     public Increment() {
     }

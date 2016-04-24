@@ -28,7 +28,7 @@ public class IncrementRepositoryImpl implements LatestIncrementsLoader {
     public static void insertEmptyIncrement(DataSource dataSource, String module, int version) {
         // language=SQL
         String query = "INSERT INTO increment (module, version, file_name, created_at) " +
-                "VALUES (?, ?, '<initial_increment>', NOW())"; // TODO Fix created_at column! Maybe create Hibernate's pre-commit hook for createdAt and createdBy, etc...
+                "VALUES (?, ?, '<initial_increment>', NOW())";
         new JdbcTemplate(dataSource).update(query, module, version);
     }
 }

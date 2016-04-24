@@ -7,12 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.datasource.SingleConnectionDataSource;
-
-import javax.sql.DataSource;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Configuration
+@EnableTransactionManagement
 public class CliContext {
 
     @Autowired
@@ -33,20 +31,28 @@ public class CliContext {
         return new IncrementsService();
     }
 
-    @Bean
-    public DataSource dataSource() {
-        SingleConnectionDataSource dataSource = new SingleConnectionDataSource(
-                environment.getProperty("spring.datasource.url"),
-                environment.getProperty("spring.datasource.username"),
-                environment.getProperty("spring.datasource.password"),
-                false
-        );
-        dataSource.setAutoCommit(environment.getProperty("spring.datasource.defaultAutoCommit", Boolean.class));
-        return dataSource;
-    }
+//    @Bean
+//    public DataSource dataSource() {
+//        SingleConnectionDataSource dataSource = new SingleConnectionDataSource(
+//                environment.getProperty("spring.datasource.url"),
+//                environment.getProperty("spring.datasource.username"),
+//                environment.getProperty("spring.datasource.password"),
+//                false
+//        );
+//        dataSource.setAutoCommit(environment.getProperty("spring.datasource.defaultAutoCommit", Boolean.class));
+//        return dataSource;
+//    }
 
-    @Bean
-    public JdbcTemplate jdbcTemplate() {
-        return new JdbcTemplate(dataSource());
-    }
+//    @Bean// (name = "transactionManager")
+//    public PlatformTransactionManager transactionManager(DataSource dataSource) {
+//        JpaTransactionManager transactionManager = new JpaTransactionManager();
+////        transactionManager.setEntityManagerFactory(emf);
+//        transactionManager.setDataSource(dataSource);
+//        return transactionManager;
+//    }
+
+//    @Bean
+//    public JdbcTemplate jdbcTemplate(DataSource dataSource) {
+//        return new JdbcTemplate(dataSource);
+//    }
 }
