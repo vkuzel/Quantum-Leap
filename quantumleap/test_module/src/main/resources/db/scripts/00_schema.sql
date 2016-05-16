@@ -1,5 +1,6 @@
 CREATE TABLE test_entity (
   id         BIGSERIAL PRIMARY KEY,
+  name       JSON,
   comment    VARCHAR,
   created_at TIMESTAMP NOT NULL,
   created_by BIGINT    NOT NULL,

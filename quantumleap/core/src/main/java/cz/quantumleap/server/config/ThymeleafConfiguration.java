@@ -1,6 +1,7 @@
-package cz.quantumleap.server.view;
+package cz.quantumleap.server.config;
 
 import cz.quantumleap.server.common.ResourceManager;
+import cz.quantumleap.server.i18n.DatabaseMessageSource;
 import nz.net.ultraq.thymeleaf.LayoutDialect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,11 +29,15 @@ public class ThymeleafConfiguration {
     @Autowired
     private ThymeleafProperties thymeleafProperties;
 
+    @Autowired
+    private DatabaseMessageSource databaseMessageSource;
+
     @Bean
     public SpringTemplateEngine thymeleafTemplateEngine() {
         SpringTemplateEngine engine = new SpringTemplateEngine();
         engine.setTemplateResolver(new ThemeTemplateResolver(thymeleafProperties, resourceManager));
         engine.addDialect(new LayoutDialect());
+        engine.setTemplateEngineMessageSource(databaseMessageSource);
         return engine;
     }
 
