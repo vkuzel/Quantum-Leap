@@ -72,7 +72,7 @@ public class IncrementsRunner {
 
         transactionExecutor.execute(() ->
                 scripts.forEach(script -> {
-                    String sql = Utils.resourceToString(script);
+                    String sql = Utils.loadResourceToString(script);
                     jdbcTemplate.execute(sql);
 
                     Increment increment = new Increment(

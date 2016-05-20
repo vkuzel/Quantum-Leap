@@ -43,7 +43,7 @@ public class EnvironmentBuilderService {
 
         List<ResourceManager.ResourceWithModule> scripts = resourceManager.findInClasspath(SCRIPTS_LOCATION_PATTERN);
         scripts.forEach(script -> {
-            String sql = Utils.resourceToString(script.getResource());
+            String sql = Utils.loadResourceToString(script.getResource());
             jdbcTemplate.execute(sql);
         });
 
