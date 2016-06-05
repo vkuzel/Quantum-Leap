@@ -13,7 +13,7 @@ CREATE TABLE language (
 
 CREATE TABLE message (
   id       BIGSERIAL PRIMARY KEY,
-  language VARCHAR(10) REFERENCES language (iso_code) NOT NULL,
-  code     VARCHAR(255)                               NOT NULL,
-  message  VARCHAR(255)                               NOT NULL
+  language VARCHAR(10) REFERENCES language NOT NULL,
+  code     VARCHAR(255)                    NOT NULL,
+  message  VARCHAR(255)                    NOT NULL
 );
