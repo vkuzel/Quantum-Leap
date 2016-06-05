@@ -5,7 +5,7 @@ import com.google.common.collect.ImmutableMap;
 import cz.quantumleap.server.QuantumLeapApplication;
 import cz.quantumleap.server.common.ModuleDependencyManager;
 import cz.quantumleap.server.common.ResourceManager;
-import cz.quantumleap.server.config.TestEnvironmentContext;
+import cz.quantumleap.test.config.TestEnvironmentContext;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;

@@ -1,4 +1,4 @@
-package cz.quantumleap.server.config;
+package cz.quantumleap.test.config;
 
 import cz.quantumleap.cli.environment.EnvironmentBuilderService;
 import org.springframework.context.annotation.Bean;

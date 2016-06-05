@@ -11,5 +11,5 @@ dependencies {
     compile('org.apache.commons:commons-lang3:3.4')
     compile('com.ibm.icu:icu4j:57.1')
     runtime('org.postgresql:postgresql')
-    testCompile('org.springframework.boot:spring-boot-starter-test')
+    testFixturesCompile('org.springframework.boot:spring-boot-starter-test')
 }
