@@ -1,1 +1,1 @@
-SELECT * FROM non_existing_table;
+SELECT * FROM core.non_existing_table;

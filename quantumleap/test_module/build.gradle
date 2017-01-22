@@ -1,4 +1,5 @@
 dependencies {
     compile project(':core')
+    testCompile project(path: ":core", configuration: "testFixturesUsageCompile")
     testCompile('org.springframework.boot:spring-boot-starter-test')
 }

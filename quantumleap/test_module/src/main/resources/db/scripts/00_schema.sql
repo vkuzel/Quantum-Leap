@@ -1,4 +1,6 @@
-CREATE TABLE test_entity (
+CREATE SCHEMA test_module;
+
+CREATE TABLE test_module.test_entity (
   id         BIGSERIAL PRIMARY KEY,
   name       JSON,
   comment    VARCHAR,

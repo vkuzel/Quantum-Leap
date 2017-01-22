@@ -1,6 +1,0 @@
-package cz.quantumleap.server.i18n.transport;
-
-public class MultilingualString extends Multilingual<String> {
-    // TODO Add test for retreving multilingual string from database...
-    // TODO Add test for rendering multilingual string in Thymeleaf...
-}

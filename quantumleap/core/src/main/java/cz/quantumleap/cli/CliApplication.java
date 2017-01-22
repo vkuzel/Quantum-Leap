@@ -1,7 +1,6 @@
 package cz.quantumleap.cli;
 
-import cz.quantumleap.cli.environment.EnvironmentBuilderService;
-import org.springframework.beans.factory.annotation.Autowired;
+import cz.quantumleap.cli.environment.EnvironmentBuilder;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -10,16 +9,14 @@ import org.springframework.context.annotation.ComponentScan;
 import java.io.IOException;
 
 @SpringBootApplication
+// TODO Scan core!
 @ComponentScan(basePackages = {"cz.quantumleap.cli"})
 public class CliApplication implements CommandLineRunner {
 
-    @Autowired
-    private EnvironmentBuilderService environmentBuilderService;
+    private final EnvironmentBuilder environmentBuilder;
 
-    public static void main(String[] args) throws IOException {
-        SpringApplication application = new SpringApplication(CliApplication.class);
-        application.setWebEnvironment(false);
-        application.run(args);
+    public CliApplication(EnvironmentBuilder environmentBuilder) {
+        this.environmentBuilder = environmentBuilder;
     }
 
     @Override
@@ -27,12 +24,18 @@ public class CliApplication implements CommandLineRunner {
         String firstArg = args.length > 0 ? args[0] : "";
         switch (firstArg) {
             case "rebuild":
-                environmentBuilderService.dropEnvironment();
+                environmentBuilder.dropEnvironment();
             case "build":
-                environmentBuilderService.buildEnvironment();
+                environmentBuilder.buildEnvironment();
                 break;
             default:
                 throw new IllegalArgumentException("Unknown command " + firstArg + "!");
         }
+    }
+
+    public static void main(String[] args) throws IOException {
+        SpringApplication application = new SpringApplication(CliApplication.class);
+        application.setWebEnvironment(false);
+        application.run(args);
     }
 }

@@ -1,1 +1,1 @@
-INSERT INTO test_entity (message) VALUES ('should not be inserted');
+INSERT INTO core.test_entity (message) VALUES ('should not be inserted');

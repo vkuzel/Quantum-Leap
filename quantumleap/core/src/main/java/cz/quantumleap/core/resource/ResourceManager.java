@@ -1,0 +1,91 @@
+package cz.quantumleap.core.resource;
+
+import cz.quantumleap.core.module.ModuleDependencies;
+import cz.quantumleap.core.module.ModuleDependencyManager;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.stereotype.Component;
+
+import java.io.IOException;
+import java.net.URL;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+@Component
+public class ResourceManager {
+
+    private static final PathMatchingResourcePatternResolver resourceResolver = new PathMatchingResourcePatternResolver();
+
+    private final ModuleDependencyManager moduleDependencyManager;
+
+    public ResourceManager(ModuleDependencyManager moduleDependencyManager) {
+        this.moduleDependencyManager = moduleDependencyManager;
+    }
+
+    public List<ResourceWithModule> findInClasspath(String locationPattern) {
+        List<ResourceWithModule> resourceWithModules;
+
+        try {
+            resourceWithModules = Arrays.stream(resourceResolver.getResources("classpath*:" + locationPattern))
+                    .map(this::createResourceWithModule).collect(Collectors.toList());
+        } catch (IOException e) {
+            throw new IllegalStateException(e);
+        }
+
+        resourceWithModules.sort(this::independentModuleResourcesFirst);
+
+        return resourceWithModules;
+    }
+
+    private int independentModuleResourcesFirst(ResourceWithModule mr1, ResourceWithModule mr2) {
+        return moduleDependencyManager.independentModuleFirst().compare(mr1.getModuleDependencies(), mr2.getModuleDependencies());
+    }
+
+    public Optional<Resource> findMostSpecificInClasspathOrWorkingDir(String locationPattern) {
+        Resource resource = null;
+        try {
+            Resource[] fileResources = resourceResolver.getResources("file:" + locationPattern);
+            if (fileResources.length > 0 && fileResources[0].exists()) {
+                resource = fileResources[0];
+            }
+        } catch (IOException e) {
+            throw new IllegalStateException(e);
+        }
+        if (resource == null) {
+            List<ResourceWithModule> classpathResourceWithModules = findInClasspath(locationPattern);
+            if (classpathResourceWithModules.size() > 0) {
+                resource = classpathResourceWithModules.get(classpathResourceWithModules.size() - 1).getResource();
+            }
+        }
+        return Optional.ofNullable(resource);
+    }
+
+    private ResourceWithModule createResourceWithModule(Resource resource) {
+        ResourceWithModule resourceWithModule = null;
+
+        final URL resourceUrl;
+        try {
+            resourceUrl = resource.getURL();
+        } catch (IOException e) {
+            throw new IllegalStateException(e);
+        }
+        for (ModuleDependencies module : moduleDependencyManager.getIndependentModulesFirst()) {
+            if (module.isInModule(resourceUrl)) {
+                if (resourceWithModule != null) {
+                    throw new IllegalStateException("Two modules (" + resourceWithModule.getModuleName() + " and " + module.getModuleName() +
+                            ") has been found for resource " + resourceUrl.toString() + "!" +
+                            " The name of each module has to be unique!");
+                }
+                resourceWithModule = new ResourceWithModule(module, resource);
+            }
+        }
+        if (resourceWithModule == null) {
+            throw new IllegalStateException("No module has not been found for resource " + resourceUrl.toString() +
+                    " Please make sure that gradle discoverProjectDependencies task has been executed.");
+        }
+        return resourceWithModule;
+    }
+
+}
