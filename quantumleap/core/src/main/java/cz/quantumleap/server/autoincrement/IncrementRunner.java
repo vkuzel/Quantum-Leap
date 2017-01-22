@@ -1,10 +1,13 @@
-package cz.quantumleap.core.autoincrement;
+package cz.quantumleap.server.autoincrement;
 
+import cz.quantumleap.core.autoincrement.IncrementDao;
+import cz.quantumleap.core.autoincrement.IncrementService;
 import cz.quantumleap.core.common.Utils;
 import cz.quantumleap.core.persistence.TransactionExecutor;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
@@ -19,15 +22,18 @@ public class IncrementRunner {
 
     private static final Logger log = LoggerFactory.getLogger(IncrementRunner.class);
 
+    private final Environment environment;
     private final IncrementService incrementService;
     private final TransactionExecutor transactionExecutor;
     private final IncrementDao incrementDao;
 
     public IncrementRunner(
+            Environment environment,
             IncrementService incrementService,
             TransactionExecutor transactionExecutor,
             IncrementDao incrementDao
     ) {
+        this.environment = environment;
         this.incrementService = incrementService;
         this.transactionExecutor = transactionExecutor;
         this.incrementDao = incrementDao;
@@ -35,10 +41,12 @@ public class IncrementRunner {
 
     @PostConstruct
     public void runIncrements() {
-        Map<String, Integer> lastIncrements = incrementDao.loadLastIncrementVersionForModules();
-        List<IncrementService.IncrementScript> incrementScripts = incrementService.findAllIncrementsInClasspath();
+        if (!environment.acceptsProfiles("test")) {
+            Map<String, Integer> lastIncrements = incrementDao.loadLastIncrementVersionForModules();
+            List<IncrementService.IncrementScript> incrementScripts = incrementService.findAllIncrementsInClasspath();
 
-        runIncrements(lastIncrements, incrementScripts);
+            runIncrements(lastIncrements, incrementScripts);
+        }
     }
 
     void runIncrements(Map<String, Integer> lastIncrements, List<IncrementService.IncrementScript> incrementScripts) {

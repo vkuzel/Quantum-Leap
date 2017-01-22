@@ -1,6 +1,6 @@
 package cz.quantumleap.server;
 
-import cz.quantumleap.core.autoincrement.IncrementRunner;
+import cz.quantumleap.server.autoincrement.IncrementRunner;
 import cz.quantumleap.server.test.ServerSpringBootTest;
 import org.junit.Assert;
 import org.junit.Test;

@@ -14,8 +14,6 @@ public class TestModuleController {
         return LocalDateTime.now();
     }
 
-    volatile int i = (int) Math.round(Math.random() * 10000);
-
     @RequestMapping("/")
     public String index() {
         return "test/home";

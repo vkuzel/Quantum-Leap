@@ -1,18 +1,22 @@
-package cz.quantumleap.core.autoincrement;
+package cz.quantumleap.server.autoincrement;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import cz.quantumleap.core.autoincrement.IncrementDao;
+import cz.quantumleap.core.autoincrement.IncrementService;
 import cz.quantumleap.core.module.ModuleDependencies;
 import cz.quantumleap.core.persistence.TransactionExecutor;
 import cz.quantumleap.core.resource.ResourceWithModule;
 import cz.quantumleap.core.test.CoreSpringBootTest;
 import cz.quantumleap.core.test.common.TestUtils;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.jdbc.BadSqlGrammarException;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -36,9 +40,19 @@ public class IncrementRunnerTest {
     private final PathMatchingResourcePatternResolver resourceResolver = new PathMatchingResourcePatternResolver();
 
     @Autowired
-    private IncrementRunner incrementRunner;
+    private Environment environment;
+    @Autowired
+    private IncrementService incrementService;
     @Autowired
     private TransactionExecutor transactionExecutor;
+    @Autowired
+    private IncrementDao incrementDao;
+    private IncrementRunner incrementRunner;
+
+    @Before
+    public void setUp() {
+        incrementRunner = new IncrementRunner(environment, incrementService, transactionExecutor, incrementDao);
+    }
 
     @Test
     public void runIncrementTest() throws SQLException {

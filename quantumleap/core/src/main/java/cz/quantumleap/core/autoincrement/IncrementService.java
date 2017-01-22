@@ -63,28 +63,28 @@ public class IncrementService {
                 .collect(Collectors.toList());
     }
 
-    static class IncrementScript {
+    public static class IncrementScript {
         private final ResourceWithModule resourceWithModule;
         private final int incrementVersion;
 
-        IncrementScript(ResourceWithModule resourceWithModule, int incrementVersion) {
+        public IncrementScript(ResourceWithModule resourceWithModule, int incrementVersion) {
             this.resourceWithModule = resourceWithModule;
             this.incrementVersion = incrementVersion;
         }
 
-        String getModuleName() {
+        public String getModuleName() {
             return this.resourceWithModule.getModuleName();
         }
 
-        int getIncrementVersion() {
+        public int getIncrementVersion() {
             return incrementVersion;
         }
 
-        Resource getScript() {
+        public Resource getScript() {
             return resourceWithModule.getResource();
         }
 
-        String getResourcePath() {
+        public String getResourcePath() {
             return resourceWithModule.getResourcePath();
         }
     }

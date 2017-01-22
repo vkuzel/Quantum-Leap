@@ -5,12 +5,13 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import java.io.IOException;
 
 @SpringBootApplication
-// TODO Scan core!
-@ComponentScan(basePackages = {"cz.quantumleap.cli"})
+@ComponentScan(basePackages = {"cz.quantumleap.cli", "cz.quantumleap.core"})
+@EnableTransactionManagement
 public class CliApplication implements CommandLineRunner {
 
     private final EnvironmentBuilder environmentBuilder;
