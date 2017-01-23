@@ -1,0 +1,44 @@
+//buildscript {
+//    repositories {
+//        mavenCentral()
+//        maven { url "https://jitpack.io" }
+//    }
+//    dependencies {
+//        classpath "com.github.vkuzel:Gradle-Spring-Boot-Multi-Project-Plugin:2.3.0"
+//    }
+//}
+
+buildscript {
+    repositories {
+        mavenCentral()
+        maven { url "https://jitpack.io" }
+    }
+    dependencies {
+        classpath 'org.springframework.boot:spring-boot-gradle-plugin:1.4.3.RELEASE'
+        // TODO Figure out how to get rid of this...
+        classpath 'org.jooq:jooq:3.8.6'
+        classpath 'org.jooq:jooq-meta:3.8.6'
+        classpath 'org.jooq:jooq-codegen:3.8.6'
+        classpath 'org.postgresql:postgresql:9.4.1208.jre7'
+
+        classpath 'com.github.vkuzel:Gradle-Project-Dependencies:3.0.0'
+        classpath files('lib/spring-boot-multi-project-gradle-plugin-2.3.0.jar')
+    }
+}
+
+// TODO Put this into multi-project plugin!
+ext['thymeleaf.version'] = '3.0.3.RELEASE'
+ext['thymeleaf-layout-dialect.version'] = '2.0.0'
+
+apply plugin: 'spring-boot-multi-project'
+
+dependencies {
+    compile project('core')
+    compile project('demo_module')
+    testCompile('org.springframework.boot:spring-boot-starter-test')
+}
+
+jar {
+    baseName = 'demo'
+    version = '0.0.1-SNAPSHOT'
+}

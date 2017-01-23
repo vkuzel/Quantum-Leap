@@ -1,0 +1,9 @@
+include 'core'
+include 'demo_module'
+
+rootProject.children.each { project ->
+    String projectDirName = sprintf("../quantumleap/%s", project.name)
+    project.projectDir = new File(settingsDir, projectDirName)
+    assert project.projectDir.isDirectory()
+    assert project.buildFile.isFile()
+}
