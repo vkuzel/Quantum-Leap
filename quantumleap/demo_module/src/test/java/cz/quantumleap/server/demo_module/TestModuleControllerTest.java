@@ -1,6 +1,5 @@
 package cz.quantumleap.server.demo_module;
 
-import cz.quantumleap.server.demo_module.TestModuleController;
 import org.jooq.DSLContext;
 import org.junit.Test;
 import org.junit.runner.RunWith;

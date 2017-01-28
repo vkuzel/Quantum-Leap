@@ -1,0 +1,23 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{dashboard/layout/skeleton}">
+<head>
+    <link href="assets/css/login.css" rel="stylesheet"/>
+</head>
+<body>
+<div layout:fragment="body" class="site-wrapper">
+    <div class="site-wrapper-inner">
+        <div class="cover-container">
+            <div class="inner cover">
+                <h1 class="cover-heading">Quantum Leap</h1>
+                <p class="lead">Courage, Integrity, Commitment.</p>
+                <p class="lead">
+                    <a th:href="@{/dashboard}" class="btn btn-lg btn-default">Enter</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+
+</html>
