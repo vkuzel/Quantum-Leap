@@ -9,7 +9,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>SB Admin 2 - Bootstrap Admin Theme</title>
+    <title th:text="#{dashboard.commons.quantumleap}">SB Admin 2 - Bootstrap Admin Theme</title>
 
     <!-- Bootstrap Core CSS -->
     <link th:href="@{assets/vendor/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
@@ -48,7 +48,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="layout.html">SB Admin v2.0</a>
+                <a class="navbar-brand" href="layout.html" th:href="@{dashboard}" th:text="#{dashboard.commons.quantumleap}">SB Admin v2.0</a>
             </div>
             <!-- /.navbar-header -->
 
@@ -264,7 +264,8 @@
 
             <div class="navbar-default sidebar" role="navigation">
                 <div class="sidebar-nav navbar-collapse">
-                    <ul class="nav" id="side-menu">
+                    <ul th:remove="all-but-first" class="nav" id="side-menu">
+                        <!--/*-->
                         <li class="sidebar-search">
                             <div class="input-group custom-search-form">
                                 <input type="text" class="form-control" placeholder="Search...">
@@ -275,6 +276,18 @@
                             </span>
                             </div>
                             <!-- /input-group -->
+                        </li>
+                        <!--*/-->
+                        <li th:each="menuItem : ${dashboardMenuItems}">
+                            <a th:href="@{${menuItem.path}}"><i th:classappend="${menuItem.fontAwesomeIcon}" class="fa fa-fw"></i> <span th:text="#{${menuItem.title}}">Menu Item</span></a>
+                            <ul th:unless="${menuItem.children.empty}" th:remove="all-but-first" class="nav nav-second-level">
+                                <li th:each="secondLevelMenuItem : ${dashboardMenuItems.children}">
+                                    <a href="flot.html" th:href="@{${secondLevelMenuItem.path}}" th:text="#{${secondLevelMenuItem.title}}">Flot Charts</a>
+                                </li>
+                                <li>
+                                    <a href="morris.html">Morris.js Charts</a>
+                                </li>
+                            </ul>
                         </li>
                         <li>
                             <a href="layout.html"><i class="fa fa-dashboard fa-fw"></i> Dashboard</a>
