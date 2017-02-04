@@ -11,18 +11,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import java.util.List;
 
 @Controller
-public class DashboardController {
+public class DashboardController extends AdminController {
 
-    private final AdminMenuManager adminMenuManager;
-
-    @Autowired
     public DashboardController(AdminMenuManager adminMenuManager) {
-        this.adminMenuManager = adminMenuManager;
-    }
-
-    @ModelAttribute("adminMenuItems")
-    public List<AdminMenuItem> getMenuItems() {
-        return adminMenuManager.getMenuItems();
+        super(adminMenuManager);
     }
 
     @AdminMenuItemDefinition(title = "admin.menu.dashboard", fontAwesomeIcon = "fa-dashboard")
@@ -32,8 +24,8 @@ public class DashboardController {
     }
 
     @AdminMenuItemDefinition(title = "admin.menu.entrance", fontAwesomeIcon = "fa-sitemap")
-    @RequestMapping("/entrance")
+    @RequestMapping("/login")
     public String skeleton() {
-        return "admin/entrance";
+        return "admin/login";
     }
 }

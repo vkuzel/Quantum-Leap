@@ -1,5 +1,6 @@
 include 'core'
 include 'admin'
+include 'view'
 include 'demo_module'
 
 rootProject.children.each { project ->

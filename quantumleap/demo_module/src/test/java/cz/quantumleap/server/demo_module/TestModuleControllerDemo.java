@@ -16,9 +16,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
-@WebMvcTest(TestModuleController.class)
+@WebMvcTest(DemoModuleController.class)
 @ActiveProfiles("test")
-public class TestModuleControllerTest {
+public class TestModuleControllerDemo {
 
     @Autowired
     private MockMvc mvc;

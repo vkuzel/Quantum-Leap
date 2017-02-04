@@ -7,16 +7,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import java.time.LocalDateTime;
 
 @Controller
-public class TestModuleController {
+public class DemoModuleController {
 
     @ModelAttribute("currentTime")
     public LocalDateTime currentTime() {
         return LocalDateTime.now();
-    }
-
-    @RequestMapping("/")
-    public String index() {
-        return "demo/home";
     }
 
     @RequestMapping("/sitemap")
