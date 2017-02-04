@@ -1,1 +1,0 @@
-SELECT * FROM core.non_existing_table;

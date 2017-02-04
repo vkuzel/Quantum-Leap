@@ -1,6 +1,0 @@
-CREATE OR REPLACE FUNCTION core.increment(i INTEGER)
-  RETURNS INTEGER AS $$
-BEGIN
-  RETURN i + 1;
-END;
-$$ LANGUAGE plpgsql;

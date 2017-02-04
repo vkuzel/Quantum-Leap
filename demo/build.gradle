@@ -34,7 +34,7 @@ apply plugin: 'spring-boot-multi-project'
 
 dependencies {
     compile project('core')
-    compile project('dashboard')
+    compile project('admin')
     compile project('demo_module')
     testCompile('org.springframework.boot:spring-boot-starter-test')
 }
