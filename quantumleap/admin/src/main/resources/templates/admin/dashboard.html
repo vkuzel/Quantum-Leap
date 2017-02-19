@@ -1,6 +1,6 @@
 <!doctype html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{admin/layout}">
+      layout:decorate="~{admin/layout}" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
 </head>
 <body>
@@ -16,18 +16,18 @@
     <div class="row">
         <div class="col-lg-3 col-md-6">
             <div class="panel panel-primary">
-                <div class="panel-heading">
+                <div class="panel-heading" sec:authorize="hasRole('ROLE_ADMIN') AND hasAnyRole('ROLE_OBSERVER', 'WHATEVER')">
                     <div class="row">
                         <div class="col-xs-3">
                             <i class="fa fa-comments fa-5x"></i>
                         </div>
                         <div class="col-xs-9 text-right">
                             <div class="huge">26</div>
-                            <div>New Comments!</div>
+                            <div sec:authentication="name">New Comments!</div>
                         </div>
                     </div>
                 </div>
-                <a href="#">
+                <a href="#" sec:authorize-url="/two-methods">
                     <div class="panel-footer">
                         <span class="pull-left">View Details</span>
                         <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>

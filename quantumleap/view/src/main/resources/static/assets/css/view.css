@@ -2,6 +2,9 @@ body {
   background-color: #333333;
   color: #ffffff;
 }
+.btn-google span {
+  margin-right: 5px;
+}
 .vertical-center {
   min-height: 100%;
   /* Fallback for vh unit */

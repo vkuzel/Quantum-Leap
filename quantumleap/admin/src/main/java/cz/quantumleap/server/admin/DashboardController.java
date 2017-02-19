@@ -1,14 +1,10 @@
 package cz.quantumleap.server.admin;
 
-import cz.quantumleap.server.admin.menu.AdminMenuItem;
 import cz.quantumleap.server.admin.menu.AdminMenuItemDefinition;
 import cz.quantumleap.server.admin.menu.AdminMenuManager;
-import org.springframework.beans.factory.annotation.Autowired;
+import cz.quantumleap.server.security.annotation.LoginPage;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
-
-import java.util.List;
 
 @Controller
 public class DashboardController extends AdminController {
@@ -24,6 +20,7 @@ public class DashboardController extends AdminController {
     }
 
     @AdminMenuItemDefinition(title = "admin.menu.entrance", fontAwesomeIcon = "fa-sitemap")
+    @LoginPage
     @RequestMapping("/login")
     public String skeleton() {
         return "admin/login";

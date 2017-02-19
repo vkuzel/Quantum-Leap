@@ -28,7 +28,10 @@ buildscript {
 
 // TODO Put this into multi-project plugin!
 ext['thymeleaf.version'] = '3.0.3.RELEASE'
-ext['thymeleaf-layout-dialect.version'] = '2.0.0'
+ext['thymeleaf-layout-dialect.version'] = '2.1.2'
+ext['thymeleaf-extras-springsecurity4.version'] = '3.0.1.RELEASE'
+// TODO Do I need Thymeleaf Java8 time?
+ext['thymeleaf-extras-java8time.version'] = '3.0.0.RELEASE'
 
 apply plugin: 'spring-boot-multi-project'
 

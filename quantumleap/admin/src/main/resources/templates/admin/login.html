@@ -1,6 +1,6 @@
 <!doctype html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{view/skeleton}">
+      layout:decorate="~{view/skeleton}" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
 <head>
     <link th:href="@{/assets/css/view.css}" rel="stylesheet">
 </head>
@@ -11,8 +11,27 @@
             <h1 class="cover-heading">Quantum Leap</h1>
             <p class="lead">Courage, Integrity, Commitment.</p>
             <p class="lead">
-                <a th:href="@{/dashboard}" class="btn btn-lg btn-default">Enter</a>
+                <a th:href="@{/dashboard}" class="btn btn-lg btn-primary btn-google">
+                    <span class="fa fa-google"></span>
+                    Sign in with Google
+                </a>
             </p>
+
+            <div th:if="${param.error}">
+                Invalid username and password.
+            </div>
+            <div th:if="${param.logout}">
+                You have been logged out.
+            </div>
+            <form th:action="@{/login}" method="post">
+                <div><label> User Name : <input type="text" name="username"/> </label></div>
+                <div><label> Password: <input type="password" name="password"/> </label></div>
+                <div><input type="submit" value="Sign In"/></div>
+            </form>
+
+            <a href="/demo/two-methods" sec:authorize-url="/demo/two-methods">
+                Two methods!
+            </a>
         </div>
     </div>
 </div>
