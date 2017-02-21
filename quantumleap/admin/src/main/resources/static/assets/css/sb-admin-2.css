@@ -43,6 +43,11 @@ body {
 .navbar-top-links .dropdown-menu li a div {
   white-space: normal;
 }
+.navbar-top-links .dropdown-menu li .btn-link {
+  color: inherit;
+  padding: 3px 20px;
+  min-height: 0;
+}
 .navbar-top-links .dropdown-messages,
 .navbar-top-links .dropdown-tasks,
 .navbar-top-links .dropdown-alerts {

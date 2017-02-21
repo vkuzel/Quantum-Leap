@@ -10,7 +10,7 @@ import java.util.Map;
 
 import static cz.quantumleap.core.tables.Increment.INCREMENT;
 
-@Component
+@Component // TODO @Repository?
 public class IncrementDao {
 
     private final DSLContext dslContext;

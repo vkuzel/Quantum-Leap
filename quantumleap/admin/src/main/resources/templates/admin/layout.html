@@ -253,7 +253,10 @@
                         <li><a href="#"><i class="fa fa-gear fa-fw"></i> Settings</a>
                         </li>
                         <li class="divider"></li>
-                        <li><a href="login.html"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
+                        <li>
+                            <form th:action="@{/logout}" method="POST">
+                                <button type="submit" class="btn btn-outline btn-link"><i class="fa fa-sign-out fa-fw"></i> <span th:text="#{admin.layout.logout}">Logout</span></button>
+                            </form>
                         </li>
                     </ul>
                     <!-- /.dropdown-user -->

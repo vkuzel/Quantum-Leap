@@ -27,7 +27,7 @@ public class IncrementRunner {
     private final TransactionExecutor transactionExecutor;
     private final IncrementDao incrementDao;
 
-    public IncrementRunner(
+    IncrementRunner(
             Environment environment,
             IncrementService incrementService,
             TransactionExecutor transactionExecutor,
