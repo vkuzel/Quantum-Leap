@@ -1,9 +1,7 @@
 package cz.quantumleap.server.security.configurer;
 
-import com.google.common.base.Joiner;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
-import cz.quantumleap.server.security.annotation.LoginPage;
 import org.apache.commons.lang3.Validate;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.http.HttpMethod;
@@ -48,32 +46,6 @@ public class RequestMappingAwareHttpSecurityConfigurer {
         registry
                 .antMatchers("/webjars/**", "/assets/**").permitAll()
                 .anyRequest().authenticated();
-
-        List<RequestMappingInfo> loginPageMappingInfo = findRequestMappingInfo(this::hasLoginPage);
-        Validate.isTrue(loginPageMappingInfo.size() < 2, "Too many login mappings! %s", Joiner.on(", ").join(loginPageMappingInfo));
-        if (!loginPageMappingInfo.isEmpty()) {
-            configureLoginPage(loginPageMappingInfo.get(0), registry);
-        }
-    }
-
-    private void configureLoginPage(
-            RequestMappingInfo loginMappingInfo,
-            ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry registry
-    ) throws Exception {
-
-        Set<String> patterns = loginMappingInfo.getPatternsCondition().getPatterns();
-        if (patterns.isEmpty()) {
-            String msg = "No patterns in login page RequestMapping " + loginMappingInfo;
-            throw new IllegalStateException(msg);
-        } else if (patterns.size() > 1) {
-            String msg = "Too many login page patterns in " + loginMappingInfo;
-            throw new IllegalStateException(msg);
-        }
-
-        registry.and()
-                .formLogin()
-                .loginPage(patterns.iterator().next())
-                .permitAll();
     }
 
     private Multimap<HttpMethod, String> groupPatternsByHttpMethod(List<RequestMappingInfo> requestMappingInfo) {
@@ -122,11 +94,5 @@ public class RequestMappingAwareHttpSecurityConfigurer {
         String spEl = preAuthorize.value();
         spEl = spEl.replace(" ", "");
         return spEl.contains(SPEL_PERMIT_ALL);
-    }
-
-    private boolean hasLoginPage(HandlerMethod handlerMethod) {
-        Method method = handlerMethod.getMethod();
-
-        return AnnotationUtils.findAnnotation(method, LoginPage.class) != null;
     }
 }

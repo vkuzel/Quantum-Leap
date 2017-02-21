@@ -1,10 +1,11 @@
 package cz.quantumleap.server.security;
 
-import cz.quantumleap.server.security.annotation.LoginPage;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.oauth2.resource.ResourceServerProperties;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -31,6 +32,9 @@ public class WebSecurityConfigurationTest {
     @Autowired
     private MockMvc mvc;
 
+    @MockBean
+    private ResourceServerProperties resourceServerProperties;
+
     @Test
     public void accessAsUnauthenticated() throws Exception {
 
@@ -38,20 +42,20 @@ public class WebSecurityConfigurationTest {
                 .andExpect(status().isOk());
 
         mvc.perform(get("/endpoint-for-authenticated"))
-                .andExpect(status().isFound());
+                .andExpect(status().isForbidden());
 
         mvc.perform(get("/method-endpoint"))
                 .andExpect(status().isOk());
 
         mvc.perform(post("/method-endpoint")
-                .with(csrf())) // TODO Test without csrf!
-                .andExpect(status().isFound());
+                .with(csrf()))
+                .andExpect(status().isForbidden());
 
         mvc.perform(get("/endpoint-for-admin"))
-                .andExpect(status().isFound());
+                .andExpect(status().isForbidden());
 
-        mvc.perform(get("/login-endpoint-for-unauthenticated"))
-                .andExpect(status().isOk());
+        mvc.perform(get("/login"))
+                .andExpect(status().isOk()); // TODO Login should redirect to xxx
 
         mvc.perform(get("/assets"))
                 .andExpect(status().isOk());
@@ -60,7 +64,7 @@ public class WebSecurityConfigurationTest {
                 .andExpect(status().isOk());
 
         mvc.perform(get("/type-endpoint-for-admin"))
-                .andExpect(status().isFound());
+                .andExpect(status().isForbidden());
     }
 
     @Test
@@ -90,8 +94,8 @@ public class WebSecurityConfigurationTest {
         mvc.perform(get("/endpoint-for-admin"))
                 .andExpect(status().isForbidden());
 
-        mvc.perform(get("/login-endpoint-for-unauthenticated"))
-                .andExpect(status().isOk());
+        mvc.perform(get("/login"))
+                .andExpect(status().isOk()); // TODO Login should redirect to xxx
 
         mvc.perform(get("/assets"))
                 .andExpect(status().isOk());
@@ -123,8 +127,8 @@ public class WebSecurityConfigurationTest {
         mvc.perform(get("/endpoint-for-admin"))
                 .andExpect(status().isOk());
 
-        mvc.perform(get("/login-endpoint-for-unauthenticated"))
-                .andExpect(status().isOk());
+        mvc.perform(get("/login"))
+                .andExpect(status().isOk()); // TODO Login should redirect to xxx
 
         mvc.perform(get("/assets"))
                 .andExpect(status().isOk());
@@ -165,12 +169,6 @@ public class WebSecurityConfigurationTest {
         @PreAuthorize("hasRole('ADMIN')")
         @ResponseBody
         public void endpointForAdmin() {
-        }
-
-        @RequestMapping("/login-endpoint-for-unauthenticated")
-        @LoginPage
-        @ResponseBody
-        public void loginEndpointForUnauthenticated() {
         }
 
         @RequestMapping({"/assets"})

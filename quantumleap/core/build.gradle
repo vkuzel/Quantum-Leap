@@ -9,6 +9,7 @@ dependencies {
     compile('org.springframework.boot:spring-boot-starter-web')
     compile('org.springframework.boot:spring-boot-starter-thymeleaf')
     compile('org.springframework.boot:spring-boot-starter-security')
+    compile('org.springframework.security.oauth:spring-security-oauth2')
     compile('org.thymeleaf.extras:thymeleaf-extras-springsecurity4')
     compile('org.thymeleaf.extras:thymeleaf-extras-java8time')
 

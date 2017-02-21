@@ -2,8 +2,9 @@ package cz.quantumleap.cli.environment;
 
 import org.jooq.DSLContext;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
-@Component
+@Repository
 public class EnvironmentDao {
 
     private final DSLContext dslContext;

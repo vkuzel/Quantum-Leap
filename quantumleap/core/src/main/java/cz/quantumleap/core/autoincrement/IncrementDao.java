@@ -5,12 +5,13 @@ import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.Result;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import java.util.Map;
 
 import static cz.quantumleap.core.tables.Increment.INCREMENT;
 
-@Component // TODO @Repository?
+@Repository
 public class IncrementDao {
 
     private final DSLContext dslContext;

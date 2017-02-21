@@ -2,7 +2,7 @@ package cz.quantumleap.server.admin;
 
 import cz.quantumleap.server.admin.menu.AdminMenuItemDefinition;
 import cz.quantumleap.server.admin.menu.AdminMenuManager;
-import cz.quantumleap.server.security.annotation.LoginPage;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -20,8 +20,8 @@ public class DashboardController extends AdminController {
     }
 
     @AdminMenuItemDefinition(title = "admin.menu.entrance", fontAwesomeIcon = "fa-sitemap")
-    @LoginPage
-    @RequestMapping("/login")
+    @RequestMapping("/")
+    @PreAuthorize("permitAll()")
     public String skeleton() {
         return "admin/login";
     }
