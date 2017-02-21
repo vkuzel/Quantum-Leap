@@ -95,7 +95,7 @@ public class RequestMappingAwareHttpSecurityConfigurer {
 
     private List<String> getPatternsWithoutHttpMethod(List<RequestMappingInfo> requestMappingInfo) {
         return requestMappingInfo.stream()
-                .filter(rmi -> rmi.getMethodsCondition().getMethods() == null)
+                .filter(rmi -> rmi.getMethodsCondition().getMethods() == null || rmi.getMethodsCondition().getMethods().isEmpty())
                 .flatMap(rmi -> rmi.getPatternsCondition().getPatterns().stream())
                 .collect(Collectors.toList());
     }
