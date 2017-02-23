@@ -1,5 +1,6 @@
 package cz.quantumleap.server.demo;
 
+import cz.quantumleap.server.admin.menu.AdminMenuItemDefinition;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -7,13 +8,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
-@PreAuthorize("hasRole('ADMIN')")
-@RequestMapping("/demo")
 public class DemoController {
 
+    @AdminMenuItemDefinition(title = "admin.menu.entrance", fontAwesomeIcon = "fa-sitemap")
     @RequestMapping("/")
+    @PreAuthorize("permitAll()")
     public String index() {
-        return "admin/login";
+        return "demo/entry";
     }
 
     @PreAuthorize("hasAnyRole('OBSERVER', 'ROLE_MASTER')")

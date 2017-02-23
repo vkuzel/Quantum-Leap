@@ -2,6 +2,9 @@ body {
   background-color: #333333;
   color: #ffffff;
 }
+.btn-google span {
+  margin-right: 5px;
+}
 .vertical-center {
   min-height: 100%;
   /* Fallback for vh unit */
@@ -29,12 +32,12 @@ body {
   -ms-flex-align: center;
   align-items: center;
   /* In legacy web browsers such as Firefox 9
-       we need to specify the width of the flex container */
+     we need to specify the width of the flex container */
   width: 100%;
   /* Also 'margin: 0 auto' doesn't have any effect on flex items in such web browsers
-       hence the bootstrap's container won't be aligned to the center anymore.
+     hence the bootstrap's container won't be aligned to the center anymore.
 
-       Therefore, we should use the following declarations to get it centered again */
+     Therefore, we should use the following declarations to get it centered again */
   -webkit-box-pack: center;
   -moz-box-pack: center;
   -ms-flex-pack: center;

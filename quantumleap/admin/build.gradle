@@ -1,6 +1,10 @@
 dependencies {
     compile project(':core')
-    compile project(':view')
+
+    compile('org.webjars:startbootstrap-sb-admin-2:1.0.8-1')
+    compile('org.webjars:morrisjs:0.5.1')
+    compile('org.webjars:raphaeljs:2.1.4')
+
     testCompile project(path: ":core", configuration: "testFixturesUsageCompile")
     testCompile('org.springframework.boot:spring-boot-starter-test')
 }

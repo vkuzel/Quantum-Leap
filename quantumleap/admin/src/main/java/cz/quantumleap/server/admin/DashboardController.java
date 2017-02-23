@@ -19,11 +19,4 @@ public class DashboardController extends AdminController {
     public String dashboard() {
         return "admin/dashboard";
     }
-
-    @AdminMenuItemDefinition(title = "admin.menu.entrance", fontAwesomeIcon = "fa-sitemap")
-    @RequestMapping("/")
-    @PreAuthorize("permitAll()")
-    public String skeleton() {
-        return "admin/login";
-    }
 }
