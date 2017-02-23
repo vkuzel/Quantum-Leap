@@ -2,6 +2,8 @@ package cz.quantumleap.server.security;
 
 import com.google.common.collect.ImmutableMap;
 import cz.quantumleap.core.tables.records.PersonRecord;
+import cz.quantumleap.server.security.dao.PersonDao;
+import cz.quantumleap.server.security.dao.RoleDao;
 import org.hamcrest.CustomTypeSafeMatcher;
 import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;

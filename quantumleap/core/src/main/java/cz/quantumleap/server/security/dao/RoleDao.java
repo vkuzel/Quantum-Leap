@@ -1,4 +1,4 @@
-package cz.quantumleap.server.security;
+package cz.quantumleap.server.security.dao;
 
 import org.jooq.DSLContext;
 import org.jooq.Record;

@@ -2,7 +2,7 @@ package cz.quantumleap.server.autoincrement;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import cz.quantumleap.core.autoincrement.IncrementDao;
+import cz.quantumleap.core.autoincrement.dao.IncrementDao;
 import cz.quantumleap.core.autoincrement.IncrementService;
 import cz.quantumleap.core.module.ModuleDependencies;
 import cz.quantumleap.core.persistence.TransactionExecutor;

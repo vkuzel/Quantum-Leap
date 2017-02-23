@@ -1,6 +1,8 @@
 package cz.quantumleap.server.security;
 
 import cz.quantumleap.core.tables.records.PersonRecord;
+import cz.quantumleap.server.security.dao.PersonDao;
+import cz.quantumleap.server.security.dao.RoleDao;
 import org.springframework.boot.autoconfigure.security.oauth2.resource.AuthoritiesExtractor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;

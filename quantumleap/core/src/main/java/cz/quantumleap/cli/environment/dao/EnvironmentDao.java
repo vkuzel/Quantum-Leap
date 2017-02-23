@@ -1,4 +1,4 @@
-package cz.quantumleap.cli.environment;
+package cz.quantumleap.cli.environment.dao;
 
 import org.jooq.DSLContext;
 import org.springframework.stereotype.Component;

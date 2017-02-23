@@ -1,4 +1,4 @@
-package cz.quantumleap.core.autoincrement;
+package cz.quantumleap.core.autoincrement.dao;
 
 import cz.quantumleap.core.tables.records.IncrementRecord;
 import org.jooq.DSLContext;

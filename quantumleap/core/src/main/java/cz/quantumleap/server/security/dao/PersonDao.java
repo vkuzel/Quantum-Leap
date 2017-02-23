@@ -1,4 +1,4 @@
-package cz.quantumleap.server.security;
+package cz.quantumleap.server.security.dao;
 
 import cz.quantumleap.core.tables.Person;
 import cz.quantumleap.core.tables.records.PersonRecord;
