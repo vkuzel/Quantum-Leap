@@ -1,7 +1,5 @@
 include 'core'
 include 'admin'
-include 'view'
-include 'demo_module'
 
 rootProject.children.each { project ->
     String projectDirName = sprintf("../quantumleap/%s", project.name)
