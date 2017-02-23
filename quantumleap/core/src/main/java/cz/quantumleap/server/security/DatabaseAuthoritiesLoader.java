@@ -1,6 +1,5 @@
 package cz.quantumleap.server.security;
 
-import com.google.common.collect.ImmutableList;
 import cz.quantumleap.core.tables.records.PersonRecord;
 import org.springframework.boot.autoconfigure.security.oauth2.resource.AuthoritiesExtractor;
 import org.springframework.security.core.GrantedAuthority;
@@ -40,7 +39,18 @@ public class DatabaseAuthoritiesLoader implements AuthoritiesExtractor {
     }
 
     private GrantedAuthority convertToAuthority(String role) {
-        return (GrantedAuthority) () -> ROLE_PREFIX + role;
+        String authority = ROLE_PREFIX + role;
+        return new GrantedAuthority() {
+            @Override
+            public String getAuthority() {
+                return authority;
+            }
+
+            @Override
+            public String toString() {
+                return authority;
+            }
+        };
     }
 
     private String getEmail(Map<String, Object> map) {

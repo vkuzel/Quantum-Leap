@@ -21,6 +21,9 @@ import java.util.stream.Collectors;
 
 public class RequestMappingAwareHttpSecurityConfigurer {
 
+    private static final String[] STATIC_CONTENT_ENDPOINTS = new String[] {
+            "/webjars/**", "/assets/**"
+    };
     private static final String SPEL_PERMIT_ALL = "permitAll()";
 
     private final Map<RequestMappingInfo, HandlerMethod> handlerMethods;
@@ -44,7 +47,7 @@ public class RequestMappingAwareHttpSecurityConfigurer {
         registry.mvcMatchers(patterns.toArray(new String[]{})).permitAll();
 
         registry
-                .antMatchers("/webjars/**", "/assets/**").permitAll()
+                .antMatchers(STATIC_CONTENT_ENDPOINTS).permitAll()
                 .anyRequest().authenticated();
     }
 

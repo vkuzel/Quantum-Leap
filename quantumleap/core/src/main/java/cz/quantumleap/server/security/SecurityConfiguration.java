@@ -2,7 +2,9 @@ package cz.quantumleap.server.security;
 
 import cz.quantumleap.server.security.configurer.RequestMappingAwareHttpSecurityConfigurer;
 import org.springframework.boot.autoconfigure.security.oauth2.client.EnableOAuth2Sso;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -31,5 +33,13 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
         RequestMappingAwareHttpSecurityConfigurer requestMappingAwareHttpSecurityConfigurer = new RequestMappingAwareHttpSecurityConfigurer(handlerMethods);
         requestMappingAwareHttpSecurityConfigurer.configure(httpSecurity);
+
+        httpSecurity.logout().logoutSuccessUrl("/");
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager() {
+        // We use the OAuth 2 so authentication manager can be disabled: http://docs.spring.io/spring-boot/docs/current/reference/html/howto-security.html
+        return null;
     }
 }
