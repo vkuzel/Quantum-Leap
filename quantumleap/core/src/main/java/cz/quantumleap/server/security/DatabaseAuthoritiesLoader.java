@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 public class DatabaseAuthoritiesLoader implements AuthoritiesExtractor {
 
     private static final String OAUTH_DETAILS_EMAIL = "email";
-    private static final String ROLE_PREFIX = "ROLE_";
+    private static final String ROLE_PREFIX = "ROLE_"; // TODO Use the constrant from the Spring Security!
 
     private final PersonDao personDao;
     private final RoleDao roleDao;

@@ -1,6 +1,7 @@
 package cz.quantumleap.server.admin.menu;
 
 import org.springframework.core.annotation.AnnotationUtils;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
@@ -44,8 +45,9 @@ public class AdminMenuManager {
         AdminMenuItemDefinition adminMenuItemDefinition = AnnotationUtils.findAnnotation(method, AdminMenuItemDefinition.class);
         if (adminMenuItemDefinition != null) {
             RequestMappingInfo requestMappingInfo = handlerMethod.getKey();
+            PreAuthorize preAuthorize = findPreAuthorize(handlerMethod.getValue());
 
-            return new AdminMenuItem(requestMappingInfo, adminMenuItemDefinition, Collections.emptyList());
+            return new AdminMenuItem(requestMappingInfo, adminMenuItemDefinition, preAuthorize, Collections.emptyList());
         }
 
         // TODO Construct tree through map?
@@ -56,4 +58,14 @@ public class AdminMenuManager {
         return null;
     }
 
+    private PreAuthorize findPreAuthorize(HandlerMethod handlerMethod) {
+        Class<?> beanType = handlerMethod.getBeanType();
+        Method method = handlerMethod.getMethod();
+
+        PreAuthorize methodPreAuthorize = AnnotationUtils.findAnnotation(method, PreAuthorize.class);
+        PreAuthorize typePreAuthorize = AnnotationUtils.findAnnotation(beanType, PreAuthorize.class);
+
+        return methodPreAuthorize != null ? methodPreAuthorize :
+                (typePreAuthorize != null ? typePreAuthorize : null);
+    }
 }
