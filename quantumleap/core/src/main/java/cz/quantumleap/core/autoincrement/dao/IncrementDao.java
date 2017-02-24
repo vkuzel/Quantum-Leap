@@ -4,7 +4,6 @@ import cz.quantumleap.core.tables.records.IncrementRecord;
 import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.Result;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
 import java.util.Map;
