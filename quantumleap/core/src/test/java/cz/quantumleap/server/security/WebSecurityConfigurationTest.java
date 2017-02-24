@@ -54,9 +54,6 @@ public class WebSecurityConfigurationTest {
         mvc.perform(get("/endpoint-for-admin"))
                 .andExpect(status().isForbidden());
 
-        mvc.perform(get("/login"))
-                .andExpect(status().isOk()); // TODO Login should redirect to xxx
-
         mvc.perform(get("/assets"))
                 .andExpect(status().isOk());
 
@@ -94,9 +91,6 @@ public class WebSecurityConfigurationTest {
         mvc.perform(get("/endpoint-for-admin"))
                 .andExpect(status().isForbidden());
 
-        mvc.perform(get("/login"))
-                .andExpect(status().isOk()); // TODO Login should redirect to xxx
-
         mvc.perform(get("/assets"))
                 .andExpect(status().isOk());
 
@@ -126,9 +120,6 @@ public class WebSecurityConfigurationTest {
 
         mvc.perform(get("/endpoint-for-admin"))
                 .andExpect(status().isOk());
-
-        mvc.perform(get("/login"))
-                .andExpect(status().isOk()); // TODO Login should redirect to xxx
 
         mvc.perform(get("/assets"))
                 .andExpect(status().isOk());
