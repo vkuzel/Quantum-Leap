@@ -1,39 +1,14 @@
-//buildscript {
-//    repositories {
-//        mavenCentral()
-//        maven { url "https://jitpack.io" }
-//    }
-//    dependencies {
-//        classpath "com.github.vkuzel:Gradle-Spring-Boot-Multi-Project-Plugin:2.3.0"
-//    }
-//}
-
 buildscript {
     repositories {
         mavenCentral()
         maven { url "https://jitpack.io" }
     }
     dependencies {
-        classpath 'org.springframework.boot:spring-boot-gradle-plugin:1.5.1.RELEASE'
-        // TODO Figure out how to get rid of this...
-        classpath 'org.jooq:jooq:3.9.1'
-        classpath 'org.jooq:jooq-meta:3.9.1'
-        classpath 'org.jooq:jooq-codegen:3.9.1'
-        classpath 'org.postgresql:postgresql:9.4.1208.jre7'
-
-        classpath 'com.github.vkuzel:Gradle-Project-Dependencies:3.0.0'
-        classpath files('lib/spring-boot-multi-project-gradle-plugin-2.3.0.jar')
+        classpath "com.github.vkuzel:Quantum-Leap-Gradle-Plugin:1.0.0"
     }
 }
 
-// TODO Put this into multi-project plugin!
-ext['thymeleaf.version'] = '3.0.3.RELEASE'
-ext['thymeleaf-layout-dialect.version'] = '2.1.2'
-ext['thymeleaf-extras-springsecurity4.version'] = '3.0.1.RELEASE'
-// TODO Do I need Thymeleaf Java8 time?
-ext['thymeleaf-extras-java8time.version'] = '3.0.0.RELEASE'
-
-apply plugin: 'spring-boot-multi-project'
+apply plugin: 'cz.quantumleap'
 
 dependencies {
     compile project('core')

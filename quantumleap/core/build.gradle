@@ -2,8 +2,6 @@ ext {
     mainClassName = 'cz.quantumleap.server.QuantumLeapApplication'
 }
 
-apply plugin: 'jooq-multi-project'
-
 dependencies {
     compile('org.springframework.boot:spring-boot-starter-jooq')
     compile('org.springframework.boot:spring-boot-starter-web')
