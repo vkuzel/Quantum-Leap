@@ -1,7 +1,7 @@
 package cz.quantumleap.server.admin.person;
 
-import cz.quantumleap.core.persistence.transport.SliceRequest;
 import cz.quantumleap.core.persistence.transport.Slice;
+import cz.quantumleap.core.persistence.transport.SliceRequest;
 import cz.quantumleap.core.person.transport.Person;
 import cz.quantumleap.server.admin.AdminController;
 import cz.quantumleap.server.admin.menu.AdminMenuItemDefinition;
@@ -10,6 +10,7 @@ import cz.quantumleap.server.security.WebSecurityExpressionEvaluator;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -61,7 +62,12 @@ public class PersonController extends AdminController {
     }
 
     @PostMapping("/person")
-    public String savePerson(@Valid Person person) {
-        return "admin/person";
+    public String savePerson(@Valid Person person, Errors errors) {
+        // TODO At this point I shouldn't provide Person with setName method if I don't want to change the value!
+        if (errors.hasErrors()) {
+            return "admin/person";
+        }
+        long id = personService.savePerson(person).getId();
+        return "redirect:person/" + id;
     }
 }

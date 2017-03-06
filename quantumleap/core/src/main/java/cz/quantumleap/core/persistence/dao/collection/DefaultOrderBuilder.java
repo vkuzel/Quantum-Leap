@@ -1,7 +1,6 @@
 package cz.quantumleap.core.persistence.dao.collection;
 
 import com.google.common.collect.Lists;
-import cz.quantumleap.core.persistence.transport.SliceRequest;
 import org.jooq.*;
 import org.springframework.data.domain.Sort;
 
@@ -14,7 +13,7 @@ public class DefaultOrderBuilder implements OrderBuilder {
 
     private final Map<String, Field<?>> sortableFields;
 
-    public DefaultOrderBuilder(Table<Record> table) {
+    public DefaultOrderBuilder(Table<? extends Record> table) {
         sortableFields = Stream.of(table.fields())
                 .collect(Collectors.toMap(field -> field.getName().toLowerCase(), field -> field));
     }

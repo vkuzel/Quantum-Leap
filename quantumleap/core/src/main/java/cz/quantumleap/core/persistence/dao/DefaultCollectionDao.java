@@ -17,14 +17,14 @@ import java.util.stream.Collectors;
 // TODO Table dao...?s
 public class DefaultCollectionDao implements CollectionDao {
 
-    protected final Table<Record> table;
+    protected final Table<? extends Record> table;
     protected final DSLContext dslContext;
 
     protected final OrderBuilder orderBuilder;
     protected final LimitBuilder limitBuilder;
     protected final MapperFactory mapperFactory;
 
-    public DefaultCollectionDao(Table<Record> table, DSLContext dslContext, OrderBuilder orderBuilder, LimitBuilder limitBuilder, MapperFactory mapperFactory) {
+    public DefaultCollectionDao(Table<? extends Record> table, DSLContext dslContext, OrderBuilder orderBuilder, LimitBuilder limitBuilder, MapperFactory mapperFactory) {
         this.table = table;
         this.dslContext = dslContext;
 
@@ -46,7 +46,7 @@ public class DefaultCollectionDao implements CollectionDao {
 
     private SliceRequest setDefaultOrder(SliceRequest sliceRequest) {
         if (sliceRequest.getSort() == null) {
-            List<TableField<Record, ?>> primaryKeyFields = getPrimaryKeyFields();
+            List<? extends TableField<? extends Record, ?>> primaryKeyFields = getPrimaryKeyFields();
             List<Sort.Order> orders = primaryKeyFields.stream()
                     .map(field -> new Sort.Order(Sort.Direction.DESC, field.getName()))
                     .collect(Collectors.toList());
@@ -59,7 +59,7 @@ public class DefaultCollectionDao implements CollectionDao {
         return sliceRequest;
     }
 
-    private List<TableField<Record, ?>> getPrimaryKeyFields() {
+    private List<? extends TableField<? extends Record, ?>> getPrimaryKeyFields() {
         if (table.getPrimaryKey() != null) {
             return table.getPrimaryKey().getFields();
         }

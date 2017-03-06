@@ -1,6 +1,7 @@
 package cz.quantumleap.core.person.dao;
 
-import cz.quantumleap.core.persistence.dao.DefaultDao;
+import cz.quantumleap.core.persistence.RecordAuditor;
+import cz.quantumleap.core.persistence.dao.Dao;
 import cz.quantumleap.core.persistence.dao.lookup.LookupDaoManager;
 import cz.quantumleap.core.person.transport.Person;
 import org.jooq.DSLContext;
@@ -11,10 +12,10 @@ import java.util.Optional;
 import static cz.quantumleap.core.tables.PersonTable.PERSON;
 
 @Repository
-public class PersonDao extends DefaultDao {
+public class PersonDao extends Dao {
 
-    protected PersonDao(DSLContext dslContext, LookupDaoManager lookupDaoManager) {
-        super(PERSON, dslContext, lookupDaoManager);
+    protected PersonDao(DSLContext dslContext, LookupDaoManager lookupDaoManager, RecordAuditor recordAuditor) {
+        super(PERSON, dslContext, lookupDaoManager, recordAuditor);
     }
 
     public Optional<Person> fetchByEmail(String email) {

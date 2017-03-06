@@ -15,7 +15,7 @@ public class LookupDaoManager {
 
     private final ApplicationContext applicationContext;
 
-    private Map<Table<Record>, LookupDao> lookupDaoMap;
+    private Map<Table<? extends Record>, LookupDao> lookupDaoMap;
 
     public LookupDaoManager(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;

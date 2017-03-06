@@ -1,20 +1,24 @@
 package cz.quantumleap.core.persistence.dao;
 
+import cz.quantumleap.core.persistence.RecordAuditor;
 import cz.quantumleap.core.persistence.dao.collection.DefaultOrderBuilder;
 import cz.quantumleap.core.persistence.dao.collection.LimitBuilder;
 import cz.quantumleap.core.persistence.dao.collection.OrderBuilder;
 import cz.quantumleap.core.persistence.dao.lookup.LookupDaoManager;
 import cz.quantumleap.core.persistence.transport.Slice;
 import cz.quantumleap.core.persistence.transport.SliceRequest;
-import org.jooq.*;
+import org.jooq.Condition;
+import org.jooq.DSLContext;
+import org.jooq.Record;
+import org.jooq.Table;
 
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-public class DefaultDao implements CrudDao, CollectionDao, LookupDao {
+public class Dao implements CrudDao, CollectionDao, LookupDao {
 
-    protected final Table<Record> table;
+    protected final Table<? extends Record> table;
     protected final DSLContext dslContext;
 
     protected final OrderBuilder orderBuilder;
@@ -25,7 +29,7 @@ public class DefaultDao implements CrudDao, CollectionDao, LookupDao {
     protected final CollectionDao collectionDao;
     protected final LookupDao lookupDao;
 
-    protected DefaultDao(Table<Record> table, DSLContext dslContext, LookupDaoManager lookupDaoManager) {
+    protected Dao(Table<? extends Record> table, DSLContext dslContext, LookupDaoManager lookupDaoManager, RecordAuditor recordAuditor) {
         this.dslContext = dslContext;
         this.table = table;
 
@@ -33,7 +37,7 @@ public class DefaultDao implements CrudDao, CollectionDao, LookupDao {
         this.limitBuilder = LimitBuilder.DEFAULT;
         this.mapperFactory = new MapperFactory(table, lookupDaoManager);
 
-        crudDao = new DefaultCrudDao(table, dslContext, mapperFactory);
+        crudDao = new DefaultCrudDao(table, dslContext, mapperFactory, recordAuditor);
         collectionDao = new DefaultCollectionDao(table, dslContext, orderBuilder, limitBuilder, mapperFactory);
         lookupDao = new DefaultLookupDao(table, dslContext);
     }
@@ -59,7 +63,7 @@ public class DefaultDao implements CrudDao, CollectionDao, LookupDao {
     }
 
     @Override
-    public Table<Record> getTable() {
+    public Table<? extends Record> getTable() {
         return lookupDao.getTable();
     }
 

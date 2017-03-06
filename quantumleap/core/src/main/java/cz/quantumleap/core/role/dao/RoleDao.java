@@ -1,6 +1,7 @@
 package cz.quantumleap.core.role.dao;
 
-import cz.quantumleap.core.persistence.dao.DefaultDao;
+import cz.quantumleap.core.persistence.RecordAuditor;
+import cz.quantumleap.core.persistence.dao.Dao;
 import cz.quantumleap.core.persistence.dao.lookup.LookupDaoManager;
 import org.jooq.DSLContext;
 import org.jooq.Record;
@@ -12,10 +13,10 @@ import java.util.List;
 import static cz.quantumleap.core.tables.RoleTable.ROLE;
 
 @Repository
-public class RoleDao extends DefaultDao {
+public class RoleDao extends Dao {
 
-    protected RoleDao(DSLContext dslContext, LookupDaoManager lookupDaoManager) {
-        super(ROLE, dslContext, lookupDaoManager);
+    protected RoleDao(DSLContext dslContext, LookupDaoManager lookupDaoManager, RecordAuditor recordAuditor) {
+        super(ROLE, dslContext, lookupDaoManager, recordAuditor);
     }
 
     public List<String> fetchRolesByPersonId(long personId) {

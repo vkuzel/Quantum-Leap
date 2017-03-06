@@ -1,8 +1,8 @@
 package cz.quantumleap.server.admin.person;
 
 import cz.quantumleap.core.common.NotFoundException;
-import cz.quantumleap.core.persistence.transport.SliceRequest;
 import cz.quantumleap.core.persistence.transport.Slice;
+import cz.quantumleap.core.persistence.transport.SliceRequest;
 import cz.quantumleap.core.person.dao.PersonDao;
 import cz.quantumleap.core.person.transport.Person;
 import org.springframework.stereotype.Service;
@@ -22,5 +22,9 @@ public class PersonService {
 
     public Person getPerson(long id) {
         return personDao.fetchById(id, Person.class).orElseThrow(() -> new NotFoundException(id));
+    }
+
+    public Person savePerson(Person person) {
+        return personDao.save(person);
     }
 }

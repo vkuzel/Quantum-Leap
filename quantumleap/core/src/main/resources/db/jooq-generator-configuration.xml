@@ -33,9 +33,6 @@
         </database>
 
         <generate>
-            <!-- TODO Don't forget to remove pojos and daos... -->
-            <pojos>false</pojos>
-            <daos>false</daos>
             <records>false</records>
             <javaTimeTypes>true</javaTimeTypes>
         </generate>

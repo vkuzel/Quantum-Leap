@@ -1,7 +1,6 @@
 package cz.quantumleap.core.persistence.dao;
 
 import com.google.common.collect.*;
-import cz.quantumleap.core.persistence.dao.LookupDao;
 import cz.quantumleap.core.persistence.dao.lookup.LookupDaoManager;
 import cz.quantumleap.core.persistence.transport.Lookup;
 import cz.quantumleap.core.persistence.transport.NamedTable;
@@ -23,16 +22,17 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.google.common.base.CaseFormat.*;
-
+import static com.google.common.base.CaseFormat.LOWER_UNDERSCORE;
+import static com.google.common.base.CaseFormat.UPPER_CAMEL;
+// TODO Fields...
 public class MapperFactory {
 
-    private final Table<Record> table;
+    private final Table<? extends Record> table;
     private final LookupDaoManager lookupDaoManager;
 
     private Map<String, Pair<Table<?>, LookupDao>> lookupDaos;
 
-    public MapperFactory(Table<Record> table, LookupDaoManager lookupDaoManager) {
+    public MapperFactory(Table<? extends Record> table, LookupDaoManager lookupDaoManager) {
         this.table = table;
         this.lookupDaoManager = lookupDaoManager;
     }
@@ -50,7 +50,7 @@ public class MapperFactory {
     }
 
     private Map<String, Pair<Table<?>, LookupDao>> getLookupDaos() {
-        Predicate<ForeignKey<Record, ?>> singleFieldOnly = foreignKey ->
+        Predicate<ForeignKey<? extends Record, ?>> singleFieldOnly = foreignKey ->
                 foreignKey.getFields().size() == 1;
 
         Map<String, Pair<Table<?>, LookupDao>> lookupDaos = new HashMap<>();
@@ -58,7 +58,7 @@ public class MapperFactory {
         table.getReferences().stream()
                 .filter(singleFieldOnly)
                 .forEach(foreignKey -> {
-                    TableField<Record, ?> field = foreignKey.getFields().get(0);
+                    TableField<? extends Record, ?> field = foreignKey.getFields().get(0);
                     Table<?> table = foreignKey.getKey().getTable();
                     LookupDao lookupDao = lookupDaoManager.getDaoForTable((Table<Record>) table);
 
@@ -116,13 +116,13 @@ public class MapperFactory {
         }
 
         private List<Column> createColumns(Sort sort) {
-            List<TableField<Record, ?>> primaryKeyFields = getPrimaryKeyFields();
+            List<? extends TableField<? extends Record, ?>> primaryKeyFields = getPrimaryKeyFields();
             return Stream.of(table.fields())
                     .map(field -> createColumn(primaryKeyFields, field, sort))
                     .collect(Collectors.toList());
         }
 
-        private Column createColumn(List<TableField<Record, ?>> primaryKeyFields, org.jooq.Field<?> field, Sort sort) {
+        private Column createColumn(List<? extends TableField<? extends Record, ?>> primaryKeyFields, org.jooq.Field<?> field, Sort sort) {
 
             Class<?> fieldType = field.getType();
             String fieldName = field.getName();
@@ -137,7 +137,7 @@ public class MapperFactory {
             return new Column(fieldType, fieldName, primaryKeyFields.contains(field), order);
         }
 
-        private List<TableField<Record, ?>> getPrimaryKeyFields() {
+        private List<? extends TableField<? extends Record, ?>> getPrimaryKeyFields() {
             if (table.getPrimaryKey() != null) {
                 return table.getPrimaryKey().getFields();
             }
