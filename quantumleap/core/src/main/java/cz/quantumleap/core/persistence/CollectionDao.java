@@ -1,4 +1,4 @@
-package cz.quantumleap.core.persistence.dao;
+package cz.quantumleap.core.persistence;
 
 import cz.quantumleap.core.persistence.transport.Slice;
 import cz.quantumleap.core.persistence.transport.SliceRequest;

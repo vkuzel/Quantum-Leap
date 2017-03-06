@@ -1,6 +1,6 @@
 package cz.quantumleap.server.autoincrement;
 
-import cz.quantumleap.core.autoincrement.dao.IncrementDao;
+import cz.quantumleap.core.autoincrement.IncrementDao;
 import cz.quantumleap.core.autoincrement.IncrementService;
 import cz.quantumleap.core.autoincrement.transport.Increment;
 import cz.quantumleap.core.common.Utils;

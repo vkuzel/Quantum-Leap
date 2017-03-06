@@ -1,6 +1,5 @@
-package cz.quantumleap.core.persistence.dao;
+package cz.quantumleap.core.persistence;
 
-import cz.quantumleap.core.persistence.RecordAuditor;
 import org.apache.commons.lang3.Validate;
 import org.jooq.*;
 

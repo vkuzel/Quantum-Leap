@@ -1,4 +1,4 @@
-package cz.quantumleap.core.persistence.dao;
+package cz.quantumleap.core.persistence;
 
 import org.jooq.DSLContext;
 import org.jooq.Record;

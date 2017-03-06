@@ -1,9 +1,9 @@
-package cz.quantumleap.core.autoincrement.dao;
+package cz.quantumleap.core.autoincrement;
 
+import cz.quantumleap.core.persistence.DefaultCrudDao;
+import cz.quantumleap.core.persistence.MapperFactory;
 import cz.quantumleap.core.persistence.RecordAuditor;
-import cz.quantumleap.core.persistence.dao.DefaultCrudDao;
-import cz.quantumleap.core.persistence.dao.MapperFactory;
-import cz.quantumleap.core.persistence.dao.lookup.LookupDaoManager;
+import cz.quantumleap.core.persistence.lookup.LookupDaoManager;
 import cz.quantumleap.core.tables.IncrementTable;
 import org.jooq.DSLContext;
 import org.jooq.Record2;

@@ -1,7 +1,7 @@
-package cz.quantumleap.core.persistence.dao;
+package cz.quantumleap.core.persistence;
 
 import com.google.common.collect.*;
-import cz.quantumleap.core.persistence.dao.lookup.LookupDaoManager;
+import cz.quantumleap.core.persistence.lookup.LookupDaoManager;
 import cz.quantumleap.core.persistence.transport.Lookup;
 import cz.quantumleap.core.persistence.transport.NamedTable;
 import cz.quantumleap.core.persistence.transport.NamedTable.Column;
@@ -24,7 +24,7 @@ import java.util.stream.Stream;
 
 import static com.google.common.base.CaseFormat.LOWER_UNDERSCORE;
 import static com.google.common.base.CaseFormat.UPPER_CAMEL;
-// TODO Fields...
+
 public class MapperFactory {
 
     private final Table<? extends Record> table;

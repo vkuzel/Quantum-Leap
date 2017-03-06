@@ -1,6 +1,5 @@
-package cz.quantumleap.core.persistence.dao.collection;
+package cz.quantumleap.core.persistence.collection;
 
-import cz.quantumleap.core.persistence.transport.SliceRequest;
 import org.jooq.SortField;
 import org.springframework.data.domain.Sort;
 

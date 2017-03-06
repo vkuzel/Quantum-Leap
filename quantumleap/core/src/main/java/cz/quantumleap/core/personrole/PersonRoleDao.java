@@ -1,8 +1,8 @@
-package cz.quantumleap.core.personrole.dao;
+package cz.quantumleap.core.personrole;
 
+import cz.quantumleap.core.persistence.Dao;
 import cz.quantumleap.core.persistence.RecordAuditor;
-import cz.quantumleap.core.persistence.dao.Dao;
-import cz.quantumleap.core.persistence.dao.lookup.LookupDaoManager;
+import cz.quantumleap.core.persistence.lookup.LookupDaoManager;
 import cz.quantumleap.core.personrole.transport.PersonRole;
 import cz.quantumleap.core.tables.PersonRoleTable;
 import org.jooq.DSLContext;

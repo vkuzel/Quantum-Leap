@@ -1,7 +1,7 @@
-package cz.quantumleap.core.persistence.dao;
+package cz.quantumleap.core.persistence;
 
-import cz.quantumleap.core.persistence.dao.collection.LimitBuilder;
-import cz.quantumleap.core.persistence.dao.collection.OrderBuilder;
+import cz.quantumleap.core.persistence.collection.LimitBuilder;
+import cz.quantumleap.core.persistence.collection.OrderBuilder;
 import cz.quantumleap.core.persistence.transport.Slice;
 import cz.quantumleap.core.persistence.transport.SliceRequest;
 import org.jooq.DSLContext;

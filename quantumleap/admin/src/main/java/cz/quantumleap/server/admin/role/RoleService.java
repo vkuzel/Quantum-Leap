@@ -1,9 +1,9 @@
 package cz.quantumleap.server.admin.role;
 
 import cz.quantumleap.core.common.NotFoundException;
-import cz.quantumleap.core.persistence.transport.SliceRequest;
 import cz.quantumleap.core.persistence.transport.Slice;
-import cz.quantumleap.core.role.dao.RoleDao;
+import cz.quantumleap.core.persistence.transport.SliceRequest;
+import cz.quantumleap.core.role.RoleDao;
 import cz.quantumleap.core.role.transport.Role;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

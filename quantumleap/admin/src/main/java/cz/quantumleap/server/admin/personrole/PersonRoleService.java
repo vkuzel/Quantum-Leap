@@ -3,7 +3,7 @@ package cz.quantumleap.server.admin.personrole;
 import cz.quantumleap.core.common.NotFoundException;
 import cz.quantumleap.core.persistence.transport.Slice;
 import cz.quantumleap.core.persistence.transport.SliceRequest;
-import cz.quantumleap.core.personrole.dao.PersonRoleDao;
+import cz.quantumleap.core.personrole.PersonRoleDao;
 import cz.quantumleap.core.personrole.transport.PersonRole;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

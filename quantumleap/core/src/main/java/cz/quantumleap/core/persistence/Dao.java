@@ -1,10 +1,9 @@
-package cz.quantumleap.core.persistence.dao;
+package cz.quantumleap.core.persistence;
 
-import cz.quantumleap.core.persistence.RecordAuditor;
-import cz.quantumleap.core.persistence.dao.collection.DefaultOrderBuilder;
-import cz.quantumleap.core.persistence.dao.collection.LimitBuilder;
-import cz.quantumleap.core.persistence.dao.collection.OrderBuilder;
-import cz.quantumleap.core.persistence.dao.lookup.LookupDaoManager;
+import cz.quantumleap.core.persistence.collection.DefaultOrderBuilder;
+import cz.quantumleap.core.persistence.collection.LimitBuilder;
+import cz.quantumleap.core.persistence.collection.OrderBuilder;
+import cz.quantumleap.core.persistence.lookup.LookupDaoManager;
 import cz.quantumleap.core.persistence.transport.Slice;
 import cz.quantumleap.core.persistence.transport.SliceRequest;
 import org.jooq.Condition;
