@@ -8,17 +8,17 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class DefaultLookupDao implements LookupDao {
+public class DefaultLookupDao<TABLE extends Table<? extends Record>> implements LookupDao<TABLE> {
 
-    protected final Table<? extends Record> table;
+    protected final TABLE table;
     protected final DSLContext dslContext;
 
-    public DefaultLookupDao(Table<? extends Record> table, DSLContext dslContext) {
+    public DefaultLookupDao(TABLE table, DSLContext dslContext) {
         this.table = table;
         this.dslContext = dslContext;
     }
 
-    public Table<? extends Record> getTable() {
+    public TABLE getTable() {
         return table;
     }
 // TODO Specify label columns in constructor...

@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 // TODO Table dao...?s
-public class DefaultCollectionDao implements CollectionDao {
+public class DefaultCollectionDao<TABLE extends Table<? extends Record>> implements CollectionDao<TABLE> {
 
     protected final Table<? extends Record> table;
     protected final DSLContext dslContext;

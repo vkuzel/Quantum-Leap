@@ -16,20 +16,20 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-public class Dao implements CrudDao, CollectionDao, LookupDao {
+public class Dao<TABLE extends Table<? extends Record>> implements CrudDao<TABLE>, CollectionDao<TABLE>, LookupDao<TABLE> {
 
-    protected final Table<? extends Record> table;
+    protected final TABLE table;
     protected final DSLContext dslContext;
 
     protected final OrderBuilder orderBuilder;
     protected final LimitBuilder limitBuilder;
     protected final MapperFactory mapperFactory;
 
-    protected final CrudDao crudDao;
-    protected final CollectionDao collectionDao;
-    protected final LookupDao lookupDao;
+    protected final CrudDao<TABLE> crudDao;
+    protected final CollectionDao<TABLE> collectionDao;
+    protected final LookupDao<TABLE> lookupDao;
 
-    protected Dao(Table<? extends Record> table, DSLContext dslContext, LookupDaoManager lookupDaoManager, RecordAuditor recordAuditor) {
+    protected Dao(TABLE table, DSLContext dslContext, LookupDaoManager lookupDaoManager, RecordAuditor recordAuditor) {
         this.dslContext = dslContext;
         this.table = table;
 
@@ -37,9 +37,9 @@ public class Dao implements CrudDao, CollectionDao, LookupDao {
         this.limitBuilder = LimitBuilder.DEFAULT;
         this.mapperFactory = new MapperFactory(table, lookupDaoManager);
 
-        crudDao = new DefaultCrudDao(table, dslContext, mapperFactory, recordAuditor);
-        collectionDao = new DefaultCollectionDao(table, dslContext, orderBuilder, limitBuilder, mapperFactory);
-        lookupDao = new DefaultLookupDao(table, dslContext);
+        crudDao = new DefaultCrudDao<>(table, dslContext, mapperFactory, recordAuditor);
+        collectionDao = new DefaultCollectionDao<>(table, dslContext, orderBuilder, limitBuilder, mapperFactory);
+        lookupDao = new DefaultLookupDao<>(table, dslContext);
     }
 
     public <T> Optional<T> fetchById(Object id, Class<T> type) {
@@ -63,7 +63,7 @@ public class Dao implements CrudDao, CollectionDao, LookupDao {
     }
 
     @Override
-    public Table<? extends Record> getTable() {
+    public TABLE getTable() {
         return lookupDao.getTable();
     }
 

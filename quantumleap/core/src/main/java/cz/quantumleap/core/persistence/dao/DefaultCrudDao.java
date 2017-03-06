@@ -10,7 +10,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class DefaultCrudDao implements CrudDao {
+public class DefaultCrudDao<TABLE extends Table<? extends Record>> implements CrudDao<TABLE> {
 
     protected final Table<? extends Record> table;
     protected final DSLContext dslContext;

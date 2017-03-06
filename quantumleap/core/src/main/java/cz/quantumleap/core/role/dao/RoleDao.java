@@ -3,6 +3,7 @@ package cz.quantumleap.core.role.dao;
 import cz.quantumleap.core.persistence.RecordAuditor;
 import cz.quantumleap.core.persistence.dao.Dao;
 import cz.quantumleap.core.persistence.dao.lookup.LookupDaoManager;
+import cz.quantumleap.core.tables.RoleTable;
 import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.Result;
@@ -13,7 +14,7 @@ import java.util.List;
 import static cz.quantumleap.core.tables.RoleTable.ROLE;
 
 @Repository
-public class RoleDao extends Dao {
+public class RoleDao extends Dao<RoleTable> {
 
     protected RoleDao(DSLContext dslContext, LookupDaoManager lookupDaoManager, RecordAuditor recordAuditor) {
         super(ROLE, dslContext, lookupDaoManager, recordAuditor);

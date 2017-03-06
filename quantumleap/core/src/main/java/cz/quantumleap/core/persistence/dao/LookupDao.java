@@ -6,9 +6,9 @@ import org.jooq.Table;
 import java.util.Map;
 import java.util.Set;
 
-public interface LookupDao {
+public interface LookupDao<TABLE extends Table<? extends Record>> {
 
-    Table<? extends Record> getTable();
+    TABLE getTable();
 
     String fetchLabelById(Object id);
 
