@@ -1,14 +1,15 @@
 package cz.quantumleap.server.security;
 
-import cz.quantumleap.core.tables.records.PersonRecord;
-import cz.quantumleap.server.security.dao.PersonDao;
-import cz.quantumleap.server.security.dao.RoleDao;
+import cz.quantumleap.core.person.dao.PersonDao;
+import cz.quantumleap.core.person.transport.Person;
+import cz.quantumleap.core.role.dao.RoleDao;
 import org.springframework.boot.autoconfigure.security.oauth2.resource.AuthoritiesExtractor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
@@ -29,12 +30,11 @@ public class DatabaseAuthoritiesLoader implements AuthoritiesExtractor {
     public List<GrantedAuthority> extractAuthorities(Map<String, Object> map) {
         String email = getEmail(map);
 
-        PersonRecord personRecord = personDao.findByEmail(email);
-        if (personRecord == null) {
-            throw new IllegalArgumentException("User " + email + " was not found in database!");
-        }
+        Optional<Person> personOptional = personDao.fetchByEmail(email);
+        long personId = personOptional.map(Person::getId)
+                .orElseThrow(() -> new IllegalArgumentException("User " + email + " was not found in database!"));
 
-        List<String> roles = roleDao.findRolesByPersonId(personRecord.getId());
+        List<String> roles = roleDao.fetchRolesByPersonId(personId);
         return roles.stream()
                 .map(this::convertToAuthority)
                 .collect(Collectors.toList());

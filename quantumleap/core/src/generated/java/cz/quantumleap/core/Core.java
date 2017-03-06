@@ -4,10 +4,10 @@
 package cz.quantumleap.core;
 
 
-import cz.quantumleap.core.tables.Increment;
-import cz.quantumleap.core.tables.Person;
-import cz.quantumleap.core.tables.PersonRole;
-import cz.quantumleap.core.tables.Role;
+import cz.quantumleap.core.tables.IncrementTable;
+import cz.quantumleap.core.tables.PersonRoleTable;
+import cz.quantumleap.core.tables.PersonTable;
+import cz.quantumleap.core.tables.RoleTable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,7 +34,7 @@ import org.jooq.impl.SchemaImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Core extends SchemaImpl {
 
-    private static final long serialVersionUID = 557374209;
+    private static final long serialVersionUID = 1271869749;
 
     /**
      * The reference instance of <code>core</code>
@@ -44,22 +44,22 @@ public class Core extends SchemaImpl {
     /**
      * The table <code>core.increment</code>.
      */
-    public final Increment INCREMENT = cz.quantumleap.core.tables.Increment.INCREMENT;
+    public final IncrementTable INCREMENT = cz.quantumleap.core.tables.IncrementTable.INCREMENT;
 
     /**
      * The table <code>core.person</code>.
      */
-    public final Person PERSON = cz.quantumleap.core.tables.Person.PERSON;
+    public final PersonTable PERSON = cz.quantumleap.core.tables.PersonTable.PERSON;
 
     /**
      * The table <code>core.person_role</code>.
      */
-    public final PersonRole PERSON_ROLE = cz.quantumleap.core.tables.PersonRole.PERSON_ROLE;
+    public final PersonRoleTable PERSON_ROLE = cz.quantumleap.core.tables.PersonRoleTable.PERSON_ROLE;
 
     /**
      * The table <code>core.role</code>.
      */
-    public final Role ROLE = cz.quantumleap.core.tables.Role.ROLE;
+    public final RoleTable ROLE = cz.quantumleap.core.tables.RoleTable.ROLE;
 
     /**
      * No further instances allowed
@@ -100,9 +100,9 @@ public class Core extends SchemaImpl {
 
     private final List<Table<?>> getTables0() {
         return Arrays.<Table<?>>asList(
-            Increment.INCREMENT,
-            Person.PERSON,
-            PersonRole.PERSON_ROLE,
-            Role.ROLE);
+            IncrementTable.INCREMENT,
+            PersonTable.PERSON,
+            PersonRoleTable.PERSON_ROLE,
+            RoleTable.ROLE);
     }
 }

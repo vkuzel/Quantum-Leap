@@ -3,6 +3,7 @@ package cz.quantumleap.cli.environment;
 import cz.quantumleap.cli.environment.dao.EnvironmentDao;
 import cz.quantumleap.core.autoincrement.IncrementService;
 import cz.quantumleap.core.autoincrement.dao.IncrementDao;
+import cz.quantumleap.core.autoincrement.transport.Increment;
 import cz.quantumleap.core.common.Utils;
 import cz.quantumleap.core.module.ModuleDependencyManager;
 import cz.quantumleap.core.resource.ResourceManager;
@@ -57,8 +58,16 @@ public class EnvironmentBuilder {
         });
 
         incrementService.getLatestIncrementVersionForModules().forEach(
-                (moduleName, version) -> incrementDao.createIncrement(moduleName, version, "<initial_increment>")
+                (moduleName, version) -> incrementDao.save(createIncrement(moduleName, version))
         );
+    }
+
+    private Increment createIncrement(String module, int version) {
+        Increment increment = new Increment();
+        increment.setModule(module);
+        increment.setVersion(version);
+        increment.setFileName("<initial_increment>");
+        return increment;
     }
 
     @Transactional

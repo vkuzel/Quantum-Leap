@@ -29,6 +29,8 @@ public class RecordAuditor implements RecordListenerProvider {
             Record record = ctx.record();
             for (Method method : record.getClass().getDeclaredMethods()) {
                 try {
+                    // TODO Externalize audit fields ... will be needed in the DAO...!
+                    // TODO This is not going to work since I have a generic records... I need to "listen" on fields.
                     switch (method.getName()) {
                         case "setCreatedAt":
                             method.invoke(record, LocalDateTime.now());

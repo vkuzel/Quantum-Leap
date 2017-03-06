@@ -1,0 +1,26 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/layout}">
+<head>
+</head>
+<body>
+
+<div layout:fragment="content" id="page-wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-default top-panel">
+                <div class="panel-heading">
+                    <i class="fa fa-users"></i>
+                    <span th:text="#{admin.table.title.person-roles}">Table</span>
+                </div>
+                <div class="panel-body table-container">
+                    <div class="table-responsive" th:insert="admin/components/table">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

@@ -1,35 +1,28 @@
 package cz.quantumleap.core.autoincrement.dao;
 
-import cz.quantumleap.core.tables.records.IncrementRecord;
+import cz.quantumleap.core.persistence.dao.DefaultCrudDao;
+import cz.quantumleap.core.persistence.dao.lookup.LookupDaoManager;
+import cz.quantumleap.core.persistence.dao.MapperFactory;
 import org.jooq.DSLContext;
-import org.jooq.Record;
-import org.jooq.Result;
+import org.jooq.Record2;
 import org.springframework.stereotype.Repository;
 
 import java.util.Map;
 
-import static cz.quantumleap.core.tables.Increment.INCREMENT;
+import static cz.quantumleap.core.tables.IncrementTable.INCREMENT;
 
 @Repository
-public class IncrementDao {
+public class IncrementDao extends DefaultCrudDao {
 
-    private final DSLContext dslContext;
-
-    IncrementDao(DSLContext dslContext) {
-        this.dslContext = dslContext;
+    protected IncrementDao(DSLContext dslContext, LookupDaoManager lookupDaoManager) {
+        super(INCREMENT, dslContext, new MapperFactory(INCREMENT, lookupDaoManager));
     }
 
     public Map<String, Integer> loadLastIncrementVersionForModules() {
-        String query = "SELECT module, MAX(version) AS version FROM core.increment GROUP BY module";
-        Result<Record> records = dslContext.fetch(query);
-        return records.intoMap(INCREMENT.MODULE, INCREMENT.VERSION);
-    }
-
-    public void createIncrement(String module, int version, String fileName) {
-        IncrementRecord increment = dslContext.newRecord(INCREMENT);
-        increment.setModule(module);
-        increment.setVersion(version);
-        increment.setFileName(fileName);
-        increment.store();
+        return dslContext
+                .select(INCREMENT.MODULE, INCREMENT.VERSION.max())
+                .from(INCREMENT)
+                .groupBy(INCREMENT.MODULE)
+                .fetchMap(Record2::value1, Record2::value2);
     }
 }

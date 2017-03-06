@@ -15,7 +15,7 @@ public abstract class AdminController {
     private final AdminMenuManager adminMenuManager;
     private final WebSecurityExpressionEvaluator webSecurityExpressionEvaluator;
 
-    AdminController(AdminMenuManager adminMenuManager, WebSecurityExpressionEvaluator webSecurityExpressionEvaluator) {
+    public AdminController(AdminMenuManager adminMenuManager, WebSecurityExpressionEvaluator webSecurityExpressionEvaluator) {
         this.adminMenuManager = adminMenuManager;
         this.webSecurityExpressionEvaluator = webSecurityExpressionEvaluator;
     }

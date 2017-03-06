@@ -2,6 +2,7 @@ package cz.quantumleap.server.autoincrement;
 
 import cz.quantumleap.core.autoincrement.dao.IncrementDao;
 import cz.quantumleap.core.autoincrement.IncrementService;
+import cz.quantumleap.core.autoincrement.transport.Increment;
 import cz.quantumleap.core.common.Utils;
 import cz.quantumleap.core.persistence.TransactionExecutor;
 import org.apache.commons.lang3.tuple.Pair;
@@ -80,8 +81,16 @@ public class IncrementRunner {
             scripts.forEach(script -> {
                 String sql = Utils.loadResourceToString(script);
                 dslContext.execute(sql);
-                incrementDao.createIncrement(moduleName, version, script.getFilename());
+                incrementDao.save(createIncrement(moduleName, version, script.getFilename()));
             });
         });
+    }
+
+    private Increment createIncrement(String module, int version, String fileName) {
+        Increment increment = new Increment();
+        increment.setModule(module);
+        increment.setVersion(version);
+        increment.setFileName(fileName);
+        return increment;
     }
 }

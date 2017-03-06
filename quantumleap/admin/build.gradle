@@ -2,6 +2,7 @@ dependencies {
     compile project(':core')
 
     compile('org.webjars:startbootstrap-sb-admin-2:3.3.7+1')
+    compile('org.webjars:font-awesome:4.7.0')
     compile('org.webjars:morrisjs:0.5.1')
     compile('org.webjars:raphaeljs:2.1.4')
 

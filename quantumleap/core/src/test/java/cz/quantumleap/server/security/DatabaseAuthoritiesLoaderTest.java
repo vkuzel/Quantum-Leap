@@ -1,9 +1,9 @@
 package cz.quantumleap.server.security;
 
 import com.google.common.collect.ImmutableMap;
-import cz.quantumleap.core.tables.records.PersonRecord;
-import cz.quantumleap.server.security.dao.PersonDao;
-import cz.quantumleap.server.security.dao.RoleDao;
+import cz.quantumleap.core.person.dao.PersonDao;
+import cz.quantumleap.core.person.transport.Person;
+import cz.quantumleap.core.role.dao.RoleDao;
 import org.hamcrest.CustomTypeSafeMatcher;
 import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
@@ -34,20 +34,20 @@ public class DatabaseAuthoritiesLoaderTest {
         String email = "whatever@email.com";
         Map<String, Object> details = ImmutableMap.of("email", email);
 
-        PersonRecord person = mock(PersonRecord.class);
+        Person person = mock(Person.class);
         doReturn(1L).when(person).getId();
-        doReturn(person).when(personDao).findByEmail(email);
+        doReturn(person).when(personDao).fetchByEmail(email);
 
         List<String> roles = Collections.singletonList("USER");
-        doReturn(roles).when(roleDao).findRolesByPersonId(1L);
+        doReturn(roles).when(roleDao).fetchRolesByPersonId(1L);
 
         // when
         DatabaseAuthoritiesLoader loader = new DatabaseAuthoritiesLoader(personDao, roleDao);
         List<GrantedAuthority> authorities = loader.extractAuthorities(details);
 
         // then
-        verify(personDao, times(1)).findByEmail(email);
-        verify(roleDao, times(1)).findRolesByPersonId(1L);
+        verify(personDao, times(1)).fetchByEmail(email);
+        verify(roleDao, times(1)).fetchRolesByPersonId(1L);
         assertThat(authorities, Matchers.contains(hasAuthority("ROLE_USER")));
     }
 

@@ -16,6 +16,7 @@ CREATE TABLE core.role (
 CREATE TABLE core.person (
   id         BIGSERIAL PRIMARY KEY,
   email      VARCHAR(255) NOT NULL UNIQUE,
+  name       VARCHAR(255),
   created_at TIMESTAMP    NOT NULL
 );
 

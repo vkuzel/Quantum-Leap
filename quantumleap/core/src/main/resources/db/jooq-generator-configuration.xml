@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<configuration xmlns="http://www.jooq.org/xsd/jooq-codegen-3.8.0.xsd">
+<configuration xmlns="http://www.jooq.org/xsd/jooq-codegen-3.9.0.xsd">
     <jdbc>
         <driver>org.postgresql.Driver</driver>
         <!-- Url, username and password will be filled from application.properties in jooq.gradle script. -->
@@ -19,11 +19,6 @@
 
             <customTypes>
                 <customType>
-                    <name>LocalDateTime</name>
-                    <type>java.time.LocalDateTime</type>
-                    <converter>cz.quantumleap.core.persistence.converter.LocalDateTimeConverter</converter>
-                </customType>
-                <customType>
                     <name>Json</name>
                     <type>com.fasterxml.jackson.databind.JsonNode</type>
                     <binding>cz.quantumleap.core.persistence.binding.JsonBinding</binding>
@@ -31,18 +26,35 @@
             </customTypes>
             <forcedTypes>
                 <forcedType>
-                    <name>LocalDateTime</name>
-                    <types>TIMESTAMP.*</types>
-                </forcedType>
-                <forcedType>
                     <name>Json</name>
                     <types>JSON</types>
                 </forcedType>
             </forcedTypes>
         </database>
 
+        <generate>
+            <!-- TODO Don't forget to remove pojos and daos... -->
+            <pojos>false</pojos>
+            <daos>false</daos>
+            <records>false</records>
+            <javaTimeTypes>true</javaTimeTypes>
+        </generate>
+
+        <strategy>
+            <matchers>
+                <tables>
+                    <table>
+                        <tableClass>
+                            <transform>PASCAL</transform>
+                            <expression>$0_table</expression>
+                        </tableClass>
+                    </table>
+                </tables>
+            </matchers>
+        </strategy>
+
         <target>
-            <!-- TODO This is going to be also replaced by code generator! -->
+            <!-- TODO Also this is going to be replaced by code generator! -->
             <packageName>cz.quantumleap</packageName>
             <directory>src/generated/java</directory>
             <encoding>UTF-8</encoding>

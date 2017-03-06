@@ -1,0 +1,23 @@
+.top-panel {
+  margin-top: 20px;
+}
+.panel-heading {
+  font-weight: bold;
+}
+label {
+  font-weight: normal;
+}
+.table th a {
+  color: black;
+}
+.table-container {
+  padding: 0;
+}
+.table-cells-bordered th,
+.table-cells-bordered td {
+  border-right: 1px solid #ddd;
+}
+.table-cells-bordered th:last-child,
+.table-cells-bordered td:last-child {
+  border-right: none;
+}
