@@ -49,6 +49,7 @@ public class DatabaseAuthoritiesLoaderTest {
 
         // then
         verify(personDao, times(1)).fetchByEmail(email);
+        verify(personDao, times(1)).save(person);
         verify(roleDao, times(1)).fetchRolesByPersonId(1L);
         assertThat(authorities, Matchers.contains(hasAuthority("ROLE_USER")));
     }

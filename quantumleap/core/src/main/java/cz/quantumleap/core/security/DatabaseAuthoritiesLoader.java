@@ -6,6 +6,8 @@ import cz.quantumleap.core.role.RoleDao;
 import org.springframework.boot.autoconfigure.security.oauth2.resource.AuthoritiesExtractor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.Map;
@@ -16,6 +18,7 @@ import java.util.stream.Collectors;
 public class DatabaseAuthoritiesLoader implements AuthoritiesExtractor {
 
     private static final String OAUTH_DETAILS_EMAIL = "email";
+    private static final String OAUTH_DETAILS_NAME = "name";
     private static final String ROLE_PREFIX = "ROLE_"; // TODO Use the constrant from the Spring Security!
 
     private final PersonDao personDao;
@@ -26,18 +29,27 @@ public class DatabaseAuthoritiesLoader implements AuthoritiesExtractor {
         this.roleDao = roleDao;
     }
 
+    @Transactional
     @Override
     public List<GrantedAuthority> extractAuthorities(Map<String, Object> map) {
         String email = getEmail(map);
 
         Optional<Person> personOptional = personDao.fetchByEmail(email);
-        long personId = personOptional.map(Person::getId)
-                .orElseThrow(() -> new IllegalArgumentException("User " + email + " was not found in database!"));
+        if (personOptional.isPresent()) {
+            Person person = personOptional.get();
 
-        List<String> roles = roleDao.fetchRolesByPersonId(personId);
-        return roles.stream()
-                .map(this::convertToAuthority)
-                .collect(Collectors.toList());
+            if (StringUtils.isEmpty(person.getName())) {
+                person.setName(getName(map));
+                personDao.save(person);
+            }
+
+            List<String> roles = roleDao.fetchRolesByPersonId(person.getId());
+            return roles.stream()
+                    .map(this::convertToAuthority)
+                    .collect(Collectors.toList());
+        } else {
+            throw new IllegalArgumentException("User " + email + " was not found in database!");
+        }
     }
 
     private GrantedAuthority convertToAuthority(String role) {
@@ -64,6 +76,14 @@ public class DatabaseAuthoritiesLoader implements AuthoritiesExtractor {
             throw new IllegalArgumentException("Wrong data type of OAuth email detail! " + email.getClass().getSimpleName());
         }
         return (String) email;
+    }
+
+    private String getName(Map<String, Object> map) {
+        Object name = map.get(OAUTH_DETAILS_NAME);
+        if (name instanceof String) {
+            return (String) name;
+        }
+        return null;
     }
 
     private String formatDetails(Map<String, Object> map) {
