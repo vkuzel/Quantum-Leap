@@ -16,7 +16,7 @@ import static cz.quantumleap.core.tables.IncrementTable.INCREMENT;
 @Repository
 public class IncrementDao extends DefaultCrudDao<IncrementTable> {
 
-    protected IncrementDao(DSLContext dslContext, LookupDaoManager lookupDaoManager, RecordAuditor recordAuditor) {
+    public IncrementDao(DSLContext dslContext, LookupDaoManager lookupDaoManager, RecordAuditor recordAuditor) {
         super(INCREMENT, dslContext, new MapperFactory(INCREMENT, lookupDaoManager), recordAuditor);
     }
 

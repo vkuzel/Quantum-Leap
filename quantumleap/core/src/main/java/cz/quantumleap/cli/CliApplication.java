@@ -1,16 +1,22 @@
 package cz.quantumleap.cli;
 
 import cz.quantumleap.cli.environment.EnvironmentBuilder;
+import cz.quantumleap.core.autoincrement.IncrementDao;
+import cz.quantumleap.core.autoincrement.IncrementService;
+import cz.quantumleap.core.module.ModuleDependencyManager;
+import cz.quantumleap.core.resource.ResourceManager;
+import org.jooq.DSLContext;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.ComponentScan;
+import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 
 @SpringBootApplication
-@ComponentScan(basePackages = {"cz.quantumleap.cli", "cz.quantumleap.core"})
 @EnableTransactionManagement
 public class CliApplication implements CommandLineRunner {
 
@@ -30,13 +36,58 @@ public class CliApplication implements CommandLineRunner {
                 environmentBuilder.buildEnvironment();
                 break;
             default:
-                throw new IllegalArgumentException("Unknown command " + firstArg + "!");
+                if (StringUtils.isEmpty(firstArg)) {
+                    String msg = "No argument has been specified!\n" +
+                            "\n" +
+                            "    build - for creating new environment (database).\n" +
+                            "    rebuild - for removing existing environment and creating a new one.\n";
+                    System.out.println(msg);
+                } else {
+                    throw new IllegalArgumentException("Unknown argument " + firstArg + "!");
+                }
+        }
+    }
+
+    /**
+     * Originally I split the project into three packages: cli, server, core.
+     * Cli for cli-related stuff, server for view and most of the business
+     * logic and core for DAOs and things shared between cli and server. But
+     * cli had only few beans in it so I decided to drop the structure and
+     * build shared beans manually in this configuration class.
+     */
+    @Configuration
+    public static class CoreApplicationContext {
+
+        private final DSLContext dslContext;
+
+        public CoreApplicationContext(DSLContext dslContext) {
+            this.dslContext = dslContext;
+        }
+
+        @Bean
+        public ModuleDependencyManager moduleDependencyManager() {
+            return new ModuleDependencyManager();
+        }
+
+        @Bean
+        public ResourceManager resourceManager(ModuleDependencyManager moduleDependencyManager) {
+            return new ResourceManager(moduleDependencyManager);
+        }
+
+        @Bean
+        public IncrementService incrementService(ModuleDependencyManager moduleDependencyManager, ResourceManager resourceManager) {
+            return new IncrementService(moduleDependencyManager, resourceManager);
+        }
+
+        @Bean
+        public IncrementDao incrementDao() {
+            return new IncrementDao(dslContext, null, null);
         }
     }
 
     public static void main(String[] args) throws IOException {
-        SpringApplication application = new SpringApplication(CliApplication.class);
-        application.setWebEnvironment(false);
-        application.run(args);
+        new SpringApplicationBuilder(CliApplication.class)
+                .web(false)
+                .run(args);
     }
 }

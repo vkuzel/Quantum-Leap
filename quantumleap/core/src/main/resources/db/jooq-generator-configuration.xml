@@ -33,7 +33,7 @@
         </database>
 
         <generate>
-            <records>false</records>
+            <!--<records>false</records>-->
             <javaTimeTypes>true</javaTimeTypes>
         </generate>
 

@@ -17,6 +17,8 @@ public class RecordAuditor implements RecordListenerProvider {
     private static final String UPDATED_BY_FIELD_NAME = "updated_by";
     private static final String REVISION_FIELD_NAME = "revision";
 
+    private static final String DEFAULT_USER_NAME = "<no-authentication>";
+
     public void onInsert(Record record) {
         if (record instanceof TableRecord) {
             TableRecord tableRecord = (TableRecord) record;
@@ -71,8 +73,7 @@ public class RecordAuditor implements RecordListenerProvider {
 
     private String getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        // TODO Get user's email here!
-        return authentication.getName();
+        return authentication != null ? authentication.getName() : DEFAULT_USER_NAME;
     }
 
     @Override

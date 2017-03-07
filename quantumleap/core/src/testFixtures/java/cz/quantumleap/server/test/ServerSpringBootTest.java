@@ -1,8 +1,8 @@
 package cz.quantumleap.server.test;
 
 
+import cz.quantumleap.QuantumLeapApplication;
 import cz.quantumleap.core.test.CoreTestContext;
-import cz.quantumleap.server.QuantumLeapApplication;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
