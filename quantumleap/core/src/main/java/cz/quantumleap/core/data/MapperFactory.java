@@ -190,7 +190,7 @@ public class MapperFactory {
                         rowWithLookups.put(fieldName, new Lookup(
                                 referenceId,
                                 referenceLabels.get(fieldName, referenceId),
-                                lookupDaoMap.get(fieldName).getKey().getName()
+                                getDatabaseTableNameWithSchema(lookupDaoMap.get(fieldName).getKey())
                         ));
                     } else {
                         rowWithLookups.put(entry.getKey(), entry.getValue());
@@ -202,6 +202,13 @@ public class MapperFactory {
         }
     }
 
+    private String getDatabaseTableNameWithSchema(Table<?> table) {
+        String name = table.getName();
+        if (table.getSchema() != null) {
+            name = table.getSchema().getName() + "." + name;
+        }
+        return name;
+    }
 
     public class TransportUnMapper<T> {
 

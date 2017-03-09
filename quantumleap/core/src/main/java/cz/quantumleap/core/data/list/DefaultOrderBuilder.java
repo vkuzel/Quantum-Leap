@@ -1,4 +1,4 @@
-package cz.quantumleap.core.data.collection;
+package cz.quantumleap.core.data.list;
 
 import com.google.common.collect.Lists;
 import org.jooq.*;

@@ -13,10 +13,11 @@ import java.util.Optional;
 import static cz.quantumleap.core.tables.PersonRoleTable.PERSON_ROLE;
 
 @Repository
+// TODO I don't need lookup support at this place!
 public class PersonRoleDao extends DaoStub<PersonRoleTable> {
 
     protected PersonRoleDao(DSLContext dslContext, LookupDaoManager lookupDaoManager, RecordAuditor recordAuditor) {
-        super(PERSON_ROLE, dslContext, lookupDaoManager, recordAuditor);
+        super(PERSON_ROLE, null, dslContext, lookupDaoManager, recordAuditor);
     }
 
     public Optional<PersonRole> fetchById(long personId, long roleId) {

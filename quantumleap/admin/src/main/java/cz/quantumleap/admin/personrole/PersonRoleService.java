@@ -8,8 +8,6 @@ import cz.quantumleap.core.personrole.PersonRoleDao;
 import cz.quantumleap.core.personrole.transport.PersonRole;
 import org.springframework.stereotype.Service;
 
-import static cz.quantumleap.core.tables.PersonRoleTable.PERSON_ROLE;
-
 @Service
 public class PersonRoleService implements ListService {
 
@@ -22,10 +20,8 @@ public class PersonRoleService implements ListService {
     }
 
     public PersonRole get(long personId, long roleId) {
-        return personRoleDao.fetchByCondition(
-                PERSON_ROLE.PERSON_ID.eq(personId).and(PERSON_ROLE.ROLE_ID.eq(roleId)),
-                PersonRole.class
-        ).orElseThrow(() -> new IllegalArgumentException("Person-role was not found for personId " + personId + " and roleId " + roleId));
+        return personRoleDao.fetchById(personId, roleId)
+                .orElseThrow(() -> new IllegalArgumentException("Person-role was not found for personId " + personId + " and roleId " + roleId));
     }
 
     public PersonRole save(PersonRole personRole) {

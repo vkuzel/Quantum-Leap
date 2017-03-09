@@ -62,8 +62,8 @@ public class PersonController extends AdminController implements LookupControlle
     }
 
     @Override
-    public boolean supportsTable(String databaseTableNameWithSchema) {
-        return lookupController.supportsTable(databaseTableNameWithSchema);
+    public String supportedDatabaseTableNameWithSchema() {
+        return lookupController.supportedDatabaseTableNameWithSchema();
     }
 
     @Override

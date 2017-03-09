@@ -6,7 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 
 public interface LookupController {
 
-    boolean supportsTable(String databaseTableNameWithSchema);
+    String supportedDatabaseTableNameWithSchema();
 
     String getDetailUrl();
 

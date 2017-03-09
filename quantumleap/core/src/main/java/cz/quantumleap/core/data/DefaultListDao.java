@@ -1,7 +1,7 @@
 package cz.quantumleap.core.data;
 
-import cz.quantumleap.core.data.collection.LimitBuilder;
-import cz.quantumleap.core.data.collection.OrderBuilder;
+import cz.quantumleap.core.data.list.LimitBuilder;
+import cz.quantumleap.core.data.list.OrderBuilder;
 import cz.quantumleap.core.data.transport.Slice;
 import cz.quantumleap.core.data.transport.SliceRequest;
 import org.jooq.DSLContext;

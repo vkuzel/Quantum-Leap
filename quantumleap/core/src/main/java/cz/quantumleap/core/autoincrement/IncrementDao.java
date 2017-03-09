@@ -1,6 +1,7 @@
 package cz.quantumleap.core.autoincrement;
 
 import cz.quantumleap.core.data.*;
+import cz.quantumleap.core.data.detail.PrimaryKeyConditionBuilder;
 import cz.quantumleap.core.tables.IncrementTable;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
@@ -21,8 +22,9 @@ public class IncrementDao implements DetailDao<IncrementTable> {
 
     public IncrementDao(DSLContext dslContext, LookupDaoManager lookupDaoManager, RecordAuditor recordAuditor) {
         this.dslContext = dslContext;
+        PrimaryKeyConditionBuilder primaryKeyConditionBuilder = new PrimaryKeyConditionBuilder(INCREMENT);
         MapperFactory mapperFactory = new MapperFactory(INCREMENT, lookupDaoManager);
-        this.detailDao = new DefaultDetailDao<>(INCREMENT, dslContext, mapperFactory, recordAuditor);
+        this.detailDao = new DefaultDetailDao<>(INCREMENT, dslContext, primaryKeyConditionBuilder, mapperFactory, recordAuditor);
     }
 
     public Map<String, Integer> loadLastIncrementVersionForModules() {

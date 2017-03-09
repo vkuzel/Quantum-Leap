@@ -28,8 +28,8 @@ public final class DefaultLookupController implements LookupController {
     }
 
     @Override
-    public boolean supportsTable(String databaseTableNameWithSchema) {
-        return supportedDatabaseTableNameWithSchema.equals(databaseTableNameWithSchema);
+    public String supportedDatabaseTableNameWithSchema() {
+        return supportedDatabaseTableNameWithSchema;
     }
 
     @Override

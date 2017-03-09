@@ -61,8 +61,8 @@ public class RoleController extends AdminController implements LookupController 
     }
 
     @Override
-    public boolean supportsTable(String databaseTableNameWithSchema) {
-        return lookupController.supportsTable(databaseTableNameWithSchema);
+    public String supportedDatabaseTableNameWithSchema() {
+        return lookupController.supportedDatabaseTableNameWithSchema();
     }
 
     @Override

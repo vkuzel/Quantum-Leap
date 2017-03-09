@@ -1,14 +1,12 @@
 package cz.quantumleap.core.data;
 
-import cz.quantumleap.core.data.collection.DefaultOrderBuilder;
-import cz.quantumleap.core.data.collection.LimitBuilder;
-import cz.quantumleap.core.data.collection.OrderBuilder;
+import cz.quantumleap.core.data.detail.PrimaryKeyConditionBuilder;
+import cz.quantumleap.core.data.list.DefaultOrderBuilder;
+import cz.quantumleap.core.data.list.LimitBuilder;
+import cz.quantumleap.core.data.list.OrderBuilder;
 import cz.quantumleap.core.data.transport.Slice;
 import cz.quantumleap.core.data.transport.SliceRequest;
-import org.jooq.Condition;
-import org.jooq.DSLContext;
-import org.jooq.Record;
-import org.jooq.Table;
+import org.jooq.*;
 
 import java.util.Map;
 import java.util.Optional;
@@ -19,6 +17,7 @@ public class DaoStub<TABLE extends Table<? extends Record>> implements DetailDao
     protected final TABLE table;
     protected final DSLContext dslContext;
 
+    protected final PrimaryKeyConditionBuilder primaryKeyConditionBuilder;
     protected final OrderBuilder orderBuilder;
     protected final LimitBuilder limitBuilder;
     protected final MapperFactory mapperFactory;
@@ -27,17 +26,18 @@ public class DaoStub<TABLE extends Table<? extends Record>> implements DetailDao
     protected final ListDao<TABLE> listDao;
     protected final LookupDao<TABLE> lookupDao;
 
-    protected DaoStub(TABLE table, DSLContext dslContext, LookupDaoManager lookupDaoManager, RecordAuditor recordAuditor) {
+    protected DaoStub(TABLE table, Field<String> lookupLabelField, DSLContext dslContext, LookupDaoManager lookupDaoManager, RecordAuditor recordAuditor) {
         this.dslContext = dslContext;
         this.table = table;
 
+        this.primaryKeyConditionBuilder = new PrimaryKeyConditionBuilder(table);
         this.orderBuilder = new DefaultOrderBuilder(table);
         this.limitBuilder = LimitBuilder.DEFAULT;
         this.mapperFactory = new MapperFactory(table, lookupDaoManager);
 
-        detailDao = new DefaultDetailDao<>(table, dslContext, mapperFactory, recordAuditor);
+        detailDao = new DefaultDetailDao<>(table, dslContext, primaryKeyConditionBuilder, mapperFactory, recordAuditor);
         listDao = new DefaultListDao<>(table, dslContext, orderBuilder, limitBuilder, mapperFactory);
-        lookupDao = new DefaultLookupDao<>(table, dslContext);
+        lookupDao = new DefaultLookupDao<>(table, lookupLabelField, dslContext, primaryKeyConditionBuilder);
     }
 
     public <T> Optional<T> fetchById(Object id, Class<T> type) {

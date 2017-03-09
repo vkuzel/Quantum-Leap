@@ -40,9 +40,9 @@
             <span th:if="${column.type != T(cz.quantumleap.core.data.transport.Lookup)}"
                   th:text="${{row['__${column.name}__']}}"
                   th:remove="tag">Standard value</span>
-            <!-- TODO this solution is not solid... -->
             <a th:if="${column.type == T(cz.quantumleap.core.data.transport.Lookup)}"
-               th:href="|${row['__${column.name}__'].databaseTableNameWithSchema}/${row['__${column.name}__'].id}|"
+               th:with="detailUrl=${@lookupControllerManager.getControllerForTable(row['__${column.name}__'].databaseTableNameWithSchema).getDetailUrl()}"
+               th:href="|${detailUrl}/${row['__${column.name}__'].id}|"
                th:text="${{row['__${column.name}__'].label}}">Lookup value</a>
         </td>
     </tr>
