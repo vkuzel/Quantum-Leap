@@ -1,22 +1,21 @@
-package cz.quantumleap.core.persistence;
+package cz.quantumleap.core.data;
 
 import org.apache.commons.lang3.Validate;
 import org.jooq.*;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-public class DefaultCrudDao<TABLE extends Table<? extends Record>> implements CrudDao<TABLE> {
+public final class DefaultDetailDao<TABLE extends Table<? extends Record>> implements DetailDao<TABLE> {
 
-    protected final Table<? extends Record> table;
-    protected final DSLContext dslContext;
-    protected final MapperFactory mapperFactory;
-    protected final RecordAuditor recordAuditor;
+    private final Table<? extends Record> table;
+    private final DSLContext dslContext;
+    private final MapperFactory mapperFactory;
+    private final RecordAuditor recordAuditor;
 
-    public DefaultCrudDao(Table<? extends Record> table, DSLContext dslContext, MapperFactory mapperFactory, RecordAuditor recordAuditor) {
+    public DefaultDetailDao(Table<? extends Record> table, DSLContext dslContext, MapperFactory mapperFactory, RecordAuditor recordAuditor) {
         this.table = table;
         this.dslContext = dslContext;
         this.mapperFactory = mapperFactory;
@@ -34,14 +33,14 @@ public class DefaultCrudDao<TABLE extends Table<? extends Record>> implements Cr
                 .fetchOptional(mapperFactory.createTransportMapper(type));
     }
 
-    public <T> T save(T transport) {
-        Validate.notNull(transport);
+    public <T> T save(T detail) {
+        Validate.notNull(detail);
 
-        Class<T> transportType = (Class<T>) transport.getClass();
+        Class<T> transportType = (Class<T>) detail.getClass();
 
         Record record = mapperFactory
                 .createTransportUnMapper(transportType)
-                .unMap(transport, dslContext.newRecord(table));
+                .unMap(detail, dslContext.newRecord(table));
 
         Condition[] primaryKeyCondition = createPrimaryKeyConditions(record);
         if (primaryKeyCondition != null) {
@@ -68,7 +67,7 @@ public class DefaultCrudDao<TABLE extends Table<? extends Record>> implements Cr
 
         recordAuditor.onUpdate(record);
 
-        Map<? extends Field<?>, ?> changedValues = getChangedValues(record);
+        Map<Field<?>, Object> changedValues = getChangedValues(record);
 
         return dslContext.update(table)
                 .set(changedValues)
@@ -78,13 +77,15 @@ public class DefaultCrudDao<TABLE extends Table<? extends Record>> implements Cr
                 .map(mapperFactory.createTransportMapper(resultType));
     }
 
-    private Map<? extends Field<?>, ?> getChangedValues(Record record) {
-        return Stream.of(record.fields())
-                .filter(record::changed)
-                .collect(Collectors.toMap(
-                        field -> field,
-                        record::getValue
-                ));
+    private Map<Field<?>, Object> getChangedValues(Record record) {
+        List<? extends TableField<? extends Record, ?>> primaryKeyFields = getPrimaryKeyFields();
+        Map<Field<?>, Object> changedValues = new HashMap<>(record.size());
+        for (Field<?> field : record.fields()) {
+            if (record.changed(field) && !primaryKeyFields.contains(field)) {
+                changedValues.put(field, record.getValue(field));
+            }
+        }
+        return changedValues;
     }
 
     public void deleteById(Object id) {

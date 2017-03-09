@@ -21,7 +21,7 @@
                 <customType>
                     <name>Json</name>
                     <type>com.fasterxml.jackson.databind.JsonNode</type>
-                    <binding>cz.quantumleap.core.persistence.binding.JsonBinding</binding>
+                    <binding>cz.quantumleap.core.data.binding.JsonBinding</binding>
                 </customType>
             </customTypes>
             <forcedTypes>

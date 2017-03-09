@@ -1,6 +1,6 @@
 package cz.quantumleap.core.web.controllerargument;
 
-import cz.quantumleap.core.persistence.transport.SliceRequest;
+import cz.quantumleap.core.data.transport.SliceRequest;
 import org.springframework.core.MethodParameter;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.SortHandlerMethodArgumentResolver;
@@ -9,7 +9,7 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
-import static cz.quantumleap.core.persistence.transport.SliceRequest.MAX_ITEMS;
+import static cz.quantumleap.core.data.transport.SliceRequest.MAX_ITEMS;
 
 public class SliceRequestControllerArgumentResolver implements HandlerMethodArgumentResolver {
 

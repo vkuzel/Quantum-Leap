@@ -1,4 +1,4 @@
-package cz.quantumleap.core.persistence;
+package cz.quantumleap.core.data;
 
 import org.jooq.Record;
 import org.jooq.Table;
@@ -13,4 +13,6 @@ public interface LookupDao<TABLE extends Table<? extends Record>> {
     String fetchLabelById(Object id);
 
     Map<Object, String> fetchLabelsById(Set<Object> ids);
+
+    Map<Object, String> fetchLabelsByFilter(String filter);
 }

@@ -1,8 +1,8 @@
 package cz.quantumleap.core.person;
 
-import cz.quantumleap.core.persistence.Dao;
-import cz.quantumleap.core.persistence.RecordAuditor;
-import cz.quantumleap.core.persistence.lookup.LookupDaoManager;
+import cz.quantumleap.core.data.DaoStub;
+import cz.quantumleap.core.data.LookupDaoManager;
+import cz.quantumleap.core.data.RecordAuditor;
 import cz.quantumleap.core.person.transport.Person;
 import cz.quantumleap.core.tables.PersonTable;
 import org.jooq.DSLContext;
@@ -13,7 +13,7 @@ import java.util.Optional;
 import static cz.quantumleap.core.tables.PersonTable.PERSON;
 
 @Repository
-public class PersonDao extends Dao<PersonTable> {
+public class PersonDao extends DaoStub<PersonTable> {
 
     protected PersonDao(DSLContext dslContext, LookupDaoManager lookupDaoManager, RecordAuditor recordAuditor) {
         super(PERSON, dslContext, lookupDaoManager, recordAuditor);

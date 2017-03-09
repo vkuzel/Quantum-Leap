@@ -1,11 +1,10 @@
-package cz.quantumleap.core.persistence;
+package cz.quantumleap.core.data;
 
-import cz.quantumleap.core.persistence.collection.DefaultOrderBuilder;
-import cz.quantumleap.core.persistence.collection.LimitBuilder;
-import cz.quantumleap.core.persistence.collection.OrderBuilder;
-import cz.quantumleap.core.persistence.lookup.LookupDaoManager;
-import cz.quantumleap.core.persistence.transport.Slice;
-import cz.quantumleap.core.persistence.transport.SliceRequest;
+import cz.quantumleap.core.data.collection.DefaultOrderBuilder;
+import cz.quantumleap.core.data.collection.LimitBuilder;
+import cz.quantumleap.core.data.collection.OrderBuilder;
+import cz.quantumleap.core.data.transport.Slice;
+import cz.quantumleap.core.data.transport.SliceRequest;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Record;
@@ -15,7 +14,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-public class Dao<TABLE extends Table<? extends Record>> implements CrudDao<TABLE>, CollectionDao<TABLE>, LookupDao<TABLE> {
+public class DaoStub<TABLE extends Table<? extends Record>> implements DetailDao<TABLE>, ListDao<TABLE>, LookupDao<TABLE> {
 
     protected final TABLE table;
     protected final DSLContext dslContext;
@@ -24,11 +23,11 @@ public class Dao<TABLE extends Table<? extends Record>> implements CrudDao<TABLE
     protected final LimitBuilder limitBuilder;
     protected final MapperFactory mapperFactory;
 
-    protected final CrudDao<TABLE> crudDao;
-    protected final CollectionDao<TABLE> collectionDao;
+    protected final DetailDao<TABLE> detailDao;
+    protected final ListDao<TABLE> listDao;
     protected final LookupDao<TABLE> lookupDao;
 
-    protected Dao(TABLE table, DSLContext dslContext, LookupDaoManager lookupDaoManager, RecordAuditor recordAuditor) {
+    protected DaoStub(TABLE table, DSLContext dslContext, LookupDaoManager lookupDaoManager, RecordAuditor recordAuditor) {
         this.dslContext = dslContext;
         this.table = table;
 
@@ -36,29 +35,29 @@ public class Dao<TABLE extends Table<? extends Record>> implements CrudDao<TABLE
         this.limitBuilder = LimitBuilder.DEFAULT;
         this.mapperFactory = new MapperFactory(table, lookupDaoManager);
 
-        crudDao = new DefaultCrudDao<>(table, dslContext, mapperFactory, recordAuditor);
-        collectionDao = new DefaultCollectionDao<>(table, dslContext, orderBuilder, limitBuilder, mapperFactory);
+        detailDao = new DefaultDetailDao<>(table, dslContext, mapperFactory, recordAuditor);
+        listDao = new DefaultListDao<>(table, dslContext, orderBuilder, limitBuilder, mapperFactory);
         lookupDao = new DefaultLookupDao<>(table, dslContext);
     }
 
     public <T> Optional<T> fetchById(Object id, Class<T> type) {
-        return crudDao.fetchById(id, type);
+        return detailDao.fetchById(id, type);
     }
 
     public <T> Optional<T> fetchByCondition(Condition condition, Class<T> type) {
-        return crudDao.fetchByCondition(condition, type);
+        return detailDao.fetchByCondition(condition, type);
     }
 
-    public <T> T save(T object) {
-        return crudDao.save(object);
+    public <T> T save(T detail) {
+        return detailDao.save(detail);
     }
 
     public void deleteById(Object id) {
-        crudDao.deleteById(id);
+        detailDao.deleteById(id);
     }
 
     public Slice fetchSlice(SliceRequest sliceRequest) {
-        return collectionDao.fetchSlice(sliceRequest);
+        return listDao.fetchSlice(sliceRequest);
     }
 
     @Override
@@ -74,5 +73,10 @@ public class Dao<TABLE extends Table<? extends Record>> implements CrudDao<TABLE
     @Override
     public Map<Object, String> fetchLabelsById(Set<Object> ids) {
         return lookupDao.fetchLabelsById(ids);
+    }
+
+    @Override
+    public Map<Object, String> fetchLabelsByFilter(String filter) {
+        return lookupDao.fetchLabelsByFilter(filter);
     }
 }

@@ -1,6 +1,6 @@
 package cz.quantumleap.core.personrole.transport;
 
-import cz.quantumleap.core.persistence.transport.Lookup;
+import cz.quantumleap.core.data.transport.Lookup;
 
 public class PersonRole {
 

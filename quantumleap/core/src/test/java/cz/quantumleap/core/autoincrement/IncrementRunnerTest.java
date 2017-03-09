@@ -2,8 +2,8 @@ package cz.quantumleap.core.autoincrement;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import cz.quantumleap.core.data.TransactionExecutor;
 import cz.quantumleap.core.module.ModuleDependencies;
-import cz.quantumleap.core.persistence.TransactionExecutor;
 import cz.quantumleap.core.resource.ResourceWithModule;
 import cz.quantumleap.core.test.CoreSpringBootTest;
 import cz.quantumleap.core.test.common.TestUtils;

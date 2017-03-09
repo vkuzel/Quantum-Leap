@@ -15,6 +15,7 @@
                 </div>
                 <div class="panel-body">
                     <form class="form-horizontal" th:action="@{/person}" th:object="${person}" method="post">
+                        <input type="hidden" th:if="*{id}" th:field="*{id}">
                         <div class="form-group">
                             <label for="email" class="control-label col-md-4" th:text="#{admin.person.email}">Email</label>
                             <div class="col-md-6">
@@ -29,7 +30,6 @@
                         </div>
 
                         <div class="form-group">
-
                             <div class="col-md-6 col-md-offset-4">
                                 <input type="submit" class="btn btn-success" value="Save" th:value="#{admin.save}">
                             </div>

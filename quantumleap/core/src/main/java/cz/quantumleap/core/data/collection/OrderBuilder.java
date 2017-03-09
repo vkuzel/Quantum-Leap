@@ -1,4 +1,4 @@
-package cz.quantumleap.core.persistence.collection;
+package cz.quantumleap.core.data.collection;
 
 import org.jooq.SortField;
 import org.springframework.data.domain.Sort;

@@ -33,16 +33,16 @@
     <tr th:each="row : ${tableSlice}">
         <td class="id-data-cell">
             <a th:assert="${detailUrl}"
-               th:href="@{|${detailUrl}${row['id']}|}"
+               th:href="@{|${detailUrl}/${row['id']}|}"
                th:text="${row['id']}">id</a>
         </td>
         <td th:each="column : ${tableSlice.getColumns()}">
-            <span th:if="${column.type != T(cz.quantumleap.core.persistence.transport.Lookup)}"
+            <span th:if="${column.type != T(cz.quantumleap.core.data.transport.Lookup)}"
                   th:text="${{row['__${column.name}__']}}"
                   th:remove="tag">Standard value</span>
             <!-- TODO this solution is not solid... -->
-            <a th:if="${column.type == T(cz.quantumleap.core.persistence.transport.Lookup)}"
-               th:href="|${row['__${column.name}__'].tableName}/${row['__${column.name}__'].id}|"
+            <a th:if="${column.type == T(cz.quantumleap.core.data.transport.Lookup)}"
+               th:href="|${row['__${column.name}__'].databaseTableNameWithSchema}/${row['__${column.name}__'].id}|"
                th:text="${{row['__${column.name}__'].label}}">Lookup value</a>
         </td>
     </tr>

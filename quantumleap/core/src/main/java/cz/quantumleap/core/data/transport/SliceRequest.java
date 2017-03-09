@@ -1,4 +1,4 @@
-package cz.quantumleap.core.persistence.transport;
+package cz.quantumleap.core.data.transport;
 
 import org.springframework.data.domain.Sort;
 

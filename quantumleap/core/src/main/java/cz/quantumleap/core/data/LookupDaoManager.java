@@ -1,6 +1,5 @@
-package cz.quantumleap.core.persistence.lookup;
+package cz.quantumleap.core.data;
 
-import cz.quantumleap.core.persistence.LookupDao;
 import org.jooq.Record;
 import org.jooq.Table;
 import org.springframework.context.ApplicationContext;

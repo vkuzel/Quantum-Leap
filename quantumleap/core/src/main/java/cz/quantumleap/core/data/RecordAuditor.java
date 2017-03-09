@@ -1,4 +1,4 @@
-package cz.quantumleap.core.persistence;
+package cz.quantumleap.core.data;
 
 import org.jooq.*;
 import org.jooq.impl.DefaultRecordListener;

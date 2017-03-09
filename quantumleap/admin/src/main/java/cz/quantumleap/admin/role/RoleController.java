@@ -3,10 +3,10 @@ package cz.quantumleap.admin.role;
 import cz.quantumleap.admin.AdminController;
 import cz.quantumleap.admin.menu.AdminMenuItemDefinition;
 import cz.quantumleap.admin.menu.AdminMenuManager;
-import cz.quantumleap.core.persistence.transport.Slice;
-import cz.quantumleap.core.persistence.transport.SliceRequest;
+import cz.quantumleap.core.data.transport.SliceRequest;
 import cz.quantumleap.core.role.transport.Role;
 import cz.quantumleap.core.security.WebSecurityExpressionEvaluator;
+import cz.quantumleap.core.web.*;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,49 +20,64 @@ import javax.validation.Valid;
 
 @Controller
 @PreAuthorize("hasRole('ADMIN')")
-public class RoleController extends AdminController {
+public class RoleController extends AdminController implements LookupController {
 
-    private static final String TABLE_SLICE_MODEL_ATTRIBUTE_NAME = "tableSlice";
-    private static final String TABLE_NAME_MODEL_ATTRIBUTE_NAME = "tableName";
-    private static final String DETAIL_URL_MODEL_ATTRIBUTE_NAME = "detailUrl";
+    private static final String DETAIL_URL = "/role";
+    private static final String DETAIL_VIEW = "admin/role";
 
+    private static final String LIST_URL = "/roles";
+    private static final String LIST_VIEW = "admin/roles";
     private static final String TABLE_NAME = "roles";
-    private static final String DETAIL_URL = "/role/";
 
-    private final RoleService roleService;
+    private static final String DATABASE_TABLE_NAME = "core.role";
+    private static final String LOOKUP_LABELS_URL = "/roles-lookup";
+    private static final String LOOKUP_LABELS_VIEW = "admin/roles-lookup";
+
+    private final DetailController<Role> detailController;
+    private final ListController listController;
+    private final LookupController lookupController;
 
     public RoleController(AdminMenuManager adminMenuManager, WebSecurityExpressionEvaluator webSecurityExpressionEvaluator, RoleService roleService) {
         super(adminMenuManager, webSecurityExpressionEvaluator);
-        this.roleService = roleService;
+        this.detailController = new DefaultDetailController<>(Role.class, DETAIL_URL, DETAIL_VIEW, roleService);
+        this.listController = new DefaultListController(TABLE_NAME, LIST_VIEW, DETAIL_URL, roleService);
+        this.lookupController = new DefaultLookupController(DATABASE_TABLE_NAME, DETAIL_URL, LOOKUP_LABELS_URL, LOOKUP_LABELS_VIEW, roleService);
+    }
+
+    @GetMapping(path = {DETAIL_URL, DETAIL_URL + "/{id}"})
+    public String showRole(@PathVariable(required = false) Long id, Model model) {
+        return detailController.show(id, model);
+    }
+
+    @PostMapping(path = {DETAIL_URL, DETAIL_URL + "/{id}"})
+    public String saveRole(@Valid Role role, Errors errors) {
+        return detailController.save(role, errors);
     }
 
     @AdminMenuItemDefinition(title = "admin.menu.roles", fontAwesomeIcon = "fa-id-card")
-    @GetMapping("/roles")
+    @GetMapping(LIST_URL)
     public String showRoles(SliceRequest sliceRequest, Model model, HttpServletRequest request) {
-        Slice people = roleService.findRoles(sliceRequest);
-        model.addAttribute(TABLE_SLICE_MODEL_ATTRIBUTE_NAME, people);
-        model.addAttribute(TABLE_NAME_MODEL_ATTRIBUTE_NAME, TABLE_NAME);
-        model.addAttribute(DETAIL_URL_MODEL_ATTRIBUTE_NAME, DETAIL_URL);
-
-        if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
-            return "admin/components/table";
-        }
-        return "admin/roles";
+        return listController.list(sliceRequest, model, request);
     }
 
-    @GetMapping(path = {"/role", "/role/{id}"})
-    public String showRole(@PathVariable(required = false) Long id, Model model) {
-        Role role = id != null ? roleService.getRole(id) : new Role();
-        model.addAttribute(role);
-        return "admin/role";
+    @Override
+    public boolean supportsTable(String databaseTableNameWithSchema) {
+        return lookupController.supportsTable(databaseTableNameWithSchema);
     }
 
-    @PostMapping("/role")
-    public String saveRole(@Valid Role role, Errors errors) {
-        if (errors.hasErrors()) {
-            return "admin/role";
-        }
-        long id = roleService.saveRole(role).getId();
-        return "redirect:role/" + id;
+    @Override
+    public String getDetailUrl() {
+        return lookupController.getDetailUrl();
+    }
+
+    @Override
+    public String getLookupLabelsUrl() {
+        return lookupController.getLookupLabelsUrl();
+    }
+
+    @GetMapping(LOOKUP_LABELS_URL)
+    @Override
+    public String findLookupLabels(String filter, Model model, HttpServletRequest request) {
+        return lookupController.findLookupLabels(filter, model, request);
     }
 }

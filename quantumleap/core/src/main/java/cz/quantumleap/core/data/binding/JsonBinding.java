@@ -1,4 +1,4 @@
-package cz.quantumleap.core.persistence.binding;
+package cz.quantumleap.core.data.binding;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;

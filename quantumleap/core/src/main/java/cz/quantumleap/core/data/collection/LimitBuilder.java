@@ -1,6 +1,6 @@
-package cz.quantumleap.core.persistence.collection;
+package cz.quantumleap.core.data.collection;
 
-import cz.quantumleap.core.persistence.transport.SliceRequest;
+import cz.quantumleap.core.data.transport.SliceRequest;
 
 public interface LimitBuilder {
 

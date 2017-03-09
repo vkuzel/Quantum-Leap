@@ -2,7 +2,7 @@ package cz.quantumleap.core.autoincrement;
 
 import cz.quantumleap.core.autoincrement.transport.Increment;
 import cz.quantumleap.core.common.Utils;
-import cz.quantumleap.core.persistence.TransactionExecutor;
+import cz.quantumleap.core.data.TransactionExecutor;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

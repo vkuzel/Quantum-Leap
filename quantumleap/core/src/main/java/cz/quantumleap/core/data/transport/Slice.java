@@ -1,6 +1,6 @@
-package cz.quantumleap.core.persistence.transport;
+package cz.quantumleap.core.data.transport;
 
-import cz.quantumleap.core.persistence.transport.NamedTable.Column;
+import cz.quantumleap.core.data.transport.NamedTable.Column;
 
 import java.util.Iterator;
 import java.util.List;

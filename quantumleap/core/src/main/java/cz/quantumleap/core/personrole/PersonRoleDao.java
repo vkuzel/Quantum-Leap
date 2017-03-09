@@ -1,8 +1,8 @@
 package cz.quantumleap.core.personrole;
 
-import cz.quantumleap.core.persistence.Dao;
-import cz.quantumleap.core.persistence.RecordAuditor;
-import cz.quantumleap.core.persistence.lookup.LookupDaoManager;
+import cz.quantumleap.core.data.DaoStub;
+import cz.quantumleap.core.data.LookupDaoManager;
+import cz.quantumleap.core.data.RecordAuditor;
 import cz.quantumleap.core.personrole.transport.PersonRole;
 import cz.quantumleap.core.tables.PersonRoleTable;
 import org.jooq.DSLContext;
@@ -13,7 +13,7 @@ import java.util.Optional;
 import static cz.quantumleap.core.tables.PersonRoleTable.PERSON_ROLE;
 
 @Repository
-public class PersonRoleDao extends Dao<PersonRoleTable> {
+public class PersonRoleDao extends DaoStub<PersonRoleTable> {
 
     protected PersonRoleDao(DSLContext dslContext, LookupDaoManager lookupDaoManager, RecordAuditor recordAuditor) {
         super(PERSON_ROLE, dslContext, lookupDaoManager, recordAuditor);

@@ -3,10 +3,10 @@ package cz.quantumleap.admin.person;
 import cz.quantumleap.admin.AdminController;
 import cz.quantumleap.admin.menu.AdminMenuItemDefinition;
 import cz.quantumleap.admin.menu.AdminMenuManager;
-import cz.quantumleap.core.persistence.transport.Slice;
-import cz.quantumleap.core.persistence.transport.SliceRequest;
+import cz.quantumleap.core.data.transport.SliceRequest;
 import cz.quantumleap.core.person.transport.Person;
 import cz.quantumleap.core.security.WebSecurityExpressionEvaluator;
+import cz.quantumleap.core.web.*;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,54 +20,65 @@ import javax.validation.Valid;
 
 @Controller
 @PreAuthorize("hasRole('ADMIN')")
-public class PersonController extends AdminController {
+public class PersonController extends AdminController implements LookupController {
 
-    private static final String TABLE_SLICE_MODEL_ATTRIBUTE_NAME = "tableSlice";
-    private static final String TABLE_NAME_MODEL_ATTRIBUTE_NAME = "tableName";
-    private static final String DETAIL_URL_MODEL_ATTRIBUTE_NAME = "detailUrl";
+    private static final String DETAIL_URL = "/person";
+    private static final String DETAIL_VIEW = "admin/person";
 
+    private static final String LIST_URL = "/people";
+    private static final String LIST_VIEW = "admin/people";
     private static final String TABLE_NAME = "people";
-    private static final String DETAIL_URL = "/person/";
 
-    private final PersonService personService;
+    private static final String DATABASE_TABLE_NAME = "core.person";
+    private static final String LOOKUP_LABELS_URL = "/people-lookup";
+    private static final String LOOKUP_LABELS_VIEW = "admin/people-lookup";
 
-    public PersonController(
-            AdminMenuManager adminMenuManager,
-            WebSecurityExpressionEvaluator webSecurityExpressionEvaluator,
-            PersonService personService
-    ) {
+    private final DetailController<Person> detailController;
+    private final ListController listController;
+    private final LookupController lookupController;
+
+    public PersonController(AdminMenuManager adminMenuManager, WebSecurityExpressionEvaluator webSecurityExpressionEvaluator, PersonService personService) {
         super(adminMenuManager, webSecurityExpressionEvaluator);
-        this.personService = personService;
+        this.detailController = new DefaultDetailController<>(Person.class, DETAIL_URL, DETAIL_VIEW, personService);
+        this.listController = new DefaultListController(TABLE_NAME, LIST_VIEW, DETAIL_URL, personService);
+        this.lookupController = new DefaultLookupController(DATABASE_TABLE_NAME, DETAIL_URL, LOOKUP_LABELS_URL, LOOKUP_LABELS_VIEW, personService);
+    }
+
+    @GetMapping(path = {DETAIL_URL, DETAIL_URL + "/{id}"})
+    public String showPerson(@PathVariable(required = false) Long id, Model model) {
+        return detailController.show(id, model);
+    }
+
+    @PostMapping(path = {DETAIL_URL, DETAIL_URL + "/{id}"})
+    public String savePerson(@Valid Person person, Errors errors) {
+        // TODO At this point I shouldn't provide Person with setName method if I don't want to change the value!
+        return detailController.save(person, errors);
     }
 
     @AdminMenuItemDefinition(title = "admin.menu.people", fontAwesomeIcon = "fa-user")
-    @GetMapping("/people")
+    @GetMapping(LIST_URL)
     public String showPeople(SliceRequest sliceRequest, Model model, HttpServletRequest request) {
-        Slice people = personService.findPeople(sliceRequest);
-        model.addAttribute(TABLE_SLICE_MODEL_ATTRIBUTE_NAME, people);
-        model.addAttribute(TABLE_NAME_MODEL_ATTRIBUTE_NAME, TABLE_NAME);
-        model.addAttribute(DETAIL_URL_MODEL_ATTRIBUTE_NAME, DETAIL_URL);
-
-        if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
-            return "admin/components/table";
-        }
-        return "admin/people";
+        return listController.list(sliceRequest, model, request);
     }
 
-    @GetMapping(path = {"/person", "/person/{id}"})
-    public String showPerson(@PathVariable(required = false) Long id, Model model) {
-        Person person = id != null ? personService.getPerson(id) : new Person();
-        model.addAttribute("person", person);
-        return "admin/person";
+    @Override
+    public boolean supportsTable(String databaseTableNameWithSchema) {
+        return lookupController.supportsTable(databaseTableNameWithSchema);
     }
 
-    @PostMapping("/person")
-    public String savePerson(@Valid Person person, Errors errors) {
-        // TODO At this point I shouldn't provide Person with setName method if I don't want to change the value!
-        if (errors.hasErrors()) {
-            return "admin/person";
-        }
-        long id = personService.savePerson(person).getId();
-        return "redirect:person/" + id;
+    @Override
+    public String getDetailUrl() {
+        return lookupController.getDetailUrl();
+    }
+
+    @Override
+    public String getLookupLabelsUrl() {
+        return lookupController.getLookupLabelsUrl();
+    }
+
+    @GetMapping(LOOKUP_LABELS_URL)
+    @Override
+    public String findLookupLabels(String filter, Model model, HttpServletRequest request) {
+        return lookupController.findLookupLabels(filter, model, request);
     }
 }

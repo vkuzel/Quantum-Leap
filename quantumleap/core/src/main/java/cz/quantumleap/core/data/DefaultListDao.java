@@ -1,9 +1,9 @@
-package cz.quantumleap.core.persistence;
+package cz.quantumleap.core.data;
 
-import cz.quantumleap.core.persistence.collection.LimitBuilder;
-import cz.quantumleap.core.persistence.collection.OrderBuilder;
-import cz.quantumleap.core.persistence.transport.Slice;
-import cz.quantumleap.core.persistence.transport.SliceRequest;
+import cz.quantumleap.core.data.collection.LimitBuilder;
+import cz.quantumleap.core.data.collection.OrderBuilder;
+import cz.quantumleap.core.data.transport.Slice;
+import cz.quantumleap.core.data.transport.SliceRequest;
 import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.Table;
@@ -15,16 +15,16 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 // TODO Table dao...?s
-public class DefaultCollectionDao<TABLE extends Table<? extends Record>> implements CollectionDao<TABLE> {
+public final class DefaultListDao<TABLE extends Table<? extends Record>> implements ListDao<TABLE> {
 
-    protected final Table<? extends Record> table;
-    protected final DSLContext dslContext;
+    private final Table<? extends Record> table;
+    private final DSLContext dslContext;
 
-    protected final OrderBuilder orderBuilder;
-    protected final LimitBuilder limitBuilder;
-    protected final MapperFactory mapperFactory;
+    private final OrderBuilder orderBuilder;
+    private final LimitBuilder limitBuilder;
+    private final MapperFactory mapperFactory;
 
-    public DefaultCollectionDao(Table<? extends Record> table, DSLContext dslContext, OrderBuilder orderBuilder, LimitBuilder limitBuilder, MapperFactory mapperFactory) {
+    public DefaultListDao(Table<? extends Record> table, DSLContext dslContext, OrderBuilder orderBuilder, LimitBuilder limitBuilder, MapperFactory mapperFactory) {
         this.table = table;
         this.dslContext = dslContext;
 

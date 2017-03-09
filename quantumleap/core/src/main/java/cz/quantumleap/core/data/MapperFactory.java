@@ -1,12 +1,11 @@
-package cz.quantumleap.core.persistence;
+package cz.quantumleap.core.data;
 
 import com.google.common.collect.*;
-import cz.quantumleap.core.persistence.lookup.LookupDaoManager;
-import cz.quantumleap.core.persistence.transport.Lookup;
-import cz.quantumleap.core.persistence.transport.NamedTable;
-import cz.quantumleap.core.persistence.transport.NamedTable.Column;
-import cz.quantumleap.core.persistence.transport.Slice;
-import cz.quantumleap.core.persistence.transport.SliceRequest;
+import cz.quantumleap.core.data.transport.Lookup;
+import cz.quantumleap.core.data.transport.NamedTable;
+import cz.quantumleap.core.data.transport.NamedTable.Column;
+import cz.quantumleap.core.data.transport.Slice;
+import cz.quantumleap.core.data.transport.SliceRequest;
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
@@ -122,7 +121,7 @@ public class MapperFactory {
                     .collect(Collectors.toList());
         }
 
-        private Column createColumn(List<? extends TableField<? extends Record, ?>> primaryKeyFields, org.jooq.Field<?> field, Sort sort) {
+        private Column createColumn(List<? extends TableField<? extends Record, ?>> primaryKeyFields, Field<?> field, Sort sort) {
 
             Class<?> fieldType = field.getType();
             String fieldName = field.getName();
@@ -214,18 +213,16 @@ public class MapperFactory {
 
         public Record unMap(T transport, Record record) {
             if (hasLookupGetters()) {
-                for (org.jooq.Field<?> field : record.fields()) {
-                    // TODO Filter out all audit fields...
+                for (Field<?> field : record.fields()) {
                     setValueToRecordField(transport, field, record);
                 }
             } else {
-                // TODO Filter out all audit fields...
                 record.from(transport);
             }
             return record;
         }
 
-        private void setValueToRecordField(T transport, org.jooq.Field<?> field, Record record) {
+        private void setValueToRecordField(T transport, Field<?> field, Record record) {
             Pair<Method, Class<?>> getter = getGetter(field);
             if (getter != null) {
 
@@ -237,7 +234,7 @@ public class MapperFactory {
                 }
 
                 if (value != null) {
-                    record.setValue((org.jooq.Field<Object>) field, value);
+                    record.setValue((Field<Object>) field, value);
                 }
             }
         }
@@ -254,7 +251,7 @@ public class MapperFactory {
             return transportGetters.values().stream().anyMatch(getter -> getter.getValue() == Lookup.class);
         }
 
-        private Pair<Method, Class<?>> getGetter(org.jooq.Field<?> field) {
+        private Pair<Method, Class<?>> getGetter(Field<?> field) {
             String fieldName = field.getName();
             String withoutPrefix = LOWER_UNDERSCORE.to(UPPER_CAMEL, fieldName.toLowerCase());
 
@@ -301,7 +298,7 @@ public class MapperFactory {
         public T map(Record record) {
             if (hasLookupSetters()) {
                 T transport = createTransportObject();
-                for (org.jooq.Field<?> field : record.fields()) {
+                for (Field<?> field : record.fields()) {
                     setValueToTransportMember(transport, record, field);
                 }
                 return transport;
@@ -310,7 +307,7 @@ public class MapperFactory {
             }
         }
 
-        private void setValueToTransportMember(T transport, Record record, org.jooq.Field<?> field) {
+        private void setValueToTransportMember(T transport, Record record, Field<?> field) {
             Pair<Method, Class<?>> setter = getSetter(field);
             if (setter != null) {
                 Class<?> paramType = setter.getValue();
@@ -359,7 +356,7 @@ public class MapperFactory {
             return transportSetters.values().stream().anyMatch(setter -> setter.getValue() == Lookup.class);
         }
 
-        private Pair<Method, Class<?>> getSetter(org.jooq.Field<?> field) {
+        private Pair<Method, Class<?>> getSetter(Field<?> field) {
             String fieldName = field.getName();
             String setterName = "set" + LOWER_UNDERSCORE.to(UPPER_CAMEL, fieldName.toLowerCase());
             return transportSetters.get(setterName);
