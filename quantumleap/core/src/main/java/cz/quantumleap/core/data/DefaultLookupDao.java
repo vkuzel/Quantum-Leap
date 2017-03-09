@@ -1,5 +1,6 @@
 package cz.quantumleap.core.data;
 
+import com.google.common.collect.ImmutableMap;
 import cz.quantumleap.core.data.detail.PrimaryKeyConditionBuilder;
 import org.jooq.*;
 
@@ -45,6 +46,11 @@ public final class DefaultLookupDao<TABLE extends Table<? extends Record>> imple
 
     @Override
     public Map<Object, String> fetchLabelsByFilter(String filter) {
-        throw new UnsupportedOperationException();
+        return ImmutableMap.of(
+                1, "Lookup data row 1",
+                2, "Lookup data row 2",
+                3, "Lookup data row 3",
+                4, "Filter: " + filter
+        );
     }
 }

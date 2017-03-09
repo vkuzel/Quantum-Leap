@@ -8,22 +8,19 @@ import java.util.Map;
 
 public final class DefaultLookupController implements LookupController {
 
+    private static final String DETAIL_URL_MODEL_ATTRIBUTE_NAME = "detailUrl";
     private static final String LOOKUP_LABELS_ATTRIBUTE_NAME = "lookupLabels";
-    private static final String AJAX_HEADER_NAME = "X-Requested-With";
-    private static final String AJAX_HEADER_VALUE = "XMLHttpRequest";
     private static final String LOOKUP_LABELS_VIEW = "admin/components/lookup-labels";
 
     private final String supportedDatabaseTableNameWithSchema;
     private final String detailUrl;
     private final String lookupLabelsUrl;
-    private final String lookupLabelsView;
     private final LookupService lookupService;
 
-    public DefaultLookupController(String supportedDatabaseTableNameWithSchema, String detailUrl, String lookupLabelsUrl, String lookupLabelsView, LookupService lookupService) {
+    public DefaultLookupController(String supportedDatabaseTableNameWithSchema, String detailUrl, String lookupLabelsUrl, LookupService lookupService) {
         this.supportedDatabaseTableNameWithSchema = supportedDatabaseTableNameWithSchema;
         this.detailUrl = detailUrl;
         this.lookupLabelsUrl = lookupLabelsUrl;
-        this.lookupLabelsView = lookupLabelsView;
         this.lookupService = lookupService;
     }
 
@@ -45,13 +42,10 @@ public final class DefaultLookupController implements LookupController {
     @Override
     public String findLookupLabels(String filter, Model model, HttpServletRequest request) {
 
+        model.addAttribute(DETAIL_URL_MODEL_ATTRIBUTE_NAME, detailUrl);
         Map<Object, String> lookupLabels = lookupService.findLookupLabels(filter);
         model.addAttribute(LOOKUP_LABELS_ATTRIBUTE_NAME, lookupLabels);
 
-        if (AJAX_HEADER_VALUE.equals(request.getHeader(AJAX_HEADER_NAME))) {
-            return LOOKUP_LABELS_VIEW;
-        }
-
-        return lookupLabelsView;
+        return LOOKUP_LABELS_VIEW;
     }
 }

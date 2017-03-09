@@ -31,7 +31,6 @@ public class PersonController extends AdminController implements LookupControlle
 
     private static final String DATABASE_TABLE_NAME = "core.person";
     private static final String LOOKUP_LABELS_URL = "/people-lookup";
-    private static final String LOOKUP_LABELS_VIEW = "admin/people-lookup";
 
     private final DetailController<Person> detailController;
     private final ListController listController;
@@ -41,7 +40,7 @@ public class PersonController extends AdminController implements LookupControlle
         super(adminMenuManager, webSecurityExpressionEvaluator);
         this.detailController = new DefaultDetailController<>(Person.class, DETAIL_URL, DETAIL_VIEW, personService);
         this.listController = new DefaultListController(TABLE_NAME, LIST_VIEW, DETAIL_URL, personService);
-        this.lookupController = new DefaultLookupController(DATABASE_TABLE_NAME, DETAIL_URL, LOOKUP_LABELS_URL, LOOKUP_LABELS_VIEW, personService);
+        this.lookupController = new DefaultLookupController(DATABASE_TABLE_NAME, DETAIL_URL, LOOKUP_LABELS_URL, personService);
     }
 
     @GetMapping(path = {DETAIL_URL, DETAIL_URL + "/{id}"})

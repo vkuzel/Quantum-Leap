@@ -22,7 +22,7 @@ $('.btn-load-more').click(function (event) {
 
     var url = urlUtils.replaceQueryParam(this.href, 'offset', newOffset);
 
-    $.get(url, {offset: newOffset}, function(html) {
+    $.get(url, {offset: newOffset}, function (html) {
         var result = $(html);
 
         var tHead = result.find('thead');
@@ -35,4 +35,50 @@ $('.btn-load-more').click(function (event) {
     });
 
     return false;
+});
+
+$('.lookup :text').each(function () {
+    var labelInput = $(this);
+    var wrapper = labelInput.parents('.lookup');
+    var idInput = wrapper.find(':hidden');
+    var lookupButton = wrapper.find('button');
+
+    labelInput.blur(function () {
+        setTimeout(function() {
+            wrapper.removeClass('open');
+        }, 250);
+    });
+
+    var labelsRequestTimeout = null;
+
+    labelInput.keyup(function () {
+        var lookupLabelsUrl = labelInput.attr('data-lookup-labels-url');
+        var filter = labelInput.val();
+
+        if (labelsRequestTimeout) {
+            clearTimeout(labelsRequestTimeout);
+            labelsRequestTimeout = null;
+        }
+
+        labelsRequestTimeout = setTimeout(function () {
+            $.get(lookupLabelsUrl, {filter: filter}, function (html) {
+                var result = $(html);
+
+                result.find('a').click(function () {
+                    var a = $(this);
+                    var id = a.attr('data-id');
+                    console.log('a', a, id);
+                    if (id) {
+                        idInput.val(id);
+                        labelInput.val(a.html());
+                        console.log(id, a.html());
+                    }
+                    wrapper.removeClass('open');
+                });
+
+                wrapper.find('ul').replaceWith(result);
+                wrapper.addClass('open');
+            });
+        }, 300);
+    });
 });

@@ -31,7 +31,6 @@ public class RoleController extends AdminController implements LookupController 
 
     private static final String DATABASE_TABLE_NAME = "core.role";
     private static final String LOOKUP_LABELS_URL = "/roles-lookup";
-    private static final String LOOKUP_LABELS_VIEW = "admin/roles-lookup";
 
     private final DetailController<Role> detailController;
     private final ListController listController;
@@ -41,7 +40,7 @@ public class RoleController extends AdminController implements LookupController 
         super(adminMenuManager, webSecurityExpressionEvaluator);
         this.detailController = new DefaultDetailController<>(Role.class, DETAIL_URL, DETAIL_VIEW, roleService);
         this.listController = new DefaultListController(TABLE_NAME, LIST_VIEW, DETAIL_URL, roleService);
-        this.lookupController = new DefaultLookupController(DATABASE_TABLE_NAME, DETAIL_URL, LOOKUP_LABELS_URL, LOOKUP_LABELS_VIEW, roleService);
+        this.lookupController = new DefaultLookupController(DATABASE_TABLE_NAME, DETAIL_URL, LOOKUP_LABELS_URL, roleService);
     }
 
     @GetMapping(path = {DETAIL_URL, DETAIL_URL + "/{id}"})

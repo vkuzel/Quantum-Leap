@@ -1,0 +1,23 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+</head>
+<body>
+<!--/*
+    Template params:
+        detailUrl
+        lookupLabels ... Id, label map.
+*/-->
+<ul class="dropdown-menu" role="menu"
+    th:assert="${detailUrl},${lookupLabels}"
+    th:remove="all-but-first">
+    <li role="presentation" th:each="lookupLabel : ${lookupLabels}">
+        <a role="menuitem" tabindex="-1" href="#" th:data-id="${lookupLabel.key}" th:text="${lookupLabel.value}">Lookup label</a>
+    </li>
+    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">CSS</a></li>
+    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">JavaScript</a></li>
+    <li role="presentation" class="divider"></li>
+    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">About Us</a></li>
+</ul>
+</body>
+</html>

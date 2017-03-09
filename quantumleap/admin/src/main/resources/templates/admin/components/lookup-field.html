@@ -1,0 +1,24 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+</head>
+<body>
+<!--/*
+    Template params:
+        databaseTableNameWithSchema ... Used to identify the lookup and to get controller from LookupControllerManager.
+        fieldId ... Id of input field.
+        field ... Field of type Lookup.
+*/-->
+<div th:assert="${field}" th:object="${field}" class="lookup dropdown">
+    <input type="hidden" th:value="*{id}">
+    <div class="input-group" th:with="lookupLabelsUrl=${@lookupControllerManager.getControllerForTable(databaseTableNameWithSchema).getLookupLabelsUrl()}">
+        <input type="text" th:assert="${fieldId}" th:id="${fieldId}" th:value="*{label}" class="form-control" th:data-lookup-labels-url="@{${lookupLabelsUrl}}">
+        <span class="input-group-btn">
+            <button class="btn btn-default" type="button"><i class="fa fa-search"></i></button>
+        </span>
+    </div>
+    <ul class="dropdown-menu" role="menu">
+    </ul>
+</div>
+</body>
+</html>
