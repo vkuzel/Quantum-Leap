@@ -17,7 +17,7 @@ import static cz.quantumleap.core.tables.PersonRoleTable.PERSON_ROLE;
 public class PersonRoleDao extends DaoStub<PersonRoleTable> {
 
     protected PersonRoleDao(DSLContext dslContext, LookupDaoManager lookupDaoManager, RecordAuditor recordAuditor) {
-        super(PERSON_ROLE, null, dslContext, lookupDaoManager, recordAuditor);
+        super(PERSON_ROLE, null, s -> null, dslContext, lookupDaoManager, recordAuditor);
     }
 
     public Optional<PersonRole> fetchById(long personId, long roleId) {

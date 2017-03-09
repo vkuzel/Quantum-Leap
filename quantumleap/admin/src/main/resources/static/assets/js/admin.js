@@ -43,6 +43,10 @@ $('.lookup :text').each(function () {
     var idInput = wrapper.find(':hidden');
     var lookupButton = wrapper.find('button');
 
+    lookupButton.click(function () {
+        $('#personIdModal').modal();
+    });
+
     labelInput.blur(function () {
         setTimeout(function() {
             wrapper.removeClass('open');
@@ -54,6 +58,10 @@ $('.lookup :text').each(function () {
     labelInput.keyup(function () {
         var lookupLabelsUrl = labelInput.attr('data-lookup-labels-url');
         var filter = labelInput.val();
+
+        if (!filter) {
+            return;
+        }
 
         if (labelsRequestTimeout) {
             clearTimeout(labelsRequestTimeout);

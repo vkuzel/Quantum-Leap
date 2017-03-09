@@ -6,11 +6,13 @@
 <!--/*
     Template params:
         databaseTableNameWithSchema ... Used to identify the lookup and to get controller from LookupControllerManager.
+        fieldName ... Name of input field.
         fieldId ... Id of input field.
         field ... Field of type Lookup.
+        modalTitle ... Title of lookup modal window.
 */-->
 <div th:assert="${field}" th:object="${field}" class="lookup dropdown">
-    <input type="hidden" th:value="*{id}">
+    <input type="hidden" th:assert="${fieldName}" th:name="${fieldName}" th:value="*{id}">
     <div class="input-group" th:with="lookupLabelsUrl=${@lookupControllerManager.getControllerForTable(databaseTableNameWithSchema).getLookupLabelsUrl()}">
         <input type="text" th:assert="${fieldId}" th:id="${fieldId}" th:value="*{label}" class="form-control" th:data-lookup-labels-url="@{${lookupLabelsUrl}}">
         <span class="input-group-btn">
@@ -19,6 +21,23 @@
     </div>
     <ul class="dropdown-menu" role="menu">
     </ul>
+
+    <div th:id="|${fieldId}Modal|" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title" th:assert="${modalTitle}" th:text="${modalTitle}">Modal Title</h4>
+                </div>
+                <div class="modal-body">
+                    <p>Some text in the modal.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 </body>
 </html>

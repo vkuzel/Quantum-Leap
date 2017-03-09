@@ -21,3 +21,7 @@ label {
 .table-cells-bordered td:last-child {
   border-right: none;
 }
+.dropdown-menu > li.disableditem {
+  padding: 3px 20px;
+  color: #999;
+}

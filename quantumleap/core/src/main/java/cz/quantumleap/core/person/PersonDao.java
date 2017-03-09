@@ -16,7 +16,7 @@ import static cz.quantumleap.core.tables.PersonTable.PERSON;
 public class PersonDao extends DaoStub<PersonTable> {
 
     protected PersonDao(DSLContext dslContext, LookupDaoManager lookupDaoManager, RecordAuditor recordAuditor) {
-        super(PERSON, PERSON.NAME.coalesce(PERSON.EMAIL), dslContext, lookupDaoManager, recordAuditor);
+        super(PERSON, PERSON.NAME.coalesce(PERSON.EMAIL), s -> PERSON.NAME.startsWith(s).or(PERSON.EMAIL.startsWith(s)), dslContext, lookupDaoManager, recordAuditor);
     }
 
     public Optional<Person> fetchByEmail(String email) {

@@ -11,6 +11,7 @@ import org.jooq.*;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
 
 public class DaoStub<TABLE extends Table<? extends Record>> implements DetailDao<TABLE>, ListDao<TABLE>, LookupDao<TABLE> {
 
@@ -26,7 +27,7 @@ public class DaoStub<TABLE extends Table<? extends Record>> implements DetailDao
     protected final ListDao<TABLE> listDao;
     protected final LookupDao<TABLE> lookupDao;
 
-    protected DaoStub(TABLE table, Field<String> lookupLabelField, DSLContext dslContext, LookupDaoManager lookupDaoManager, RecordAuditor recordAuditor) {
+    protected DaoStub(TABLE table, Field<String> lookupLabelField, Function<String, Condition> filterConditionBuilder, DSLContext dslContext, LookupDaoManager lookupDaoManager, RecordAuditor recordAuditor) {
         this.dslContext = dslContext;
         this.table = table;
 
@@ -37,7 +38,7 @@ public class DaoStub<TABLE extends Table<? extends Record>> implements DetailDao
 
         detailDao = new DefaultDetailDao<>(table, dslContext, primaryKeyConditionBuilder, mapperFactory, recordAuditor);
         listDao = new DefaultListDao<>(table, dslContext, orderBuilder, limitBuilder, mapperFactory);
-        lookupDao = new DefaultLookupDao<>(table, lookupLabelField, dslContext, primaryKeyConditionBuilder);
+        lookupDao = new DefaultLookupDao<>(table, lookupLabelField, dslContext, filterConditionBuilder, primaryKeyConditionBuilder);
     }
 
     public <T> Optional<T> fetchById(Object id, Class<T> type) {
