@@ -30,7 +30,8 @@ public class RoleController extends AdminController implements LookupController 
     private static final String TABLE_NAME = "roles";
 
     private static final String DATABASE_TABLE_NAME = "core.role";
-    private static final String LOOKUP_LABELS_URL = "/roles-lookup";
+    private static final String LOOKUP_LABELS_URL = "/roles-lookup-labels";
+    private static final String LOOKUP_LIST_URL = "/roles-lookup";
 
     private final DetailController<Role> detailController;
     private final ListController listController;
@@ -40,7 +41,7 @@ public class RoleController extends AdminController implements LookupController 
         super(adminMenuManager, webSecurityExpressionEvaluator);
         this.detailController = new DefaultDetailController<>(Role.class, DETAIL_URL, DETAIL_VIEW, roleService);
         this.listController = new DefaultListController(TABLE_NAME, LIST_VIEW, DETAIL_URL, roleService);
-        this.lookupController = new DefaultLookupController(DATABASE_TABLE_NAME, DETAIL_URL, LOOKUP_LABELS_URL, roleService);
+        this.lookupController = new DefaultLookupController(TABLE_NAME, DATABASE_TABLE_NAME, DETAIL_URL, LOOKUP_LABELS_URL, LOOKUP_LIST_URL, roleService);
     }
 
     @GetMapping(path = {DETAIL_URL, DETAIL_URL + "/{id}"})
@@ -74,9 +75,20 @@ public class RoleController extends AdminController implements LookupController 
         return lookupController.getLookupLabelsUrl();
     }
 
+    @Override
+    public String getLookupListUrl() {
+        return lookupController.getLookupListUrl();
+    }
+
     @GetMapping(LOOKUP_LABELS_URL)
     @Override
     public String findLookupLabels(String filter, Model model, HttpServletRequest request) {
         return lookupController.findLookupLabels(filter, model, request);
+    }
+
+    @GetMapping(LOOKUP_LIST_URL)
+    @Override
+    public String lookupList(SliceRequest sliceRequest, Model model, HttpServletRequest request) {
+        return lookupController.lookupList(sliceRequest, model, request);
     }
 }

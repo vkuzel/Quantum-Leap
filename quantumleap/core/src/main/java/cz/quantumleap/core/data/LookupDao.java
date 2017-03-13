@@ -6,7 +6,7 @@ import org.jooq.Table;
 import java.util.Map;
 import java.util.Set;
 
-public interface LookupDao<TABLE extends Table<? extends Record>> {
+public interface LookupDao<TABLE extends Table<? extends Record>> extends ListDao<TABLE> {
 
     TABLE getTable();
 

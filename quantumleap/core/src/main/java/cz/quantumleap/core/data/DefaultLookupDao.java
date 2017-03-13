@@ -1,6 +1,8 @@
 package cz.quantumleap.core.data;
 
 import cz.quantumleap.core.data.detail.PrimaryKeyConditionBuilder;
+import cz.quantumleap.core.data.transport.Slice;
+import cz.quantumleap.core.data.transport.SliceRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.*;
 
@@ -16,15 +18,21 @@ public final class DefaultLookupDao<TABLE extends Table<? extends Record>> imple
     private final TABLE table;
     private final Field<String> labelField;
     private final DSLContext dslContext;
+
     private final Function<String, Condition> filterConditionBuilder;
     private final PrimaryKeyConditionBuilder primaryKeyConditionBuilder;
 
-    public DefaultLookupDao(TABLE table, Field<String> labelField, DSLContext dslContext, Function<String, Condition> filterConditionBuilder, PrimaryKeyConditionBuilder primaryKeyConditionBuilder) {
+    private final ListDao<TABLE> listDao;
+
+    public DefaultLookupDao(TABLE table, Field<String> labelField, DSLContext dslContext, Function<String, Condition> filterConditionBuilder, PrimaryKeyConditionBuilder primaryKeyConditionBuilder, ListDao<TABLE> listDao) {
         this.table = table;
         this.labelField = labelField;
         this.dslContext = dslContext;
+
         this.filterConditionBuilder = filterConditionBuilder;
         this.primaryKeyConditionBuilder = primaryKeyConditionBuilder;
+
+        this.listDao = listDao;
     }
 
     public TABLE getTable() {
@@ -70,5 +78,10 @@ public final class DefaultLookupDao<TABLE extends Table<? extends Record>> imple
                 .orderBy(labelField.asc())
                 .limit(MAX_FILTERED_ROWS)
                 .fetchMap(Record2::value1, Record2::value2);
+    }
+
+    @Override
+    public Slice fetchSlice(SliceRequest sliceRequest) {
+        return listDao.fetchSlice(sliceRequest);
     }
 }

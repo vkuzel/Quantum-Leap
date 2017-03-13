@@ -13,16 +13,17 @@
 */-->
 <div th:assert="${field}" th:object="${field}" class="lookup dropdown">
     <input type="hidden" th:assert="${fieldName}" th:name="${fieldName}" th:value="*{id}">
-    <div class="input-group" th:with="lookupLabelsUrl=${@lookupControllerManager.getControllerForTable(databaseTableNameWithSchema).getLookupLabelsUrl()}">
-        <input type="text" th:assert="${fieldId}" th:id="${fieldId}" th:value="*{label}" class="form-control" th:data-lookup-labels-url="@{${lookupLabelsUrl}}">
+    <div class="input-group"
+         th:with="lookupController=${@lookupControllerManager.getControllerForTable(databaseTableNameWithSchema)}">
+        <input type="text" th:assert="${fieldId}" th:id="${fieldId}" th:value="*{label}" class="form-control" th:data-lookup-labels-url="@{${lookupController.getLookupLabelsUrl()}}">
         <span class="input-group-btn">
-            <button class="btn btn-default" type="button"><i class="fa fa-search"></i></button>
+            <button class="btn btn-default" type="button" th:data-lookup-list-url="@{${lookupController.getLookupListUrl()}}"><i class="fa fa-search"></i></button>
         </span>
     </div>
     <ul class="dropdown-menu" role="menu">
     </ul>
 
-    <div th:id="|${fieldId}Modal|" class="modal fade" role="dialog">
+    <div class="modal fade" role="dialog">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">

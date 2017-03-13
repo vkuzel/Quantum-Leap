@@ -19,7 +19,7 @@ public class DefaultOrderBuilder implements OrderBuilder {
     }
 
     @Override
-    public List<SortField<?>> build(Sort sort) {
+    public List<SortField<?>> build(Sort sort) { // TODO It is public api (sort of) so make this optional...
         List<SortField<?>> sortFields = Lists.newArrayList();
 
         if (sort != null) {

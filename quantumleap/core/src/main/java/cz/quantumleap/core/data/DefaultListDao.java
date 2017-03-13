@@ -40,7 +40,7 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
         return dslContext.selectFrom(table)
                 .orderBy(orderBuilder.build(request.getSort()))
                 .limit(request.getOffset(), Math.min(request.getSize() + 1, SliceRequest.MAX_ITEMS))
-                .fetchInto(mapperFactory.createSliceMapper(sliceRequest))
+                .fetchInto(mapperFactory.createSliceMapper(request)) // TODO Request?
                 .intoSlice();
     }
 

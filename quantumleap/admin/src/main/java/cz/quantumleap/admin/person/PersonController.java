@@ -30,7 +30,8 @@ public class PersonController extends AdminController implements LookupControlle
     private static final String TABLE_NAME = "people";
 
     private static final String DATABASE_TABLE_NAME = "core.person";
-    private static final String LOOKUP_LABELS_URL = "/people-lookup";
+    private static final String LOOKUP_LABELS_URL = "/people-lookup-labels";
+    private static final String LOOKUP_LIST_URL = "/people-lookup";
 
     private final DetailController<Person> detailController;
     private final ListController listController;
@@ -40,7 +41,7 @@ public class PersonController extends AdminController implements LookupControlle
         super(adminMenuManager, webSecurityExpressionEvaluator);
         this.detailController = new DefaultDetailController<>(Person.class, DETAIL_URL, DETAIL_VIEW, personService);
         this.listController = new DefaultListController(TABLE_NAME, LIST_VIEW, DETAIL_URL, personService);
-        this.lookupController = new DefaultLookupController(DATABASE_TABLE_NAME, DETAIL_URL, LOOKUP_LABELS_URL, personService);
+        this.lookupController = new DefaultLookupController(TABLE_NAME, DATABASE_TABLE_NAME, DETAIL_URL, LOOKUP_LABELS_URL, LOOKUP_LIST_URL, personService);
     }
 
     @GetMapping(path = {DETAIL_URL, DETAIL_URL + "/{id}"})
@@ -75,9 +76,20 @@ public class PersonController extends AdminController implements LookupControlle
         return lookupController.getLookupLabelsUrl();
     }
 
+    @Override
+    public String getLookupListUrl() {
+        return lookupController.getLookupListUrl();
+    }
+
     @GetMapping(LOOKUP_LABELS_URL)
     @Override
     public String findLookupLabels(String filter, Model model, HttpServletRequest request) {
         return lookupController.findLookupLabels(filter, model, request);
+    }
+
+    @GetMapping(LOOKUP_LIST_URL)
+    @Override
+    public String lookupList(SliceRequest sliceRequest, Model model, HttpServletRequest request) {
+        return lookupController.lookupList(sliceRequest, model, request);
     }
 }

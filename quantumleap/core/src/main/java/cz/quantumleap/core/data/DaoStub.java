@@ -38,7 +38,7 @@ public class DaoStub<TABLE extends Table<? extends Record>> implements DetailDao
 
         detailDao = new DefaultDetailDao<>(table, dslContext, primaryKeyConditionBuilder, mapperFactory, recordAuditor);
         listDao = new DefaultListDao<>(table, dslContext, orderBuilder, limitBuilder, mapperFactory);
-        lookupDao = new DefaultLookupDao<>(table, lookupLabelField, dslContext, filterConditionBuilder, primaryKeyConditionBuilder);
+        lookupDao = new DefaultLookupDao<>(table, lookupLabelField, dslContext, filterConditionBuilder, primaryKeyConditionBuilder, listDao);
     }
 
     public <T> Optional<T> fetchById(Object id, Class<T> type) {
