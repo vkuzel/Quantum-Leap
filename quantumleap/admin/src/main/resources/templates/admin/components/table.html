@@ -13,37 +13,29 @@
        th:with="urlBuilder=${T(org.springframework.web.servlet.support.ServletUriComponentsBuilder)}">
     <thead>
     <tr>
-        <th th:object="${tableSlice.getIdColumn()}"
-            th:with="direction=*{order} ? (*{order.direction.isAscending()} ? 'asc' : 'desc') : null"
-            th:class="${direction} ? ('sorting_' + ${direction}) : 'sorting'">
-            <a th:with="sortValue=*{name} + (${direction} and ${direction} == 'asc' ? ';desc' : '')"
-               th:href="${urlBuilder.fromCurrentRequest().replaceQueryParam('sort', '__${sortValue}__').replaceQueryParam('offset').toUriString()}">#</a>
-        </th>
         <th th:each="column : ${tableSlice.getColumns()}"
             th:object="${column}"
             th:class="*{order} ? (*{order.direction.isAscending()} ? 'sorting_asc' : 'sorting_desc') : 'sorting'">
             <a th:with="sortValue=*{name} + (*{order} and *{order.direction.isAscending()} ? ';desc' : '')"
                th:href="${urlBuilder.fromCurrentRequest().replaceQueryParam('sort', '__${sortValue}__').replaceQueryParam('offset').build()}"
                th:assert="${tableName}"
-               th:text="#{|admin.table.${tableName}.*{name}|}">Column name</a>
+               th:text="${column.primaryKey} ? '#' : #{|admin.table.${tableName}.*{name}|}">Column name</a>
         </th>
     </tr>
     </thead>
     <tbody th:remove="all-but-first">
     <tr th:each="row : ${tableSlice}">
-        <td class="id-data-cell">
-            <a th:assert="${detailUrl}"
-               th:href="@{|${detailUrl}/${row['id']}|}"
-               th:text="${row['id']}">id</a>
-        </td>
         <td th:each="column : ${tableSlice.getColumns()}">
-            <span th:if="${column.type != T(cz.quantumleap.core.data.transport.Lookup)}"
-                  th:text="${{row['__${column.name}__']}}"
+            <a th:if="${column.primaryKey}"
+               th:href="@{|${detailUrl}/${row.get(column)}|}"
+               th:text="${{row.get(column)}}">id</a>
+            <span th:if="${!column.primaryKey && column.type != T(cz.quantumleap.core.data.transport.Lookup)}"
+                  th:text="${{row.get(column)}}"
                   th:remove="tag">Standard value</span>
             <a th:if="${column.type == T(cz.quantumleap.core.data.transport.Lookup)}"
-               th:with="detailUrl=${@lookupControllerManager.getControllerForTable(row['__${column.name}__'].databaseTableNameWithSchema).getDetailUrl()}"
-               th:href="|${detailUrl}/${row['__${column.name}__'].id}|"
-               th:text="${{row['__${column.name}__'].label}}">Lookup value</a>
+               th:with="detailUrl=${@lookupControllerManager.getControllerForTable(row.get(column).databaseTableNameWithSchema).getDetailUrl()}"
+               th:href="|${detailUrl}/${row.get(column).id}|"
+               th:text="${{row.get(column).label}}">Lookup value</a>
         </td>
     </tr>
     <tr>

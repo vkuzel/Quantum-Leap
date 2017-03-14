@@ -14,19 +14,24 @@ public class LookupDaoManager {
 
     private final ApplicationContext applicationContext;
 
-    private Map<Table<? extends Record>, LookupDao> lookupDaoMap;
+    private Map<Table<? extends Record>, LookupDao<Table<? extends Record>>> lookupDaoMap;
 
     public LookupDaoManager(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
     }
 
-    public LookupDao getDaoForTable(Table<Record> table) {
+    public LookupDao<Table<? extends Record>> getDaoForTable(Table<? extends Record> table) {
         return lookupDaoMap.get(table);
     }
 
     @PostConstruct
     public void initializeLookupDaoMap() {
         Map<String, LookupDao> beans = applicationContext.getBeansOfType(LookupDao.class);
-        lookupDaoMap = beans.values().stream().collect(Collectors.toMap(LookupDao::getTable, bean -> bean));
+        lookupDaoMap = beans.values().stream().collect(Collectors.toMap(LookupDao::getTable, this::toGenericDao));
+    }
+
+    @SuppressWarnings("unchecked")
+    private LookupDao<Table<? extends Record>> toGenericDao(LookupDao lookupDao) {
+        return (LookupDao<Table<? extends Record>>) lookupDao;
     }
 }

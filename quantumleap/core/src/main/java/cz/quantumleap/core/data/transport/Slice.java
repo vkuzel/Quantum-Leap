@@ -5,9 +5,8 @@ import cz.quantumleap.core.data.transport.NamedTable.Column;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
-public class Slice implements Iterable<Map<String, Object>>  {
+public class Slice implements Iterable<Map<Column, Object>>  {
 
     private final NamedTable table;
     private final SliceRequest sliceRequest;
@@ -23,22 +22,16 @@ public class Slice implements Iterable<Map<String, Object>>  {
         return table.getName();
     }
 
-    // TODO More like getIdColumns... and move it to table
-    public Column getIdColumn() {
-        // TODO This is mess!
-        return table.getColumns().stream().filter(Column::isIdentifier).findAny().orElse(table.getColumns().get(0));
-    }
-
     public List<Column> getColumns() {
-        return table.getColumns().stream().filter(column -> !column.isIdentifier()).collect(Collectors.toList());
+        return table.getColumns();
     }
 
-    public List<Map<String, Object>> getRows() {
+    public List<Map<Column, Object>> getRows() {
         return table.getRows();
     }
 
     @Override
-    public Iterator<Map<String, Object>> iterator() {
+    public Iterator<Map<Column, Object>> iterator() {
         return table.iterator();
     }
 

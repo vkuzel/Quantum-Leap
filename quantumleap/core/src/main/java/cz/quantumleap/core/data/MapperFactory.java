@@ -16,7 +16,10 @@ import org.springframework.data.domain.Sort;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -29,7 +32,7 @@ public class MapperFactory {
     private final Table<? extends Record> table;
     private final LookupDaoManager lookupDaoManager;
 
-    private Map<String, Pair<Table<?>, LookupDao>> lookupDaos;
+    private Map<String, TableLookupDao> lookupDaos;
 
     public MapperFactory(Table<? extends Record> table, LookupDaoManager lookupDaoManager) {
         this.table = table;
@@ -48,28 +51,51 @@ public class MapperFactory {
         return new TransportMapper<T>(transportType);
     }
 
-    private Map<String, Pair<Table<?>, LookupDao>> getLookupDaos() {
+    private Map<String, TableLookupDao> getLookupDaos() {
         Predicate<ForeignKey<? extends Record, ?>> singleFieldOnly = foreignKey ->
                 foreignKey.getFields().size() == 1;
 
-        Map<String, Pair<Table<?>, LookupDao>> lookupDaos = new HashMap<>();
+        Map<String, TableLookupDao> lookupDaos = new HashMap<>();
 
         table.getReferences().stream()
                 .filter(singleFieldOnly)
                 .forEach(foreignKey -> {
                     TableField<? extends Record, ?> field = foreignKey.getFields().get(0);
                     Table<?> table = foreignKey.getKey().getTable();
-                    LookupDao lookupDao = lookupDaoManager.getDaoForTable((Table<Record>) table);
+                    LookupDao<Table<? extends Record>> lookupDao = lookupDaoManager.getDaoForTable(table);
 
                     if (lookupDao != null) {
-                        lookupDaos.putIfAbsent(field.getName(), Pair.of(table, lookupDao));
+                        lookupDaos.put(field.getName(), new TableLookupDao(table, lookupDao));
                     }
                 });
 
         return lookupDaos;
     }
 
-    private Pair<Table<?>, LookupDao> getLookupDao(String fieldName) {
+    private static class TableLookupDao {
+
+        private final Table<?> table;
+        private final LookupDao<Table<? extends Record>> dao;
+
+        private TableLookupDao(Table<?> table, LookupDao<Table<? extends Record>> dao) {
+            this.table = table;
+            this.dao = dao;
+        }
+
+        private LookupDao<Table<? extends Record>> getDao() {
+            return dao;
+        }
+
+        private String getDatabaseTableNameWithSchema() {
+            String name = table.getName();
+            if (table.getSchema() != null) {
+                name = table.getSchema().getName() + "." + name;
+            }
+            return name;
+        }
+    }
+
+    private TableLookupDao getTableLookupDao(String fieldName) {
         if (lookupDaos == null) {
             lookupDaos = getLookupDaos();
         }
@@ -86,7 +112,7 @@ public class MapperFactory {
 
         private SliceMapper(SliceRequest sliceRequest) {
             this.sliceRequest = sliceRequest;
-            this.namedTableMapper = new NamedTableMapper(sliceRequest.getSort());
+            this.namedTableMapper = new NamedTableMapper(sliceRequest.getSort(), sliceRequest.getSize());
         }
 
         @Override
@@ -106,34 +132,39 @@ public class MapperFactory {
 
     public class NamedTableMapper implements RecordHandler<Record> {
 
-        private List<Column> columns;
-        private List<Map<String, Object>> rows = new ArrayList<>();
-        private Map<String, Pair<Table<?>, LookupDao>> lookupDaoMap = Maps.newHashMap();
+        private final List<Column> columns;
+        private final List<Map<Column, Object>> rows;
 
-        private NamedTableMapper(Sort sort) {
+        private final SetMultimap<Column, Object> referenceIds = HashMultimap.create();
+
+        private final Map<String, TableLookupDao> lookupDaoMap = Maps.newHashMap();
+
+        private NamedTableMapper(Sort sort, int expectedSize) {
             columns = createColumns(sort);
+            rows = Lists.newArrayListWithExpectedSize(expectedSize);
         }
 
         private List<Column> createColumns(Sort sort) {
+
             List<? extends TableField<? extends Record, ?>> primaryKeyFields = getPrimaryKeyFields();
+
             return Stream.of(table.fields())
-                    .map(field -> createColumn(primaryKeyFields, field, sort))
+                    .map(field -> createColumn(field, primaryKeyFields.contains(field), sort))
                     .collect(Collectors.toList());
         }
 
-        private Column createColumn(List<? extends TableField<? extends Record, ?>> primaryKeyFields, Field<?> field, Sort sort) {
-
+        private Column createColumn(Field<?> field, boolean primaryKey, Sort sort) {
             Class<?> fieldType = field.getType();
             String fieldName = field.getName();
             Sort.Order order = sort != null ? sort.getOrderFor(field.getName()) : null;
 
-            Pair<Table<?>, LookupDao> lookupDao = getLookupDao(fieldName);
-            if (lookupDao != null) {
+            TableLookupDao tableLookupDao = getTableLookupDao(fieldName);
+            if (tableLookupDao != null) {
                 fieldType = Lookup.class;
-                lookupDaoMap.put(fieldName, lookupDao);
+                lookupDaoMap.put(fieldName, tableLookupDao);
             }
 
-            return new Column(fieldType, fieldName, primaryKeyFields.contains(field), order);
+            return new Column(fieldType, fieldName, primaryKey, order);
         }
 
         private List<? extends TableField<? extends Record, ?>> getPrimaryKeyFields() {
@@ -145,21 +176,31 @@ public class MapperFactory {
 
         @Override
         public void next(Record record) {
-            rows.add(record.intoMap());
+
+            Object[] values = record.intoArray();
+
+            Map<Column, Object> row = Maps.newHashMapWithExpectedSize(values.length);
+
+            for (int i = 0; i < values.length; i++) {
+                Column column = columns.get(i);
+                Object value = values[i];
+
+                row.put(column, value);
+
+                if (column.getType() == Lookup.class) {
+                    referenceIds.put(column, value);
+                }
+            }
+
+            rows.add(row);
         }
 
         public NamedTable intoTable() {
 
             if (!lookupDaoMap.isEmpty()) {
 
-                Set<String> lookupFieldNames = lookupDaoMap.keySet();
-
-                SetMultimap<String, Object> referenceIds = HashMultimap.create();
-                rows.forEach(row -> lookupFieldNames.forEach(fieldName -> referenceIds.put(fieldName, row.get(fieldName))));
-
-                HashBasedTable<String, Object, String> lookupLabels = fetchLookupLabels(referenceIds);
-
-                List<Map<String, Object>> rowsWithLookups = convertRowToRowWithLookups(lookupFieldNames, lookupLabels);
+                HashBasedTable<Object, Column, String> lookupLabels = fetchLookupLabels();
+                List<Map<Column, Object>> rowsWithLookups = convertRowsToRowsWithLookups(lookupLabels);
 
                 return new NamedTable(table.getName(), columns, rowsWithLookups);
             } else {
@@ -168,46 +209,45 @@ public class MapperFactory {
         }
 
         @NotNull
-        private HashBasedTable<String, Object, String> fetchLookupLabels(SetMultimap<String, Object> referenceIds) {
-            HashBasedTable<String, Object, String> referenceLabels = HashBasedTable.create();
-            for (String fieldName : referenceIds.keys()) {
-                Pair<Table<?>, LookupDao> lookupDao = getLookupDao(fieldName);
+        private HashBasedTable<Object, Column, String> fetchLookupLabels() {
 
-                Map<Object, String> labels = lookupDao.getValue().fetchLabelsById(referenceIds.get(fieldName));
-                labels.forEach((referenceId, label) -> referenceLabels.put(fieldName, referenceId, label));
+            HashBasedTable<Object, Column, String> referenceLabels = HashBasedTable.create();
+            for (Column column : referenceIds.keys()) {
+                // TODO Revisit this getTableLookupDao by name...
+                TableLookupDao tableLookupDao = getTableLookupDao(column.getName());
+
+                Map<Object, String> labels = tableLookupDao.getDao().fetchLabelsById(referenceIds.get(column));
+                labels.forEach((referenceId, label) -> referenceLabels.put(referenceId, column, label));
             }
+
             return referenceLabels;
         }
 
-        private List<Map<String, Object>> convertRowToRowWithLookups(Set<String> lookupFieldNames, HashBasedTable<String, Object, String> referenceLabels) {
-            List<Map<String, Object>> rowsWithLookups = Lists.newArrayListWithExpectedSize(rows.size());
-            for (Map<String, Object> row : rows) {
-                Map<String, Object> rowWithLookups = Maps.newHashMapWithExpectedSize(row.size());
-                for (Map.Entry<String, Object> entry : row.entrySet()) {
-                    String fieldName = entry.getKey();
-                    if (lookupFieldNames.contains(entry.getKey())) {
-                        Object referenceId = entry.getValue();
-                        rowWithLookups.put(fieldName, new Lookup(
-                                referenceId,
-                                referenceLabels.get(fieldName, referenceId),
-                                getDatabaseTableNameWithSchema(lookupDaoMap.get(fieldName).getKey())
+        private List<Map<Column, Object>> convertRowsToRowsWithLookups(HashBasedTable<Object, Column, String> lookupLabels) {
+
+            List<Map<Column, Object>> rowsWithLookups = Lists.newArrayListWithExpectedSize(rows.size());
+            for (Map<Column, Object> row : rows) {
+
+                Map<Column, Object> rowWithLookups = Maps.newHashMapWithExpectedSize(row.size());
+
+                row.forEach((column, value) -> {
+                    if (column.getType() == Lookup.class) {
+                        rowWithLookups.put(column, new Lookup(
+                                value,
+                                lookupLabels.get(value, column),
+                                // TODO Get rid of this column.getName()
+                                lookupDaoMap.get(column.getName()).getDatabaseTableNameWithSchema()
                         ));
                     } else {
-                        rowWithLookups.put(entry.getKey(), entry.getValue());
+                        rowWithLookups.put(column, value);
                     }
-                }
+                });
+
                 rowsWithLookups.add(rowWithLookups);
             }
+
             return rowsWithLookups;
         }
-    }
-
-    private String getDatabaseTableNameWithSchema(Table<?> table) {
-        String name = table.getName();
-        if (table.getSchema() != null) {
-            name = table.getSchema().getName() + "." + name;
-        }
-        return name;
     }
 
     public class TransportUnMapper<T> {
@@ -326,12 +366,12 @@ public class MapperFactory {
                     if (referenceId != null) {
                         String fieldName = field.getName();
 
-                        Pair<Table<?>, LookupDao> lookupDao = getLookupDao(fieldName);
-                        Validate.notNull(lookupDao, "LookupDao for field " + fieldName + " was not found! Trying to set to " + transport.getClass().getSimpleName());
+                        TableLookupDao tableLookupDao = getTableLookupDao(fieldName);
+                        Validate.notNull(tableLookupDao, "LookupDao for field " + fieldName + " was not found! Trying to set to " + transport.getClass().getSimpleName());
 
-                        String label = lookupDao.getValue().fetchLabelById(referenceId);
+                        String label = tableLookupDao.getDao().fetchLabelById(referenceId);
 
-                        value = new Lookup(referenceId, label, lookupDao.getKey().getName());
+                        value = new Lookup(referenceId, label, tableLookupDao.getDatabaseTableNameWithSchema());
                     }
                 } else {
                     value = record.getValue(field, paramType);

@@ -7,14 +7,13 @@ import java.util.List;
 import java.util.Map;
 
 // Actually, this class has name NamedTable because of name collision with jooq.Table
-public class NamedTable implements Iterable<Map<String, Object>> {
+public class NamedTable implements Iterable<Map<NamedTable.Column, Object>> {
 
     private final String name;
     private final List<Column> columns;
-    // TODO Re-do this to Map<Column, Object>
-    private final List<Map<String, Object>> rows;
+    private final List<Map<Column, Object>> rows;
 
-    public NamedTable(String name, List<Column> columns, List<Map<String, Object>> rows) {
+    public NamedTable(String name, List<Column> columns, List<Map<Column, Object>> rows) {
         this.name = name;
         this.columns = columns;
         this.rows = rows;
@@ -28,12 +27,12 @@ public class NamedTable implements Iterable<Map<String, Object>> {
         return columns;
     }
 
-    public List<Map<String, Object>> getRows() {
+    public List<Map<Column, Object>> getRows() {
         return rows;
     }
 
     @Override
-    public Iterator<Map<String, Object>> iterator() {
+    public Iterator<Map<Column, Object>> iterator() {
         return rows.iterator();
     }
 
@@ -41,13 +40,13 @@ public class NamedTable implements Iterable<Map<String, Object>> {
 
         private final Class<?> type;
         private final String name;
-        private final boolean identifier;
+        private final boolean primaryKey;
         private final Sort.Order order;
 
-        public Column(Class<?> type, String name, boolean identifier, Sort.Order order) {
+        public Column(Class<?> type, String name, boolean primaryKey, Sort.Order order) {
             this.type = type;
             this.name = name;
-            this.identifier = identifier;
+            this.primaryKey = primaryKey;
             this.order = order;
         }
 
@@ -59,8 +58,8 @@ public class NamedTable implements Iterable<Map<String, Object>> {
             return name;
         }
 
-        public boolean isIdentifier() {
-            return identifier;
+        public boolean isPrimaryKey() {
+            return primaryKey;
         }
 
         public Sort.Order getOrder() {
