@@ -42,5 +42,4 @@ public class Slice<ROW> implements Iterable<ROW>  {
     public SliceRequest extend() {
         return canExtend ? sliceRequest.extend() : null;
     }
-
 }
