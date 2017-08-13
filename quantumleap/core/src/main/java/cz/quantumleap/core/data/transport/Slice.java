@@ -1,25 +1,25 @@
 package cz.quantumleap.core.data.transport;
 
-import cz.quantumleap.core.data.transport.NamedTable.Column;
+import cz.quantumleap.core.data.transport.Table.Column;
 
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-public class Slice implements Iterable<Map<Column, Object>>  {
+public class Slice<ROW> implements Iterable<ROW>  {
 
-    private final NamedTable table;
+    private final Table table;
     private final SliceRequest sliceRequest;
     private final boolean canExtend;
 
-    public Slice(NamedTable table, SliceRequest sliceRequest, boolean canExtend) {
+    public Slice(Table table, SliceRequest sliceRequest, boolean canExtend) {
         this.table = table;
         this.sliceRequest = sliceRequest;
         this.canExtend = canExtend;
     }
 
     public String getName() {
-        return table.getName();
+        return table.getDatabaseTableNameWithSchema();
     }
 
     public List<Column> getColumns() {
@@ -31,7 +31,7 @@ public class Slice implements Iterable<Map<Column, Object>>  {
     }
 
     @Override
-    public Iterator<Map<Column, Object>> iterator() {
+    public Iterator<ROW> iterator() {
         return table.iterator();
     }
 

@@ -4,8 +4,17 @@ import cz.quantumleap.core.data.transport.Lookup;
 
 public class PersonRole {
 
-    private Lookup personId;
-    private Lookup roleId;
+    private Long id;
+    private Lookup personId = new Lookup();
+    private Lookup roleId = new Lookup();
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public Lookup getPersonId() {
         return personId;

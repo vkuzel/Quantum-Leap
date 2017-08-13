@@ -21,14 +21,16 @@ public final class DefaultLookupController implements LookupController {
     private final String tableName;
     private final String supportedDatabaseTableNameWithSchema;
     private final String detailUrl;
+    private final String lookupLabelUrl;
     private final String lookupLabelsUrl;
     private final String lookupListUrl;
     private final LookupService lookupService;
 
-    public DefaultLookupController(String tableName, String supportedDatabaseTableNameWithSchema, String detailUrl, String lookupLabelsUrl, String lookupListUrl, LookupService lookupService) {
+    public DefaultLookupController(String tableName, String supportedDatabaseTableNameWithSchema, String detailUrl, String lookupLabelUrl, String lookupLabelsUrl, String lookupListUrl, LookupService lookupService) {
         this.tableName = tableName;
         this.supportedDatabaseTableNameWithSchema = supportedDatabaseTableNameWithSchema;
         this.detailUrl = detailUrl;
+        this.lookupLabelUrl = lookupLabelUrl;
         this.lookupLabelsUrl = lookupLabelsUrl;
         this.lookupListUrl = lookupListUrl;
         this.lookupService = lookupService;
@@ -45,6 +47,11 @@ public final class DefaultLookupController implements LookupController {
     }
 
     @Override
+    public String getLookupLabelUrl() {
+        return lookupLabelUrl;
+    }
+
+    @Override
     public String getLookupLabelsUrl() {
         return lookupLabelsUrl;
     }
@@ -55,8 +62,12 @@ public final class DefaultLookupController implements LookupController {
     }
 
     @Override
-    public String findLookupLabels(String filter, Model model, HttpServletRequest request) {
+    public String resolveLookupLabel(String id) {
+        return lookupService.findLookupLabel(id);
+    }
 
+    @Override
+    public String findLookupLabels(String filter, Model model, HttpServletRequest request) {
         model.addAttribute(DETAIL_URL_MODEL_ATTRIBUTE_NAME, detailUrl);
         Map<Object, String> lookupLabels = lookupService.findLookupLabels(filter);
         model.addAttribute(LOOKUP_LABELS_ATTRIBUTE_NAME, lookupLabels);
@@ -66,7 +77,6 @@ public final class DefaultLookupController implements LookupController {
 
     @Override
     public String lookupList(SliceRequest sliceRequest, Model model, HttpServletRequest request) {
-
         Slice slice = lookupService.findSlice(sliceRequest);
         model.addAttribute(TABLE_SLICE_MODEL_ATTRIBUTE_NAME, slice);
         model.addAttribute(TABLE_NAME_MODEL_ATTRIBUTE_NAME, tableName);

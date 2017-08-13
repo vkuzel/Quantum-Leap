@@ -4,10 +4,10 @@
 package cz.quantumleap.core;
 
 
-import javax.annotation.Generated;
-
 import org.jooq.Sequence;
 import org.jooq.impl.SequenceImpl;
+
+import javax.annotation.Generated;
 
 
 /**
@@ -32,6 +32,11 @@ public class Sequences {
      * The sequence <code>core.person_id_seq</code>
      */
     public static final Sequence<Long> PERSON_ID_SEQ = new SequenceImpl<Long>("person_id_seq", Core.CORE, org.jooq.impl.SQLDataType.BIGINT.nullable(false));
+
+    /**
+     * The sequence <code>core.person_role_id_seq</code>
+     */
+    public static final Sequence<Long> PERSON_ROLE_ID_SEQ = new SequenceImpl<Long>("person_role_id_seq", Core.CORE, org.jooq.impl.SQLDataType.BIGINT.nullable(false));
 
     /**
      * The sequence <code>core.role_id_seq</code>

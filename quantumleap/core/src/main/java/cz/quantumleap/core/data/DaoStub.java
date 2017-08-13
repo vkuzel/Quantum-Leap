@@ -4,6 +4,7 @@ import cz.quantumleap.core.data.detail.PrimaryKeyConditionBuilder;
 import cz.quantumleap.core.data.list.DefaultOrderBuilder;
 import cz.quantumleap.core.data.list.LimitBuilder;
 import cz.quantumleap.core.data.list.OrderBuilder;
+import cz.quantumleap.core.data.mapper.MapperFactory;
 import cz.quantumleap.core.data.transport.Slice;
 import cz.quantumleap.core.data.transport.SliceRequest;
 import org.jooq.*;

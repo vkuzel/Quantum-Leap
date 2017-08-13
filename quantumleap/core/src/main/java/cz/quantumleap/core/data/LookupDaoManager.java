@@ -1,5 +1,6 @@
 package cz.quantumleap.core.data;
 
+import cz.quantumleap.core.data.mapper.MapperUtils;
 import org.jooq.Record;
 import org.jooq.Table;
 import org.springframework.context.ApplicationContext;
@@ -14,20 +15,20 @@ public class LookupDaoManager {
 
     private final ApplicationContext applicationContext;
 
-    private Map<Table<? extends Record>, LookupDao<Table<? extends Record>>> lookupDaoMap;
+    private Map<String, LookupDao<Table<? extends Record>>> lookupDaoMap;
 
     public LookupDaoManager(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
     }
 
-    public LookupDao<Table<? extends Record>> getDaoForTable(Table<? extends Record> table) {
-        return lookupDaoMap.get(table);
+    public LookupDao<Table<? extends Record>> getDaoByDatabaseTableNameWithSchema(String databaseTableNameWithSchema) {
+        return lookupDaoMap.get(databaseTableNameWithSchema);
     }
 
     @PostConstruct
     public void initializeLookupDaoMap() {
         Map<String, LookupDao> beans = applicationContext.getBeansOfType(LookupDao.class);
-        lookupDaoMap = beans.values().stream().collect(Collectors.toMap(LookupDao::getTable, this::toGenericDao));
+        lookupDaoMap = beans.values().stream().collect(Collectors.toMap(dao -> MapperUtils.resolveDatabaseTableNameWithSchema(dao.getTable()), this::toGenericDao));
     }
 
     @SuppressWarnings("unchecked")

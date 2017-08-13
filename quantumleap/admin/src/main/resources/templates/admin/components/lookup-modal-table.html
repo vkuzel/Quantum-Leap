@@ -18,12 +18,14 @@
             <a th:with="sortValue=*{name} + (*{order} and *{order.direction.isAscending()} ? ';desc' : '')"
                th:href="${urlBuilder.fromCurrentRequest().replaceQueryParam('sort', '__${sortValue}__').replaceQueryParam('offset').build()}"
                th:assert="${tableName}"
-               th:text="#{|admin.table.${tableName}.*{name}|}">Column name</a>
+               th:text="${column.primaryKey} ? '#' : #{|admin.table.${tableName}.*{name}|}">Column name</a>
         </th>
     </tr>
     </thead>
     <tbody th:remove="all-but-first">
-    <tr th:each="row : ${tableSlice}">
+    <tr th:each="row : ${tableSlice}"
+        th:with="primaryKeyColumn=${tableSlice.getColumns().?[primaryKey].get(0)}"
+        th:data-id="${row.get(primaryKeyColumn)}">
         <td th:each="column : ${tableSlice.getColumns()}">
             <span th:if="${column.type != T(cz.quantumleap.core.data.transport.Lookup)}"
                   th:text="${{row.get(column)}}"

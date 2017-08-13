@@ -2,6 +2,7 @@ package cz.quantumleap.core.data;
 
 import cz.quantumleap.core.data.list.LimitBuilder;
 import cz.quantumleap.core.data.list.OrderBuilder;
+import cz.quantumleap.core.data.mapper.MapperFactory;
 import cz.quantumleap.core.data.transport.Slice;
 import cz.quantumleap.core.data.transport.SliceRequest;
 import org.jooq.DSLContext;
@@ -14,7 +15,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-// TODO Table dao...?s
 public final class DefaultListDao<TABLE extends Table<? extends Record>> implements ListDao<TABLE> {
 
     private final Table<? extends Record> table;
@@ -34,7 +34,6 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
     }
 
     public Slice fetchSlice(SliceRequest sliceRequest) {
-
         SliceRequest request = setDefaultOrder(sliceRequest);
 
         return dslContext.selectFrom(table)

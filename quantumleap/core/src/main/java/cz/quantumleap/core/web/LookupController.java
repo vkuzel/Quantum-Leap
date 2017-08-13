@@ -11,9 +11,13 @@ public interface LookupController {
 
     String getDetailUrl();
 
+    String getLookupLabelUrl();
+
     String getLookupLabelsUrl();
 
     String getLookupListUrl();
+
+    String resolveLookupLabel(String id);
 
     String findLookupLabels(String filter, Model model, HttpServletRequest request);
 

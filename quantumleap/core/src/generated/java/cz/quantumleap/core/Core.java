@@ -8,17 +8,15 @@ import cz.quantumleap.core.tables.IncrementTable;
 import cz.quantumleap.core.tables.PersonRoleTable;
 import cz.quantumleap.core.tables.PersonTable;
 import cz.quantumleap.core.tables.RoleTable;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import javax.annotation.Generated;
-
 import org.jooq.Catalog;
 import org.jooq.Sequence;
 import org.jooq.Table;
 import org.jooq.impl.SchemaImpl;
+
+import javax.annotation.Generated;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 
 /**
@@ -34,7 +32,7 @@ import org.jooq.impl.SchemaImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Core extends SchemaImpl {
 
-    private static final long serialVersionUID = 1271869749;
+    private static final long serialVersionUID = 1353909313;
 
     /**
      * The reference instance of <code>core</code>
@@ -88,6 +86,7 @@ public class Core extends SchemaImpl {
         return Arrays.<Sequence<?>>asList(
             Sequences.INCREMENT_ID_SEQ,
             Sequences.PERSON_ID_SEQ,
+            Sequences.PERSON_ROLE_ID_SEQ,
             Sequences.ROLE_ID_SEQ);
     }
 

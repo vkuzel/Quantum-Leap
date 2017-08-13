@@ -28,7 +28,7 @@ import java.util.List;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class PersonRoleTable extends TableImpl<PersonRoleRecord> {
 
-    private static final long serialVersionUID = 962972703;
+    private static final long serialVersionUID = -149685157;
 
     /**
      * The reference instance of <code>core.person_role</code>
@@ -42,6 +42,11 @@ public class PersonRoleTable extends TableImpl<PersonRoleRecord> {
     public Class<PersonRoleRecord> getRecordType() {
         return PersonRoleRecord.class;
     }
+
+    /**
+     * The column <code>core.person_role.id</code>.
+     */
+    public final TableField<PersonRoleRecord, Long> ID = createField("id", org.jooq.impl.SQLDataType.BIGINT.nullable(false).defaultValue(org.jooq.impl.DSL.field("nextval('core.person_role_id_seq'::regclass)", org.jooq.impl.SQLDataType.BIGINT)), this, "");
 
     /**
      * The column <code>core.person_role.person_id</code>.
@@ -87,8 +92,24 @@ public class PersonRoleTable extends TableImpl<PersonRoleRecord> {
      * {@inheritDoc}
      */
     @Override
+    public Identity<PersonRoleRecord, Long> getIdentity() {
+        return Keys.IDENTITY_PERSON_ROLE;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public UniqueKey<PersonRoleRecord> getPrimaryKey() {
+        return Keys.PERSON_ROLE_PKEY;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public List<UniqueKey<PersonRoleRecord>> getKeys() {
-        return Arrays.<UniqueKey<PersonRoleRecord>>asList(Keys.PERSON_ROLE_PERSON_ID_ROLE_ID_KEY);
+        return Arrays.<UniqueKey<PersonRoleRecord>>asList(Keys.PERSON_ROLE_PKEY, Keys.PERSON_ROLE_PERSON_ID_ROLE_ID_KEY);
     }
 
     /**

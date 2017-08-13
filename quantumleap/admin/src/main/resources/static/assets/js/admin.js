@@ -21,10 +21,10 @@ var urlUtils = {
 
 // TODO Add a support of multiple tables on a single page! Tables (and query string parameters) will be prefixed by a unique identifier (table name?).
 
-function TableControl(table) {
+function TableControl(table, tBodyListenersBinder) {
     var $table = $(table);
 
-    var instance = { // TODO tableControl
+    var tableControl = {
         $table: $table,
 
         $tHead: $table.find('thead'),
@@ -32,69 +32,73 @@ function TableControl(table) {
         $tFoot: $table.find('tfoot')
     };
 
-    instance.attachListeners = function () {
+    tableControl.bindListeners = function () {
 
-        var $loadMoreButton = instance.$tFoot.find('.btn-load-more');
-        $loadMoreButton.click(instance.fetchMore);
+        var $loadMoreButton = tableControl.$tFoot.find('.btn-load-more');
+        $loadMoreButton.click(tableControl.fetchMore);
 
-        var $sortButtons = instance.$tHead.find('a');
-        $sortButtons.click(instance.sort);
+        if (tBodyListenersBinder) {
+            tBodyListenersBinder(tableControl.$tBody);
+        }
+
+        var $sortButtons = tableControl.$tHead.find('a');
+        $sortButtons.click(tableControl.sort);
     };
 
-    instance.appendContent = function (table) {
+    tableControl.appendContent = function (table) {
         var $table = $(table);
 
         var $tHead = $table.find('thead');
         var $tBody = $table.find('tbody');
         var $tFoot = $table.find('tfoot');
 
-        instance.$tHead.replaceWith($tHead);
-        instance.$tHead = $tHead;
-        instance.$tBody.append($tBody.html());
-        instance.$tFoot.replaceWith($tFoot);
-        instance.$tFoot = $tFoot;
+        tableControl.$tHead.replaceWith($tHead);
+        tableControl.$tHead = $tHead;
+        tableControl.$tBody.append($tBody.html());
+        tableControl.$tFoot.replaceWith($tFoot);
+        tableControl.$tFoot = $tFoot;
 
-        instance.attachListeners(instance.$tHead, instance.$tFoot);
+        tableControl.bindListeners();
     };
 
-    instance.replaceContent = function (table) {
+    tableControl.replaceContent = function (table) {
         var $table = $(table);
 
         var $tHead = $table.find('thead');
         var $tBody = $table.find('tbody');
         var $tFoot = $table.find('tfoot');
 
-        instance.$tHead.replaceWith($tHead);
-        instance.$tHead = $tHead;
-        instance.$tBody.replaceWith($tBody);
-        instance.$tBody = $tBody;
-        instance.$tFoot.replaceWith($tFoot);
-        instance.$tFoot = $tFoot;
+        tableControl.$tHead.replaceWith($tHead);
+        tableControl.$tHead = $tHead;
+        tableControl.$tBody.replaceWith($tBody);
+        tableControl.$tBody = $tBody;
+        tableControl.$tFoot.replaceWith($tFoot);
+        tableControl.$tFoot = $tFoot;
 
-        instance.attachListeners(instance.$tHead, instance.$tFoot);
+        tableControl.bindListeners();
     };
 
-    instance.fetchMore = function () {
-        var offset = instance.$tBody.find('tr').length;
+    tableControl.fetchMore = function () {
+        var offset = tableControl.$tBody.find('tr').length;
 
         var url = urlUtils.removeQueryParams(this.href, 'size', 'offset');
 
-        $.get(url, {offset: offset}, instance.appendContent);
+        $.get(url, {offset: offset}, tableControl.appendContent);
 
         return false;
     };
 
-    instance.sort = function () {
-        var size = instance.$tBody.find('tr').length;
+    tableControl.sort = function () {
+        var size = tableControl.$tBody.find('tr').length;
 
         var url = urlUtils.removeQueryParams(this.href, 'size', 'offset');
 
-        $.get(url, {size: size}, instance.replaceContent);
+        $.get(url, {size: size}, tableControl.replaceContent);
 
         return false;
     };
 
-    instance.attachListeners(instance.$tHead, instance.$tFoot);
+    tableControl.bindListeners();
 }
 
 $('table.dataTable').each(function (i, table) {
@@ -118,7 +122,7 @@ function LookupControl(lookupField) {
         labelsRequestTimeout: null
     };
 
-    dropDownControl.attachListeners = function () {
+    dropDownControl.bindListeners = function () {
         lookupControl.$labelInput.keyup(dropDownControl.fetchLabels);
         lookupControl.$labelInput.blur(dropDownControl.fieldLostFocus);
     };
@@ -144,7 +148,7 @@ function LookupControl(lookupField) {
     dropDownControl.replaceDropdownContent = function (html) {
         var $dropDownReplacement = $(html).next('ul.dropdown-menu');
 
-        $dropDownReplacement.find('a').click(function () {
+        $dropDownReplacement.find('a[data-id]').click(function () {
             dropDownControl.selectDropdownItem(this);
         });
 
@@ -157,7 +161,6 @@ function LookupControl(lookupField) {
         dropDownControl.cancelRequestInProgress();
 
         var filter = lookupControl.$labelInput.val();
-
         if (!filter) {
             return;
         }
@@ -175,7 +178,7 @@ function LookupControl(lookupField) {
         }, 300);
     };
 
-    dropDownControl.attachListeners();
+    dropDownControl.bindListeners();
 
     var $lookupButton = $lookupField.find('button[data-lookup-list-url]');
     var $modal = $lookupField.find('div.modal');
@@ -183,19 +186,42 @@ function LookupControl(lookupField) {
     var modalControl = {
         $lookupButton: $lookupField.find('button[data-lookup-list-url]'),
         lookupListUrl: $lookupButton.attr('data-lookup-list-url'),
+        lookupLabelUrl: $lookupButton.attr('data-lookup-label-url'),
         $modal: $modal,
 
         $modalBody: $modal.find('.modal-body')
     };
 
-    modalControl.attachListeners = function () {
+    modalControl.bindListeners = function () {
         modalControl.$lookupButton.click(modalControl.fetchList);
+    };
+
+    modalControl.selectTableRow = function (tr) {
+        var $tr = $(tr);
+
+        var id = $tr.attr('data-id');
+        if (id) {
+            lookupControl.$idInput.val(id);
+            $.get(modalControl.lookupLabelUrl, {id: id}, function (label) {
+                lookupControl.$labelInput.val(label);
+            }).fail(function () {
+                lookupControl.$labelInput.val(id);
+            });
+        }
+
+        modalControl.$modal.modal('hide');
     };
 
     modalControl.replaceModalContent = function (html) {
         var $table = $(html).next('table');
 
-        new TableControl($table);
+        var tBodyListenersBinder = function ($tBody) {
+            $tBody.find('tr[data-id]').click(function () {
+                modalControl.selectTableRow(this);
+            });
+        };
+
+        new TableControl($table, tBodyListenersBinder);
         modalControl.$modalBody.empty().append($table);
 
         modalControl.$modal.modal();
@@ -205,105 +231,9 @@ function LookupControl(lookupField) {
         $.get(modalControl.lookupListUrl, {}, modalControl.replaceModalContent);
     };
 
-    modalControl.attachListeners();
+    modalControl.bindListeners();
 }
 
 $('div.lookup').each(function (i, lookupField) {
     new LookupControl(lookupField);
 });
-
-
-var lookupControlFactory = {
-    createLookupControl: function (lookupField) {
-        var $lookupField = $(lookupField);
-
-        var $idInput = $lookupField.find(':hidden');
-        var $labelInput = $lookupField.find(':text');
-
-        // drop down
-
-        var labelsUrl = $labelInput.attr('data-lookup-labels-url');
-        var $dropDown = $lookupField.find('ul.dropdown-menu');
-
-        var labelsRequestTimeout = null;
-
-        var cancelRequestInProgress = function () {
-            if (labelsRequestTimeout) {
-                clearTimeout(labelsRequestTimeout);
-                labelsRequestTimeout = null;
-            }
-        };
-
-        var selectDropdownItem = function (a) {
-            var $a = $(a);
-
-            var id = a.attr('data-id');
-            if (id) {
-                $idInput.val(id);
-                $labelInput.val(a.html());
-            }
-            $lookupField.removeClass('open');
-        };
-
-        var replaceDropdownContent = function (html) {
-            var $dropDownReplacement = $(html).next('ul.dropdown-menu');
-
-            $dropDownReplacement.find('a').click(function () {
-                selectDropdownItem(this);
-            });
-
-            $dropDown.replaceWith($dropDownReplacement);
-            $dropDown = $dropDownReplacement;
-            $lookupField.addClass('open');
-        };
-
-        var fetchLabels = function () {
-            cancelRequestInProgress();
-
-            var filter = $labelInput.val();
-
-            if (!filter) {
-                return;
-            }
-
-            labelsRequestTimeout = setTimeout(function () {
-                $.get(labelsUrl, {filter: filter}, replaceDropdownContent);
-            }, 300);
-        };
-
-        $labelInput.keyup(fetchLabels);
-
-        var fieldLostFocus = function () {
-            cancelRequestInProgress();
-
-            setTimeout(function () {
-                $lookupField.removeClass('open');
-            }, 300);
-        };
-
-        $labelInput.blur(fieldLostFocus);
-
-        // modal
-
-        var $lookupButton = $lookupField.find('button[data-lookup-list-url]');
-        var lookupListUrl = $lookupButton.attr('data-lookup-list-url');
-        var $modal = $lookupField.find('div.modal');
-
-        var $modalBody = $modal.find('.modal-body');
-
-        var replaceModalContent = function (html) {
-            var $table = $(html).next('table');
-
-            tableControlFactory.createTableControl($table);
-            $modalBody.empty().append($table);
-
-            $modal.modal();
-        };
-
-        var fetchList = function () {
-            $.get(lookupListUrl, {}, replaceModalContent);
-        };
-
-        $lookupButton.click(fetchList);
-    }
-};

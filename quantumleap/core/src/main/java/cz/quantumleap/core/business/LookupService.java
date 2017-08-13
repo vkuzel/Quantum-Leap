@@ -4,6 +4,7 @@ import java.util.Map;
 
 public interface LookupService extends ListService {
 
-    Map<Object, String> findLookupLabels(String filter);
+    String findLookupLabel(Object id);
 
+    Map<Object, String> findLookupLabels(String filter);
 }

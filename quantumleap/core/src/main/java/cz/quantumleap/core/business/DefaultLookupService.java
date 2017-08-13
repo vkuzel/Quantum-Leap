@@ -17,6 +17,11 @@ public final class DefaultLookupService implements LookupService {
     }
 
     @Override
+    public String findLookupLabel(Object id) {
+        return lookupDao.fetchLabelById(id);
+    }
+
+    @Override
     public Map<Object, String> findLookupLabels(String filter) {
         return lookupDao.fetchLabelsByFilter(filter);
     }

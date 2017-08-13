@@ -40,6 +40,7 @@ public class Keys {
 
     public static final Identity<IncrementRecord, Long> IDENTITY_INCREMENT = Identities0.IDENTITY_INCREMENT;
     public static final Identity<PersonRecord, Long> IDENTITY_PERSON = Identities0.IDENTITY_PERSON;
+    public static final Identity<PersonRoleRecord, Long> IDENTITY_PERSON_ROLE = Identities0.IDENTITY_PERSON_ROLE;
     public static final Identity<RoleRecord, Long> IDENTITY_ROLE = Identities0.IDENTITY_ROLE;
 
     // -------------------------------------------------------------------------
@@ -49,6 +50,7 @@ public class Keys {
     public static final UniqueKey<IncrementRecord> INCREMENT_PKEY = UniqueKeys0.INCREMENT_PKEY;
     public static final UniqueKey<PersonRecord> PERSON_PKEY = UniqueKeys0.PERSON_PKEY;
     public static final UniqueKey<PersonRecord> PERSON_EMAIL_KEY = UniqueKeys0.PERSON_EMAIL_KEY;
+    public static final UniqueKey<PersonRoleRecord> PERSON_ROLE_PKEY = UniqueKeys0.PERSON_ROLE_PKEY;
     public static final UniqueKey<PersonRoleRecord> PERSON_ROLE_PERSON_ID_ROLE_ID_KEY = UniqueKeys0.PERSON_ROLE_PERSON_ID_ROLE_ID_KEY;
     public static final UniqueKey<RoleRecord> ROLE_PKEY = UniqueKeys0.ROLE_PKEY;
     public static final UniqueKey<RoleRecord> ROLE_NAME_KEY = UniqueKeys0.ROLE_NAME_KEY;
@@ -67,6 +69,7 @@ public class Keys {
     private static class Identities0 extends AbstractKeys {
         public static Identity<IncrementRecord, Long> IDENTITY_INCREMENT = createIdentity(IncrementTable.INCREMENT, IncrementTable.INCREMENT.ID);
         public static Identity<PersonRecord, Long> IDENTITY_PERSON = createIdentity(PersonTable.PERSON, PersonTable.PERSON.ID);
+        public static Identity<PersonRoleRecord, Long> IDENTITY_PERSON_ROLE = createIdentity(PersonRoleTable.PERSON_ROLE, PersonRoleTable.PERSON_ROLE.ID);
         public static Identity<RoleRecord, Long> IDENTITY_ROLE = createIdentity(RoleTable.ROLE, RoleTable.ROLE.ID);
     }
 
@@ -74,6 +77,7 @@ public class Keys {
         public static final UniqueKey<IncrementRecord> INCREMENT_PKEY = createUniqueKey(IncrementTable.INCREMENT, "increment_pkey", IncrementTable.INCREMENT.ID);
         public static final UniqueKey<PersonRecord> PERSON_PKEY = createUniqueKey(PersonTable.PERSON, "person_pkey", PersonTable.PERSON.ID);
         public static final UniqueKey<PersonRecord> PERSON_EMAIL_KEY = createUniqueKey(PersonTable.PERSON, "person_email_key", PersonTable.PERSON.EMAIL);
+        public static final UniqueKey<PersonRoleRecord> PERSON_ROLE_PKEY = createUniqueKey(PersonRoleTable.PERSON_ROLE, "person_role_pkey", PersonRoleTable.PERSON_ROLE.ID);
         public static final UniqueKey<PersonRoleRecord> PERSON_ROLE_PERSON_ID_ROLE_ID_KEY = createUniqueKey(PersonRoleTable.PERSON_ROLE, "person_role_person_id_role_id_key", PersonRoleTable.PERSON_ROLE.PERSON_ID, PersonRoleTable.PERSON_ROLE.ROLE_ID);
         public static final UniqueKey<RoleRecord> ROLE_PKEY = createUniqueKey(RoleTable.ROLE, "role_pkey", RoleTable.ROLE.ID);
         public static final UniqueKey<RoleRecord> ROLE_NAME_KEY = createUniqueKey(RoleTable.ROLE, "role_name_key", RoleTable.ROLE.NAME);

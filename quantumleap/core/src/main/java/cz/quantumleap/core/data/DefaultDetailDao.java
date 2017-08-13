@@ -1,6 +1,7 @@
 package cz.quantumleap.core.data;
 
 import cz.quantumleap.core.data.detail.PrimaryKeyConditionBuilder;
+import cz.quantumleap.core.data.mapper.MapperFactory;
 import org.apache.commons.lang3.Validate;
 import org.jooq.*;
 
@@ -53,7 +54,6 @@ public final class DefaultDetailDao<TABLE extends Table<? extends Record>> imple
     }
 
     private <T> T insert(Record record, Class<T> resultType) {
-
         recordAuditor.onInsert(record);
 
         Map<? extends Field<?>, ?> changedValues = getChangedValues(record);
@@ -66,7 +66,6 @@ public final class DefaultDetailDao<TABLE extends Table<? extends Record>> imple
     }
 
     private <T> T update(Record record, Condition condition, Class<T> resultType) {
-
         recordAuditor.onUpdate(record);
 
         Map<Field<?>, Object> changedValues = getChangedValues(record);

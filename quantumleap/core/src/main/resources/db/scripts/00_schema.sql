@@ -21,6 +21,7 @@ CREATE TABLE core.person (
 );
 
 CREATE TABLE core.person_role (
+  id         BIGSERIAL PRIMARY KEY,
   person_id BIGINT NOT NULL REFERENCES core.person (id),
   role_id   BIGINT NOT NULL REFERENCES core.role (id),
   UNIQUE (person_id, role_id)

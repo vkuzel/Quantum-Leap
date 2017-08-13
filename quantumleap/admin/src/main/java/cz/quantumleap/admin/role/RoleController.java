@@ -14,6 +14,7 @@ import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -30,6 +31,7 @@ public class RoleController extends AdminController implements LookupController 
     private static final String TABLE_NAME = "roles";
 
     private static final String DATABASE_TABLE_NAME = "core.role";
+    private static final String LOOKUP_LABEL_URL = "/role-lookup-label";
     private static final String LOOKUP_LABELS_URL = "/roles-lookup-labels";
     private static final String LOOKUP_LIST_URL = "/roles-lookup";
 
@@ -41,7 +43,7 @@ public class RoleController extends AdminController implements LookupController 
         super(adminMenuManager, webSecurityExpressionEvaluator);
         this.detailController = new DefaultDetailController<>(Role.class, DETAIL_URL, DETAIL_VIEW, roleService);
         this.listController = new DefaultListController(TABLE_NAME, LIST_VIEW, DETAIL_URL, roleService);
-        this.lookupController = new DefaultLookupController(TABLE_NAME, DATABASE_TABLE_NAME, DETAIL_URL, LOOKUP_LABELS_URL, LOOKUP_LIST_URL, roleService);
+        this.lookupController = new DefaultLookupController(TABLE_NAME, DATABASE_TABLE_NAME, DETAIL_URL, LOOKUP_LABEL_URL, LOOKUP_LABELS_URL, LOOKUP_LIST_URL, roleService);
     }
 
     @GetMapping(path = {DETAIL_URL, DETAIL_URL + "/{id}"})
@@ -71,6 +73,11 @@ public class RoleController extends AdminController implements LookupController 
     }
 
     @Override
+    public String getLookupLabelUrl() {
+        return lookupController.getLookupLabelUrl();
+    }
+
+    @Override
     public String getLookupLabelsUrl() {
         return lookupController.getLookupLabelsUrl();
     }
@@ -78,6 +85,13 @@ public class RoleController extends AdminController implements LookupController 
     @Override
     public String getLookupListUrl() {
         return lookupController.getLookupListUrl();
+    }
+
+    @GetMapping(LOOKUP_LABEL_URL)
+    @ResponseBody
+    @Override
+    public String resolveLookupLabel(String id) {
+        return lookupController.resolveLookupLabel(id);
     }
 
     @GetMapping(LOOKUP_LABELS_URL)

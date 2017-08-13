@@ -15,9 +15,13 @@
     <input type="hidden" th:assert="${fieldName}" th:name="${fieldName}" th:value="*{id}">
     <div class="input-group"
          th:with="lookupController=${@lookupControllerManager.getControllerForTable(databaseTableNameWithSchema)}">
-        <input type="text" th:assert="${fieldId}" th:id="${fieldId}" th:value="*{label}" class="form-control" th:data-lookup-labels-url="@{${lookupController.getLookupLabelsUrl()}}">
+        <input type="text" th:assert="${fieldId}" th:id="${fieldId}" th:value="*{label}" class="form-control"
+               th:data-lookup-labels-url="@{${lookupController.getLookupLabelsUrl()}}" autocomplete="off">
         <span class="input-group-btn">
-            <button class="btn btn-default" type="button" th:data-lookup-list-url="@{${lookupController.getLookupListUrl()}}"><i class="fa fa-search"></i></button>
+            <button class="btn btn-default" type="button"
+                    th:data-lookup-list-url="@{${lookupController.getLookupListUrl()}}"
+                    th:data-lookup-label-url="@{${lookupController.getLookupLabelUrl()}}">
+                <i class="fa fa-search"></i></button>
         </span>
     </div>
     <ul class="dropdown-menu" role="menu">
