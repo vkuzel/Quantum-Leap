@@ -25,7 +25,7 @@
     </thead>
     <tbody th:remove="all-but-first">
     <tr th:each="row : ${tableSlice}">
-        <td th:each="column : ${tableSlice.getColumns()}">
+        <td th:each="column : ${tableSlice.getColumns()}" th:classappend="${column.primaryKey} ? 'primary-key'">
             <a th:if="${column.primaryKey}"
                th:href="@{|${detailUrl}/${row.get(column)}|}"
                th:text="${{row.get(column)}}">id</a>

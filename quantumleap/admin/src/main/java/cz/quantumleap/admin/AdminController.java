@@ -76,6 +76,7 @@ public abstract class AdminController {
         return true;
     }
 
+    // TODO I can move this to Javascript sessionStorage...
     private boolean fixActiveMenuItem(List<AdminMenuItem> adminMenuItems, HttpServletRequest request) {
         Object lastActivePath = request.getSession().getAttribute(LAST_ACTIVE_PATH);
         for (AdminMenuItem adminMenuItem : adminMenuItems) {

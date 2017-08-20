@@ -22,7 +22,7 @@ var urlUtils = {
     getQueryParam: function (url, name) {
         var regExp = new RegExp(name + "=([^&#]+)");
         var match = url.match(regExp);
-        return match != null ? match[1] : null;
+        return match !== null ? match[1] : null;
     },
     replaceQueryParam: function (url, name, value) {
         var regExp = new RegExp(name + '=[^&#]+');
@@ -122,7 +122,19 @@ function TableControl(table, tBodyListenersBinder) {
 }
 
 $('table.dataTable').each(function (i, table) {
-    new TableControl(table);
+    var tBodyListenersBinder = function ($tBody) {
+        $tBody.find('tr > td').click(function () {
+            var primaryKeyAnchors = $(this).parent().find('> td.primary-key > a');
+            var anchors = $(this).children('a');
+            if (anchors.length) {
+                window.location = anchors.first().attr('href');
+            } else if (primaryKeyAnchors.length) {
+                window.location = primaryKeyAnchors.first().attr('href');
+            }
+        });
+    };
+
+    new TableControl(table, tBodyListenersBinder);
 });
 
 function LookupControl(lookupField) {
