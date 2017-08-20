@@ -1,3 +1,23 @@
+// This function was extracted from sb-admin-2.js because that file also
+// contains initialization of metisMenu  javascript that is not used.
+$(window).bind("load resize", function () {
+    var topOffset = 50;
+    var width = (this.window.innerWidth > 0) ? this.window.innerWidth : this.screen.width;
+    if (width < 768) {
+        $('div.navbar-collapse').addClass('collapse');
+        topOffset = 100; // 2-row-menu
+    } else {
+        $('div.navbar-collapse').removeClass('collapse');
+    }
+
+    var height = ((this.window.innerHeight > 0) ? this.window.innerHeight : this.screen.height) - 1;
+    height = height - topOffset;
+    if (height < 1) height = 1;
+    if (height > topOffset) {
+        $("#page-wrapper").css("min-height", (height) + "px");
+    }
+});
+
 var urlUtils = {
     getQueryParam: function (url, name) {
         var regExp = new RegExp(name + "=([^&#]+)");

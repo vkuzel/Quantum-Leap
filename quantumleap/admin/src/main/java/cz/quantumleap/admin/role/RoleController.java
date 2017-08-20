@@ -56,7 +56,7 @@ public class RoleController extends AdminController implements LookupController 
         return detailController.save(role, errors);
     }
 
-    @AdminMenuItemDefinition(title = "admin.menu.roles", fontAwesomeIcon = "fa-id-card")
+    @AdminMenuItemDefinition(title = "admin.menu.roles", parentByTitle = "admin.menu.people", fontAwesomeIcon = "fa-id-card")
     @GetMapping(LIST_URL)
     public String showRoles(SliceRequest sliceRequest, Model model, HttpServletRequest request) {
         return listController.list(sliceRequest, model, request);

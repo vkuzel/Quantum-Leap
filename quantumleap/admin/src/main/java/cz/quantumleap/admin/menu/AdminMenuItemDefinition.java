@@ -8,6 +8,10 @@ public @interface AdminMenuItemDefinition {
 
     String title();
 
-    String fontAwesomeIcon() default "";
+    /**
+     * Identify parent menu item by its title. This may change in future.
+     */
+    String parentByTitle() default "";
 
+    String fontAwesomeIcon() default "";
 }

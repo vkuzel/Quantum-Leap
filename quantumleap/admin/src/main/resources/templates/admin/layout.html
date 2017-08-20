@@ -273,11 +273,14 @@
                             <!-- /input-group -->
                         </li>
                         <!--*/-->
-                        <li th:each="menuItem : ${adminMenuItems}">
-                            <!--<span sec:authorize="${menuItem.securityExpression}">exp</span>-->
-                            <a th:href="@{${menuItem.path}}"><i th:classappend="${menuItem.fontAwesomeIcon}" class="fa fa-fw"></i> <span th:text="#{${menuItem.title}}">Menu Item</span></a>
-                            <ul th:unless="${menuItem.children.empty}" th:remove="all-but-first" class="nav nav-second-level">
-                                <li th:each="secondLevelMenuItem : ${menuItem.children}">
+                        <li th:each="menuItem : ${adminMenuItems}" th:with="ItemState=${T(cz.quantumleap.admin.menu.AdminMenuItem.State)}" th:class="${menuItem.state == ItemState.OPEN || menuItem.state == ItemState.ACTIVE} ? 'active'">
+                            <a th:href="@{${menuItem.path}}">
+                                <i th:classappend="${menuItem.fontAwesomeIcon}" class="fa fa-fw"></i>
+                                <span th:text="#{${menuItem.title}}">Menu Item</span>
+                                <span th:unless="${menuItem.children.empty}" class="fa arrow"></span>
+                            </a>
+                            <ul th:unless="${menuItem.children.empty}" th:remove="all-but-first" class="nav nav-second-level collapse" th:classappend="${menuItem.state == ItemState.OPEN || menuItem.state == ItemState.ACTIVE} ? 'in'">
+                                <li th:each="secondLevelMenuItem : ${menuItem.children}" th:class="${secondLevelMenuItem.state == ItemState.OPEN || secondLevelMenuItem.state == ItemState.ACTIVE} ? 'active'">
                                     <a href="flot.html" th:href="@{${secondLevelMenuItem.path}}" th:text="#{${secondLevelMenuItem.title}}">Flot Charts</a>
                                 </li>
                                 <li>
@@ -926,9 +929,6 @@
 
     <script th:src="@{/webjars/jquery/1.11.1/jquery.min.js}"></script>
     <script th:src="@{/webjars/bootstrap/3.3.7/js/bootstrap.min.js}"></script>
-    <script th:src="@{/webjars/startbootstrap-sb-admin-2/3.3.7+1/js/sb-admin-2.js}"></script>
-
-    <script th:src="@{/webjars/metisMenu/1.1.3-1/metisMenu.min.js}"></script>
 
     <script th:src="@{/assets/js/admin.js}"></script>
 

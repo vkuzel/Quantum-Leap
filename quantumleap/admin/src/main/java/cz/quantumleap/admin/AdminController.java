@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public abstract class AdminController {
 
@@ -23,28 +23,38 @@ public abstract class AdminController {
     @ModelAttribute("adminMenuItems")
     public List<AdminMenuItem> getMenuItems(HttpServletRequest request, HttpServletResponse response) {
         List<AdminMenuItem> menuItems = adminMenuManager.getMenuItems();
-        return filterInaccessibleMenuItems(menuItems, request, response);
+        return filterInaccessibleMenuItemsAndSetState(menuItems, request, response);
     }
 
-    private List<AdminMenuItem> filterInaccessibleMenuItems(List<AdminMenuItem> adminMenuItems, HttpServletRequest request, HttpServletResponse response) {
-        return adminMenuItems.stream()
-                .filter(item -> evaluateItem(item, request, response))
-                .map(item -> filterChildren(item, request, response))
-                .collect(Collectors.toList());
+    private List<AdminMenuItem> filterInaccessibleMenuItemsAndSetState(List<AdminMenuItem> adminMenuItems, HttpServletRequest request, HttpServletResponse response) {
+        List<AdminMenuItem> items = new ArrayList<>(adminMenuItems.size());
+        for (AdminMenuItem adminMenuItem : adminMenuItems) {
+            if (!evaluateItem(adminMenuItem, request, response)) {
+                continue;
+            }
+
+            AdminMenuItem.Builder builder = AdminMenuItem.fromMenuItem(adminMenuItem);
+            if (adminMenuItem.getPaths().contains(request.getRequestURI())) {
+                builder.setState(AdminMenuItem.State.ACTIVE);
+            }
+            if (!adminMenuItem.getChildren().isEmpty()) {
+                List<AdminMenuItem> children = filterInaccessibleMenuItemsAndSetState(adminMenuItem.getChildren(), request, response);
+                for (AdminMenuItem child : children) {
+                    if (child.getState() == AdminMenuItem.State.ACTIVE) {
+                        builder.setState(AdminMenuItem.State.OPEN);
+                        break;
+                    }
+                }
+                builder.setChildren(children);
+            }
+
+            items.add(builder.build());
+        }
+        return items;
     }
 
     private boolean evaluateItem(AdminMenuItem adminMenuItem, HttpServletRequest request, HttpServletResponse response) {
         String securityExpression = adminMenuItem.getSecurityExpression();
         return securityExpression == null || webSecurityExpressionEvaluator.evaluate(securityExpression, request, response);
-    }
-
-    private AdminMenuItem filterChildren(AdminMenuItem adminMenuItem, HttpServletRequest request, HttpServletResponse response) {
-        if (!adminMenuItem.getChildren().isEmpty()) {
-            List<AdminMenuItem> filteredChildren = filterInaccessibleMenuItems(adminMenuItem.getChildren(), request, response);
-            if (adminMenuItem.getChildren().size() != filteredChildren.size()) {
-                return AdminMenuItem.fromMenuItem(adminMenuItem).setChildren(filteredChildren).build();
-            }
-        }
-        return adminMenuItem;
     }
 }

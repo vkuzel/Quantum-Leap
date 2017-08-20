@@ -51,7 +51,7 @@ public class PersonRoleController extends AdminController {
         return detailController.save(personRole, errors);
     }
 
-    @AdminMenuItemDefinition(title = "admin.menu.person-roles", fontAwesomeIcon = "fa-users")
+    @AdminMenuItemDefinition(title = "admin.menu.person-roles", parentByTitle = "admin.menu.people", fontAwesomeIcon = "fa-users")
     @GetMapping(LIST_URL)
     public String listPersonRoles(SliceRequest sliceRequest, Model model, HttpServletRequest request) {
         return listController.list(sliceRequest, model, request);

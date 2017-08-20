@@ -61,7 +61,7 @@ public class AdminControllerTest {
         assertThat(menuItems.size(), equalTo(1));
         AdminMenuItem menuItem = menuItems.get(0);
         assertThat(menuItem.getChildren().size(), equalTo(1));
-        assertThat(menuItem.getChildren().get(0), equalTo(accessibleMenuItem));
+        assertThat(menuItem.getChildren().get(0).getPaths(), equalTo(accessibleMenuItem.getPaths()));
     }
 
     private AdminMenuItem createMenuItem(String securityExpression, List<AdminMenuItem> children) {
@@ -70,7 +70,7 @@ public class AdminControllerTest {
         PreAuthorize preAuthorize = mock(PreAuthorize.class);
         doReturn(securityExpression).when(preAuthorize).value();
 
-        return new AdminMenuItem(requestMappingInfo, adminMenuItemDefinition, preAuthorize, children);
+        return new AdminMenuItem(requestMappingInfo, adminMenuItemDefinition, preAuthorize, AdminMenuItem.State.NONE, children);
 
     }
 }
