@@ -85,8 +85,9 @@ public class AdminMenuItem {
             return this;
         }
 
-        public void setState(State state) {
+        public Builder setState(State state) {
             this.state = state;
+            return this;
         }
 
         public AdminMenuItem build() {
