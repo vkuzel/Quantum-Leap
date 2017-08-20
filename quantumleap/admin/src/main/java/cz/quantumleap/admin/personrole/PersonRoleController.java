@@ -1,7 +1,6 @@
 package cz.quantumleap.admin.personrole;
 
 import cz.quantumleap.admin.AdminController;
-import cz.quantumleap.admin.menu.AdminMenuItemDefinition;
 import cz.quantumleap.admin.menu.AdminMenuManager;
 import cz.quantumleap.core.data.transport.SliceRequest;
 import cz.quantumleap.core.personrole.transport.PersonRole;
@@ -30,15 +29,17 @@ public class PersonRoleController extends AdminController {
 
     private static final String LIST_URL = "/person-roles";
     private static final String LIST_VIEW = "admin/person-roles";
-    private static final String TABLE_NAME = "person-role";
+    private static final String DATABASE_TABLE_NAME_WITH_SCHEMA = "core.person-role";
 
     private final DetailController<PersonRole> detailController;
     private final ListController listController;
 
+    // TODO Move this whole thing into PersonController!
+
     public PersonRoleController(AdminMenuManager adminMenuManager, WebSecurityExpressionEvaluator webSecurityExpressionEvaluator, PersonRoleService personRoleService) {
         super(adminMenuManager, webSecurityExpressionEvaluator);
         this.detailController = new DefaultDetailController<>(PersonRole.class, DETAIL_URL, DETAIL_VIEW, personRoleService);
-        this.listController = new DefaultListController(TABLE_NAME, LIST_VIEW, DETAIL_URL, personRoleService);
+        this.listController = new DefaultListController(DATABASE_TABLE_NAME_WITH_SCHEMA, LIST_VIEW, DETAIL_URL, personRoleService);
     }
 
     @GetMapping(path = {DETAIL_URL, DETAIL_URL + "/{id}"})
@@ -51,7 +52,6 @@ public class PersonRoleController extends AdminController {
         return detailController.save(personRole, errors);
     }
 
-    @AdminMenuItemDefinition(title = "admin.menu.person-roles", parentByTitle = "admin.menu.people", fontAwesomeIcon = "fa-users")
     @GetMapping(LIST_URL)
     public String listPersonRoles(SliceRequest sliceRequest, Model model, HttpServletRequest request) {
         return listController.list(sliceRequest, model, request);

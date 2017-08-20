@@ -5,7 +5,7 @@
 <body>
 <!--/*
     Template params:
-        tableName ... Used in column name message `admin.table.<tableName>.<columnName>'
+        databaseTableNameWithSchema ... Used in column name message `admin.table.<databaseTableNameWithSchema>.<columnName>'
         tableSlice ... TableSlice object.
 */-->
 <table class="table table-striped table-cells-bordered table-hover dataTable"
@@ -17,8 +17,8 @@
             th:class="*{order} ? (*{order.direction.isAscending()} ? 'sorting_asc' : 'sorting_desc') : 'sorting'">
             <a th:with="sortValue=*{name} + (*{order} and *{order.direction.isAscending()} ? ';desc' : '')"
                th:href="${urlBuilder.fromCurrentRequest().replaceQueryParam('sort', '__${sortValue}__').replaceQueryParam('offset').build()}"
-               th:assert="${tableName}"
-               th:text="${column.primaryKey} ? '#' : #{|admin.table.${tableName}.*{name}|}">Column name</a>
+               th:assert="${databaseTableNameWithSchema}"
+               th:text="${column.primaryKey} ? '#' : #{|admin.table.${databaseTableNameWithSchema}.*{name}|}">Column name</a>
         </th>
     </tr>
     </thead>

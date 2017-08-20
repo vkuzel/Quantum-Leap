@@ -39,17 +39,20 @@ var urlUtils = {
 
 // TODO Loaders, spinners?
 
-// TODO Add a support of multiple tables on a single page! Tables (and query string parameters) will be prefixed by a unique identifier (table name?).
-
 function TableControl(table, tBodyListenersBinder) {
     var $table = $(table);
 
     var tableControl = {
         $table: $table,
+        qualifier: $table.attr('data-qualifier'),
 
         $tHead: $table.find('thead'),
         $tBody: $table.find('tbody'),
         $tFoot: $table.find('tfoot')
+    };
+
+    var qualifyParamName = function (qualifier, paramName) {
+        return qualifier ? qualifier + '_' + paramName : paramName;
     };
 
     tableControl.bindListeners = function () {
@@ -101,7 +104,7 @@ function TableControl(table, tBodyListenersBinder) {
     tableControl.fetchMore = function () {
         var offset = tableControl.$tBody.find('tr').length;
 
-        var url = urlUtils.removeQueryParams(this.href, 'size', 'offset');
+        var url = urlUtils.removeQueryParams(this.href, qualifyParamName(tableControl.qualifier, 'size'), qualifyParamName(tableControl.qualifier, 'offset'));
 
         $.get(url, {offset: offset}, tableControl.appendContent);
 
@@ -111,7 +114,7 @@ function TableControl(table, tBodyListenersBinder) {
     tableControl.sort = function () {
         var size = tableControl.$tBody.find('tr').length;
 
-        var url = urlUtils.removeQueryParams(this.href, 'size', 'offset');
+        var url = urlUtils.removeQueryParams(this.href, qualifyParamName(tableControl.qualifier, 'size'), qualifyParamName(tableControl.qualifier, 'offset'));
 
         $.get(url, {size: size}, tableControl.replaceContent);
 

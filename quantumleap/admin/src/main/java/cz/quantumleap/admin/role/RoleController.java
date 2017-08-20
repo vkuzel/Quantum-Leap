@@ -28,9 +28,8 @@ public class RoleController extends AdminController implements LookupController 
 
     private static final String LIST_URL = "/roles";
     private static final String LIST_VIEW = "admin/roles";
-    private static final String TABLE_NAME = "roles";
+    private static final String DATABASE_TABLE_NAME_WITH_SCHEMA = "core.role";
 
-    private static final String DATABASE_TABLE_NAME = "core.role";
     private static final String LOOKUP_LABEL_URL = "/role-lookup-label";
     private static final String LOOKUP_LABELS_URL = "/roles-lookup-labels";
     private static final String LOOKUP_LIST_URL = "/roles-lookup";
@@ -42,8 +41,8 @@ public class RoleController extends AdminController implements LookupController 
     public RoleController(AdminMenuManager adminMenuManager, WebSecurityExpressionEvaluator webSecurityExpressionEvaluator, RoleService roleService) {
         super(adminMenuManager, webSecurityExpressionEvaluator);
         this.detailController = new DefaultDetailController<>(Role.class, DETAIL_URL, DETAIL_VIEW, roleService);
-        this.listController = new DefaultListController(TABLE_NAME, LIST_VIEW, DETAIL_URL, roleService);
-        this.lookupController = new DefaultLookupController(TABLE_NAME, DATABASE_TABLE_NAME, DETAIL_URL, LOOKUP_LABEL_URL, LOOKUP_LABELS_URL, LOOKUP_LIST_URL, roleService);
+        this.listController = new DefaultListController(DATABASE_TABLE_NAME_WITH_SCHEMA, LIST_VIEW, DETAIL_URL, roleService);
+        this.lookupController = new DefaultLookupController(DATABASE_TABLE_NAME_WITH_SCHEMA, DETAIL_URL, LOOKUP_LABEL_URL, LOOKUP_LABELS_URL, LOOKUP_LIST_URL, roleService);
     }
 
     @GetMapping(path = {DETAIL_URL, DETAIL_URL + "/{id}"})

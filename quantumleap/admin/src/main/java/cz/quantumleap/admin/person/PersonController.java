@@ -3,10 +3,13 @@ package cz.quantumleap.admin.person;
 import cz.quantumleap.admin.AdminController;
 import cz.quantumleap.admin.menu.AdminMenuItemDefinition;
 import cz.quantumleap.admin.menu.AdminMenuManager;
+import cz.quantumleap.admin.personrole.PersonRoleService;
+import cz.quantumleap.core.data.transport.Slice;
 import cz.quantumleap.core.data.transport.SliceRequest;
 import cz.quantumleap.core.person.transport.Person;
 import cz.quantumleap.core.security.WebSecurityExpressionEvaluator;
 import cz.quantumleap.core.web.*;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -28,9 +31,8 @@ public class PersonController extends AdminController implements LookupControlle
 
     private static final String LIST_URL = "/people";
     private static final String LIST_VIEW = "admin/people";
-    private static final String TABLE_NAME = "people";
+    private static final String DATABASE_TABLE_NAME_WITH_SCHEMA = "core.person";
 
-    private static final String DATABASE_TABLE_NAME = "core.person";
     private static final String LOOKUP_LABEL_URL = "/person-lookup-label";
     private static final String LOOKUP_LABELS_URL = "/people-lookup-labels";
     private static final String LOOKUP_LIST_URL = "/people-lookup";
@@ -38,17 +40,29 @@ public class PersonController extends AdminController implements LookupControlle
     private final DetailController<Person> detailController;
     private final ListController listController;
     private final LookupController lookupController;
+    private final PersonService personService;
+    private final PersonRoleService personRoleService;
 
-    public PersonController(AdminMenuManager adminMenuManager, WebSecurityExpressionEvaluator webSecurityExpressionEvaluator, PersonService personService) {
+    public PersonController(AdminMenuManager adminMenuManager, WebSecurityExpressionEvaluator webSecurityExpressionEvaluator, PersonService personService, PersonRoleService personRoleService) {
         super(adminMenuManager, webSecurityExpressionEvaluator);
         this.detailController = new DefaultDetailController<>(Person.class, DETAIL_URL, DETAIL_VIEW, personService);
-        this.listController = new DefaultListController(TABLE_NAME, LIST_VIEW, DETAIL_URL, personService);
-        this.lookupController = new DefaultLookupController(TABLE_NAME, DATABASE_TABLE_NAME, DETAIL_URL, LOOKUP_LABEL_URL, LOOKUP_LABELS_URL, LOOKUP_LIST_URL, personService);
+        this.listController = new DefaultListController(DATABASE_TABLE_NAME_WITH_SCHEMA, LIST_VIEW, DETAIL_URL, personService);
+        this.lookupController = new DefaultLookupController(DATABASE_TABLE_NAME_WITH_SCHEMA, DETAIL_URL, LOOKUP_LABEL_URL, LOOKUP_LABELS_URL, LOOKUP_LIST_URL, personService);
+        this.personService = personService;
+        this.personRoleService = personRoleService;
     }
 
     @GetMapping(path = {DETAIL_URL, DETAIL_URL + "/{id}"})
-    public String showPerson(@PathVariable(required = false) Long id, Model model) {
-        return detailController.show(id, model);
+    public String showPerson(@PathVariable(required = false) Long id, @Qualifier("personRole") SliceRequest personRoleSliceRequest, Model model) {
+        Person person = id != null ? personService.get(id) : new Person();
+        model.addAttribute(person);
+
+        Slice slice = personRoleService.findSlice(personRoleSliceRequest);
+        model.addAttribute("personRoleTableSlice", slice);
+        model.addAttribute("personRoleDatabaseTableNameWithSchema", "core.person_role");
+        model.addAttribute("personRoleDetailUrl", "/person-role");
+
+        return DETAIL_VIEW;
     }
 
     @PostMapping(path = {DETAIL_URL, DETAIL_URL + "/{id}"})
