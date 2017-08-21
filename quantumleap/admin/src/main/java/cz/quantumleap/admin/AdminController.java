@@ -13,8 +13,6 @@ import java.util.List;
 
 public abstract class AdminController {
 
-    private static final String LAST_ACTIVE_PATH = "lastActiveItem";
-
     private final AdminMenuManager adminMenuManager;
     private final WebSecurityExpressionEvaluator webSecurityExpressionEvaluator;
 
@@ -26,11 +24,7 @@ public abstract class AdminController {
     @ModelAttribute("adminMenuItems")
     public List<AdminMenuItem> getMenuItems(HttpServletRequest request, HttpServletResponse response) {
         List<AdminMenuItem> menuItems = adminMenuManager.getMenuItems();
-        List<AdminMenuItem> adminMenuItems = filterInaccessibleMenuItemsAndSetState(menuItems, request, response);
-        if (canFixActiveMenuItem(adminMenuItems, request)) {
-            fixActiveMenuItem(adminMenuItems, request);
-        }
-        return adminMenuItems;
+        return filterInaccessibleMenuItemsAndSetState(menuItems, request, response);
     }
 
     private List<AdminMenuItem> filterInaccessibleMenuItemsAndSetState(List<AdminMenuItem> adminMenuItems, HttpServletRequest request, HttpServletResponse response) {
@@ -43,7 +37,6 @@ public abstract class AdminController {
             AdminMenuItem.Builder builder = AdminMenuItem.fromMenuItem(adminMenuItem);
             if (adminMenuItem.getPaths().contains(request.getRequestURI())) {
                 builder.setState(State.ACTIVE);
-                request.getSession().setAttribute(LAST_ACTIVE_PATH, request.getRequestURI());
             }
             if (!adminMenuItem.getChildren().isEmpty()) {
                 List<AdminMenuItem> children = filterInaccessibleMenuItemsAndSetState(adminMenuItem.getChildren(), request, response);
@@ -59,40 +52,6 @@ public abstract class AdminController {
             items.add(builder.build());
         }
         return items;
-    }
-
-    private boolean canFixActiveMenuItem(List<AdminMenuItem> adminMenuItems, HttpServletRequest request) {
-        Object lastActivePath = request.getSession().getAttribute(LAST_ACTIVE_PATH);
-        if (lastActivePath == null) {
-            return false;
-        }
-
-        for (AdminMenuItem adminMenuItem : adminMenuItems) {
-            if (adminMenuItem.getState() == State.ACTIVE || adminMenuItem.getState() == State.OPEN) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    // TODO I can move this to Javascript sessionStorage...
-    private boolean fixActiveMenuItem(List<AdminMenuItem> adminMenuItems, HttpServletRequest request) {
-        Object lastActivePath = request.getSession().getAttribute(LAST_ACTIVE_PATH);
-        for (AdminMenuItem adminMenuItem : adminMenuItems) {
-            if (adminMenuItem.getPaths().contains(lastActivePath)) {
-                int index = adminMenuItems.indexOf(adminMenuItem);
-                adminMenuItems.set(index, AdminMenuItem.fromMenuItem(adminMenuItem).setState(State.ACTIVE).build());
-                return true;
-            } else if (!adminMenuItem.getChildren().isEmpty()) {
-                if (fixActiveMenuItem(adminMenuItem.getChildren(), request)) {
-                    int index = adminMenuItems.indexOf(adminMenuItem);
-                    adminMenuItems.set(index, AdminMenuItem.fromMenuItem(adminMenuItem).setState(State.OPEN).build());
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 
     private boolean evaluateItem(AdminMenuItem adminMenuItem, HttpServletRequest request, HttpServletResponse response) {

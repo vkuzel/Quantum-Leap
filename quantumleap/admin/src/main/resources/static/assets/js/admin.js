@@ -37,6 +37,26 @@ var urlUtils = {
     }
 };
 
+function MenuControl(menuSelector) {
+    var $menu = $(menuSelector);
+    var $activeAnchor = $menu.find('li > a.active');
+
+    if ($activeAnchor.length > 0) {
+        var href = $activeAnchor.attr('href');
+        sessionStorage.setItem("lastActiveMenuItemHref", href);
+    } else {
+        var lastActiveMenuItemHref = sessionStorage.getItem("lastActiveMenuItemHref");
+        if (lastActiveMenuItemHref) {
+            var $anchor = $menu.find('a[href="' + lastActiveMenuItemHref + '"]');
+            $anchor.addClass('active');
+            $anchor.next('ul').addClass('in');
+            $anchor.parentsUntil(menuSelector, 'ul').addClass('in');
+        }
+    }
+}
+
+MenuControl('#side-menu');
+
 // TODO Loaders, spinners?
 
 function TableControl(table, tBodyListenersBinder) {
@@ -137,7 +157,7 @@ $('table.dataTable').each(function (i, table) {
         });
     };
 
-    new TableControl(table, tBodyListenersBinder);
+    TableControl(table, tBodyListenersBinder);
 });
 
 function LookupControl(lookupField) {
@@ -270,5 +290,5 @@ function LookupControl(lookupField) {
 }
 
 $('div.lookup').each(function (i, lookupField) {
-    new LookupControl(lookupField);
+    LookupControl(lookupField);
 });

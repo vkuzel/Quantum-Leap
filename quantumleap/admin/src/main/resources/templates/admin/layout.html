@@ -273,15 +273,15 @@
                             <!-- /input-group -->
                         </li>
                         <!--*/-->
-                        <li th:each="menuItem : ${adminMenuItems}" th:with="ItemState=${T(cz.quantumleap.admin.menu.AdminMenuItem.State)}" th:class="${menuItem.state == ItemState.OPEN || menuItem.state == ItemState.ACTIVE} ? 'active'">
-                            <a th:href="@{${menuItem.path}}">
+                        <li th:each="menuItem : ${adminMenuItems}" th:with="ItemState=${T(cz.quantumleap.admin.menu.AdminMenuItem.State)}">
+                            <a th:href="@{${menuItem.path}}" th:class="${menuItem.state == ItemState.ACTIVE} ? 'active'">
                                 <i th:classappend="${menuItem.fontAwesomeIcon}" class="fa fa-fw"></i>
                                 <span th:text="#{${menuItem.title}}">Menu Item</span>
                                 <span th:unless="${menuItem.children.empty}" class="fa arrow"></span>
                             </a>
                             <ul th:unless="${menuItem.children.empty}" th:remove="all-but-first" class="nav nav-second-level collapse" th:classappend="${menuItem.state == ItemState.OPEN || menuItem.state == ItemState.ACTIVE} ? 'in'">
-                                <li th:each="secondLevelMenuItem : ${menuItem.children}" th:class="${secondLevelMenuItem.state == ItemState.OPEN || secondLevelMenuItem.state == ItemState.ACTIVE} ? 'active'">
-                                    <a href="flot.html" th:href="@{${secondLevelMenuItem.path}}" th:text="#{${secondLevelMenuItem.title}}">Flot Charts</a>
+                                <li th:each="secondLevelMenuItem : ${menuItem.children}">
+                                    <a href="flot.html" th:href="@{${secondLevelMenuItem.path}}" th:text="#{${secondLevelMenuItem.title}}" th:class="${secondLevelMenuItem.state == ItemState.ACTIVE} ? 'active'">Flot Charts</a>
                                 </li>
                                 <li>
                                     <a href="morris.html">Morris.js Charts</a>
