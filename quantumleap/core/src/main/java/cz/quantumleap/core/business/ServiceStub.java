@@ -3,6 +3,7 @@ package cz.quantumleap.core.business;
 import cz.quantumleap.core.data.DaoStub;
 import cz.quantumleap.core.data.transport.Slice;
 import cz.quantumleap.core.data.transport.SliceRequest;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Map;
 
@@ -25,6 +26,7 @@ public class ServiceStub<T> implements DetailService<T>, ListService, LookupServ
         return detailService.get(id);
     }
 
+    @Transactional
     @Override
     public T save(T detail) {
         return detailService.save(detail);
