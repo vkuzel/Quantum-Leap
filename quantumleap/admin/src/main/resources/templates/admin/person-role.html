@@ -14,7 +14,8 @@
                     <span th:text="#{admin.title.person-role}">Person-Role</span>
                 </div>
                 <div class="panel-body">
-                    <form class="form-horizontal" th:action="@{/person-role}" th:object="${personRole}" method="post">
+                    <form class="form-horizontal" th:action="@{|/person/${personId}/person-role|}" th:object="${personRole}" method="post">
+                        <input type="hidden" th:if="*{id}" th:field="*{id}">
                         <div class="form-group">
                             <label for="personId" class="control-label col-md-4" th:text="#{admin.person-role.person}">Person</label>
                             <div class="col-md-6"
@@ -30,7 +31,7 @@
 
                         <div class="form-group">
                             <div class="col-md-6 col-md-offset-4">
-                                <a th:href="@{/person-roles}" class="btn btn-default" th:text="#{admin.cancel}">Cancel</a>
+                                <a th:href="@{|/person/${personId}|}" class="btn btn-default" th:text="#{admin.cancel}">Cancel</a>
                                 <input type="submit" class="btn btn-success" value="Save" th:value="#{admin.save}">
                             </div>
                         </div>

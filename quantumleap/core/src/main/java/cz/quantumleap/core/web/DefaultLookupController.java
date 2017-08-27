@@ -15,20 +15,18 @@ public final class DefaultLookupController implements LookupController {
     private static final String LOOKUP_LABELS_VIEW = "admin/components/lookup-labels";
 
     private static final String TABLE_SLICE_MODEL_ATTRIBUTE_NAME = "tableSlice";
-    private static final String TABLE_NAME_MODEL_ATTRIBUTE_NAME = "tableName";
+    private static final String DATABASE_TABLE_NAME_WITH_SCHEMA_ATTRIBUTE_NAME = "databaseTableNameWithSchema";
     private static final String LOOKUP_LIST_VIEW = "admin/components/lookup-modal-table";
 
-    private final String tableName;
-    private final String supportedDatabaseTableNameWithSchema;
+    private final String databaseTableNameWithSchema;
     private final String detailUrl;
     private final String lookupLabelUrl;
     private final String lookupLabelsUrl;
     private final String lookupListUrl;
     private final LookupService lookupService;
 
-    public DefaultLookupController(String tableName, String supportedDatabaseTableNameWithSchema, String detailUrl, String lookupLabelUrl, String lookupLabelsUrl, String lookupListUrl, LookupService lookupService) {
-        this.tableName = tableName;
-        this.supportedDatabaseTableNameWithSchema = supportedDatabaseTableNameWithSchema;
+    public DefaultLookupController(String databaseTableNameWithSchema, String detailUrl, String lookupLabelUrl, String lookupLabelsUrl, String lookupListUrl, LookupService lookupService) {
+        this.databaseTableNameWithSchema = databaseTableNameWithSchema;
         this.detailUrl = detailUrl;
         this.lookupLabelUrl = lookupLabelUrl;
         this.lookupLabelsUrl = lookupLabelsUrl;
@@ -38,7 +36,7 @@ public final class DefaultLookupController implements LookupController {
 
     @Override
     public String supportedDatabaseTableNameWithSchema() {
-        return supportedDatabaseTableNameWithSchema;
+        return databaseTableNameWithSchema;
     }
 
     @Override
@@ -79,7 +77,7 @@ public final class DefaultLookupController implements LookupController {
     public String lookupList(SliceRequest sliceRequest, Model model, HttpServletRequest request) {
         Slice slice = lookupService.findSlice(sliceRequest);
         model.addAttribute(TABLE_SLICE_MODEL_ATTRIBUTE_NAME, slice);
-        model.addAttribute(TABLE_NAME_MODEL_ATTRIBUTE_NAME, tableName);
+        model.addAttribute(DATABASE_TABLE_NAME_WITH_SCHEMA_ATTRIBUTE_NAME, databaseTableNameWithSchema);
         model.addAttribute(DETAIL_URL_MODEL_ATTRIBUTE_NAME, detailUrl);
 
         return LOOKUP_LIST_VIEW;

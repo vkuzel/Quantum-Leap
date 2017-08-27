@@ -3,6 +3,7 @@ package cz.quantumleap.admin.person;
 import cz.quantumleap.admin.AdminController;
 import cz.quantumleap.admin.menu.AdminMenuItemDefinition;
 import cz.quantumleap.admin.menu.AdminMenuManager;
+import cz.quantumleap.admin.personrole.PersonRoleController;
 import cz.quantumleap.admin.personrole.PersonRoleService;
 import cz.quantumleap.core.data.transport.Slice;
 import cz.quantumleap.core.data.transport.SliceRequest;
@@ -31,7 +32,7 @@ public class PersonController extends AdminController implements LookupControlle
 
     private static final String LIST_URL = "/people";
     private static final String LIST_VIEW = "admin/people";
-    private static final String DATABASE_TABLE_NAME_WITH_SCHEMA = "core.person";
+    public static final String DATABASE_TABLE_NAME_WITH_SCHEMA = "core.person";
 
     private static final String LOOKUP_LABEL_URL = "/person-lookup-label";
     private static final String LOOKUP_LABELS_URL = "/people-lookup-labels";
@@ -57,10 +58,11 @@ public class PersonController extends AdminController implements LookupControlle
         Person person = id != null ? personService.get(id) : new Person();
         model.addAttribute(person);
 
+        personRoleSliceRequest.getFilter().put("person_id", id);
         Slice slice = personRoleService.findSlice(personRoleSliceRequest);
         model.addAttribute("personRoleTableSlice", slice);
-        model.addAttribute("personRoleDatabaseTableNameWithSchema", "core.person_role");
-        model.addAttribute("personRoleDetailUrl", "/person-role");
+        model.addAttribute("personRoleDatabaseTableNameWithSchema", PersonRoleController.DATABASE_TABLE_NAME_WITH_SCHEMA);
+        model.addAttribute("personRoleDetailUrl", PersonRoleController.DETAIL_URL.replace("{personId}", String.valueOf(id)));
 
         return DETAIL_VIEW;
     }

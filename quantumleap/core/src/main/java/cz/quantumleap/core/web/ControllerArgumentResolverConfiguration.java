@@ -14,7 +14,7 @@ import java.util.List;
 public class ControllerArgumentResolverConfiguration extends WebMvcConfigurerAdapter {
 
     // Comma is used to create an array in SpEL. That causes problems while
-    // building order queries in Thymeleaf so semicolon is used instead.
+    // building order queries in Thymeleaf, so semicolon is used instead.
     private static final String SORT_COLUMN_ORDER_DELIMITER = ";";
 
     @Override

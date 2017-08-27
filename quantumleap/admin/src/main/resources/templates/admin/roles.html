@@ -12,6 +12,9 @@
                 <div class="panel-heading">
                     <i class="fa fa-id-card"></i>
                     <span th:text="#{admin.table.title.core.role}">Table</span>
+                    <div class="btn-group pull-right">
+                        <a type="button" th:href="@{|/role|}" class="btn btn-success btn-xs" th:text="#{admin.table.title.new-record}"></a>
+                    </div>
                 </div>
                 <div class="panel-body table-container">
                     <div class="table-responsive" th:insert="admin/components/table">

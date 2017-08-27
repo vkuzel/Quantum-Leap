@@ -1,6 +1,7 @@
 package cz.quantumleap.core.web.controllerargument;
 
 import cz.quantumleap.core.data.transport.SliceRequest;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.MethodParameter;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.SortHandlerMethodArgumentResolver;
@@ -9,13 +10,17 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
+import java.util.HashMap;
+
 import static cz.quantumleap.core.data.transport.SliceRequest.MAX_ITEMS;
 
 public class SliceRequestControllerArgumentResolver implements HandlerMethodArgumentResolver {
 
-    private static final String FILTER_PARAM_NAME = "filter";
-    private static final String OFFSET_PARAM_NAME = "offset";
-    private static final String SIZE_PARAM_NAME = "size";
+    public static final String SORT_PARAM_NAME = "sort";
+    public static final String FILTER_PARAM_NAME = "filter";
+    public static final String OFFSET_PARAM_NAME = "offset";
+    public static final String SIZE_PARAM_NAME = "size";
+    private static final String QUALIFIER_DELIMITER = "_";
 
     private static final int DEFAULT_OFFSET = 0;
 
@@ -32,9 +37,9 @@ public class SliceRequestControllerArgumentResolver implements HandlerMethodArgu
 
     @Override
     public SliceRequest resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
-
-        int offset = getWebRequestIntParameter(webRequest, OFFSET_PARAM_NAME, DEFAULT_OFFSET);
-        int size = getWebRequestIntParameter(webRequest, SIZE_PARAM_NAME, SliceRequest.CHUNK_SIZE);
+        String qualifier = parameter != null && parameter.hasParameterAnnotation(Qualifier.class) ? parameter.getParameterAnnotation(Qualifier.class).value() : null;
+        int offset = getWebRequestIntParameter(webRequest, qualifier, OFFSET_PARAM_NAME, DEFAULT_OFFSET);
+        int size = getWebRequestIntParameter(webRequest, qualifier, SIZE_PARAM_NAME, SliceRequest.CHUNK_SIZE);
 
         if (offset >= MAX_ITEMS) {
             offset = MAX_ITEMS - 1;
@@ -45,11 +50,16 @@ public class SliceRequestControllerArgumentResolver implements HandlerMethodArgu
 
         Sort sort = sortHandlerMethodArgumentResolver.resolveArgument(parameter, mavContainer, webRequest, binderFactory);
 
-        return new SliceRequest(offset, size, sort);
+        return new SliceRequest(new HashMap<>(), offset, size, sort);
     }
 
-    private int getWebRequestIntParameter(NativeWebRequest webRequest, String paramName, int defaultValue) {
-        String value = webRequest.getParameter(paramName);
+    private int getWebRequestIntParameter(NativeWebRequest webRequest, String qualifier, String paramName, int defaultValue) {
+        String qualifiedParamName = qualifyParamName(qualifier, paramName);
+        String value = webRequest.getParameter(qualifiedParamName);
         return value != null ? Integer.parseInt(value) : defaultValue;
+    }
+
+    public static String qualifyParamName(String qualifier, String paramName) {
+        return qualifier != null ? qualifier + QUALIFIER_DELIMITER + paramName : paramName;
     }
 }

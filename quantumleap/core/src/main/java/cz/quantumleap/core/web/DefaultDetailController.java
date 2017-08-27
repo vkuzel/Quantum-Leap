@@ -23,7 +23,6 @@ public final class DefaultDetailController<T> implements DetailController<T> {
 
     @Override
     public String show(Object id, Model model) {
-
         T detail = id != null ? detailService.get(id) : createDetail();
         model.addAttribute(detail);
         return detailView;

@@ -1,9 +1,7 @@
 package cz.quantumleap.core.data;
 
 import cz.quantumleap.core.data.detail.PrimaryKeyConditionBuilder;
-import cz.quantumleap.core.data.list.DefaultOrderBuilder;
-import cz.quantumleap.core.data.list.LimitBuilder;
-import cz.quantumleap.core.data.list.OrderBuilder;
+import cz.quantumleap.core.data.list.*;
 import cz.quantumleap.core.data.mapper.MapperFactory;
 import cz.quantumleap.core.data.transport.Slice;
 import cz.quantumleap.core.data.transport.SliceRequest;
@@ -20,6 +18,7 @@ public class DaoStub<TABLE extends Table<? extends Record>> implements DetailDao
     protected final DSLContext dslContext;
 
     protected final PrimaryKeyConditionBuilder primaryKeyConditionBuilder;
+    protected final FilterBuilder filterBuilder;
     protected final OrderBuilder orderBuilder;
     protected final LimitBuilder limitBuilder;
     protected final MapperFactory mapperFactory;
@@ -33,12 +32,13 @@ public class DaoStub<TABLE extends Table<? extends Record>> implements DetailDao
         this.table = table;
 
         this.primaryKeyConditionBuilder = new PrimaryKeyConditionBuilder(table);
+        this.filterBuilder = new DefaultFilterBuilder(table);
         this.orderBuilder = new DefaultOrderBuilder(table);
         this.limitBuilder = LimitBuilder.DEFAULT;
         this.mapperFactory = new MapperFactory(table, lookupDaoManager);
 
         detailDao = new DefaultDetailDao<>(table, dslContext, primaryKeyConditionBuilder, mapperFactory, recordAuditor);
-        listDao = new DefaultListDao<>(table, dslContext, orderBuilder, limitBuilder, mapperFactory);
+        listDao = new DefaultListDao<>(table, dslContext, filterBuilder, orderBuilder, limitBuilder, mapperFactory);
         lookupDao = new DefaultLookupDao<>(table, lookupLabelField, dslContext, filterConditionBuilder, primaryKeyConditionBuilder, listDao);
     }
 
