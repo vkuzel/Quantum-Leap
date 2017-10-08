@@ -1,5 +1,5 @@
 ext {
-    mainClassName = 'cz.quantumleap.server.QuantumLeapApplication'
+    mainClassName = 'cz.quantumleap.QuantumLeapApplication'
 }
 
 dependencies {
