@@ -4,6 +4,7 @@ import cz.quantumleap.core.module.ModuleDependencies;
 import org.springframework.core.io.Resource;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 public class ResourceWithModule {
     private final ModuleDependencies moduleDependencies;
@@ -29,6 +30,14 @@ public class ResourceWithModule {
     public String getResourcePath() {
         try {
             return resource.getURL().getPath();
+        } catch (IOException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    public InputStream getInputStream() {
+        try {
+            return resource.getInputStream();
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }

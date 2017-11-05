@@ -1,5 +1,11 @@
 package cz.quantumleap.admin.menu;
 
+import com.google.common.collect.ComparisonChain;
+import org.springframework.boot.context.event.ApplicationPreparedEvent;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.boot.context.event.ApplicationStartedEvent;
+import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
@@ -15,6 +21,11 @@ import java.util.stream.Collectors;
 @Component
 public class AdminMenuManager {
 
+    private static final Comparator<MappingDefinitionAuthorize> MENU_ITEM_COMPARATOR = (o1, o2) -> ComparisonChain.start()
+            .compare(o2.getPriority(), o1.getPriority())
+            .compare(o1.getTitle(), o2.getTitle())
+            .result();
+
     private final RequestMappingHandlerMapping requestMappingHandlerMapping;
 
     private List<AdminMenuItem> menuItems = Collections.emptyList();
@@ -27,8 +38,7 @@ public class AdminMenuManager {
         return menuItems;
     }
 
-    // TODO More like listener on controllers-initialised or something like that!
-    @PostConstruct
+    @EventListener(ContextRefreshedEvent.class)
     private void buildMenu() {
         Map<RequestMappingInfo, HandlerMethod> handlerMethodMap = requestMappingHandlerMapping.getHandlerMethods();
         Map<String, MappingDefinitionAuthorize> map = new HashMap<>();
@@ -57,6 +67,7 @@ public class AdminMenuManager {
 
         menuItems = map.values().stream()
                 .filter(mappingDefinitionAuthorize -> !mappingDefinitionAuthorize.isChild)
+                .sorted(MENU_ITEM_COMPARATOR)
                 .map(MappingDefinitionAuthorize::toAdminMenuItem)
                 .collect(Collectors.toList());
     }
@@ -89,8 +100,16 @@ public class AdminMenuManager {
             return adminMenuItemDefinition.parentByTitle();
         }
 
+        private String getTitle() {
+            return adminMenuItemDefinition.title();
+        }
+
+        private int getPriority() {
+            return adminMenuItemDefinition.priority();
+        }
+
         private AdminMenuItem toAdminMenuItem() {
-            List<AdminMenuItem> childrenItems = children.stream().map(MappingDefinitionAuthorize::toAdminMenuItem).collect(Collectors.toList());
+            List<AdminMenuItem> childrenItems = children.stream().sorted(MENU_ITEM_COMPARATOR).map(MappingDefinitionAuthorize::toAdminMenuItem).collect(Collectors.toList());
             return new AdminMenuItem(requestMappingInfo, adminMenuItemDefinition, preAuthorize, AdminMenuItem.State.NONE, childrenItems);
         }
     }

@@ -17,9 +17,9 @@
                     <form class="form-horizontal" th:action="@{/role}" th:object="${role}" method="post">
                         <input type="hidden" th:if="*{id}" th:field="*{id}">
                         <div class="form-group">
-                            <label for="name" class="control-label col-md-4" th:text="#{admin.role.name}">Name</label>
+                            <label th:for="name" class="control-label col-md-4" th:text="#{admin.role.name}">Name</label>
                             <div class="col-md-6">
-                                <input id="name" name="name" th:field="*{name}" class="form-control">
+                                <input th:field="*{name}" class="form-control">
                             </div>
                         </div>
 

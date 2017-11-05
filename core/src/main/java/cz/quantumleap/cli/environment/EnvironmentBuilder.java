@@ -73,9 +73,10 @@ public class EnvironmentBuilder {
     public void dropEnvironment() {
         log.info("Dropping existing environment.");
 
-        moduleDependencyManager.getModuleNames().forEach(moduleName -> {
-            log.debug("Dropping schema {}", moduleName);
-            environmentDao.dropSchema(moduleName);
-        });
+        for (String moduleName : moduleDependencyManager.getModuleNames()) {
+            String schemaName = moduleName.replace('-', '_');
+            log.debug("Dropping schema {}", schemaName);
+            environmentDao.dropSchema(schemaName);
+        }
     }
 }

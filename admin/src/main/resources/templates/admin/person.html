@@ -17,15 +17,15 @@
                     <form class="form-horizontal" th:action="@{/person}" th:object="${person}" method="post">
                         <input type="hidden" th:if="*{id}" th:field="*{id}">
                         <div class="form-group">
-                            <label for="email" class="control-label col-md-4" th:text="#{admin.person.email}">Email</label>
+                            <label th:for="email" class="control-label col-md-4" th:text="#{admin.person.email}">Email</label>
                             <div class="col-md-6">
-                                <input id="email" name="email" th:value="*{email}" class="form-control">
+                                <input th:field="*{email}" class="form-control">
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="name" class="control-label col-md-4" th:text="#{admin.person.name}">Name</label>
+                            <label th:for="name" class="control-label col-md-4" th:text="#{admin.person.name}">Name</label>
                             <div class="col-md-6">
-                                <input id="name" name="name" th:value="*{name}" class="form-control" th:placeholder="#{admin.person.name.placeholder}" disabled>
+                                <input th:field="*{name}" class="form-control" th:placeholder="#{admin.person.name.placeholder}" disabled>
                             </div>
                         </div>
 

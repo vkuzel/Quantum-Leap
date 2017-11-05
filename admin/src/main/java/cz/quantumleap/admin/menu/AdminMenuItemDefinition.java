@@ -14,4 +14,6 @@ public @interface AdminMenuItemDefinition {
     String parentByTitle() default "";
 
     String fontAwesomeIcon() default "";
+
+    int priority() default 0;
 }

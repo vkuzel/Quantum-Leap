@@ -5,6 +5,7 @@ import cz.quantumleap.core.web.template.ThemeTemplateResolver;
 import nz.net.ultraq.thymeleaf.LayoutDialect;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafProperties;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.thymeleaf.extras.springsecurity4.dialect.SpringSecurityDialect;
@@ -15,11 +16,13 @@ import org.thymeleaf.spring4.SpringTemplateEngine;
 public class ThymeleafConfiguration {
 
     private final ThymeleafProperties thymeleafProperties;
-    private final cz.quantumleap.core.resource.ResourceManager resourceManager;
+    private final ResourceManager resourceManager;
+    private final MessageSource messageSource;
 
-    public ThymeleafConfiguration(ThymeleafProperties thymeleafProperties, ResourceManager resourceManager) {
+    public ThymeleafConfiguration(ThymeleafProperties thymeleafProperties, ResourceManager resourceManager, MessageSource messageSource) {
         this.thymeleafProperties = thymeleafProperties;
         this.resourceManager = resourceManager;
+        this.messageSource = messageSource;
     }
 
     @Bean
@@ -27,10 +30,7 @@ public class ThymeleafConfiguration {
         SpringTemplateEngine engine = new SpringTemplateEngine();
         engine.setTemplateResolver(new ThemeTemplateResolver(thymeleafProperties, resourceManager));
         engine.addDialect(new SpringSecurityDialect());
-// TODO What's this good for?
         engine.addDialect(new LayoutDialect());
-// TODO Does Thymeleaf need any message source?
-//        engine.setTemplateEngineMessageSource(databaseMessageSource);
         return engine;
     }
 }

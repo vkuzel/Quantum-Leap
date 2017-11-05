@@ -3,6 +3,7 @@ package cz.quantumleap.cli;
 import cz.quantumleap.cli.environment.EnvironmentBuilder;
 import cz.quantumleap.core.autoincrement.IncrementDao;
 import cz.quantumleap.core.autoincrement.IncrementService;
+import cz.quantumleap.core.data.RecordAuditor;
 import cz.quantumleap.core.module.ModuleDependencyManager;
 import cz.quantumleap.core.resource.ResourceManager;
 import org.jooq.DSLContext;
@@ -17,7 +18,7 @@ import org.springframework.util.StringUtils;
 import java.io.IOException;
 
 @SpringBootApplication
-@EnableTransactionManagement
+@EnableTransactionManagement(proxyTargetClass = true)
 public class CliApplication implements CommandLineRunner {
 
     private final EnvironmentBuilder environmentBuilder;
@@ -81,7 +82,7 @@ public class CliApplication implements CommandLineRunner {
 
         @Bean
         public IncrementDao incrementDao() {
-            return new IncrementDao(dslContext, null, null);
+            return new IncrementDao(dslContext, null, new RecordAuditor());
         }
     }
 

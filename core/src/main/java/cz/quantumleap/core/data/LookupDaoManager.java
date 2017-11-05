@@ -4,6 +4,8 @@ import cz.quantumleap.core.data.mapper.MapperUtils;
 import org.jooq.Record;
 import org.jooq.Table;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -25,7 +27,7 @@ public class LookupDaoManager {
         return lookupDaoMap.get(databaseTableNameWithSchema);
     }
 
-    @PostConstruct
+    @EventListener(ContextRefreshedEvent.class)
     public void initializeLookupDaoMap() {
         Map<String, LookupDao> beans = applicationContext.getBeansOfType(LookupDao.class);
         lookupDaoMap = beans.values().stream().collect(Collectors.toMap(dao -> MapperUtils.resolveDatabaseTableNameWithSchema(dao.getTable()), this::toGenericDao));

@@ -14,7 +14,7 @@ public class DashboardController extends AdminController {
         super(adminMenuManager, webSecurityExpressionEvaluator);
     }
 
-    @AdminMenuItemDefinition(title = "admin.menu.dashboard", fontAwesomeIcon = "fa-dashboard")
+    @AdminMenuItemDefinition(title = "admin.menu.dashboard", fontAwesomeIcon = "fa-dashboard", priority = Integer.MAX_VALUE)
     @GetMapping("/dashboard")
     public String dashboard() {
         return "admin/dashboard";
