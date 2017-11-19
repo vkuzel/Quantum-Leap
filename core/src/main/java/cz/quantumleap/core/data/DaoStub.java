@@ -42,22 +42,27 @@ public class DaoStub<TABLE extends Table<? extends Record>> implements DetailDao
         lookupDao = new DefaultLookupDao<>(table, lookupLabelField, dslContext, filterConditionBuilder, primaryKeyConditionBuilder, listDao);
     }
 
+    @Override
     public <T> Optional<T> fetchById(Object id, Class<T> type) {
         return detailDao.fetchById(id, type);
     }
 
+    @Override
     public <T> Optional<T> fetchByCondition(Condition condition, Class<T> type) {
         return detailDao.fetchByCondition(condition, type);
     }
 
+    @Override
     public <T> T save(T detail) {
         return detailDao.save(detail);
     }
 
+    @Override
     public void deleteById(Object id) {
         detailDao.deleteById(id);
     }
 
+    @Override
     public Slice fetchSlice(SliceRequest sliceRequest) {
         return listDao.fetchSlice(sliceRequest);
     }

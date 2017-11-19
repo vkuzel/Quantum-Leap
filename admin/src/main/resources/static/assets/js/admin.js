@@ -37,6 +37,15 @@ var urlUtils = {
     }
 };
 
+var loader = {
+    show: function () {
+        $('#loader').show();
+    },
+    hide: function () {
+        $('#loader').hide();
+    }
+};
+
 function MenuControl(menuSelector) {
     var $menu = $(menuSelector);
     var $activeAnchor = $menu.find('li > a.active');

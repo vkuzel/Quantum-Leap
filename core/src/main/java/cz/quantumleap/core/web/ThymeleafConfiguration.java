@@ -8,6 +8,7 @@ import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafProperties;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.thymeleaf.extras.java8time.dialect.Java8TimeDialect;
 import org.thymeleaf.extras.springsecurity4.dialect.SpringSecurityDialect;
 import org.thymeleaf.spring4.SpringTemplateEngine;
 
@@ -31,6 +32,7 @@ public class ThymeleafConfiguration {
         engine.setTemplateResolver(new ThemeTemplateResolver(thymeleafProperties, resourceManager));
         engine.addDialect(new SpringSecurityDialect());
         engine.addDialect(new LayoutDialect());
+        engine.addDialect(new Java8TimeDialect());
         return engine;
     }
 }
