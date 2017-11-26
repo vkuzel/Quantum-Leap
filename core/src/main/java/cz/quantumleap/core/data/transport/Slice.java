@@ -1,6 +1,7 @@
 package cz.quantumleap.core.data.transport;
 
 import cz.quantumleap.core.data.transport.Table.Column;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;
 import java.util.List;
@@ -8,11 +9,11 @@ import java.util.Map;
 
 public class Slice<ROW> implements Iterable<ROW>  {
 
-    private final Table table;
+    private final Table<ROW> table;
     private final SliceRequest sliceRequest;
     private final boolean canExtend;
 
-    public Slice(Table table, SliceRequest sliceRequest, boolean canExtend) {
+    public Slice(Table<ROW> table, SliceRequest sliceRequest, boolean canExtend) {
         this.table = table;
         this.sliceRequest = sliceRequest;
         this.canExtend = canExtend;
@@ -26,10 +27,11 @@ public class Slice<ROW> implements Iterable<ROW>  {
         return table.getColumns();
     }
 
-    public List<Map<Column, Object>> getRows() {
+    public List<ROW> getRows() {
         return table.getRows();
     }
 
+    @NotNull
     @Override
     public Iterator<ROW> iterator() {
         return table.iterator();

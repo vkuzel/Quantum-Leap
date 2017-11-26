@@ -8,10 +8,12 @@ import cz.quantumleap.core.tables.IncrementTable;
 import cz.quantumleap.core.tables.PersonRoleTable;
 import cz.quantumleap.core.tables.PersonTable;
 import cz.quantumleap.core.tables.RoleTable;
+import cz.quantumleap.core.tables.TablePreferencesTable;
 import cz.quantumleap.core.tables.records.IncrementRecord;
 import cz.quantumleap.core.tables.records.PersonRecord;
 import cz.quantumleap.core.tables.records.PersonRoleRecord;
 import cz.quantumleap.core.tables.records.RoleRecord;
+import cz.quantumleap.core.tables.records.TablePreferencesRecord;
 
 import javax.annotation.Generated;
 
@@ -43,6 +45,7 @@ public class Keys {
     public static final Identity<PersonRecord, Long> IDENTITY_PERSON = Identities0.IDENTITY_PERSON;
     public static final Identity<PersonRoleRecord, Long> IDENTITY_PERSON_ROLE = Identities0.IDENTITY_PERSON_ROLE;
     public static final Identity<RoleRecord, Long> IDENTITY_ROLE = Identities0.IDENTITY_ROLE;
+    public static final Identity<TablePreferencesRecord, Long> IDENTITY_TABLE_PREFERENCES = Identities0.IDENTITY_TABLE_PREFERENCES;
 
     // -------------------------------------------------------------------------
     // UNIQUE and PRIMARY KEY definitions
@@ -55,6 +58,8 @@ public class Keys {
     public static final UniqueKey<PersonRoleRecord> PERSON_ROLE_PERSON_ID_ROLE_ID_KEY = UniqueKeys0.PERSON_ROLE_PERSON_ID_ROLE_ID_KEY;
     public static final UniqueKey<RoleRecord> ROLE_PKEY = UniqueKeys0.ROLE_PKEY;
     public static final UniqueKey<RoleRecord> ROLE_NAME_KEY = UniqueKeys0.ROLE_NAME_KEY;
+    public static final UniqueKey<TablePreferencesRecord> TABLE_PREFERENCES_PKEY = UniqueKeys0.TABLE_PREFERENCES_PKEY;
+    public static final UniqueKey<TablePreferencesRecord> TABLE_PREFERENCES_DATABASE_TABLE_NAME_WITH_SCHEMA_IS_DEFAUL_KEY = UniqueKeys0.TABLE_PREFERENCES_DATABASE_TABLE_NAME_WITH_SCHEMA_IS_DEFAUL_KEY;
 
     // -------------------------------------------------------------------------
     // FOREIGN KEY definitions
@@ -72,6 +77,7 @@ public class Keys {
         public static Identity<PersonRecord, Long> IDENTITY_PERSON = createIdentity(PersonTable.PERSON, PersonTable.PERSON.ID);
         public static Identity<PersonRoleRecord, Long> IDENTITY_PERSON_ROLE = createIdentity(PersonRoleTable.PERSON_ROLE, PersonRoleTable.PERSON_ROLE.ID);
         public static Identity<RoleRecord, Long> IDENTITY_ROLE = createIdentity(RoleTable.ROLE, RoleTable.ROLE.ID);
+        public static Identity<TablePreferencesRecord, Long> IDENTITY_TABLE_PREFERENCES = createIdentity(TablePreferencesTable.TABLE_PREFERENCES, TablePreferencesTable.TABLE_PREFERENCES.ID);
     }
 
     private static class UniqueKeys0 extends AbstractKeys {
@@ -82,6 +88,8 @@ public class Keys {
         public static final UniqueKey<PersonRoleRecord> PERSON_ROLE_PERSON_ID_ROLE_ID_KEY = createUniqueKey(PersonRoleTable.PERSON_ROLE, "person_role_person_id_role_id_key", PersonRoleTable.PERSON_ROLE.PERSON_ID, PersonRoleTable.PERSON_ROLE.ROLE_ID);
         public static final UniqueKey<RoleRecord> ROLE_PKEY = createUniqueKey(RoleTable.ROLE, "role_pkey", RoleTable.ROLE.ID);
         public static final UniqueKey<RoleRecord> ROLE_NAME_KEY = createUniqueKey(RoleTable.ROLE, "role_name_key", RoleTable.ROLE.NAME);
+        public static final UniqueKey<TablePreferencesRecord> TABLE_PREFERENCES_PKEY = createUniqueKey(TablePreferencesTable.TABLE_PREFERENCES, "table_preferences_pkey", TablePreferencesTable.TABLE_PREFERENCES.ID);
+        public static final UniqueKey<TablePreferencesRecord> TABLE_PREFERENCES_DATABASE_TABLE_NAME_WITH_SCHEMA_IS_DEFAUL_KEY = createUniqueKey(TablePreferencesTable.TABLE_PREFERENCES, "table_preferences_database_table_name_with_schema_is_defaul_key", TablePreferencesTable.TABLE_PREFERENCES.DATABASE_TABLE_NAME_WITH_SCHEMA, TablePreferencesTable.TABLE_PREFERENCES.IS_DEFAULT);
     }
 
     private static class ForeignKeys0 extends AbstractKeys {

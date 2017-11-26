@@ -8,6 +8,7 @@ import cz.quantumleap.core.tables.IncrementTable;
 import cz.quantumleap.core.tables.PersonRoleTable;
 import cz.quantumleap.core.tables.PersonTable;
 import cz.quantumleap.core.tables.RoleTable;
+import cz.quantumleap.core.tables.TablePreferencesTable;
 
 import javax.annotation.Generated;
 
@@ -44,4 +45,9 @@ public class Tables {
      * The table <code>core.role</code>.
      */
     public static final RoleTable ROLE = cz.quantumleap.core.tables.RoleTable.ROLE;
+
+    /**
+     * The table <code>core.table_preferences</code>.
+     */
+    public static final TablePreferencesTable TABLE_PREFERENCES = cz.quantumleap.core.tables.TablePreferencesTable.TABLE_PREFERENCES;
 }

@@ -14,12 +14,14 @@ public class SliceRequest {
     private final int offset;
     private final int size;
     private final Sort sort;
+    private final Long tablePreferencesId;
 
-    public SliceRequest(Map<String, Object> filter, int offset, int size, Sort sort) {
+    public SliceRequest(Map<String, Object> filter, int offset, int size, Sort sort, Long tablePreferencesId) {
         this.filter = filter;
         this.offset = offset;
         this.size = size;
         this.sort = sort;
+        this.tablePreferencesId = tablePreferencesId;
     }
 
     public Map<String, Object> getFilter() {
@@ -38,10 +40,14 @@ public class SliceRequest {
         return sort;
     }
 
+    public Long getTablePreferencesId() {
+        return tablePreferencesId;
+    }
+
     public SliceRequest extend() {
         if (offset + size < MAX_ITEMS) {
             int nextSize = Math.min(MAX_ITEMS - offset, offset + size + CHUNK_SIZE);
-            return new SliceRequest(filter, offset, nextSize, sort);
+            return new SliceRequest(filter, offset, nextSize, sort, tablePreferencesId);
         }
         return null;
     }

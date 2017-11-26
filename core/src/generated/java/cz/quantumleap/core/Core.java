@@ -8,6 +8,7 @@ import cz.quantumleap.core.tables.IncrementTable;
 import cz.quantumleap.core.tables.PersonRoleTable;
 import cz.quantumleap.core.tables.PersonTable;
 import cz.quantumleap.core.tables.RoleTable;
+import cz.quantumleap.core.tables.TablePreferencesTable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,7 +35,7 @@ import org.jooq.impl.SchemaImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Core extends SchemaImpl {
 
-    private static final long serialVersionUID = 1039097884;
+    private static final long serialVersionUID = -467822395;
 
     /**
      * The reference instance of <code>core</code>
@@ -60,6 +61,11 @@ public class Core extends SchemaImpl {
      * The table <code>core.role</code>.
      */
     public final RoleTable ROLE = cz.quantumleap.core.tables.RoleTable.ROLE;
+
+    /**
+     * The table <code>core.table_preferences</code>.
+     */
+    public final TablePreferencesTable TABLE_PREFERENCES = cz.quantumleap.core.tables.TablePreferencesTable.TABLE_PREFERENCES;
 
     /**
      * No further instances allowed
@@ -89,7 +95,8 @@ public class Core extends SchemaImpl {
             Sequences.INCREMENT_ID_SEQ,
             Sequences.PERSON_ID_SEQ,
             Sequences.PERSON_ROLE_ID_SEQ,
-            Sequences.ROLE_ID_SEQ);
+            Sequences.ROLE_ID_SEQ,
+            Sequences.TABLE_PREFERENCES_ID_SEQ);
     }
 
     @Override
@@ -104,6 +111,7 @@ public class Core extends SchemaImpl {
             IncrementTable.INCREMENT,
             PersonTable.PERSON,
             PersonRoleTable.PERSON_ROLE,
-            RoleTable.ROLE);
+            RoleTable.ROLE,
+            TablePreferencesTable.TABLE_PREFERENCES);
     }
 }

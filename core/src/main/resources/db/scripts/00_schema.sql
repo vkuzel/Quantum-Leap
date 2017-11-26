@@ -21,8 +21,16 @@ CREATE TABLE core.person (
 );
 
 CREATE TABLE core.person_role (
-  id         BIGSERIAL PRIMARY KEY,
+  id        BIGSERIAL PRIMARY KEY,
   person_id BIGINT NOT NULL REFERENCES core.person (id),
   role_id   BIGINT NOT NULL REFERENCES core.role (id),
   UNIQUE (person_id, role_id)
+);
+
+CREATE TABLE core.table_preferences (
+  id                              BIGSERIAL PRIMARY KEY,
+  database_table_name_with_schema VARCHAR(128) NOT NULL,
+  is_default                      BOOLEAN      NOT NULL,
+  enabled_columns                 VARCHAR []   NOT NULL DEFAULT '{}',
+  UNIQUE (database_table_name_with_schema, is_default)
 );

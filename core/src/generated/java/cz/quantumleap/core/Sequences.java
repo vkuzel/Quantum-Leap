@@ -42,4 +42,9 @@ public class Sequences {
      * The sequence <code>core.role_id_seq</code>
      */
     public static final Sequence<Long> ROLE_ID_SEQ = new SequenceImpl<Long>("role_id_seq", Core.CORE, org.jooq.impl.SQLDataType.BIGINT.nullable(false));
+
+    /**
+     * The sequence <code>core.table_preferences_id_seq</code>
+     */
+    public static final Sequence<Long> TABLE_PREFERENCES_ID_SEQ = new SequenceImpl<Long>("table_preferences_id_seq", Core.CORE, org.jooq.impl.SQLDataType.BIGINT.nullable(false));
 }

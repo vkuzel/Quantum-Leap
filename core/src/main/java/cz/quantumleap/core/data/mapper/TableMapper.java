@@ -7,13 +7,12 @@ import cz.quantumleap.core.data.transport.Lookup;
 import cz.quantumleap.core.data.transport.Table;
 import cz.quantumleap.core.data.transport.Table.Column;
 import cz.quantumleap.core.data.transport.Table.LookupColumn;
+import cz.quantumleap.core.data.transport.TablePreferences;
 import org.jetbrains.annotations.NotNull;
 import org.jooq.*;
 import org.springframework.data.domain.Sort;
 
 import java.util.*;
-
-import cz.quantumleap.core.data.transport.Table;
 
 public class TableMapper implements RecordHandler<Record> {
 
@@ -50,13 +49,13 @@ public class TableMapper implements RecordHandler<Record> {
         rows.add(row);
     }
 
-    public Table<Map<Column, Object>> intoTable() {
+    public Table<Map<Column, Object>> intoTable(TablePreferences tablePreferences) {
         if (tableColumnHandler.hasLookupColumns()) {
             HashBasedTable<Object, Column, String> lookupLabels = fetchLookupLabels();
             List<Map<Column, Object>> rowsWithLookups = convertRowsToRowsWithLookups(lookupLabels);
-            return new Table<>(MapperUtils.resolveDatabaseTableNameWithSchema(table), columns, rowsWithLookups);
+            return new Table<>(MapperUtils.resolveDatabaseTableNameWithSchema(table), columns, rowsWithLookups, tablePreferences);
         } else {
-            return new Table<>(MapperUtils.resolveDatabaseTableNameWithSchema(table), columns, rows);
+            return new Table<>(MapperUtils.resolveDatabaseTableNameWithSchema(table), columns, rows, tablePreferences);
         }
     }
 

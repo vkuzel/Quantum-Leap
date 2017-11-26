@@ -50,7 +50,7 @@ public class SliceRequestControllerArgumentResolver implements HandlerMethodArgu
 
         Sort sort = sortHandlerMethodArgumentResolver.resolveArgument(parameter, mavContainer, webRequest, binderFactory);
 
-        return new SliceRequest(new HashMap<>(), offset, size, sort);
+        return new SliceRequest(new HashMap<>(), offset, size, sort, null);
     }
 
     private int getWebRequestIntParameter(NativeWebRequest webRequest, String qualifier, String paramName, int defaultValue) {

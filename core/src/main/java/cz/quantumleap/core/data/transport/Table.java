@@ -1,20 +1,25 @@
 package cz.quantumleap.core.data.transport;
 
+import org.jetbrains.annotations.NotNull;
 import org.springframework.data.domain.Sort;
 
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Table<ROW> implements Iterable<ROW> {
 
     private final String databaseTableNameWithSchema;
     private final List<Column> columns;
     private final List<ROW> rows;
+    private final TablePreferences tablePreferences;
 
-    public Table(String databaseTableNameWithSchema, List<Column> columns, List<ROW> rows) {
+    public Table(String databaseTableNameWithSchema, List<Column> columns, List<ROW> rows, TablePreferences tablePreferences) {
         this.databaseTableNameWithSchema = databaseTableNameWithSchema;
         this.columns = columns;
         this.rows = rows;
+        this.tablePreferences = tablePreferences;
     }
 
     public String getDatabaseTableNameWithSchema() {
@@ -22,13 +27,21 @@ public class Table<ROW> implements Iterable<ROW> {
     }
 
     public List<Column> getColumns() {
-        return columns;
+        List<String> enabledColumns = tablePreferences.getEnabledColumnsAsList();
+        if (enabledColumns.isEmpty()) {
+            return columns;
+        }
+        return columns.stream()
+                .filter(column -> enabledColumns.contains(column.name))
+                .sorted(Comparator.comparingLong(o -> enabledColumns.indexOf(o.name)))
+                .collect(Collectors.toList());
     }
 
     public List<ROW> getRows() {
         return rows;
     }
 
+    @NotNull
     @Override
     public Iterator<ROW> iterator() {
         return rows.iterator();
@@ -86,4 +99,5 @@ public class Table<ROW> implements Iterable<ROW> {
             return databaseTableNameWithSchema;
         }
     }
+
 }

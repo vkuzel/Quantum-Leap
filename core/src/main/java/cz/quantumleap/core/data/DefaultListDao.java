@@ -4,8 +4,10 @@ import cz.quantumleap.core.data.list.FilterBuilder;
 import cz.quantumleap.core.data.list.LimitBuilder;
 import cz.quantumleap.core.data.list.OrderBuilder;
 import cz.quantumleap.core.data.mapper.MapperFactory;
+import cz.quantumleap.core.data.mapper.MapperUtils;
 import cz.quantumleap.core.data.transport.Slice;
 import cz.quantumleap.core.data.transport.SliceRequest;
+import cz.quantumleap.core.data.transport.TablePreferences;
 import org.jooq.*;
 import org.springframework.data.domain.Sort;
 
@@ -15,6 +17,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static cz.quantumleap.core.data.list.LimitBuilder.Limit;
+import static cz.quantumleap.core.tables.TablePreferencesTable.TABLE_PREFERENCES;
 
 public final class DefaultListDao<TABLE extends Table<? extends Record>> implements ListDao<TABLE> {
 
@@ -45,7 +48,7 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
                 .where(conditions)
                 .orderBy(orderBuilder.build(request.getSort()))
                 .limit(limit.getOffset(), limit.getNumberOfRows())
-                .fetchInto(mapperFactory.createSliceMapper(request)) // TODO Request?
+                .fetchInto(mapperFactory.createSliceMapper(request, fetchTablePreferences())) // TODO Request?
                 .intoSlice();
     }
 
@@ -59,7 +62,8 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
                     sliceRequest.getFilter(),
                     sliceRequest.getOffset(),
                     sliceRequest.getSize(),
-                    !orders.isEmpty() ? new Sort(orders) : null // TODO Solve for tables without primary key...
+                    !orders.isEmpty() ? new Sort(orders) : null, // TODO Solve for tables without primary key...
+                    sliceRequest.getTablePreferencesId()
             );
         }
         return sliceRequest;
@@ -70,5 +74,13 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
             return table.getPrimaryKey().getFields();
         }
         return Collections.emptyList();
+    }
+
+    private List<TablePreferences> fetchTablePreferences() {
+        String tableName = MapperUtils.resolveDatabaseTableNameWithSchema(table);
+        return dslContext.select(TABLE_PREFERENCES.ID, TABLE_PREFERENCES.IS_DEFAULT, TABLE_PREFERENCES.ENABLED_COLUMNS)
+                .from(TABLE_PREFERENCES)
+                .where(TABLE_PREFERENCES.DATABASE_TABLE_NAME_WITH_SCHEMA.equal(tableName))
+                .fetchInto(TablePreferences.class);
     }
 }

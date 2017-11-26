@@ -4,6 +4,7 @@ import cz.quantumleap.core.data.LookupDao;
 import cz.quantumleap.core.data.LookupDaoManager;
 import cz.quantumleap.core.data.transport.Lookup;
 import cz.quantumleap.core.data.transport.SliceRequest;
+import cz.quantumleap.core.data.transport.TablePreferences;
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jooq.*;
@@ -12,6 +13,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static com.google.common.base.CaseFormat.LOWER_UNDERSCORE;
@@ -27,8 +29,8 @@ public class MapperFactory {
         this.lookupDaoManager = lookupDaoManager;
     }
 
-    public SliceMapper createSliceMapper(SliceRequest sliceRequest) {
-        return new SliceMapper(table, lookupDaoManager, sliceRequest);
+    public SliceMapper createSliceMapper(SliceRequest sliceRequest, List<TablePreferences> tablePreferencesList) {
+        return new SliceMapper(table, lookupDaoManager, sliceRequest, tablePreferencesList);
     }
 
     public <T> TransportUnMapper<T> createTransportUnMapper(Class<T> transportType) {
