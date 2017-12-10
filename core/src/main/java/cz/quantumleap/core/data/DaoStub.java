@@ -27,7 +27,7 @@ public class DaoStub<TABLE extends Table<? extends Record>> implements DetailDao
     protected final ListDao<TABLE> listDao;
     protected final LookupDao<TABLE> lookupDao;
 
-    protected DaoStub(TABLE table, Field<String> lookupLabelField, Function<String, Condition> filterConditionBuilder, DSLContext dslContext, LookupDaoManager lookupDaoManager, RecordAuditor recordAuditor) {
+    protected DaoStub(TABLE table, Field<String> lookupLabelField, Function<String, Condition> filterConditionBuilder, DSLContext dslContext, LookupDaoManager lookupDaoManager, EnumManager enumManager, RecordAuditor recordAuditor) {
         this.dslContext = dslContext;
         this.table = table;
 
@@ -35,7 +35,7 @@ public class DaoStub<TABLE extends Table<? extends Record>> implements DetailDao
         this.filterBuilder = new DefaultFilterBuilder(table);
         this.orderBuilder = new DefaultOrderBuilder(table);
         this.limitBuilder = LimitBuilder.DEFAULT;
-        this.mapperFactory = new MapperFactory(table, lookupDaoManager);
+        this.mapperFactory = new MapperFactory(table, lookupDaoManager, enumManager);
 
         detailDao = new DefaultDetailDao<>(table, dslContext, primaryKeyConditionBuilder, mapperFactory, recordAuditor);
         listDao = new DefaultListDao<>(table, dslContext, filterBuilder, orderBuilder, limitBuilder, mapperFactory);

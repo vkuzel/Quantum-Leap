@@ -22,8 +22,8 @@ CREATE TABLE core.person (
 
 CREATE TABLE core.person_role (
   id        BIGSERIAL PRIMARY KEY,
-  person_id BIGINT NOT NULL REFERENCES core.person (id),
-  role_id   BIGINT NOT NULL REFERENCES core.role (id),
+  person_id BIGINT NOT NULL REFERENCES core.person,
+  role_id   BIGINT NOT NULL REFERENCES core.role,
   UNIQUE (person_id, role_id)
 );
 
@@ -33,4 +33,16 @@ CREATE TABLE core.table_preferences (
   is_default                      BOOLEAN      NOT NULL,
   enabled_columns                 VARCHAR []   NOT NULL DEFAULT '{}',
   UNIQUE (database_table_name_with_schema, is_default)
+);
+
+CREATE TABLE core.enum (
+  id   VARCHAR(255) NOT NULL PRIMARY KEY,
+  name VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE core.enum_value (
+  id      VARCHAR(255) NOT NULL PRIMARY KEY,
+  enum_id VARCHAR(255) NOT NULL REFERENCES core.enum,
+  label   VARCHAR(255) NOT NULL,
+  UNIQUE (id, enum_id)
 );

@@ -4,11 +4,7 @@
 package cz.quantumleap.core;
 
 
-import cz.quantumleap.core.tables.IncrementTable;
-import cz.quantumleap.core.tables.PersonRoleTable;
-import cz.quantumleap.core.tables.PersonTable;
-import cz.quantumleap.core.tables.RoleTable;
-import cz.quantumleap.core.tables.TablePreferencesTable;
+import cz.quantumleap.core.tables.*;
 
 import javax.annotation.Generated;
 
@@ -25,6 +21,16 @@ import javax.annotation.Generated;
 )
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Tables {
+
+    /**
+     * The table <code>core.enum</code>.
+     */
+    public static final EnumTable ENUM = cz.quantumleap.core.tables.EnumTable.ENUM;
+
+    /**
+     * The table <code>core.enum_value</code>.
+     */
+    public static final EnumValueTable ENUM_VALUE = cz.quantumleap.core.tables.EnumValueTable.ENUM_VALUE;
 
     /**
      * The table <code>core.increment</code>.

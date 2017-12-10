@@ -1,17 +1,18 @@
 package cz.quantumleap.core.data.mapper;
 
+import cz.quantumleap.core.data.EnumManager;
 import cz.quantumleap.core.data.LookupDao;
 import cz.quantumleap.core.data.LookupDaoManager;
-import cz.quantumleap.core.data.transport.Lookup;
-import cz.quantumleap.core.data.transport.SliceRequest;
-import cz.quantumleap.core.data.transport.TablePreferences;
+import cz.quantumleap.core.data.transport.*;
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jooq.*;
+import org.jooq.Table;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,14 +24,16 @@ public class MapperFactory {
 
     private final org.jooq.Table<? extends Record> table;
     private final LookupDaoManager lookupDaoManager;
+    private final EnumManager enumManager;
 
-    public MapperFactory(org.jooq.Table<? extends Record> table, LookupDaoManager lookupDaoManager) {
+    public MapperFactory(Table<? extends Record> table, LookupDaoManager lookupDaoManager, EnumManager enumManager) {
         this.table = table;
         this.lookupDaoManager = lookupDaoManager;
+        this.enumManager = enumManager;
     }
 
     public SliceMapper createSliceMapper(SliceRequest sliceRequest, List<TablePreferences> tablePreferencesList) {
-        return new SliceMapper(table, lookupDaoManager, sliceRequest, tablePreferencesList);
+        return new SliceMapper(table, lookupDaoManager, enumManager, sliceRequest, tablePreferencesList);
     }
 
     public <T> TransportUnMapper<T> createTransportUnMapper(Class<T> transportType) {
@@ -50,7 +53,7 @@ public class MapperFactory {
         }
 
         public Record unMap(T transport, Record record) {
-            if (hasLookupGetters()) {
+            if (hasComplexValueGetters()) {
                 for (Field<?> field : record.fields()) {
                     setValueToRecordField(transport, field, record);
                 }
@@ -66,14 +69,21 @@ public class MapperFactory {
                 Object value = getValue(transport, getter.getKey());
                 if (value instanceof Lookup) {
                     value = ((Lookup) value).getId();
+                } else if (value instanceof EnumValue) {
+                    value = ((EnumValue) value).getId();
                 } else {
                     value = getValue(transport, getter.getKey());
                 }
 
                 if (value != null) {
-                    record.setValue((Field<Object>) field, value);
+                    record.setValue(castField(field), value);
                 }
             }
+        }
+
+        @SuppressWarnings("unchecked")
+        private Field<Object> castField(Field<?> field) {
+            return (Field<Object>) field;
         }
 
         private Object getValue(T transport, Method getter) {
@@ -84,9 +94,10 @@ public class MapperFactory {
             }
         }
 
-        private boolean hasLookupGetters() {
+        private boolean hasComplexValueGetters() {
             for (Pair<Method, Class<?>> getter : transportGetters.values()) {
-                if (getter.getValue() == Lookup.class) {
+                Class<?> type = getter.getValue();
+                if (type == Lookup.class || type == EnumValue.class || type == Set.class) {
                     return true;
                 }
             }
@@ -141,7 +152,7 @@ public class MapperFactory {
 
         @Override
         public T map(Record record) {
-            if (hasLookupSetters()) {
+            if (hasComplexValueSetters()) {
                 T transport = createTransportObject();
                 for (Field<?> field : record.fields()) {
                     setValueToTransportMember(transport, record, field);
@@ -163,12 +174,24 @@ public class MapperFactory {
                     if (referenceId != null) {
                         String fieldName = field.getName();
 
-                        String databaseTableNameWithSchema = getDatabaseTableNameWithSchemaForLookupField(field);
+                        String databaseTableNameWithSchema = convertFieldToDatabaseTableNameWithSchema(field);
                         LookupDao lookupDao = lookupDaoManager.getDaoByDatabaseTableNameWithSchema(databaseTableNameWithSchema);
                         Validate.notNull(lookupDao, "LookupDao for field " + transport.getClass().getSimpleName() + "." + fieldName + " was not found!");
 
                         String label = lookupDao.fetchLabelById(referenceId);
                         value = new Lookup(referenceId, label, databaseTableNameWithSchema);
+                    }
+                } else if (paramType == EnumValue.class) {
+                    String referenceId = record.getValue(field, String.class);
+                    if (referenceId != null) {
+                        String enumId = MapperUtils.resolveEnumId(field);
+                        value = enumManager.createEnumValue(enumId, referenceId);
+                    }
+                } else if (paramType == Set.class) {
+                    String[] referenceIds = record.getValue(field, String[].class);
+                    if (referenceIds != null) {
+                        String enumId = MapperUtils.resolveEnumId(field);
+                        value = enumManager.createSet(enumId, Arrays.asList(referenceIds));
                     }
                 } else {
                     value = record.getValue(field, paramType);
@@ -180,7 +203,7 @@ public class MapperFactory {
             }
         }
 
-        private String getDatabaseTableNameWithSchemaForLookupField(Field<?> field) {
+        private String convertFieldToDatabaseTableNameWithSchema(Field<?> field) {
             for (ForeignKey<? extends Record, ?> foreignKey : table.getReferences()) {
                 if (foreignKey.getFields().size() != 1) {
                     continue;
@@ -212,9 +235,10 @@ public class MapperFactory {
             }
         }
 
-        private boolean hasLookupSetters() {
+        private boolean hasComplexValueSetters() {
             for (Pair<Method, Class<?>> setter : transportSetters.values()) {
-                if (setter.getValue() == Lookup.class) {
+                Class<?> type = setter.getValue();
+                if (type == Lookup.class || type == EnumValue.class || type == Set.class) {
                     return true;
                 }
             }

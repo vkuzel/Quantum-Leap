@@ -15,8 +15,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.util.StringUtils;
 
-import java.io.IOException;
-
 @SpringBootApplication
 @EnableTransactionManagement(proxyTargetClass = true)
 public class CliApplication implements CommandLineRunner {
@@ -28,7 +26,7 @@ public class CliApplication implements CommandLineRunner {
     }
 
     @Override
-    public void run(String... args) throws Exception {
+    public void run(String... args) {
         String firstArg = args.length > 0 ? args[0] : "";
         switch (firstArg) {
             case "rebuild":
@@ -82,11 +80,11 @@ public class CliApplication implements CommandLineRunner {
 
         @Bean
         public IncrementDao incrementDao() {
-            return new IncrementDao(dslContext, null, new RecordAuditor());
+            return new IncrementDao(dslContext, null, null, new RecordAuditor());
         }
     }
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         new SpringApplicationBuilder(CliApplication.class)
                 .web(false)
                 .run(args);

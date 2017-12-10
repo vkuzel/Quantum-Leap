@@ -69,6 +69,22 @@ public class Table<ROW> implements Iterable<ROW> {
             return (LookupColumn) this;
         }
 
+        public boolean isEnumColumn() {
+            return this instanceof EnumColumn;
+        }
+
+        public EnumColumn asEnumColumn() {
+            return (EnumColumn) this;
+        }
+
+        public boolean isSetColumn() {
+            return this instanceof SetColumn;
+        }
+
+        public SetColumn asSetColumn() {
+            return (SetColumn) this;
+        }
+
         public Class<?> getType() {
             return type;
         }
@@ -90,8 +106,8 @@ public class Table<ROW> implements Iterable<ROW> {
 
         private final String databaseTableNameWithSchema;
 
-        public LookupColumn(Class<?> type, String name, boolean primaryKey, Sort.Order order, String databaseTableNameWithSchema) {
-            super(type, name, primaryKey, order);
+        public LookupColumn(String name, Sort.Order order, String databaseTableNameWithSchema) {
+            super(Lookup.class, name, false, order);
             this.databaseTableNameWithSchema = databaseTableNameWithSchema;
         }
 
@@ -100,4 +116,31 @@ public class Table<ROW> implements Iterable<ROW> {
         }
     }
 
+    public static class EnumColumn extends Column {
+
+        private final String enumId;
+
+        public EnumColumn(String name, Sort.Order order, String enumId) {
+            super(EnumValue.class, name, false, order);
+            this.enumId = enumId;
+        }
+
+        public String getEnumId() {
+            return enumId;
+        }
+    }
+
+    public static class SetColumn extends Column {
+
+        private final String enumId;
+
+        public SetColumn(String name, Sort.Order order, String enumId) {
+            super(Set.class, name, false, order);
+            this.enumId = enumId;
+        }
+
+        public String getEnumId() {
+            return enumId;
+        }
+    }
 }

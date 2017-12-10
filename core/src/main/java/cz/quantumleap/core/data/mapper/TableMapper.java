@@ -1,12 +1,15 @@
 package cz.quantumleap.core.data.mapper;
 
 import com.google.common.collect.*;
+import cz.quantumleap.core.data.EnumManager;
 import cz.quantumleap.core.data.LookupDao;
 import cz.quantumleap.core.data.LookupDaoManager;
 import cz.quantumleap.core.data.transport.Lookup;
 import cz.quantumleap.core.data.transport.Table;
 import cz.quantumleap.core.data.transport.Table.Column;
+import cz.quantumleap.core.data.transport.Table.EnumColumn;
 import cz.quantumleap.core.data.transport.Table.LookupColumn;
+import cz.quantumleap.core.data.transport.Table.SetColumn;
 import cz.quantumleap.core.data.transport.TablePreferences;
 import org.jetbrains.annotations.NotNull;
 import org.jooq.*;
@@ -14,19 +17,24 @@ import org.springframework.data.domain.Sort;
 
 import java.util.*;
 
+import cz.quantumleap.core.data.transport.Table;
+
 public class TableMapper implements RecordHandler<Record> {
 
     private final org.jooq.Table<? extends Record> table;
     private final LookupDaoManager lookupDaoManager;
+    private final EnumManager enumManager;
 
     private final TableColumnHandler tableColumnHandler;
     private final List<Column> columns;
     private final List<Map<Column, Object>> rows;
-    private final SetMultimap<LookupColumn, Object> referenceIds = HashMultimap.create();
+    private final SetMultimap<LookupColumn, Object> lookupReferenceIds = HashMultimap.create();
+    private final SetMultimap<EnumColumn, Object> enumReferenceIds = HashMultimap.create();
 
-    TableMapper(org.jooq.Table<? extends Record> table, LookupDaoManager lookupDaoManager, Sort sort, int expectedSize) {
+    TableMapper(org.jooq.Table<? extends Record> table, LookupDaoManager lookupDaoManager, EnumManager enumManager, Sort sort, int expectedSize) {
         this.table = table;
         this.lookupDaoManager = lookupDaoManager;
+        this.enumManager = enumManager;
         this.tableColumnHandler = new TableColumnHandler(table, sort);
         this.columns = tableColumnHandler.getColumns();
         this.rows = Lists.newArrayListWithExpectedSize(expectedSize);
@@ -43,16 +51,18 @@ public class TableMapper implements RecordHandler<Record> {
             row.put(column, value);
 
             if (column.isLookupColumn()) {
-                referenceIds.put(column.asLookupColumn(), value);
+                lookupReferenceIds.put(column.asLookupColumn(), value);
+            } else if (column.isEnumColumn() || column.isSetColumn()) {
+                enumReferenceIds.put(column.asEnumColumn(), value);
             }
         }
         rows.add(row);
     }
 
     public Table<Map<Column, Object>> intoTable(TablePreferences tablePreferences) {
-        if (tableColumnHandler.hasLookupColumns()) {
+        if (tableColumnHandler.hasComplexColumns()) {
             HashBasedTable<Object, Column, String> lookupLabels = fetchLookupLabels();
-            List<Map<Column, Object>> rowsWithLookups = convertRowsToRowsWithLookups(lookupLabels);
+            List<Map<Column, Object>> rowsWithLookups = convertRowsToRowsWithComplexValues(lookupLabels);
             return new Table<>(MapperUtils.resolveDatabaseTableNameWithSchema(table), columns, rowsWithLookups, tablePreferences);
         } else {
             return new Table<>(MapperUtils.resolveDatabaseTableNameWithSchema(table), columns, rows, tablePreferences);
@@ -61,35 +71,41 @@ public class TableMapper implements RecordHandler<Record> {
 
     @NotNull
     private HashBasedTable<Object, Column, String> fetchLookupLabels() {
-        HashBasedTable<Object, Column, String> referenceLabels = HashBasedTable.create();
-        for (LookupColumn lookupColumn : referenceIds.keys()) {
+        HashBasedTable<Object, Column, String> valueColumnLabels = HashBasedTable.create();
+        for (LookupColumn lookupColumn : lookupReferenceIds.keys()) {
             String databaseTableNameWithSchema = lookupColumn.getDatabaseTableNameWithSchema();
             LookupDao<org.jooq.Table<? extends Record>> lookupDao = lookupDaoManager.getDaoByDatabaseTableNameWithSchema(databaseTableNameWithSchema);
-            Map<Object, String> labels = lookupDao.fetchLabelsById(referenceIds.get(lookupColumn));
-            labels.forEach((referenceId, label) -> referenceLabels.put(referenceId, lookupColumn, label));
+            Map<Object, String> labels = lookupDao.fetchLabelsById(lookupReferenceIds.get(lookupColumn));
+            labels.forEach((referenceId, label) -> valueColumnLabels.put(referenceId, lookupColumn, label));
         }
-        return referenceLabels;
+        return valueColumnLabels;
     }
 
-    private List<Map<Column, Object>> convertRowsToRowsWithLookups(HashBasedTable<Object, Column, String> lookupLabels) {
-        List<Map<Column, Object>> rowsWithLookups = new ArrayList<>(rows.size());
+    private List<Map<Column, Object>> convertRowsToRowsWithComplexValues(HashBasedTable<Object, Column, String> lookupLabels) {
+        List<Map<Column, Object>> rowsWithComplexValues = new ArrayList<>(rows.size());
         for (Map<Column, Object> row : rows) {
-            Map<Column, Object> rowWithLookups = Maps.newHashMapWithExpectedSize(row.size());
+            Map<Column, Object> rowWithComplexValues = Maps.newHashMapWithExpectedSize(row.size());
             row.forEach((column, value) -> {
                 if (column.isLookupColumn()) {
                     LookupColumn lookupColumn = column.asLookupColumn();
-                    rowWithLookups.put(column, new Lookup(
+                    rowWithComplexValues.put(column, new Lookup(
                             value,
                             lookupLabels.get(value, column),
                             lookupColumn.getDatabaseTableNameWithSchema()
                     ));
+                } else if (column.isEnumColumn()) {
+                    EnumColumn enumColumn = column.asEnumColumn();
+                    rowWithComplexValues.put(column, enumManager.createEnumValue(enumColumn.getEnumId(), String.valueOf(value)));
+                } else if (column.isSetColumn()) {
+                    SetColumn setColumn = column.asSetColumn();
+                    rowWithComplexValues.put(column, enumManager.createSet(setColumn.getEnumId(), Arrays.asList((String[]) value)));
                 } else {
-                    rowWithLookups.put(column, value);
+                    rowWithComplexValues.put(column, value);
                 }
             });
-            rowsWithLookups.add(rowWithLookups);
+            rowsWithComplexValues.add(rowWithComplexValues);
         }
-        return rowsWithLookups;
+        return rowsWithComplexValues;
     }
 
     private class TableColumnHandler {
@@ -102,23 +118,23 @@ public class TableMapper implements RecordHandler<Record> {
             this.sort = sort;
             this.fieldColumnMap = Maps.newLinkedHashMapWithExpectedSize(table.fields().length);
 
-            createColumns();
+            buildFieldColumnMap();
         }
 
         private List<Column> getColumns() {
             return Lists.newArrayList(fieldColumnMap.values());
         }
 
-        private boolean hasLookupColumns() {
+        private boolean hasComplexColumns() {
             for (Column column : fieldColumnMap.values()) {
-                if (column.getType() == Lookup.class) {
+                if (column.isLookupColumn() || column.isEnumColumn() || column.isSetColumn()) {
                     return true;
                 }
             }
             return false;
         }
 
-        private void createColumns() {
+        private void buildFieldColumnMap() {
             List<Field<?>> primaryKeyFields = getPrimaryKeyFields();
             Map<Field<?>, String> lookupFieldDatabaseTableNameWithSchemaMap = getLookupFieldDatabaseTableNameWithSchemaMap();
 
@@ -129,11 +145,21 @@ public class TableMapper implements RecordHandler<Record> {
                 Column column;
                 if (lookupFieldDatabaseTableNameWithSchemaMap.containsKey(field)) {
                     column = new Table.LookupColumn(
-                            Lookup.class,
                             name,
-                            false,
                             order,
                             lookupFieldDatabaseTableNameWithSchemaMap.get(field)
+                    );
+                } else if (isEnumField(field)) {
+                    column = new EnumColumn(
+                            name,
+                            order,
+                            MapperUtils.resolveEnumId(field)
+                    );
+                } else if (isSetField(field)) {
+                    column = new SetColumn(
+                            name,
+                            order,
+                            MapperUtils.resolveEnumId(field)
                     );
                 } else {
                     column = new Column(
@@ -177,6 +203,16 @@ public class TableMapper implements RecordHandler<Record> {
                 }
             }
             return map;
+        }
+
+        private boolean isEnumField(Field<?> field) {
+            String enumId = MapperUtils.resolveEnumId(field);
+            return enumManager.isEnum(enumId) && field.getDataType().isString();
+        }
+
+        private boolean isSetField(Field<?> field) {
+            String enumId = MapperUtils.resolveEnumId(field);
+            return enumManager.isEnum(enumId) && field.getDataType().isArray();
         }
     }
 }

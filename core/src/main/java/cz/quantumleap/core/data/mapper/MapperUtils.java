@@ -1,5 +1,6 @@
 package cz.quantumleap.core.data.mapper;
 
+import org.jooq.Field;
 import org.jooq.Table;
 
 public class MapperUtils {
@@ -10,5 +11,9 @@ public class MapperUtils {
             name = table.getSchema().getName() + "." + name;
         }
         return name;
+    }
+
+    public static String resolveEnumId(Field<?> field) {
+        return field.getName().toUpperCase();
     }
 }

@@ -31,9 +31,15 @@
             <a th:if="${column.primaryKey}"
                th:href="@{|${detailUrl}/${row.get(column)}|}"
                th:text="${{row.get(column)}}">id</a>
-            <span th:if="${!column.primaryKey && column.type != T(cz.quantumleap.core.data.transport.Lookup)}"
+            <span th:if="${!column.primaryKey && column.type != T(cz.quantumleap.core.data.transport.Lookup) && column.type != T(cz.quantumleap.core.data.transport.EnumValue) && column.type != T(cz.quantumleap.core.data.transport.Set)}"
                   th:text="${{row.get(column)}}"
                   th:remove="tag">Standard value</span>
+            <span th:if="${column.type == T(cz.quantumleap.core.data.transport.EnumValue)}"
+                  th:text="${{row.get(column).label}}">
+            </span>
+            <span th:if="${column.type == T(cz.quantumleap.core.data.transport.Set)}">
+                <span th:each="value : ${row.get(column).values}" th:text="${{value.label}}"></span>
+            </span>
             <a th:if="${column.type == T(cz.quantumleap.core.data.transport.Lookup)}"
                th:with="detailUrl=${@lookupControllerManager.getControllerForTable(row.get(column).databaseTableNameWithSchema).getDetailUrl()}"
                th:href="|${detailUrl}/${row.get(column).id}|"

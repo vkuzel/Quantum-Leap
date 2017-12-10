@@ -1,9 +1,6 @@
 package cz.quantumleap.core.autoincrement;
 
-import cz.quantumleap.core.data.DefaultDetailDao;
-import cz.quantumleap.core.data.DetailDao;
-import cz.quantumleap.core.data.LookupDaoManager;
-import cz.quantumleap.core.data.RecordAuditor;
+import cz.quantumleap.core.data.*;
 import cz.quantumleap.core.data.detail.PrimaryKeyConditionBuilder;
 import cz.quantumleap.core.data.mapper.MapperFactory;
 import cz.quantumleap.core.tables.IncrementTable;
@@ -24,10 +21,10 @@ public class IncrementDao implements DetailDao<IncrementTable> {
     private final DSLContext dslContext;
     private final DetailDao<IncrementTable> detailDao;
 
-    public IncrementDao(DSLContext dslContext, LookupDaoManager lookupDaoManager, RecordAuditor recordAuditor) {
+    public IncrementDao(DSLContext dslContext, LookupDaoManager lookupDaoManager, EnumManager enumManager, RecordAuditor recordAuditor) {
         this.dslContext = dslContext;
         PrimaryKeyConditionBuilder primaryKeyConditionBuilder = new PrimaryKeyConditionBuilder(INCREMENT);
-        MapperFactory mapperFactory = new MapperFactory(INCREMENT, lookupDaoManager);
+        MapperFactory mapperFactory = new MapperFactory(INCREMENT, lookupDaoManager, enumManager);
         this.detailDao = new DefaultDetailDao<>(INCREMENT, dslContext, primaryKeyConditionBuilder, mapperFactory, recordAuditor);
     }
 

@@ -4,23 +4,14 @@
 package cz.quantumleap.core;
 
 
-import cz.quantumleap.core.tables.IncrementTable;
-import cz.quantumleap.core.tables.PersonRoleTable;
-import cz.quantumleap.core.tables.PersonTable;
-import cz.quantumleap.core.tables.RoleTable;
-import cz.quantumleap.core.tables.TablePreferencesTable;
-import cz.quantumleap.core.tables.records.IncrementRecord;
-import cz.quantumleap.core.tables.records.PersonRecord;
-import cz.quantumleap.core.tables.records.PersonRoleRecord;
-import cz.quantumleap.core.tables.records.RoleRecord;
-import cz.quantumleap.core.tables.records.TablePreferencesRecord;
-
-import javax.annotation.Generated;
-
+import cz.quantumleap.core.tables.*;
+import cz.quantumleap.core.tables.records.*;
 import org.jooq.ForeignKey;
 import org.jooq.Identity;
 import org.jooq.UniqueKey;
 import org.jooq.impl.AbstractKeys;
+
+import javax.annotation.Generated;
 
 
 /**
@@ -51,6 +42,9 @@ public class Keys {
     // UNIQUE and PRIMARY KEY definitions
     // -------------------------------------------------------------------------
 
+    public static final UniqueKey<EnumRecord> ENUM_PKEY = UniqueKeys0.ENUM_PKEY;
+    public static final UniqueKey<EnumValueRecord> ENUM_VALUE_PKEY = UniqueKeys0.ENUM_VALUE_PKEY;
+    public static final UniqueKey<EnumValueRecord> ENUM_VALUE_ID_ENUM_ID_KEY = UniqueKeys0.ENUM_VALUE_ID_ENUM_ID_KEY;
     public static final UniqueKey<IncrementRecord> INCREMENT_PKEY = UniqueKeys0.INCREMENT_PKEY;
     public static final UniqueKey<PersonRecord> PERSON_PKEY = UniqueKeys0.PERSON_PKEY;
     public static final UniqueKey<PersonRecord> PERSON_EMAIL_KEY = UniqueKeys0.PERSON_EMAIL_KEY;
@@ -65,6 +59,7 @@ public class Keys {
     // FOREIGN KEY definitions
     // -------------------------------------------------------------------------
 
+    public static final ForeignKey<EnumValueRecord, EnumRecord> ENUM_VALUE__ENUM_VALUE_ENUM_ID_FKEY = ForeignKeys0.ENUM_VALUE__ENUM_VALUE_ENUM_ID_FKEY;
     public static final ForeignKey<PersonRoleRecord, PersonRecord> PERSON_ROLE__PERSON_ROLE_PERSON_ID_FKEY = ForeignKeys0.PERSON_ROLE__PERSON_ROLE_PERSON_ID_FKEY;
     public static final ForeignKey<PersonRoleRecord, RoleRecord> PERSON_ROLE__PERSON_ROLE_ROLE_ID_FKEY = ForeignKeys0.PERSON_ROLE__PERSON_ROLE_ROLE_ID_FKEY;
 
@@ -81,6 +76,9 @@ public class Keys {
     }
 
     private static class UniqueKeys0 extends AbstractKeys {
+        public static final UniqueKey<EnumRecord> ENUM_PKEY = createUniqueKey(EnumTable.ENUM, "enum_pkey", EnumTable.ENUM.ID);
+        public static final UniqueKey<EnumValueRecord> ENUM_VALUE_PKEY = createUniqueKey(EnumValueTable.ENUM_VALUE, "enum_value_pkey", EnumValueTable.ENUM_VALUE.ID);
+        public static final UniqueKey<EnumValueRecord> ENUM_VALUE_ID_ENUM_ID_KEY = createUniqueKey(EnumValueTable.ENUM_VALUE, "enum_value_id_enum_id_key", EnumValueTable.ENUM_VALUE.ID, EnumValueTable.ENUM_VALUE.ENUM_ID);
         public static final UniqueKey<IncrementRecord> INCREMENT_PKEY = createUniqueKey(IncrementTable.INCREMENT, "increment_pkey", IncrementTable.INCREMENT.ID);
         public static final UniqueKey<PersonRecord> PERSON_PKEY = createUniqueKey(PersonTable.PERSON, "person_pkey", PersonTable.PERSON.ID);
         public static final UniqueKey<PersonRecord> PERSON_EMAIL_KEY = createUniqueKey(PersonTable.PERSON, "person_email_key", PersonTable.PERSON.EMAIL);
@@ -93,6 +91,7 @@ public class Keys {
     }
 
     private static class ForeignKeys0 extends AbstractKeys {
+        public static final ForeignKey<EnumValueRecord, EnumRecord> ENUM_VALUE__ENUM_VALUE_ENUM_ID_FKEY = createForeignKey(cz.quantumleap.core.Keys.ENUM_PKEY, EnumValueTable.ENUM_VALUE, "enum_value__enum_value_enum_id_fkey", EnumValueTable.ENUM_VALUE.ENUM_ID);
         public static final ForeignKey<PersonRoleRecord, PersonRecord> PERSON_ROLE__PERSON_ROLE_PERSON_ID_FKEY = createForeignKey(cz.quantumleap.core.Keys.PERSON_PKEY, PersonRoleTable.PERSON_ROLE, "person_role__person_role_person_id_fkey", PersonRoleTable.PERSON_ROLE.PERSON_ID);
         public static final ForeignKey<PersonRoleRecord, RoleRecord> PERSON_ROLE__PERSON_ROLE_ROLE_ID_FKEY = createForeignKey(cz.quantumleap.core.Keys.ROLE_PKEY, PersonRoleTable.PERSON_ROLE, "person_role__person_role_role_id_fkey", PersonRoleTable.PERSON_ROLE.ROLE_ID);
     }
