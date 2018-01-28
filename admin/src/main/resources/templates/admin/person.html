@@ -42,12 +42,12 @@
         </div>
     </div>
 
-    <div class="row">
+    <div class="row" th:if="*{id}">
         <div class="col-lg-12">
             <div class="panel panel-default top-panel">
                 <div class="panel-heading">
                     <i class="fa fa-users"></i>
-                    <span th:text="#{admin.table.title.core.person-role}">Table</span>
+                    <span th:text="#{admin.table.title.core.roles}">Table</span>
                     <div class="btn-group pull-right">
                         <a type="button" th:href="@{|/person/${person.id}/person-role|}" class="btn btn-success btn-xs" th:text="#{admin.table.title.new-record}"></a>
                     </div>
