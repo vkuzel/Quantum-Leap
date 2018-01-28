@@ -16,7 +16,7 @@ public class ServiceStub<T> implements DetailService<T>, ListService, LookupServ
 
     public ServiceStub(Class<T> transportType, DaoStub<?> dao) {
         this.transportType = transportType;
-        this.detailService = new DefaultDetailService<T>(transportType, dao);
+        this.detailService = new DefaultDetailService<>(transportType, dao);
         this.listService = new DefaultListService(dao);
         this.lookupService = new DefaultLookupService(dao, listService);
     }
