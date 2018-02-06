@@ -1,10 +1,12 @@
 package cz.quantumleap.core.web;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 @Component
+@ConditionalOnWebApplication
 public class LookupControllerManager {
 
     private final List<LookupController> lookupControllers;
@@ -27,5 +29,5 @@ public class LookupControllerManager {
     private boolean hasSupportForTable(LookupController controller, String tableName) {
         return controller.supportedDatabaseTableNameWithSchema().equals(tableName);
     }
-
 }
+
