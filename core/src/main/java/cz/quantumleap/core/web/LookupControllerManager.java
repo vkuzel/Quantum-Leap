@@ -1,5 +1,6 @@
 package cz.quantumleap.core.web;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.stereotype.Component;
 
@@ -11,7 +12,7 @@ public class LookupControllerManager {
 
     private final List<LookupController> lookupControllers;
 
-    public LookupControllerManager(List<LookupController> lookupControllers) {
+    public LookupControllerManager(@Autowired(required = false) List<LookupController> lookupControllers) {
         this.lookupControllers = lookupControllers;
     }
 

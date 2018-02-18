@@ -175,8 +175,14 @@ function LookupControl(lookupField) {
     var lookupControl = {
         $lookupField: $lookupField,
 
-        $idInput: $lookupField.find(':hidden'),
+        $dataInput: $lookupField.find(':hidden'),
         $labelInput: $lookupField.find(':text')
+    };
+
+    lookupControl.setValues = function (id, label) {
+        var json = JSON.stringify({id: id, label: label});
+        lookupControl.$dataInput.val(json);
+        lookupControl.$labelInput.val(label);
     };
 
     var dropDownControl = {
@@ -203,8 +209,8 @@ function LookupControl(lookupField) {
 
         var id = $a.attr('data-id');
         if (id) {
-            lookupControl.$idInput.val(id);
-            lookupControl.$labelInput.val($a.html());
+            var label = $a.html();
+            lookupControl.setValues(id, label);
         }
         lookupControl.$lookupField.removeClass('open');
     };
@@ -212,7 +218,9 @@ function LookupControl(lookupField) {
     dropDownControl.replaceDropdownContent = function (html) {
         var $dropDownReplacement = $(html).next('ul.dropdown-menu');
 
-        $dropDownReplacement.find('a[data-id]').click(function () {
+        $dropDownReplacement.find('a[data-id]').click(function (event) {
+            event.preventDefault();
+
             dropDownControl.selectDropdownItem(this);
         });
 
@@ -265,11 +273,10 @@ function LookupControl(lookupField) {
 
         var id = $tr.attr('data-id');
         if (id) {
-            lookupControl.$idInput.val(id);
             $.get(modalControl.lookupLabelUrl, {id: id}, function (label) {
-                lookupControl.$labelInput.val(label);
+                lookupControl.setValues(id, label);
             }).fail(function () {
-                lookupControl.$labelInput.val(id);
+                lookupControl.setValues(id, id);
             });
         }
 
@@ -302,27 +309,30 @@ $('div.lookup').each(function (i, lookupField) {
     LookupControl(lookupField);
 });
 
-function AsyncFormPartControl(formPartSelector, actionButtonsSelector) {
+function AsyncFormPartControl(formPartSelector, actionElementsSelector) {
     var $formPart = $(formPartSelector);
     var asyncFormPartControl = {
         $formPart: $formPart,
         $form: $formPart.parents('form'),
-        $actionButtons: $(actionButtonsSelector)
+        $actionElements: $(actionElementsSelector)
     };
 
     asyncFormPartControl.bindListeners = function () {
-        this.$actionButtons.off('click', '*', this.clickActionButton);
-        this.$actionButtons.click(this.clickActionButton);
+        this.$actionElements.off('click', '*', this.clickActionButton);
+        this.$actionElements.click(this.clickActionButton);
     };
 
     asyncFormPartControl.clickActionButton = function (event) {
         event.preventDefault();
+        asyncFormPartControl.requestFormPart(this);
+    };
 
+    asyncFormPartControl.requestFormPart = function (actionElement) {
         var action = asyncFormPartControl.$form.attr('action');
         var data = asyncFormPartControl.$form.serialize();
-        var $actionButton = $(this);
-        data += '&' + encodeURI($actionButton.attr('name'));
-        var actionButtonValue = $actionButton.val();
+        var $actionElement = $(actionElement);
+        data += '&' + encodeURI($actionElement.attr('name'));
+        var actionButtonValue = $actionElement.val();
         if (actionButtonValue) {
             data += '=' + encodeURI(actionButtonValue);
         }
@@ -335,9 +345,12 @@ function AsyncFormPartControl(formPartSelector, actionButtonsSelector) {
 
         asyncFormPartControl.$formPart.replaceWith($formPartReplacement);
         asyncFormPartControl.$formPart = $formPartReplacement;
-        asyncFormPartControl.$actionButtons = $(actionButtonsSelector);
+        asyncFormPartControl.$actionElements = $(actionElementsSelector);
+
         asyncFormPartControl.bindListeners();
-        console.log('html', html);
+        asyncFormPartControl.$formPart.find('div.lookup').each(function (i, lookupField) {
+            LookupControl(lookupField);
+        });
     };
 
     asyncFormPartControl.bindListeners();

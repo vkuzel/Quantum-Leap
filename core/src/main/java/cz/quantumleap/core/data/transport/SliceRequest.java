@@ -24,12 +24,12 @@ public class SliceRequest {
         this.tablePreferencesId = tablePreferencesId;
     }
 
-    public static SliceRequest filtered(Map<String, Object> filter) {
+    public static SliceRequest filteredSorted(Map<String, Object> filter, Sort sort) {
         return new SliceRequest(
                 filter,
                 0,
                 MAX_ITEMS,
-                null,
+                sort,
                 null
         );
     }
