@@ -24,6 +24,16 @@ public class SliceRequest {
         this.tablePreferencesId = tablePreferencesId;
     }
 
+    public static SliceRequest filtered(Map<String, Object> filter) {
+        return new SliceRequest(
+                filter,
+                0,
+                MAX_ITEMS,
+                null,
+                null
+        );
+    }
+
     public Map<String, Object> getFilter() {
         return filter;
     }

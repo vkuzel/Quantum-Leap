@@ -68,8 +68,8 @@ MenuControl('#side-menu');
 
 // TODO Loaders, spinners?
 
-function TableControl(table, tBodyListenersBinder) {
-    var $table = $(table);
+function TableControl(tableSelector, tBodyListenersBinder) {
+    var $table = $(tableSelector);
 
     var tableControl = {
         $table: $table,
@@ -156,12 +156,12 @@ function TableControl(table, tBodyListenersBinder) {
 $('table.dataTable').each(function (i, table) {
     var tBodyListenersBinder = function ($tBody) {
         $tBody.find('tr > td').click(function () {
-            var primaryKeyAnchors = $(this).parent().find('> td.primary-key > a');
-            var anchors = $(this).children('a');
-            if (anchors.length) {
-                window.location = anchors.first().attr('href');
-            } else if (primaryKeyAnchors.length) {
-                window.location = primaryKeyAnchors.first().attr('href');
+            var $primaryKeyAnchors = $(this).parent().find('> td.primary-key > a');
+            var $anchors = $(this).children('a');
+            if ($anchors.length) {
+                window.location = $anchors.first().attr('href');
+            } else if ($primaryKeyAnchors.length) {
+                window.location = $primaryKeyAnchors.first().attr('href');
             }
         });
     };
@@ -301,3 +301,44 @@ function LookupControl(lookupField) {
 $('div.lookup').each(function (i, lookupField) {
     LookupControl(lookupField);
 });
+
+function AsyncFormPartControl(formPartSelector, actionButtonsSelector) {
+    var $formPart = $(formPartSelector);
+    var asyncFormPartControl = {
+        $formPart: $formPart,
+        $form: $formPart.parents('form'),
+        $actionButtons: $(actionButtonsSelector)
+    };
+
+    asyncFormPartControl.bindListeners = function () {
+        this.$actionButtons.off('click', '*', this.clickActionButton);
+        this.$actionButtons.click(this.clickActionButton);
+    };
+
+    asyncFormPartControl.clickActionButton = function (event) {
+        event.preventDefault();
+
+        var action = asyncFormPartControl.$form.attr('action');
+        var data = asyncFormPartControl.$form.serialize();
+        var $actionButton = $(this);
+        data += '&' + encodeURI($actionButton.attr('name'));
+        var actionButtonValue = $actionButton.val();
+        if (actionButtonValue) {
+            data += '=' + encodeURI(actionButtonValue);
+        }
+
+        $.post(action, data, asyncFormPartControl.replaceFormPartContent);
+    };
+
+    asyncFormPartControl.replaceFormPartContent = function (html) {
+        var $formPartReplacement = $(html);
+
+        asyncFormPartControl.$formPart.replaceWith($formPartReplacement);
+        asyncFormPartControl.$formPart = $formPartReplacement;
+        asyncFormPartControl.$actionButtons = $(actionButtonsSelector);
+        asyncFormPartControl.bindListeners();
+        console.log('html', html);
+    };
+
+    asyncFormPartControl.bindListeners();
+}

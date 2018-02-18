@@ -52,6 +52,19 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
                 .intoSlice();
     }
 
+    public <T> List<T> fetchList(SliceRequest sliceRequest, Class<T> type) {
+        SliceRequest request = setDefaultOrder(sliceRequest);
+        Limit limit = limitBuilder.build(sliceRequest);
+        Collection<Condition> conditions = filterBuilder.build(sliceRequest.getFilter());
+
+
+        return dslContext.selectFrom(table)
+                .where(conditions)
+                .orderBy(orderBuilder.build(request.getSort()))
+                .limit(limit.getOffset(), limit.getNumberOfRows())
+                .fetch(mapperFactory.createTransportMapper(type)); // TODO Is this mapper optimized for high volume lists?
+    }
+
     private SliceRequest setDefaultOrder(SliceRequest sliceRequest) {
         if (sliceRequest.getSort() == null) {
             List<? extends TableField<? extends Record, ?>> primaryKeyFields = getPrimaryKeyFields();

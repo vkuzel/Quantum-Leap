@@ -7,9 +7,7 @@ import cz.quantumleap.core.data.transport.Slice;
 import cz.quantumleap.core.data.transport.SliceRequest;
 import org.jooq.*;
 
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 
 public class DaoStub<TABLE extends Table<? extends Record>> implements DetailDao<TABLE>, ListDao<TABLE>, LookupDao<TABLE> {
@@ -63,8 +61,18 @@ public class DaoStub<TABLE extends Table<? extends Record>> implements DetailDao
     }
 
     @Override
+    public <T> List<T> saveDetailsAssociatedBy(TableField foreignKey, Object foreignId, Collection<T> details, Class<T> detailType) {
+        return detailDao.saveDetailsAssociatedBy(foreignKey, foreignId, details, detailType);
+    }
+
+    @Override
     public Slice fetchSlice(SliceRequest sliceRequest) {
         return listDao.fetchSlice(sliceRequest);
+    }
+
+    @Override
+    public <T> List<T> fetchList(SliceRequest sliceRequest, Class<T> type) {
+        return listDao.fetchList(sliceRequest, type);
     }
 
     @Override

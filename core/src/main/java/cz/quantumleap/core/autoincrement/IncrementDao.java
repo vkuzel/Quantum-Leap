@@ -7,9 +7,12 @@ import cz.quantumleap.core.tables.IncrementTable;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Record2;
+import org.jooq.TableField;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -55,5 +58,10 @@ public class IncrementDao implements DetailDao<IncrementTable> {
     @Override
     public void deleteById(Object id) {
         detailDao.deleteById(id);
+    }
+
+    @Override
+    public <T> List<T> saveDetailsAssociatedBy(TableField foreignKey, Object foreignId, Collection<T> details, Class<T> detailType) {
+        return detailDao.saveDetailsAssociatedBy(foreignKey, foreignId, details, detailType);
     }
 }

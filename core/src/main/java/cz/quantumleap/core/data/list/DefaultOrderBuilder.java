@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import org.jooq.*;
 import org.springframework.data.domain.Sort;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -20,16 +21,17 @@ public class DefaultOrderBuilder implements OrderBuilder {
 
     @Override
     public List<SortField<?>> build(Sort sort) { // TODO It is public api (sort of) so make this optional...
-        List<SortField<?>> sortFields = Lists.newArrayList();
+        if (sort == null) {
+            return Collections.emptyList();
+        }
 
-        if (sort != null) {
-            for (Sort.Order order : sort) {
-                // TODO Get rid of toLowerCase...
-                Field<?> field = sortableFields.get(order.getProperty().toLowerCase());
-                if (field != null) {
-                    SortOrder sortOrder = order.isAscending() ? SortOrder.ASC : SortOrder.DESC;
-                    sortFields.add(field.sort(sortOrder));
-                }
+        List<SortField<?>> sortFields = Lists.newArrayList();
+        for (Sort.Order order : sort) {
+            // TODO Get rid of toLowerCase...
+            Field<?> field = sortableFields.get(order.getProperty().toLowerCase());
+            if (field != null) {
+                SortOrder sortOrder = order.isAscending() ? SortOrder.ASC : SortOrder.DESC;
+                sortFields.add(field.sort(sortOrder));
             }
         }
 

@@ -5,9 +5,7 @@ import cz.quantumleap.core.data.mapper.MapperFactory;
 import org.apache.commons.lang3.Validate;
 import org.jooq.*;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public final class DefaultDetailDao<TABLE extends Table<? extends Record>> implements DetailDao<TABLE> {
 
@@ -93,5 +91,36 @@ public final class DefaultDetailDao<TABLE extends Table<? extends Record>> imple
         dslContext.delete(table)
                 .where(condition)
                 .execute();
+    }
+
+    public <T> List<T> saveDetailsAssociatedBy(TableField foreignKey, Object foreignId, Collection<T> details, Class<T> detailType) {
+        MapperFactory.TransportUnMapper<T> unMapper = mapperFactory.createTransportUnMapper(detailType);
+        Field<Object> primaryKeyField = primaryKeyConditionBuilder.getPrimaryKeyField();
+
+        List<Record> records = new ArrayList<>(details.size());
+        Set<Object> ids = new HashSet<>(details.size());
+        List<T> result = new ArrayList<>(details.size());
+
+        for (T detail : details) {
+            Record record = unMapper.unMap(detail, dslContext.newRecord(table));
+            record.set(foreignKey, foreignId);
+            records.add(record);
+            ids.add(record.get(primaryKeyField));
+        }
+
+        dslContext.delete(table)
+                .where(foreignKey.eq(foreignId).andNot(primaryKeyField.in(ids)))
+                .execute();
+
+        for (Record record : records) {
+            Optional<Condition> condition = primaryKeyConditionBuilder.buildFromRecord(record);
+            if (condition.isPresent()) {
+                result.add(update(record, condition.get(), detailType));
+            } else {
+                result.add(insert(record, detailType));
+            }
+        }
+
+        return result;
     }
 }

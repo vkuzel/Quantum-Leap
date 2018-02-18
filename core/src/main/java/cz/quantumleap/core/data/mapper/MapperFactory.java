@@ -152,7 +152,7 @@ public class MapperFactory {
 
         @Override
         public T map(Record record) {
-            if (hasComplexValueSetters()) {
+            if (hasComplexValueSetters()) { // TODO Do not evaluate this on each map call!
                 T transport = createTransportObject();
                 for (Field<?> field : record.fields()) {
                     setValueToTransportMember(transport, record, field);

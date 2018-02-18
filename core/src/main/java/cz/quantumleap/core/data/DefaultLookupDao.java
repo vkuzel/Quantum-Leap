@@ -7,6 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jooq.*;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
@@ -80,5 +81,10 @@ public final class DefaultLookupDao<TABLE extends Table<? extends Record>> imple
     @Override
     public Slice fetchSlice(SliceRequest sliceRequest) {
         return listDao.fetchSlice(sliceRequest);
+    }
+
+    @Override
+    public <T> List<T> fetchList(SliceRequest sliceRequest, Class<T> type) {
+        return listDao.fetchList(sliceRequest, type);
     }
 }

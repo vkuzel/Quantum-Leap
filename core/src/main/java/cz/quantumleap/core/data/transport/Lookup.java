@@ -15,6 +15,10 @@ public class Lookup {
         this.databaseTableNameWithSchema = databaseTableNameWithSchema;
     }
 
+    public static Lookup withoutLabel(Object id, String databaseTableNameWithSchema) {
+        return new Lookup(id, null, databaseTableNameWithSchema);
+    }
+
     public Object getId() {
         return id;
     }
