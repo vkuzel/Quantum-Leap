@@ -52,7 +52,7 @@ public class EnvironmentBuilder {
         List<ResourceWithModule> scripts = resourceManager.findInClasspath(SCRIPTS_LOCATION_PATTERN);
         scripts.forEach(script -> {
             log.debug("Executing script {}", script.getResourcePath());
-            String sql = Utils.loadResourceToString(script.getResource());
+            String sql = Utils.readResourceToString(script.getResource());
             dslContext.execute(sql);
         });
 

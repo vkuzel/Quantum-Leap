@@ -11,8 +11,10 @@
         field ... Field of type Lookup.
         modalTitle ... Title of lookup modal window.
 */-->
-<div th:assert="${field}" th:object="${field}" class="lookup dropdown">
-    <input type="hidden" th:assert="${fieldName}" th:name="${fieldName}" th:value="${@jacksonObjectMapper.writeValueAsString(field)}">
+<div th:fragment="lookup(databaseTableNameWithSchema, fieldName, fieldId, field, modalTitle)" th:assert="${field}"
+     th:object="${field}" class="lookup dropdown">
+    <input type="hidden" th:assert="${fieldName}" th:name="${fieldName}"
+           th:value="${@jacksonObjectMapper.writeValueAsString(field)}">
     <div class="input-group"
          th:with="lookupController=${@lookupControllerManager.getControllerForTable(databaseTableNameWithSchema)}">
         <input type="text" th:assert="${fieldId}" th:id="${fieldId}" th:value="*{label}" class="form-control"

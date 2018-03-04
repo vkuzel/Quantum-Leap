@@ -1,6 +1,7 @@
 package cz.quantumleap.core.web;
 
 import cz.quantumleap.core.business.ListService;
+import cz.quantumleap.core.common.Utils;
 import cz.quantumleap.core.data.transport.Slice;
 import cz.quantumleap.core.data.transport.SliceRequest;
 import org.springframework.ui.Model;
@@ -12,10 +13,7 @@ public final class DefaultListController implements ListController {
     private static final String TABLE_SLICE_MODEL_ATTRIBUTE_NAME = "tableSlice";
     private static final String DATABASE_TABLE_NAME_WITH_SCHEMA_MODEL_ATTRIBUTE_NAME = "databaseTableNameWithSchema";
     private static final String DETAIL_URL_MODEL_ATTRIBUTE_NAME = "detailUrl";
-    // TODO Externalize Ajax support?
-    private static final String AJAX_HEADER_NAME = "X-Requested-With";
-    private static final String AJAX_HEADER_VALUE = "XMLHttpRequest";
-    private static final String LIST_VIEW = "admin/components/table";
+    private static final String AJAX_LIST_VIEW = "admin/components/table";
 
     private final String databaseTableNameWithSchema;
     private final String listView;
@@ -31,16 +29,11 @@ public final class DefaultListController implements ListController {
 
     @Override
     public String list(SliceRequest sliceRequest, Model model, HttpServletRequest request) {
-
         Slice slice = listService.findSlice(sliceRequest);
         model.addAttribute(TABLE_SLICE_MODEL_ATTRIBUTE_NAME, slice);
         model.addAttribute(DATABASE_TABLE_NAME_WITH_SCHEMA_MODEL_ATTRIBUTE_NAME, databaseTableNameWithSchema);
         model.addAttribute(DETAIL_URL_MODEL_ATTRIBUTE_NAME, detailUrl);
 
-        if (AJAX_HEADER_VALUE.equals(request.getHeader(AJAX_HEADER_NAME))) {
-            return LIST_VIEW;
-        }
-
-        return listView;
+        return Utils.isAjaxRequest(request) ? AJAX_LIST_VIEW : listView;
     }
 }

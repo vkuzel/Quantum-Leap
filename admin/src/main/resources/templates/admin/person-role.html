@@ -19,13 +19,13 @@
                         <div class="form-group">
                             <label for="personId" class="control-label col-md-4" th:text="#{admin.person-role.person}">Person</label>
                             <div class="col-md-6"
-                                 th:insert="admin/components/lookup-field(databaseTableNameWithSchema='core.person',fieldName='personId',fieldId='personId',field=*{personId},modalTitle=#{admin.lookup.modal.title.people})">
+                                 th:insert="admin/components/lookup-field::lookup(databaseTableNameWithSchema='core.person',fieldName='personId',fieldId='personId',field=*{personId},modalTitle=#{admin.lookup.modal.title.people})">
                             </div>
                         </div>
                         <div class="form-group">
                             <label for="roleId" class="control-label col-md-4" th:text="#{admin.person-role.role}">Role</label>
                             <div class="col-md-6"
-                                 th:insert="admin/components/lookup-field(databaseTableNameWithSchema='core.role',fieldName='roleId',fieldId='roleId',field=*{roleId},modalTitle=#{admin.lookup.modal.title.roles})">
+                                 th:insert="admin/components/lookup-field::lookup(databaseTableNameWithSchema='core.role',fieldName='roleId',fieldId='roleId',field=*{roleId},modalTitle=#{admin.lookup.modal.title.roles})">
                             </div>
                         </div>
 

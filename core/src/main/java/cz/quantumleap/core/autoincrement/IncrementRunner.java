@@ -77,7 +77,7 @@ public class IncrementRunner {
 
         transactionExecutor.execute(dslContext -> {
             scripts.forEach(script -> {
-                String sql = Utils.loadResourceToString(script);
+                String sql = Utils.readResourceToString(script);
                 dslContext.execute(sql);
                 incrementDao.save(createIncrement(moduleName, version, script.getFilename()));
             });

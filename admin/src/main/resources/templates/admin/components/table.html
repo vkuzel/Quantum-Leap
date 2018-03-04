@@ -10,7 +10,7 @@
         tableSlice ... TableSlice object.
         detailUrl ... Detail endpoint URL to which detail ID will be appended.
 */-->
-<table class="table table-striped table-cells-bordered table-hover dataTable"
+<table th:fragment="table" class="table table-striped table-cells-bordered table-hover dataTable"
        th:data-qualifier="${qualifier}"
        th:with="urlBuilder=${T(org.springframework.web.servlet.support.ServletUriComponentsBuilder)},templateTable=${T(cz.quantumleap.admin.web.TemplateHelper).createTemplateTable(qualifier,databaseTableNameWithSchema,tableSlice,detailUrl)}">
     <thead>

@@ -53,7 +53,7 @@
                     </div>
                 </div>
                 <div class="panel-body table-container">
-                    <div class="table-responsive" th:insert="admin/components/table(qualifier='personRole',databaseTableNameWithSchema=${personRoleDatabaseTableNameWithSchema},tableSlice=${personRoleTableSlice},detailUrl=${personRoleDetailUrl})">
+                    <div class="table-responsive" th:insert="admin/components/table::table(qualifier='personRole',databaseTableNameWithSchema=${personRoleDatabaseTableNameWithSchema},tableSlice=${personRoleTableSlice},detailUrl=${personRoleDetailUrl})">
                     </div>
                 </div>
             </div>
