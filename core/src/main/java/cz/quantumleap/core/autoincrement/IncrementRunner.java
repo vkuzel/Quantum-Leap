@@ -11,10 +11,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Component
 public class IncrementRunner {
@@ -73,14 +70,17 @@ public class IncrementRunner {
     }
 
     private void runOneIncrement(String moduleName, int version, List<Resource> scripts) {
-        log.info("Executing increment {} for module {}.", version, moduleName);
+        log.info("Running increment {} for module {}.", version, moduleName);
 
         transactionExecutor.execute(dslContext -> {
-            scripts.forEach(script -> {
-                String sql = Utils.readResourceToString(script);
-                dslContext.execute(sql);
-                incrementDao.save(createIncrement(moduleName, version, script.getFilename()));
-            });
+            scripts.stream()
+                    .sorted(Comparator.comparing(Resource::getFilename))
+                    .forEach(script -> {
+                        log.info("Running {}", script.getFilename());
+                        String sql = Utils.readResourceToString(script);
+                        dslContext.execute(sql);
+                        incrementDao.save(createIncrement(moduleName, version, script.getFilename()));
+                    });
         });
     }
 
