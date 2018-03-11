@@ -8,16 +8,15 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Component
 public class LookupDaoManager {
 
     private final ApplicationContext applicationContext;
 
-    private Map<String, LookupDao<Table<? extends Record>>> lookupDaoMap;
+    private Map<String, LookupDao<Table<? extends Record>>> lookupDaoMap = new HashMap<>();
 
     public LookupDaoManager(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
@@ -30,7 +29,15 @@ public class LookupDaoManager {
     @EventListener(ContextRefreshedEvent.class)
     public void initializeLookupDaoMap() {
         Map<String, LookupDao> beans = applicationContext.getBeansOfType(LookupDao.class);
-        lookupDaoMap = beans.values().stream().collect(Collectors.toMap(dao -> MapperUtils.resolveDatabaseTableNameWithSchema(dao.getTable()), this::toGenericDao));
+        for (LookupDao lookupDao : beans.values()) {
+            String tableName = MapperUtils.resolveDatabaseTableNameWithSchema(lookupDao.getTable());
+            lookupDaoMap.put(tableName, lookupDao); // TODO What if table already exists?
+        }
+    }
+
+    public void registerDaoForTable(Table<?> table, LookupDao lookupDao) {
+        String tableName = MapperUtils.resolveDatabaseTableNameWithSchema(table);
+        lookupDaoMap.put(tableName, lookupDao); // TODO What if table already exists?
     }
 
     @SuppressWarnings("unchecked")
