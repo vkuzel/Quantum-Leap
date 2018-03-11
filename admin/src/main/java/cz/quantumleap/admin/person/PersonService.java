@@ -9,6 +9,6 @@ import org.springframework.stereotype.Service;
 public class PersonService extends ServiceStub<Person> {
 
     public PersonService(PersonDao personDao) {
-        super(Person.class, personDao);
+        super(Person.class, personDao, personDao, personDao);
     }
 }

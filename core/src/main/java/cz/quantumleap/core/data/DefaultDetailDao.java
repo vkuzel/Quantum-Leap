@@ -1,7 +1,7 @@
 package cz.quantumleap.core.data;
 
-import cz.quantumleap.core.data.detail.PrimaryKeyConditionBuilder;
 import cz.quantumleap.core.data.mapper.MapperFactory;
+import cz.quantumleap.core.data.primarykey.PrimaryKeyConditionBuilder;
 import org.apache.commons.lang3.Validate;
 import org.jooq.*;
 

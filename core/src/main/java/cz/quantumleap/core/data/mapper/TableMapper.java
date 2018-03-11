@@ -4,6 +4,7 @@ import com.google.common.collect.*;
 import cz.quantumleap.core.data.EnumManager;
 import cz.quantumleap.core.data.LookupDao;
 import cz.quantumleap.core.data.LookupDaoManager;
+import cz.quantumleap.core.data.primarykey.PrimaryKeyResolver;
 import cz.quantumleap.core.data.transport.Lookup;
 import cz.quantumleap.core.data.transport.Table;
 import cz.quantumleap.core.data.transport.Table.Column;
@@ -22,6 +23,7 @@ import cz.quantumleap.core.data.transport.Table;
 public class TableMapper implements RecordHandler<Record> {
 
     private final org.jooq.Table<? extends Record> table;
+    private final PrimaryKeyResolver primaryKeyResolver;
     private final LookupDaoManager lookupDaoManager;
     private final EnumManager enumManager;
 
@@ -31,8 +33,9 @@ public class TableMapper implements RecordHandler<Record> {
     private final SetMultimap<LookupColumn, Object> lookupReferenceIds = HashMultimap.create();
     private final SetMultimap<EnumColumn, Object> enumReferenceIds = HashMultimap.create();
 
-    TableMapper(org.jooq.Table<? extends Record> table, LookupDaoManager lookupDaoManager, EnumManager enumManager, Sort sort, int expectedSize) {
+    TableMapper(org.jooq.Table<? extends Record> table, PrimaryKeyResolver primaryKeyResolver, LookupDaoManager lookupDaoManager, EnumManager enumManager, Sort sort, int expectedSize) {
         this.table = table;
+        this.primaryKeyResolver = primaryKeyResolver;
         this.lookupDaoManager = lookupDaoManager;
         this.enumManager = enumManager;
         this.tableColumnHandler = new TableColumnHandler(table, sort);
@@ -135,7 +138,7 @@ public class TableMapper implements RecordHandler<Record> {
         }
 
         private void buildFieldColumnMap() {
-            List<Field<?>> primaryKeyFields = getPrimaryKeyFields();
+            List<Field<Object>> primaryKeyFields = primaryKeyResolver.getPrimaryKeyFields();
             Map<Field<?>, String> lookupFieldDatabaseTableNameWithSchemaMap = getLookupFieldDatabaseTableNameWithSchemaMap();
 
             for (Field<?> field : table.fields()) {
@@ -171,21 +174,6 @@ public class TableMapper implements RecordHandler<Record> {
                 }
                 fieldColumnMap.put(field, column);
             }
-        }
-
-        private List<Field<?>> getPrimaryKeyFields() {
-            if (table.getPrimaryKey() != null) {
-                TableField<? extends Record, ?>[] tableFields = table.getPrimaryKey().getFieldsArray();
-                List<Field<?>> fields = new ArrayList<>(tableFields.length);
-
-                for (TableField<? extends Record, ?> tableField : tableFields) {
-                    Field<?> field = table.field(tableField.getName());
-                    fields.add(field);
-                }
-
-                return fields;
-            }
-            return Collections.emptyList();
         }
 
         private Map<Field<?>, String> getLookupFieldDatabaseTableNameWithSchemaMap() {

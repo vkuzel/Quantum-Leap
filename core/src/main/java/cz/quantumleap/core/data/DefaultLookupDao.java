@@ -1,6 +1,6 @@
 package cz.quantumleap.core.data;
 
-import cz.quantumleap.core.data.detail.PrimaryKeyConditionBuilder;
+import cz.quantumleap.core.data.primarykey.PrimaryKeyConditionBuilder;
 import cz.quantumleap.core.data.transport.Slice;
 import cz.quantumleap.core.data.transport.SliceRequest;
 import org.apache.commons.lang3.StringUtils;

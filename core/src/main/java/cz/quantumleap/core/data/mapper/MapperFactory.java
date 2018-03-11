@@ -3,6 +3,7 @@ package cz.quantumleap.core.data.mapper;
 import cz.quantumleap.core.data.EnumManager;
 import cz.quantumleap.core.data.LookupDao;
 import cz.quantumleap.core.data.LookupDaoManager;
+import cz.quantumleap.core.data.primarykey.PrimaryKeyResolver;
 import cz.quantumleap.core.data.transport.*;
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.tuple.Pair;
@@ -23,17 +24,19 @@ import static com.google.common.base.CaseFormat.UPPER_CAMEL;
 public class MapperFactory {
 
     private final org.jooq.Table<? extends Record> table;
+    private final PrimaryKeyResolver primaryKeyResolver;
     private final LookupDaoManager lookupDaoManager;
     private final EnumManager enumManager;
 
-    public MapperFactory(Table<? extends Record> table, LookupDaoManager lookupDaoManager, EnumManager enumManager) {
+    public MapperFactory(Table<? extends Record> table, PrimaryKeyResolver primaryKeyResolver, LookupDaoManager lookupDaoManager, EnumManager enumManager) {
         this.table = table;
+        this.primaryKeyResolver = primaryKeyResolver;
         this.lookupDaoManager = lookupDaoManager;
         this.enumManager = enumManager;
     }
 
     public SliceMapper createSliceMapper(SliceRequest sliceRequest, List<TablePreferences> tablePreferencesList) {
-        return new SliceMapper(table, lookupDaoManager, enumManager, sliceRequest, tablePreferencesList);
+        return new SliceMapper(table, primaryKeyResolver, lookupDaoManager, enumManager, sliceRequest, tablePreferencesList);
     }
 
     public <T> TransportUnMapper<T> createTransportUnMapper(Class<T> transportType) {
