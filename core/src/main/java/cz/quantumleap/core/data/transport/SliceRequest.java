@@ -34,6 +34,10 @@ public class SliceRequest {
         );
     }
 
+    public SliceRequest sort(Sort sort) {
+        return new SliceRequest(filter, offset, size, sort, tablePreferencesId);
+    }
+
     public Map<String, Object> getFilter() {
         return filter;
     }
