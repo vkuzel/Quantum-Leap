@@ -5,21 +5,16 @@
 </head>
 <body>
 
-<div layout:fragment="content" id="page-wrapper">
-    <div class="row">
-        <div class="col-lg-12">
-            <div class="panel panel-default top-panel">
-                <div class="panel-heading">
-                    <i class="fa fa-user"></i>
-                    <span th:text="#{admin.table.title.core.person}">Table</span>
-                    <div class="btn-group pull-right">
-                        <a type="button" th:href="@{|/person|}" class="btn btn-success btn-xs" th:text="#{admin.table.title.new-record}"></a>
-                    </div>
-                </div>
-                <div class="panel-body table-container">
-                    <div class="table-responsive" th:insert="admin/components/table::table">
-                    </div>
-                </div>
+<div layout:fragment="content">
+    <div class="card mb-3">
+        <div class="card-header">
+            <i class="fa fa-user"></i>
+            <span th:text="#{admin.table.title.core.person}">Table</span>
+            <a th:href="@{|/person|}" class="btn btn-success btn-sm float-right"
+               th:text="#{admin.table.title.new-record}"></a>
+        </div>
+        <div class="card-body table-container">
+            <div class="table-responsive" th:insert="admin/components/table::table">
             </div>
         </div>
     </div>

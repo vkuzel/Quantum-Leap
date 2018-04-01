@@ -1,3 +1,8 @@
+.navbar .active {
+    font-weight: bold;
+    color: #fff !important;
+}
+
 #loader {
     position: absolute;
     left: 50%;
@@ -21,18 +26,6 @@
     100% { transform: rotate(360deg); }
 }
 
-.top-panel {
-    margin-top: 20px;
-}
-
-.panel-heading {
-    font-weight: bold;
-}
-
-label {
-    font-weight: normal;
-}
-
 .table th a {
     color: black;
 }
@@ -41,17 +34,25 @@ label {
     padding: 0;
 }
 
-.table-cells-bordered th,
-.table-cells-bordered td {
-    border-right: 1px solid #ddd;
+.table-container .table {
+    margin-bottom: 0;
 }
 
-.table-cells-bordered th:last-child,
-.table-cells-bordered td:last-child {
-    border-right: none;
+.table th.sorting:after {
+    content: "\f0dc";
+    color: #ccc;
+    float: right;
+    font-family: fontawesome;
 }
 
-.dropdown-menu > li.disableditem {
-    padding: 3px 20px;
-    color: #999;
+.table th.sorting_asc:after {
+    content: "\f0de";
+    float: right;
+    font-family: fontawesome;
+}
+
+.table th.sorting_desc:after {
+    content: "\f0dd";
+    float: right;
+    font-family: fontawesome;
 }

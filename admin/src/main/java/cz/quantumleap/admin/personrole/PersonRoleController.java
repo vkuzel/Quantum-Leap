@@ -27,7 +27,6 @@ public class PersonRoleController extends AdminController {
     public static final String DETAIL_URL = "/person/{personId}/person-role";
     private static final String DETAIL_VIEW = "admin/person-role";
 
-    private static final String LIST_VIEW = "admin/person-roles";
     public static final String DATABASE_TABLE_NAME_WITH_SCHEMA = "core.person-role";
 
     private final LookupDaoManager lookupDaoManager;

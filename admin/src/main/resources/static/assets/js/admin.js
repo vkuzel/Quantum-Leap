@@ -1,23 +1,3 @@
-// This function was extracted from sb-admin-2.js because that file also
-// contains initialization of metisMenu  javascript that is not used.
-$(window).bind("load resize", function () {
-    var topOffset = 50;
-    var width = (this.window.innerWidth > 0) ? this.window.innerWidth : this.screen.width;
-    if (width < 768) {
-        $('div.navbar-collapse').addClass('collapse');
-        topOffset = 100; // 2-row-menu
-    } else {
-        $('div.navbar-collapse').removeClass('collapse');
-    }
-
-    var height = ((this.window.innerHeight > 0) ? this.window.innerHeight : this.screen.height) - 1;
-    height = height - topOffset;
-    if (height < 1) height = 1;
-    if (height > topOffset) {
-        $("#page-wrapper").css("min-height", (height) + "px");
-    }
-});
-
 var urlUtils = {
     getQueryParam: function (url, name) {
         var regExp = new RegExp(name + "=([^&#]+)");
@@ -56,11 +36,18 @@ function MenuControl(menuSelector) {
     } else {
         var lastActiveMenuItemHref = sessionStorage.getItem("lastActiveMenuItemHref");
         if (lastActiveMenuItemHref) {
-            var $anchor = $menu.find('a[href="' + lastActiveMenuItemHref + '"]');
-            $anchor.addClass('active');
-            $anchor.next('ul').addClass('in');
-            $anchor.parentsUntil(menuSelector, 'ul').addClass('in');
+            $activeAnchor = $menu.find('a[href="' + lastActiveMenuItemHref + '"]');
+            $activeAnchor.addClass('active');
+            $activeAnchor.next('ul').addClass('show');
+            $activeAnchor.parentsUntil(menuSelector, 'ul').addClass('show');
         }
+    }
+
+    if ($activeAnchor.length > 0) {
+        $activeAnchor
+            .parents('li.nav-item')
+            .children('a.nav-link-collapse.collapsed')
+            .removeClass('collapsed');
     }
 }
 
@@ -153,7 +140,7 @@ function TableControl(tableSelector, tBodyListenersBinder) {
     tableControl.bindListeners();
 }
 
-$('table.dataTable').each(function (i, table) {
+$('table.data-table').each(function (i, table) {
     var tBodyListenersBinder = function ($tBody) {
         $tBody.find('tr > td').click(function () {
             var $primaryKeyAnchors = $(this).parent().find('> td.primary-key > a');
@@ -187,7 +174,7 @@ function LookupControl(lookupField) {
 
     var dropDownControl = {
         labelsUrl: lookupControl.$labelInput.attr('data-lookup-labels-url'),
-        $dropDown: $lookupField.find('ul.dropdown-menu'),
+        $dropDown: $lookupField.find('div.dropdown-menu'),
 
         labelsRequestTimeout: null
     };
@@ -212,11 +199,11 @@ function LookupControl(lookupField) {
             var label = $a.html();
             lookupControl.setValues(id, label);
         }
-        lookupControl.$lookupField.removeClass('open');
+        dropDownControl.$dropDown.removeClass('show');
     };
 
     dropDownControl.replaceDropdownContent = function (html) {
-        var $dropDownReplacement = $(html).next('ul.dropdown-menu');
+        var $dropDownReplacement = $(html).next('div.dropdown-menu');
 
         $dropDownReplacement.find('a[data-id]').click(function (event) {
             event.preventDefault();
@@ -226,7 +213,6 @@ function LookupControl(lookupField) {
 
         dropDownControl.$dropDown.replaceWith($dropDownReplacement);
         dropDownControl.$dropDown = $dropDownReplacement;
-        lookupControl.$lookupField.addClass('open');
     };
 
     dropDownControl.fetchLabels = function () {
@@ -246,7 +232,7 @@ function LookupControl(lookupField) {
         dropDownControl.cancelRequestInProgress();
 
         setTimeout(function () {
-            lookupControl.$lookupField.removeClass('open');
+            dropDownControl.$dropDown.removeClass('show');
         }, 300);
     };
 

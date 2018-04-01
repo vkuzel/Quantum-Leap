@@ -19,28 +19,29 @@
          th:with="lookupController=${@lookupControllerManager.getControllerForTable(databaseTableNameWithSchema)}">
         <input type="text" th:assert="${fieldId}" th:id="${fieldId}" th:value="*{label}" class="form-control"
                th:data-lookup-labels-url="@{${lookupController.getLookupLabelsUrl()}}" autocomplete="off">
-        <span class="input-group-btn">
-            <button class="btn btn-default" type="button"
+        <div class="input-group-append">
+            <button class="btn btn-outline-secondary" type="button"
                     th:data-lookup-list-url="@{${lookupController.getLookupListUrl()}}"
                     th:data-lookup-label-url="@{${lookupController.getLookupLabelUrl()}}">
                 <i class="fa fa-search"></i></button>
-        </span>
+        </div>
     </div>
-    <ul class="dropdown-menu" role="menu">
-    </ul>
 
-    <div class="modal fade" role="dialog">
-        <div class="modal-dialog modal-lg">
+    <div class="dropdown-menu">
+    </div>
+
+    <div class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
                     <h4 class="modal-title" th:assert="${modalTitle}" th:text="${modalTitle}">Modal Title</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
                 <div class="modal-body">
                     <p>Some text in the modal.</p>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>

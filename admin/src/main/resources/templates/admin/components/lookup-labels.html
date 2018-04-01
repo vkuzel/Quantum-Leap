@@ -8,13 +8,11 @@
         detailUrl
         lookupLabels ... Id, label map.
 */-->
-<ul class="dropdown-menu" role="menu" th:assert="${detailUrl},${lookupLabels}">
-    <li role="presentation" th:each="lookupLabel : ${lookupLabels}">
-        <a role="menuitem" tabindex="-1" href="#" th:data-id="${lookupLabel.key}" th:text="${lookupLabel.value}">Lookup label</a>
-    </li>
-    <li role="presentation" class="disableditem" th:if="${#maps.isEmpty(lookupLabels)}" th:text="${param.filter} ? #{admin.lookup-labels.no-records} + ' ' + ${param.filter} : #{admin.lookup-labels.empty}">
+<div class="dropdown-menu show" th:assert="${detailUrl},${lookupLabels}">
+    <a class="dropdown-item" th:each="lookupLabel : ${lookupLabels}" th:data-id="${lookupLabel.key}" th:text="${lookupLabel.value}">Lookup label</a>
+    <span class="dropdown-item disabled" th:if="${#maps.isEmpty(lookupLabels)}" th:text="${param.filter} ? #{admin.lookup-labels.no-records} + ' ' + ${param.filter} : #{admin.lookup-labels.empty}">
         No items found!
-    </li>
-</ul>
+    </span>
+</div>
 </body>
 </html>
