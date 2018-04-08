@@ -11,13 +11,15 @@ public class SliceRequest {
     public static final int MAX_ITEMS = 2000;
 
     private final Map<String, Object> filter;
+    private final String query;
     private final int offset;
     private final int size;
     private final Sort sort;
     private final Long tablePreferencesId;
 
-    public SliceRequest(Map<String, Object> filter, int offset, int size, Sort sort, Long tablePreferencesId) {
+    public SliceRequest(Map<String, Object> filter, String query, int offset, int size, Sort sort, Long tablePreferencesId) {
         this.filter = filter;
+        this.query = query;
         this.offset = offset;
         this.size = size;
         this.sort = sort;
@@ -27,6 +29,7 @@ public class SliceRequest {
     public static SliceRequest filteredSorted(Map<String, Object> filter, Sort sort) {
         return new SliceRequest(
                 filter,
+                null,
                 0,
                 MAX_ITEMS,
                 sort,
@@ -35,11 +38,15 @@ public class SliceRequest {
     }
 
     public SliceRequest sort(Sort sort) {
-        return new SliceRequest(filter, offset, size, sort, tablePreferencesId);
+        return new SliceRequest(filter, query, offset, size, sort, tablePreferencesId);
     }
 
     public Map<String, Object> getFilter() {
         return filter;
+    }
+
+    public String getQuery() {
+        return query;
     }
 
     public int getOffset() {
@@ -61,7 +68,7 @@ public class SliceRequest {
     public SliceRequest extend() {
         if (offset + size < MAX_ITEMS) {
             int nextSize = Math.min(MAX_ITEMS - offset, offset + size + CHUNK_SIZE);
-            return new SliceRequest(filter, offset, nextSize, sort, tablePreferencesId);
+            return new SliceRequest(filter, query, offset, nextSize, sort, tablePreferencesId);
         }
         return null;
     }

@@ -62,7 +62,8 @@ function TableControl(tableSelector, tBodyListenersBinder) {
 
         $tHead: $table.find('thead'),
         $tBody: $table.find('tbody'),
-        $tFoot: $table.find('tfoot')
+        $tFoot: $table.find('tfoot'),
+        $searchInput: $($table.attr('data-search-selector'))
     };
 
     var qualifyParamName = function (qualifier, paramName) {
@@ -70,7 +71,6 @@ function TableControl(tableSelector, tBodyListenersBinder) {
     };
 
     tableControl.bindListeners = function () {
-
         var $loadMoreButton = tableControl.$tFoot.find('.btn-load-more');
         $loadMoreButton.click(tableControl.fetchMore);
 
@@ -117,7 +117,6 @@ function TableControl(tableSelector, tBodyListenersBinder) {
 
     tableControl.fetchMore = function () {
         var offset = tableControl.$tBody.find('tr').length;
-
         var url = UrlUtils.removeQueryParams(this.href, qualifyParamName(tableControl.qualifier, 'size'), qualifyParamName(tableControl.qualifier, 'offset'));
 
         $.get(url, {offset: offset}, tableControl.appendContent);
@@ -125,9 +124,17 @@ function TableControl(tableSelector, tBodyListenersBinder) {
         return false;
     };
 
+    tableControl.fetchSearchResults = DelayedFunctionCall(function () {
+        var query = tableControl.$searchInput.val();
+        var url = UrlUtils.removeQueryParams(location.href, qualifyParamName(tableControl.qualifier, 'size'), qualifyParamName(tableControl.qualifier, 'offset'));
+
+        $.get(url, {query: query}, tableControl.replaceContent);
+
+        return false;
+    }, 500);
+
     tableControl.sort = function () {
         var size = tableControl.$tBody.find('tr').length;
-
         var url = UrlUtils.removeQueryParams(this.href, qualifyParamName(tableControl.qualifier, 'size'), qualifyParamName(tableControl.qualifier, 'offset'));
 
         $.get(url, {size: size}, tableControl.replaceContent);
@@ -136,6 +143,10 @@ function TableControl(tableSelector, tBodyListenersBinder) {
     };
 
     tableControl.bindListeners();
+    if (tableControl.$searchInput) {
+        tableControl.$searchInput.keyup(tableControl.fetchSearchResults.call);
+        tableControl.$searchInput.blur(tableControl.fetchSearchResults.cancel);
+    }
 }
 
 $('table.data-table').each(function (i, table) {
@@ -172,21 +183,12 @@ function LookupControl(lookupField) {
 
     var dropDownControl = {
         labelsUrl: lookupControl.$labelInput.attr('data-lookup-labels-url'),
-        $dropDown: $lookupField.find('div.dropdown-menu'),
-
-        labelsRequestTimeout: null
+        $dropDown: $lookupField.find('div.dropdown-menu')
     };
 
     dropDownControl.bindListeners = function () {
-        lookupControl.$labelInput.keyup(dropDownControl.fetchLabels);
+        lookupControl.$labelInput.keyup(dropDownControl.fetchLabels.call);
         lookupControl.$labelInput.blur(dropDownControl.fieldLostFocus);
-    };
-
-    dropDownControl.cancelRequestInProgress = function () {
-        if (dropDownControl.labelsRequestTimeout) {
-            clearTimeout(dropDownControl.labelsRequestTimeout);
-            dropDownControl.labelsRequestTimeout = null;
-        }
     };
 
     dropDownControl.selectDropdownItem = function (a) {
@@ -213,21 +215,17 @@ function LookupControl(lookupField) {
         dropDownControl.$dropDown = $dropDownReplacement;
     };
 
-    dropDownControl.fetchLabels = function () {
-        dropDownControl.cancelRequestInProgress();
-
+    dropDownControl.fetchLabels = DelayedFunctionCall(function () {
         var filter = lookupControl.$labelInput.val();
         if (!filter) {
             return;
         }
 
-        dropDownControl.labelsRequestTimeout = setTimeout(function () {
-            $.get(dropDownControl.labelsUrl, {filter: filter}, dropDownControl.replaceDropdownContent);
-        }, 300);
-    };
+        $.get(dropDownControl.labelsUrl, {filter: filter}, dropDownControl.replaceDropdownContent);
+    }, 300);
 
     dropDownControl.fieldLostFocus = function () {
-        dropDownControl.cancelRequestInProgress();
+        dropDownControl.fetchLabels.cancel();
 
         setTimeout(function () {
             dropDownControl.$dropDown.removeClass('show');

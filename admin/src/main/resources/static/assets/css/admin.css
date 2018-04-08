@@ -39,23 +39,28 @@
     margin-bottom: 0;
 }
 
+.table th.sorting {
+    position: relative;
+    padding-right: 1em;
+    vertical-align: middle;
+}
+
 .table th.sorting:after {
+    position: absolute;
+    right: 0.4em;
+    top: 50%;
+    transform: translateY(-50%);
     content: "\f0dc";
     color: #ccc;
-    float: right;
     font-family: fontawesome;
 }
 
-.table th.sorting_asc:after {
+.table th.sorting.asc:after {
     content: "\f0de";
-    float: right;
-    font-family: fontawesome;
 }
 
-.table th.sorting_desc:after {
+.table th.sorting.desc:after {
     content: "\f0dd";
-    float: right;
-    font-family: fontawesome;
 }
 
 .wrap {

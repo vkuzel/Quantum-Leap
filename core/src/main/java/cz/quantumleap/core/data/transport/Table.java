@@ -47,6 +47,10 @@ public class Table<ROW> implements Iterable<ROW> {
         return rows.iterator();
     }
 
+    public boolean isEmpty() {
+        return rows.isEmpty();
+    }
+
     public static class Column {
 
         private final Class<?> type;

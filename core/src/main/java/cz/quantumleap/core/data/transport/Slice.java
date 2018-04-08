@@ -5,7 +5,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 public class Slice<ROW> implements Iterable<ROW>  {
 
@@ -35,6 +34,10 @@ public class Slice<ROW> implements Iterable<ROW>  {
     @Override
     public Iterator<ROW> iterator() {
         return table.iterator();
+    }
+
+    public boolean isEmpty() {
+        return table.isEmpty();
     }
 
     public boolean canExtend() {

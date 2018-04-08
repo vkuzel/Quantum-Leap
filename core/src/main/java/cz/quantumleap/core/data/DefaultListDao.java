@@ -12,6 +12,7 @@ import cz.quantumleap.core.data.transport.TablePreferences;
 import org.jooq.*;
 import org.springframework.data.domain.Sort;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -44,7 +45,10 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
     public Slice fetchSlice(SliceRequest sliceRequest) {
         SliceRequest request = setDefaultOrder(sliceRequest);
         Limit limit = limitBuilder.build(sliceRequest);
-        Collection<Condition> conditions = filterBuilder.build(sliceRequest.getFilter());
+        Collection<Condition> conditions = joinConditions(
+                filterBuilder.buildForFilter(sliceRequest.getFilter()),
+                filterBuilder.buildForQuery(sliceRequest.getQuery())
+        );
 
         return dslContext.selectFrom(table)
                 .where(conditions)
@@ -57,14 +61,27 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
     public <T> List<T> fetchList(SliceRequest sliceRequest, Class<T> type) {
         SliceRequest request = setDefaultOrder(sliceRequest);
         Limit limit = limitBuilder.build(sliceRequest);
-        Collection<Condition> conditions = filterBuilder.build(sliceRequest.getFilter());
-
+        Collection<Condition> conditions = joinConditions(
+                filterBuilder.buildForFilter(sliceRequest.getFilter()),
+                filterBuilder.buildForQuery(sliceRequest.getQuery())
+        );
 
         return dslContext.selectFrom(table)
                 .where(conditions)
                 .orderBy(orderBuilder.build(request.getSort()))
                 .limit(limit.getOffset(), limit.getNumberOfRows())
                 .fetch(mapperFactory.createTransportMapper(type)); // TODO Is this mapper optimized for high volume lists?
+    }
+
+    private Collection<Condition> joinConditions(Condition condition1, Condition condition2) {
+        List<Condition> conditions = new ArrayList<>(2);
+        if (condition1 != null) {
+            conditions.add(condition1);
+        }
+        if (condition2 != null) {
+            conditions.add(condition2);
+        }
+        return conditions;
     }
 
     private SliceRequest setDefaultOrder(SliceRequest sliceRequest) {
@@ -75,6 +92,7 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
                     .collect(Collectors.toList());
             return new SliceRequest(
                     sliceRequest.getFilter(),
+                    sliceRequest.getQuery(),
                     sliceRequest.getOffset(),
                     sliceRequest.getSize(),
                     !orders.isEmpty() ? new Sort(orders) : null,

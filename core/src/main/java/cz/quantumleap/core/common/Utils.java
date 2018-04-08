@@ -2,6 +2,7 @@ package cz.quantumleap.core.common;
 
 import com.google.common.io.CharStreams;
 import org.springframework.core.io.Resource;
+import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -22,5 +23,15 @@ public class Utils {
 
     public static boolean isAjaxRequest(HttpServletRequest request) {
         return AJAX_HEADER_VALUE.equals(request.getHeader(AJAX_HEADER_NAME));
+    }
+
+    public static String escapeLikeBinding(String binding, char escapeChar) {
+        if (StringUtils.isEmpty(binding)) {
+            return binding;
+        }
+
+        return binding
+                .replace("%", escapeChar + "%")
+                .replace("_", escapeChar + "_");
     }
 }

@@ -18,6 +18,7 @@ public class SliceRequestControllerArgumentResolver implements HandlerMethodArgu
 
     public static final String SORT_PARAM_NAME = "sort";
     public static final String FILTER_PARAM_NAME = "filter";
+    public static final String QUERY_PARAM_NAME = "query";
     public static final String OFFSET_PARAM_NAME = "offset";
     public static final String SIZE_PARAM_NAME = "size";
     private static final String QUALIFIER_DELIMITER = "_";
@@ -38,6 +39,7 @@ public class SliceRequestControllerArgumentResolver implements HandlerMethodArgu
     @Override
     public SliceRequest resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
         String qualifier = parameter != null && parameter.hasParameterAnnotation(Qualifier.class) ? parameter.getParameterAnnotation(Qualifier.class).value() : null;
+        String query = getWebRequestStringParameter(webRequest, qualifier, QUERY_PARAM_NAME, null);
         int offset = getWebRequestIntParameter(webRequest, qualifier, OFFSET_PARAM_NAME, DEFAULT_OFFSET);
         int size = getWebRequestIntParameter(webRequest, qualifier, SIZE_PARAM_NAME, SliceRequest.CHUNK_SIZE);
 
@@ -50,13 +52,19 @@ public class SliceRequestControllerArgumentResolver implements HandlerMethodArgu
 
         Sort sort = sortHandlerMethodArgumentResolver.resolveArgument(parameter, mavContainer, webRequest, binderFactory);
 
-        return new SliceRequest(new HashMap<>(), offset, size, sort, null);
+        return new SliceRequest(new HashMap<>(), query, offset, size, sort, null);
     }
 
     private int getWebRequestIntParameter(NativeWebRequest webRequest, String qualifier, String paramName, int defaultValue) {
         String qualifiedParamName = qualifyParamName(qualifier, paramName);
         String value = webRequest.getParameter(qualifiedParamName);
         return value != null ? Integer.parseInt(value) : defaultValue;
+    }
+
+    private String getWebRequestStringParameter(NativeWebRequest webRequest, String qualifier, String paramName, String defaultValue) {
+        String qualifiedParamName = qualifyParamName(qualifier, paramName);
+        String value = webRequest.getParameter(qualifiedParamName);
+        return value != null ? value : defaultValue;
     }
 
     public static String qualifyParamName(String qualifier, String paramName) {

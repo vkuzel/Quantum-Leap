@@ -25,12 +25,12 @@ public final class DefaultLookupDao<TABLE extends Table<? extends Record>> imple
 
     private final ListDao<TABLE> listDao;
 
-    public DefaultLookupDao(TABLE table, Field<String> labelField, DSLContext dslContext, Function<String, Condition> filterConditionBuilder, PrimaryKeyConditionBuilder primaryKeyConditionBuilder, ListDao<TABLE> listDao) {
+    public DefaultLookupDao(TABLE table, Field<String> labelField, DSLContext dslContext, Function<String, Condition> queryFilterConditionBuilder, PrimaryKeyConditionBuilder primaryKeyConditionBuilder, ListDao<TABLE> listDao) {
         this.table = table;
         this.labelField = labelField;
         this.dslContext = dslContext;
 
-        this.filterConditionBuilder = filterConditionBuilder;
+        this.filterConditionBuilder = queryFilterConditionBuilder;
         this.primaryKeyConditionBuilder = primaryKeyConditionBuilder;
 
         this.listDao = listDao;
