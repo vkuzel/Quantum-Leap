@@ -1,4 +1,4 @@
-var urlUtils = {
+var UrlUtils = {
     getQueryParam: function (url, name) {
         var regExp = new RegExp(name + "=([^&#]+)");
         var match = url.match(regExp);
@@ -17,7 +17,7 @@ var urlUtils = {
     }
 };
 
-var loader = {
+var Loader = {
     show: function () {
         $('#loader').show();
     },
@@ -52,8 +52,6 @@ function MenuControl(menuSelector) {
 }
 
 MenuControl('#side-menu');
-
-// TODO Loaders, spinners?
 
 function TableControl(tableSelector, tBodyListenersBinder) {
     var $table = $(tableSelector);
@@ -120,7 +118,7 @@ function TableControl(tableSelector, tBodyListenersBinder) {
     tableControl.fetchMore = function () {
         var offset = tableControl.$tBody.find('tr').length;
 
-        var url = urlUtils.removeQueryParams(this.href, qualifyParamName(tableControl.qualifier, 'size'), qualifyParamName(tableControl.qualifier, 'offset'));
+        var url = UrlUtils.removeQueryParams(this.href, qualifyParamName(tableControl.qualifier, 'size'), qualifyParamName(tableControl.qualifier, 'offset'));
 
         $.get(url, {offset: offset}, tableControl.appendContent);
 
@@ -130,7 +128,7 @@ function TableControl(tableSelector, tBodyListenersBinder) {
     tableControl.sort = function () {
         var size = tableControl.$tBody.find('tr').length;
 
-        var url = urlUtils.removeQueryParams(this.href, qualifyParamName(tableControl.qualifier, 'size'), qualifyParamName(tableControl.qualifier, 'offset'));
+        var url = UrlUtils.removeQueryParams(this.href, qualifyParamName(tableControl.qualifier, 'size'), qualifyParamName(tableControl.qualifier, 'offset'));
 
         $.get(url, {size: size}, tableControl.replaceContent);
 
@@ -340,4 +338,29 @@ function AsyncFormPartControl(formPartSelector, actionElementsSelector) {
     };
 
     asyncFormPartControl.bindListeners();
+}
+
+function DelayedFunctionCall(func, wait) {
+    var timeout;
+
+    return {
+        call: function () {
+            var context = this;
+            var args = arguments;
+
+            if (timeout) {
+                clearTimeout(timeout);
+            }
+
+            timeout = setTimeout(function () {
+                timeout = null;
+                func.apply(context, args);
+            }, wait);
+        },
+        cancel: function () {
+            if (timeout) {
+                clearTimeout(timeout);
+            }
+        }
+    }
 }
