@@ -24,23 +24,23 @@ public class DefaultFilterBuilder implements FilterBuilder {
     @Override
     @SuppressWarnings("unchecked")
     public Condition buildForFilter(Map<String, Object> filter) {
-        Condition lastCondition = null;
+        Condition resultCondition = null;
 
         for (Map.Entry<String, Object> fieldNameValue : filter.entrySet()) {
             String fieldName = fieldNameValue.getKey();
             Field<Object> field = (Field<Object>) table.field(fieldName);
 
-            Validate.notNull(field, "Field %s not found in table %s", fieldName, table.getName());
+            Validate.notNull(field, "Field %s was not found in table %s", fieldName, table.getName());
 
             Condition condition = field.eq(fieldNameValue.getValue());
-            if (lastCondition == null) {
-                lastCondition = condition;
+            if (resultCondition == null) {
+                resultCondition = condition;
             } else {
-                lastCondition = lastCondition.and(condition);
+                resultCondition = resultCondition.and(condition);
             }
         }
 
-        return lastCondition;
+        return resultCondition;
     }
 
     @Override
