@@ -12,7 +12,7 @@
             <span th:text="#{admin.title.person}">Person</span>
         </div>
         <div class="card-body">
-            <form th:action="@{/person}" th:object="${person}" method="post">
+            <form th:action="${#httpServletRequest.requestURI}" th:object="${person}" method="post">
                 <input type="hidden" th:if="*{id}" th:field="*{id}">
                 <div class="form-group row">
                     <label th:for="email" class="col-form-label col-md-4"
