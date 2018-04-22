@@ -9,6 +9,6 @@
 
 # Files storage
 
-* By default all files are stored into `${user.dir}/storage` directory. This can be changed by the `file.storage.dir` configuration directive.
-* Image thumbnails are stored into `quantum-leap` subdirectory of operating system's temporary directory. It is recommended to set up some kind of cleanup job. On Linux this can be done by running a script `find /tmp/quantum-leap -mtime +30 -type f -exec rm {} \;` as a cronjob.
+* By default all files are stored into `${user.dir}/storage/` directory. This can be changed by the `file.storage.dir` configuration directive.
+* Temporary files are stored into storage directory's `tmp/` subdirectory. Temporary files are automatically deleted one month after their creation by a cleanup job. For example the temporary directory is used for image thumbnails.
  

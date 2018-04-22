@@ -1,6 +1,8 @@
 package cz.quantumleap.core.web;
 
+import cz.quantumleap.core.filestorage.FileStorageManager;
 import cz.quantumleap.core.resource.ResourceManager;
+import cz.quantumleap.core.web.template.QuantumLeapDialect;
 import cz.quantumleap.core.web.template.ThemeTemplateResolver;
 import nz.net.ultraq.thymeleaf.LayoutDialect;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
@@ -19,11 +21,13 @@ public class ThymeleafConfiguration {
     private final ThymeleafProperties thymeleafProperties;
     private final ResourceManager resourceManager;
     private final MessageSource messageSource;
+    private final FileStorageManager fileStorageManager;
 
-    public ThymeleafConfiguration(ThymeleafProperties thymeleafProperties, ResourceManager resourceManager, MessageSource messageSource) {
+    public ThymeleafConfiguration(ThymeleafProperties thymeleafProperties, ResourceManager resourceManager, MessageSource messageSource, FileStorageManager fileStorageManager) {
         this.thymeleafProperties = thymeleafProperties;
         this.resourceManager = resourceManager;
         this.messageSource = messageSource;
+        this.fileStorageManager = fileStorageManager;
     }
 
     @Bean
@@ -33,6 +37,7 @@ public class ThymeleafConfiguration {
         engine.addDialect(new SpringSecurityDialect());
         engine.addDialect(new LayoutDialect());
         engine.addDialect(new Java8TimeDialect());
+        engine.addDialect(new QuantumLeapDialect(fileStorageManager));
         return engine;
     }
 }

@@ -7,8 +7,7 @@ import org.springframework.boot.context.TypeExcludeFilter;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.ComponentScan.Filter;
 import org.springframework.context.annotation.FilterType;
-
-import java.io.IOException;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
 @ComponentScan(
@@ -18,9 +17,10 @@ import java.io.IOException;
                 @Filter(type = FilterType.REGEX, pattern = "cz.quantumleap.cli\\..*")
         }
 )
+@EnableScheduling
 public class QuantumLeapApplication {
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         SpringApplication.run(QuantumLeapApplication.class, args);
     }
 }
