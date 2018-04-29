@@ -179,6 +179,7 @@ function LookupControl(lookupField) {
         var json = JSON.stringify({id: id, label: label});
         lookupControl.$dataInput.val(json);
         lookupControl.$labelInput.val(label);
+        lookupControl.$dataInput.trigger('change');
     };
 
     var dropDownControl = {
@@ -291,7 +292,7 @@ $('div.lookup').each(function (i, lookupField) {
     LookupControl(lookupField);
 });
 
-function AsyncFormPartControl(formPartSelector, actionElementsSelector) {
+function AsyncFormPartControl(formPartSelector, actionElementsSelector, onFormPartReady) {
     var $formPart = $(formPartSelector);
     var asyncFormPartControl = {
         $formPart: $formPart,
@@ -333,9 +334,15 @@ function AsyncFormPartControl(formPartSelector, actionElementsSelector) {
         asyncFormPartControl.$formPart.find('div.lookup').each(function (i, lookupField) {
             LookupControl(lookupField);
         });
+        if (onFormPartReady) {
+            onFormPartReady(asyncFormPartControl.$formPart);
+        }
     };
 
     asyncFormPartControl.bindListeners();
+    if (onFormPartReady) {
+        onFormPartReady(asyncFormPartControl.$formPart);
+    }
 }
 
 function DelayedFunctionCall(func, wait) {
