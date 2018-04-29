@@ -28,6 +28,7 @@ public class RoleController extends AdminController implements LookupController 
 
     private static final String LIST_URL = "/roles";
     private static final String LIST_VIEW = "admin/roles";
+    private static final String AJAX_LIST_VIEW = "admin/components/table";
     private static final String DATABASE_TABLE_NAME_WITH_SCHEMA = "core.role";
 
     private static final String LOOKUP_LABEL_URL = "/role-lookup-label";
@@ -41,7 +42,7 @@ public class RoleController extends AdminController implements LookupController 
     public RoleController(AdminMenuManager adminMenuManager, WebSecurityExpressionEvaluator webSecurityExpressionEvaluator, RoleService roleService) {
         super(adminMenuManager, webSecurityExpressionEvaluator);
         this.detailController = new DefaultDetailController<>(Role.class, DETAIL_URL, DETAIL_VIEW, roleService);
-        this.listController = new DefaultListController(DATABASE_TABLE_NAME_WITH_SCHEMA, LIST_VIEW, DETAIL_URL, roleService);
+        this.listController = new DefaultListController(DATABASE_TABLE_NAME_WITH_SCHEMA, LIST_VIEW, AJAX_LIST_VIEW, DETAIL_URL, roleService);
         this.lookupController = new DefaultLookupController(DATABASE_TABLE_NAME_WITH_SCHEMA, DETAIL_URL, LOOKUP_LABEL_URL, LOOKUP_LABELS_URL, LOOKUP_LIST_URL, roleService);
     }
 

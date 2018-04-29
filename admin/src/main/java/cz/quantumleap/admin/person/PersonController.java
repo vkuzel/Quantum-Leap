@@ -32,6 +32,7 @@ public class PersonController extends AdminController implements LookupControlle
 
     private static final String LIST_URL = "/people";
     private static final String LIST_VIEW = "admin/people";
+    private static final String AJAX_LIST_VIEW = "admin/components/table";
     public static final String DATABASE_TABLE_NAME_WITH_SCHEMA = "core.person";
 
     private static final String LOOKUP_LABEL_URL = "/person-lookup-label";
@@ -47,7 +48,7 @@ public class PersonController extends AdminController implements LookupControlle
     public PersonController(AdminMenuManager adminMenuManager, WebSecurityExpressionEvaluator webSecurityExpressionEvaluator, PersonService personService, PersonRoleService personRoleService) {
         super(adminMenuManager, webSecurityExpressionEvaluator);
         this.detailController = new DefaultDetailController<>(Person.class, DETAIL_URL, DETAIL_VIEW, personService);
-        this.listController = new DefaultListController(DATABASE_TABLE_NAME_WITH_SCHEMA, LIST_VIEW, DETAIL_URL, personService);
+        this.listController = new DefaultListController(DATABASE_TABLE_NAME_WITH_SCHEMA, LIST_VIEW, AJAX_LIST_VIEW, DETAIL_URL, personService);
         this.lookupController = new DefaultLookupController(DATABASE_TABLE_NAME_WITH_SCHEMA, DETAIL_URL, LOOKUP_LABEL_URL, LOOKUP_LABELS_URL, LOOKUP_LIST_URL, personService);
         this.personService = personService;
         this.personRoleService = personRoleService;
