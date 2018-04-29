@@ -119,26 +119,10 @@ public class ResizableImageTagProcessor extends AbstractAttributeTagProcessor {
 
             switch (resizeStrategy) {
                 case LIMIT:
-                    if (Math.abs(originalWidth - width) > Math.abs(originalHeight - height)) {
-                        height = (int) (width * ((float) originalHeight / originalWidth));
-                    } else {
-                        width = (int) (height * ((float) originalWidth / originalHeight));
-                    }
-                    image = originalImage.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+                    image = new ResizeLimit(originalWidth, originalHeight, width, height).resize(originalImage);
                     break;
                 case CROP:
-                    int cropWidth = originalWidth;
-                    int cropHeight = originalHeight;
-                    int x = 0;
-                    int y = 0;
-                    if (Math.abs(originalWidth - width) > Math.abs(originalHeight - height)) {
-                        cropWidth *= (float) originalHeight / originalWidth;
-                        x = (originalWidth - cropWidth) / 2;
-                    } else {
-                        cropHeight *= (float) originalWidth / originalHeight;
-                        y = (originalHeight - cropHeight) / 2;
-                    }
-                    image = originalImage.getSubimage(x, y, cropWidth, cropHeight).getScaledInstance(width, height, Image.SCALE_SMOOTH);
+                    image = new ResizeCrop(originalWidth, originalHeight, width, height).resize(originalImage);
                     break;
                 default:
                     throw new IllegalArgumentException("Unknown resize strategy " + resizeStrategy);
@@ -146,13 +130,107 @@ public class ResizableImageTagProcessor extends AbstractAttributeTagProcessor {
 
             log.debug("Resizing image {} from {}x{} to {}x{}", originalImagePath, originalWidth, originalHeight, width, height);
 
-            BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+            BufferedImage bufferedImage = new BufferedImage(image.getWidth(null), image.getHeight(null), BufferedImage.TYPE_INT_RGB);
             Graphics2D graphics2D = bufferedImage.createGraphics();
             graphics2D.drawImage(image, 0, 0, null);
             graphics2D.dispose();
             ImageIO.write(bufferedImage, FilenameUtils.getExtension(originalImagePath.toString()), outputStream);
         } catch (IOException e) {
             throw new IllegalStateException(e);
+        }
+    }
+
+    static class ResizeLimit {
+
+        private final int originalWidth;
+        private final int originalHeight;
+        private final int width;
+        private final int height;
+        private int calculatedWidth;
+        private int calculatedHeight;
+
+        ResizeLimit(int originalWidth, int originalHeight, int width, int height) {
+            this.originalWidth = originalWidth;
+            this.originalHeight = originalHeight;
+            this.width = width;
+            this.height = height;
+            calculate();
+        }
+
+        private void calculate() {
+            calculatedWidth = width;
+            calculatedHeight = height;
+            if ((float) width / originalWidth * originalHeight <= height) {
+                calculatedHeight = (int) (originalHeight * ((float) width / originalWidth));
+            } else {
+                calculatedWidth = (int) (originalWidth * ((float) height / originalHeight));
+            }
+        }
+
+        int getCalculatedWidth() {
+            return calculatedWidth;
+        }
+
+        int getCalculatedHeight() {
+            return calculatedHeight;
+        }
+
+        private Image resize(BufferedImage image) {
+            return image.getScaledInstance(calculatedWidth, calculatedHeight, Image.SCALE_SMOOTH);
+        }
+    }
+
+    static class ResizeCrop {
+
+        private final int originalWidth;
+        private final int originalHeight;
+        private final int width;
+        private final int height;
+        private int cropWidth;
+        private int cropHeight;
+        private int x;
+        private int y;
+
+        ResizeCrop(int originalWidth, int originalHeight, int width, int height) {
+            this.originalWidth = originalWidth;
+            this.originalHeight = originalHeight;
+            this.width = width;
+            this.height = height;
+            calculate();
+        }
+
+        private void calculate() {
+            cropWidth = originalWidth;
+            cropHeight = originalHeight;
+            x = 0;
+            y = 0;
+            if (originalWidth > originalHeight) {
+                cropWidth = originalHeight;
+                x = (originalWidth - originalHeight) / 2;
+            } else if (originalHeight > originalWidth) {
+                cropHeight = originalWidth;
+                y = (originalHeight - originalWidth) / 2;
+            }
+        }
+
+        int getCropWidth() {
+            return cropWidth;
+        }
+
+        int getCropHeight() {
+            return cropHeight;
+        }
+
+        int getX() {
+            return x;
+        }
+
+        int getY() {
+            return y;
+        }
+
+        private Image resize(BufferedImage image) {
+            return image.getSubimage(x, y, cropWidth, cropHeight).getScaledInstance(width, height, Image.SCALE_SMOOTH);
         }
     }
 }
