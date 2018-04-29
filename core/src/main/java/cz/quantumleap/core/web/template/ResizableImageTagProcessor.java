@@ -120,9 +120,9 @@ public class ResizableImageTagProcessor extends AbstractAttributeTagProcessor {
             switch (resizeStrategy) {
                 case LIMIT:
                     if (Math.abs(originalWidth - width) > Math.abs(originalHeight - height)) {
-                        width = (int) (height * ((float) originalWidth / originalHeight));
-                    } else {
                         height = (int) (width * ((float) originalHeight / originalWidth));
+                    } else {
+                        width = (int) (height * ((float) originalWidth / originalHeight));
                     }
                     image = originalImage.getScaledInstance(width, height, Image.SCALE_SMOOTH);
                     break;

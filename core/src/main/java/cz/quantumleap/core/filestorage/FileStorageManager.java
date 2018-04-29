@@ -73,8 +73,8 @@ public class FileStorageManager {
         log.debug("Creating file {}", path);
 
         try (FileChannel fileChannel = FileChannel.open(path, StandardOpenOption.CREATE_NEW, StandardOpenOption.WRITE);
+             BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(Channels.newOutputStream(fileChannel));
              FileLock fileLock = fileChannel.lock()) {
-            BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(Channels.newOutputStream(fileChannel));
             supplier.accept(bufferedOutputStream);
         } catch (IOException e) {
             throw new IllegalStateException(e);
