@@ -19,6 +19,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Set;
@@ -75,6 +76,10 @@ public class ResizableImageTagProcessor extends AbstractAttributeTagProcessor {
         }
 
         Path imagePath = fileStorageManager.convertUrlToPath(url);
+        if (!Files.exists(imagePath)) {
+            return;
+        }
+
         Path resizedImagePath = getResizedImagePath(imagePath, resizeStrategy, width, height);
 
         String resizedImageUrl = fileStorageManager.createFileIfNotExistsAndBuildUrl(resizedImagePath, outputStream ->

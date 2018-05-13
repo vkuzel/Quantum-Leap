@@ -15,6 +15,7 @@ import java.util.List;
 
 @Configuration
 @ConditionalOnWebApplication
+// TODO Spring Boot 2 provides default methods in WebMvcConfigurer interface. Adapter is not needed!
 public class WebMvcConfiguration extends WebMvcConfigurerAdapter {
 
     // Comma is used to create an array in SpEL. That causes problems while
