@@ -30,7 +30,7 @@ public abstract class AdminController {
     private List<AdminMenuItem> filterInaccessibleMenuItemsAndSetState(List<AdminMenuItem> adminMenuItems, HttpServletRequest request, HttpServletResponse response) {
         List<AdminMenuItem> items = new ArrayList<>(adminMenuItems.size());
         for (AdminMenuItem adminMenuItem : adminMenuItems) {
-            if (!evaluateItem(adminMenuItem, request, response)) {
+            if (!canAccessMenuItem(adminMenuItem, request, response)) {
                 continue;
             }
 
@@ -54,7 +54,7 @@ public abstract class AdminController {
         return items;
     }
 
-    private boolean evaluateItem(AdminMenuItem adminMenuItem, HttpServletRequest request, HttpServletResponse response) {
+    private boolean canAccessMenuItem(AdminMenuItem adminMenuItem, HttpServletRequest request, HttpServletResponse response) {
         String securityExpression = adminMenuItem.getSecurityExpression();
         return securityExpression == null || webSecurityExpressionEvaluator.evaluate(securityExpression, request, response);
     }
