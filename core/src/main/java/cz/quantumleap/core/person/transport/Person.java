@@ -1,8 +1,11 @@
 package cz.quantumleap.core.person.transport;
 
+import javax.validation.constraints.Pattern;
+
 public class Person {
 
     private Long id;
+    @Pattern(regexp = "^\\S+@\\S+\\.\\S+$", message = "{admin.table.core.person.email.pattern}")
     private String email;
     private String name;
 

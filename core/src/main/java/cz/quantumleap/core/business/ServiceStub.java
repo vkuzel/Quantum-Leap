@@ -6,6 +6,7 @@ import cz.quantumleap.core.data.LookupDao;
 import cz.quantumleap.core.data.transport.Slice;
 import cz.quantumleap.core.data.transport.SliceRequest;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.Errors;
 
 import java.util.Map;
 
@@ -30,8 +31,8 @@ public class ServiceStub<T> implements DetailService<T>, ListService, LookupServ
 
     @Transactional
     @Override
-    public T save(T detail) {
-        return detailService.save(detail);
+    public T save(T detail, Errors errors) {
+        return detailService.save(detail, errors);
     }
 
     @Override

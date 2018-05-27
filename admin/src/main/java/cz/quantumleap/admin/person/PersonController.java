@@ -58,20 +58,25 @@ public class PersonController extends AdminController implements LookupControlle
     public String showPerson(@PathVariable(required = false) Long id, @Qualifier("personRole") SliceRequest personRoleSliceRequest, Model model) {
         Person person = id != null ? personService.get(id) : new Person();
         model.addAttribute(person);
-
-        personRoleSliceRequest.getFilter().put("person_id", id);
-        Slice slice = personRoleService.findSlice(personRoleSliceRequest);
-        model.addAttribute("personRoleTableSlice", slice);
-        model.addAttribute("personRoleDatabaseTableNameWithSchema", PersonRoleController.DATABASE_TABLE_NAME_WITH_SCHEMA);
-        model.addAttribute("personRoleDetailUrl", PersonRoleController.DETAIL_URL.replace("{personId}", String.valueOf(id)));
-
+        addPersonRoleTableAttributes(id, personRoleSliceRequest, model);
         return DETAIL_VIEW;
     }
 
     @PostMapping(path = {DETAIL_URL, DETAIL_URL + "/{id}"})
-    public String savePerson(@Valid Person person, Errors errors) {
-        // TODO At this point I shouldn't provide Person with setName method if I don't want to change the value!
-        return detailController.save(person, errors);
+    public String savePerson(@Valid Person person, @Qualifier("personRole") SliceRequest personRoleSliceRequest, Model model, Errors errors) {
+        String view = detailController.save(person, errors);
+        if (errors.hasErrors() && person.getId() != null) {
+            addPersonRoleTableAttributes(person.getId(), personRoleSliceRequest, model);
+        }
+        return view;
+    }
+
+    private void addPersonRoleTableAttributes(Long personId, SliceRequest personRoleSliceRequest, Model model) {
+        personRoleSliceRequest.getFilter().put("person_id", personId);
+        Slice slice = personRoleService.findSlice(personRoleSliceRequest);
+        model.addAttribute("personRoleTableSlice", slice);
+        model.addAttribute("personRoleDatabaseTableNameWithSchema", PersonRoleController.DATABASE_TABLE_NAME_WITH_SCHEMA);
+        model.addAttribute("personRoleDetailUrl", PersonRoleController.DETAIL_URL.replace("{personId}", String.valueOf(personId)));
     }
 
     @AdminMenuItemDefinition(title = "admin.menu.people", fontAwesomeIcon = "fa-user")

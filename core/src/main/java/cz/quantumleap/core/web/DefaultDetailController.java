@@ -41,7 +41,10 @@ public final class DefaultDetailController<T> implements DetailController<T> {
         if (errors.hasErrors()) {
             return detailView;
         }
-        T saved = detailService.save(transport);
+        T saved = detailService.save(transport, errors);
+        if (errors.hasErrors()) {
+            return detailView;
+        }
         return "redirect:" + detailUrl + "/" + getDetailId(saved);
     }
 

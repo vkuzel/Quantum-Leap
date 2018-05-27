@@ -2,6 +2,7 @@ package cz.quantumleap.core.business;
 
 import cz.quantumleap.core.data.DetailDao;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.Errors;
 
 public final class DefaultDetailService<T> implements DetailService<T> {
 
@@ -21,7 +22,7 @@ public final class DefaultDetailService<T> implements DetailService<T> {
 
     @Transactional
     @Override
-    public T save(T detail) {
+    public T save(T detail, Errors errors) {
         return detailDao.save(detail);
     }
 }

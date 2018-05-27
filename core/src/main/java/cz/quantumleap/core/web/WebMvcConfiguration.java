@@ -4,8 +4,11 @@ import cz.quantumleap.core.filestorage.FileStorageManager;
 import cz.quantumleap.core.web.controllerargument.SliceRequestControllerArgumentResolver;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.web.SortHandlerMethodArgumentResolver;
+import org.springframework.validation.Validator;
+import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
@@ -24,8 +27,13 @@ public class WebMvcConfiguration extends WebMvcConfigurerAdapter {
 
     private static final String STORAGE_PATH_PATTERN = FileStorageManager.STORAGE_URL_PREFIX + "**";
 
-    @Value("${file.storage.dir}")
-    private String fileStorageDirectory;
+    private final String fileStorageDirectory;
+    private final MessageSource messageSource;
+
+    public WebMvcConfiguration(@Value("${file.storage.dir}") String fileStorageDirectory, MessageSource messageSource) {
+        this.fileStorageDirectory = fileStorageDirectory;
+        this.messageSource = messageSource;
+    }
 
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
@@ -48,5 +56,15 @@ public class WebMvcConfiguration extends WebMvcConfigurerAdapter {
         SortHandlerMethodArgumentResolver resolver = new SortHandlerMethodArgumentResolver();
         resolver.setPropertyDelimiter(SORT_COLUMN_ORDER_DELIMITER);
         return resolver;
+    }
+
+    // To be able to use validation messages in a form of "{message.path}" from
+    // messages*.properties files. Standard Validator gets the messages from
+    // ValidationMessages*.properties files.
+    @Override
+    public Validator getValidator() {
+        LocalValidatorFactoryBean localValidatorFactoryBean = new LocalValidatorFactoryBean();
+        localValidatorFactoryBean.setValidationMessageSource(messageSource);
+        return localValidatorFactoryBean;
     }
 }
