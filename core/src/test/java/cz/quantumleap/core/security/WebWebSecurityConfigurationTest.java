@@ -12,8 +12,9 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.stereotype.Controller;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -53,9 +54,6 @@ public class WebWebSecurityConfigurationTest {
 
         mvc.perform(get("/endpoint-for-admin"))
                 .andExpect(status().isForbidden());
-
-        mvc.perform(get("/assets"))
-                .andExpect(status().isOk());
 
         mvc.perform(get("/type-endpoint-for-unauthenticated"))
                 .andExpect(status().isOk());
@@ -121,9 +119,6 @@ public class WebWebSecurityConfigurationTest {
         mvc.perform(get("/endpoint-for-admin"))
                 .andExpect(status().isOk());
 
-        mvc.perform(get("/assets"))
-                .andExpect(status().isOk());
-
         mvc.perform(get("/type-endpoint-for-unauthenticated"))
                 .andExpect(status().isOk());
 
@@ -145,13 +140,13 @@ public class WebWebSecurityConfigurationTest {
         public void endpointForAuthenticated() {
         }
 
-        @RequestMapping(value = "/method-endpoint", method = RequestMethod.GET)
+        @GetMapping(value = "/method-endpoint")
         @PreAuthorize("permitAll()")
         @ResponseBody
         public void getMethodEndpointForUnauthenticated() {
         }
 
-        @RequestMapping(value = "/method-endpoint", method = RequestMethod.POST)
+        @PostMapping(value = "/method-endpoint")
         @ResponseBody
         public void postMethodEndpointForAuthenticated() {
         }

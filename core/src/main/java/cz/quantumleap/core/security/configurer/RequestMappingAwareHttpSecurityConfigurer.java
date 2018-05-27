@@ -17,9 +17,6 @@ import java.util.stream.Collectors;
 
 public class RequestMappingAwareHttpSecurityConfigurer {
 
-    private static final String[] STATIC_CONTENT_ENDPOINTS = new String[]{
-            "/webjars/**", "/assets/**"
-    };
     private static final String SPEL_PERMIT_ALL = "permitAll()";
 
     private final Map<RequestMappingInfo, HandlerMethod> handlerMethods;
@@ -30,11 +27,9 @@ public class RequestMappingAwareHttpSecurityConfigurer {
 
     public void configure(HttpSecurity httpSecurity) throws Exception {
         ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry registry = httpSecurity.authorizeRequests();
-        List<RequestMappingInfo> permitAllMappingInfo = findRequestMappingInfo(this::hasPermitAll);
-        registry
-                .requestMatchers(new MappingInfoRequestMatcher(permitAllMappingInfo)).permitAll()
-                .antMatchers(STATIC_CONTENT_ENDPOINTS).permitAll()
-                .anyRequest().authenticated();
+        List<RequestMappingInfo> authenticatedMappingInfo = findRequestMappingInfo(this::hasNotPermitAll);
+
+        registry.requestMatchers(new MappingInfoRequestMatcher(authenticatedMappingInfo)).authenticated();
     }
 
     private List<RequestMappingInfo> findRequestMappingInfo(Predicate<HandlerMethod> handlerMethodPredicate) {
@@ -44,18 +39,21 @@ public class RequestMappingAwareHttpSecurityConfigurer {
                 .collect(Collectors.toList());
     }
 
-    private boolean hasPermitAll(HandlerMethod handlerMethod) {
+    private boolean hasNotPermitAll(HandlerMethod handlerMethod) {
         Class<?> beanType = handlerMethod.getBeanType();
         Method method = handlerMethod.getMethod();
 
         PreAuthorize methodPreAuthorize = AnnotationUtils.findAnnotation(method, PreAuthorize.class);
         PreAuthorize typePreAuthorize = AnnotationUtils.findAnnotation(beanType, PreAuthorize.class);
 
-        return methodPreAuthorize != null && isPermitAll(methodPreAuthorize)
-                || methodPreAuthorize == null && typePreAuthorize != null && isPermitAll(typePreAuthorize);
+        return !isPermitAll(methodPreAuthorize) && !isPermitAll(typePreAuthorize);
     }
 
     private boolean isPermitAll(PreAuthorize preAuthorize) {
+        if (preAuthorize == null) {
+            return false;
+        }
+
         String spEl = preAuthorize.value();
         spEl = spEl.replace(" ", "");
         return spEl.contains(SPEL_PERMIT_ALL);

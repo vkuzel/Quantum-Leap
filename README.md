@@ -1,9 +1,9 @@
 # Security
 
 * Spring Security `@Pre*` and `@Post*` annotations works. Do not use @Secure or JSR-250 annotations.
-* By default all endpoints are secured except for static content paths `/assets/**` and `/webjars/**`
+* By default authentication is needed for all `RequestMapping` endpoints. Static content paths like `/assets/**`, `/webjars/**` or `/storage/*` are left unprotected.
 * HttpSecurity is based on security of endpoints. If you want to provide an access to an endpoint you will have to use `@PreAuthorize("permitAll()")` annotation.
-* There is OAuth2, the only available authentication method. Tested with Google OAuth. Quantum Leap does not store any passwords.
+* Only available authentication method is OAuth2. Tested with Google OAuth. Quantum Leap does not store any passwords.
 * Users that has an email stored in the `core.person` table can be authenticated.
 * Thymeleaf `sec:authorize-url` attribute does not check the role or authority. This means if the user is authenticated but does not have permission to access the url he will see 410 unauthorized. Use explicit `sec:authorize="hasRole('ADMIN')"` in case you want to check an authority.
 
