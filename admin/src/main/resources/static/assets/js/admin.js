@@ -292,6 +292,89 @@ $('div.lookup').each(function (i, lookupField) {
     LookupControl(lookupField);
 });
 
+function TagsControl(tagsFieldSelector) {
+    var $tagsField = $(tagsFieldSelector);
+
+    var modalControl = {
+        $tagsInput: $tagsField.find('input[name="tags"]'),
+        $tagsButton: $tagsField.find('button[name="select-tags"]'),
+        $modal: $tagsField.find('div.modal'),
+        $tagsContainer: $tagsField.find('.tags-container'),
+        $tagsCheckboxes: $tagsField.find('input[type="checkbox"]'),
+        $newTagInput: $tagsField.find('input[name="new-tag"]'),
+        $createNewTagButton: $tagsField.find('button[name="create-new-tag"]')
+    };
+
+    modalControl.bindListeners = function () {
+        modalControl.$tagsButton.click(modalControl.show);
+        modalControl.$tagsCheckboxes.click(function () {
+            modalControl.changeTag(this.value, this.checked);
+        });
+        modalControl.$createNewTagButton.click(function () {
+            modalControl.createTag(modalControl.$newTagInput.val());
+        });
+    };
+
+    modalControl.show = function () {
+        modalControl.$modal.modal();
+    };
+
+    modalControl.changeTag = function (tag, checked) {
+        if (checked) {
+            modalControl.addTag(tag);
+        } else {
+            modalControl.removeTag(tag);
+        }
+    };
+
+    modalControl.addTag = function (tag) {
+        var tagsValue = modalControl.$tagsInput.val();
+        var tags = tagsValue.length === 0 ? [] : tagsValue.split(',');
+        tags.push(tag);
+        modalControl.$tagsInput.val(tags.join(','));
+    };
+
+    modalControl.removeTag = function (tag) {
+        var tags = modalControl.$tagsInput.val().split(',');
+        tags = tags.filter(function (t) {
+            return t !== tag;
+        });
+        modalControl.$tagsInput.val(tags.join(','));
+    };
+
+    modalControl.createTag = function (tag) {
+        tag = tag.replace(/[^a-z0-9]/gi, '').toLowerCase();
+        if (!tag) {
+            return;
+        }
+
+        var $checkbox = modalControl.$tagsCheckboxes.filter('[value="' + tag + '"]');
+        if ($checkbox.length > 0) {
+            if (!$checkbox.prop('checked')) {
+                $checkbox.prop('checked', true);
+                modalControl.addTag(tag);
+            }
+        } else {
+            var html = '<div class="form-group w-25"><label class="form-check-label">';
+            html += '<input class="form-check-input" type="checkbox" value="' + tag + '" checked> ' + tag + '</label></div>';
+            var $element = $(html);
+            var $newCheckbox = $element.find('input');
+            $newCheckbox.click(function () {
+                modalControl.changeTag(this.value, this.checked);
+            });
+            modalControl.$tagsCheckboxes = modalControl.$tagsCheckboxes.add($newCheckbox);
+            modalControl.$tagsContainer.append($element);
+            modalControl.addTag(tag);
+        }
+    };
+
+    modalControl.bindListeners();
+}
+
+$('div.tags').each(function (i, tagsField) {
+    TagsControl(tagsField);
+});
+
 function AsyncFormPartControl(formPartSelector, actionElementsSelector, onFormPartReady) {
     var $formPart = $(formPartSelector);
     var asyncFormPartControl = {

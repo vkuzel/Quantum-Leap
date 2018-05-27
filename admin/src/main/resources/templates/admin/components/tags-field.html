@@ -1,0 +1,57 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+</head>
+<body>
+<!--/*
+    Template params:
+        fieldName ... Name of input field.
+        fieldId ... Id of input field.
+        tags ... Comma separated string of selected tags.
+        allTags ... List of all available tags.
+*/-->
+<div th:fragment="tags(fieldName, fieldId, tags, allTags)" th:assert="${fieldName},${fieldId},${tags},${allTags}" class="tags">
+    <div class="input-group">
+        <input type="text" th:name="${fieldName}" th:id="${fieldId}" th:value="${{tags}}" class="form-control" autocomplete="off">
+        <div class="input-group-append">
+            <button class="btn btn-outline-secondary" type="button" name="select-tags">
+                <i class="fa fa-tags"></i>
+            </button>
+        </div>
+    </div>
+    <div class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Tags</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        <div class="form-inline tags-container">
+                            <div class="form-group w-25" th:each="tag: ${allTags}">
+                                <label class="form-check-label">
+                                    <input class="form-check-input" type="checkbox" th:value="${tag}" th:checked="${#lists.contains(tags, tag)}">
+                                    <span th:text="${tag}">tag</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="input-group">
+                        <input type="text" name="new-tag" autocomplete="off">
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-secondary" type="button" name="create-new-tag">
+                                <i class="fa fa-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
