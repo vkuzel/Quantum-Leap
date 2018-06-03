@@ -65,9 +65,9 @@ public final class DefaultLookupController implements LookupController {
     }
 
     @Override
-    public String findLookupLabels(String filter, Model model, HttpServletRequest request) {
+    public String findLookupLabels(String query, Model model, HttpServletRequest request) {
         model.addAttribute(DETAIL_URL_MODEL_ATTRIBUTE_NAME, detailUrl);
-        Map<Object, String> lookupLabels = lookupService.findLookupLabels(filter);
+        Map<Object, String> lookupLabels = lookupService.findLookupLabels(query);
         model.addAttribute(LOOKUP_LABELS_ATTRIBUTE_NAME, lookupLabels);
 
         return LOOKUP_LABELS_VIEW;

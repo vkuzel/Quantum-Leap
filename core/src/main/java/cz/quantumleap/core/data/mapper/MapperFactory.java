@@ -129,8 +129,8 @@ public class MapperFactory {
                 if ((method.getModifiers() & Modifier.STATIC) != 0) {
                     continue;
                 }
-                // A setter with a single parameter only
-                if (!method.getName().startsWith("get") || method.getParameterCount() != 0) {
+                // A getter with no parameters only
+                if (!(method.getName().startsWith("get") || method.getName().startsWith("is")) || method.getParameterCount() != 0) {
                     continue;
                 }
 

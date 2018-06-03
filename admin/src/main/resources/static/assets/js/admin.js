@@ -217,12 +217,16 @@ function LookupControl(lookupField) {
     };
 
     dropDownControl.fetchLabels = DelayedFunctionCall(function () {
-        var filter = lookupControl.$labelInput.val();
-        if (!filter) {
+        var query = lookupControl.$labelInput.val();
+        if (!query) {
             return;
         }
+        var queryPrefix = lookupControl.$labelInput.attr('data-query-prefix');
+        if (queryPrefix) {
+            query = queryPrefix + ' ' + query;
+        }
 
-        $.get(dropDownControl.labelsUrl, {filter: filter}, dropDownControl.replaceDropdownContent);
+        $.get(dropDownControl.labelsUrl, {query: query}, dropDownControl.replaceDropdownContent);
     }, 300);
 
     dropDownControl.fieldLostFocus = function () {

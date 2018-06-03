@@ -6,5 +6,5 @@ public interface LookupService extends ListService {
 
     String findLookupLabel(Object id);
 
-    Map<Object, String> findLookupLabels(String filter);
+    Map<Object, String> findLookupLabels(String query);
 }

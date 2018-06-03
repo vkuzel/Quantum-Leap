@@ -17,7 +17,6 @@ import static cz.quantumleap.core.data.transport.SliceRequest.MAX_ITEMS;
 public class SliceRequestControllerArgumentResolver implements HandlerMethodArgumentResolver {
 
     public static final String SORT_PARAM_NAME = "sort";
-    public static final String FILTER_PARAM_NAME = "filter";
     public static final String QUERY_PARAM_NAME = "query";
     public static final String OFFSET_PARAM_NAME = "offset";
     public static final String SIZE_PARAM_NAME = "size";

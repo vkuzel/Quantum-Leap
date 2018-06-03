@@ -19,7 +19,7 @@ public interface LookupController {
 
     String resolveLookupLabel(String id);
 
-    String findLookupLabels(String filter, Model model, HttpServletRequest request);
+    String findLookupLabels(String query, Model model, HttpServletRequest request);
 
     String lookupList(SliceRequest sliceRequest, Model model, HttpServletRequest request);
 }

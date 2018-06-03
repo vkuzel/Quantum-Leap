@@ -14,5 +14,5 @@ public interface LookupDao<TABLE extends Table<? extends Record>> extends ListDa
 
     Map<Object, String> fetchLabelsById(Set<Object> ids);
 
-    Map<Object, String> fetchLabelsByFilter(String filter);
+    Map<Object, String> fetchLabelsByFilter(String query);
 }
