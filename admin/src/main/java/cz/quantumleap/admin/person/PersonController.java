@@ -119,8 +119,8 @@ public class PersonController extends AdminController implements LookupControlle
 
     @GetMapping(LOOKUP_LABELS_URL)
     @Override
-    public String findLookupLabels(String filter, Model model, HttpServletRequest request) {
-        return lookupController.findLookupLabels(filter, model, request);
+    public String findLookupLabels(String query, Model model, HttpServletRequest request) {
+        return lookupController.findLookupLabels(query, model, request);
     }
 
     @GetMapping(LOOKUP_LIST_URL)

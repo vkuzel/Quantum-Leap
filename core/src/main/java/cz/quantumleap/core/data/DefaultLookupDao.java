@@ -1,5 +1,6 @@
 package cz.quantumleap.core.data;
 
+import cz.quantumleap.core.data.list.FilterBuilder;
 import cz.quantumleap.core.data.primarykey.PrimaryKeyConditionBuilder;
 import cz.quantumleap.core.data.transport.Slice;
 import cz.quantumleap.core.data.transport.SliceRequest;
@@ -10,7 +11,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Function;
 
 public final class DefaultLookupDao<TABLE extends Table<? extends Record>> implements LookupDao<TABLE> {
 
@@ -20,18 +20,18 @@ public final class DefaultLookupDao<TABLE extends Table<? extends Record>> imple
     private final Field<String> labelField;
     private final DSLContext dslContext;
 
-    private final Function<String, Condition> filterConditionBuilder;
     private final PrimaryKeyConditionBuilder primaryKeyConditionBuilder;
+    private final FilterBuilder filterBuilder;
 
     private final ListDao<TABLE> listDao;
 
-    public DefaultLookupDao(TABLE table, Field<String> labelField, DSLContext dslContext, Function<String, Condition> queryFilterConditionBuilder, PrimaryKeyConditionBuilder primaryKeyConditionBuilder, ListDao<TABLE> listDao) {
+    public DefaultLookupDao(TABLE table, Field<String> labelField, DSLContext dslContext, PrimaryKeyConditionBuilder primaryKeyConditionBuilder, FilterBuilder filterBuilder, ListDao<TABLE> listDao) {
         this.table = table;
         this.labelField = labelField;
         this.dslContext = dslContext;
 
-        this.filterConditionBuilder = queryFilterConditionBuilder;
         this.primaryKeyConditionBuilder = primaryKeyConditionBuilder;
+        this.filterBuilder = filterBuilder;
 
         this.listDao = listDao;
     }
@@ -62,13 +62,13 @@ public final class DefaultLookupDao<TABLE extends Table<? extends Record>> imple
     }
 
     @Override
-    public Map<Object, String> fetchLabelsByFilter(String filter) {
-        if (StringUtils.isEmpty(filter)) {
+    public Map<Object, String> fetchLabelsByFilter(String query) {
+        if (StringUtils.isEmpty(query)) {
             return Collections.emptyMap();
         }
 
         Field<Object> primaryKey = primaryKeyConditionBuilder.getPrimaryKeyField();
-        Condition condition = filterConditionBuilder.apply(filter);
+        Condition condition = filterBuilder.buildForQuery(query);
 
         return dslContext.select(primaryKey, labelField)
                 .from(table)

@@ -46,7 +46,7 @@ public class ServiceStub<T> implements DetailService<T>, ListService, LookupServ
     }
 
     @Override
-    public Map<Object, String> findLookupLabels(String filter) {
-        return lookupService.findLookupLabels(filter);
+    public Map<Object, String> findLookupLabels(String query) {
+        return lookupService.findLookupLabels(query);
     }
 }

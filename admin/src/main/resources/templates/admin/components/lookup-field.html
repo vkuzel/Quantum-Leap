@@ -10,6 +10,7 @@
         fieldId ... Id of input field.
         field ... Field of type Lookup.
         modalTitle ... Title of lookup modal window.
+        queryPrefix ... Prefix prepend to every filter query (optional)
 */-->
 <div th:fragment="lookup(databaseTableNameWithSchema, fieldName, fieldId, field, modalTitle)" th:assert="${field}"
      th:object="${field}" class="lookup dropdown">
@@ -18,7 +19,8 @@
     <div class="input-group"
          th:with="lookupController=${@lookupControllerManager.getControllerForTable(databaseTableNameWithSchema)}">
         <input type="text" th:assert="${fieldId}" th:id="${fieldId}" th:value="*{label}" class="form-control"
-               th:data-lookup-labels-url="@{${lookupController.getLookupLabelsUrl()}}" autocomplete="off">
+               th:data-lookup-labels-url="@{${lookupController.getLookupLabelsUrl()}}"
+               th:data-query-prefix="${queryPrefix}" autocomplete="off">
         <div class="input-group-append">
             <button class="btn btn-outline-secondary" type="button"
                     th:data-lookup-list-url="@{${lookupController.getLookupListUrl()}}"

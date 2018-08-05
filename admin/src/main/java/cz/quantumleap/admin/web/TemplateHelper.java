@@ -23,10 +23,6 @@ public class TemplateHelper {
             this.detailUrl = detailUrl;
         }
 
-        public String getFilterParamName() {
-            return SliceRequestControllerArgumentResolver.qualifyParamName(qualifier, SliceRequestControllerArgumentResolver.FILTER_PARAM_NAME);
-        }
-
         public String getSortParamName() {
             return SliceRequestControllerArgumentResolver.qualifyParamName(qualifier, SliceRequestControllerArgumentResolver.SORT_PARAM_NAME);
         }

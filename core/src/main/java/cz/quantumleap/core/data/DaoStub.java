@@ -28,20 +28,20 @@ public class DaoStub<TABLE extends Table<? extends Record>> implements DetailDao
     protected final ListDao<TABLE> listDao;
     protected final LookupDao<TABLE> lookupDao;
 
-    protected DaoStub(TABLE table, Field<String> lookupLabelField, Function<String, Condition> queryFilterConditionBuilder, DSLContext dslContext, LookupDaoManager lookupDaoManager, EnumManager enumManager, RecordAuditor recordAuditor) {
+    protected DaoStub(TABLE table, Field<String> lookupLabelField, Function<String, Condition> wordConditionBuilder, DSLContext dslContext, LookupDaoManager lookupDaoManager, EnumManager enumManager, RecordAuditor recordAuditor) {
         this.dslContext = dslContext;
         this.table = table;
 
         this.primaryKeyResolver = new TablePrimaryKeyResolver(table);
         this.primaryKeyConditionBuilder = new PrimaryKeyConditionBuilder(primaryKeyResolver);
-        this.filterBuilder = new DefaultFilterBuilder(table, queryFilterConditionBuilder);
+        this.filterBuilder = new DefaultFilterBuilder(table, wordConditionBuilder);
         this.orderBuilder = new DefaultOrderBuilder(table);
         this.limitBuilder = LimitBuilder.DEFAULT;
         this.mapperFactory = new MapperFactory(table, primaryKeyResolver, lookupDaoManager, enumManager);
 
         detailDao = new DefaultDetailDao<>(table, dslContext, primaryKeyConditionBuilder, mapperFactory, recordAuditor);
         listDao = new DefaultListDao<>(table, dslContext, primaryKeyResolver, filterBuilder, orderBuilder, limitBuilder, mapperFactory);
-        lookupDao = new DefaultLookupDao<>(table, lookupLabelField, dslContext, queryFilterConditionBuilder, primaryKeyConditionBuilder, listDao);
+        lookupDao = new DefaultLookupDao<>(table, lookupLabelField, dslContext, primaryKeyConditionBuilder, filterBuilder, listDao);
     }
 
     @Override
@@ -95,7 +95,7 @@ public class DaoStub<TABLE extends Table<? extends Record>> implements DetailDao
     }
 
     @Override
-    public Map<Object, String> fetchLabelsByFilter(String filter) {
-        return lookupDao.fetchLabelsByFilter(filter);
+    public Map<Object, String> fetchLabelsByFilter(String query) {
+        return lookupDao.fetchLabelsByFilter(query);
     }
 }
