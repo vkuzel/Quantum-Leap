@@ -39,8 +39,11 @@ public class FileStorageManager {
 
     private static final DateTimeFormatter MONTH_FORMATTER = DateTimeFormatter.ofPattern("yy-MM");
 
-    @Value("${file.storage.dir}")
-    private String fileStorageDirectory;
+    private final String fileStorageDirectory;
+
+    public FileStorageManager(@Value("${quantumleap.file.storage.dir}") String fileStorageDirectory) {
+        this.fileStorageDirectory = fileStorageDirectory;
+    }
 
     public String saveMultipartFileAndBuildUrl(String directory, MultipartFile multipartFile) {
         Validate.isTrue(StringUtils.isNotBlank(directory));

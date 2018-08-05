@@ -11,15 +11,14 @@ import org.springframework.validation.Validator;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.nio.file.Paths;
 import java.util.List;
 
 @Configuration
 @ConditionalOnWebApplication
-// TODO Spring Boot 2 provides default methods in WebMvcConfigurer interface. Adapter is not needed!
-public class WebMvcConfiguration extends WebMvcConfigurerAdapter {
+public class WebMvcConfiguration implements WebMvcConfigurer {
 
     // Comma is used to create an array in SpEL. That causes problems while
     // building order queries in Thymeleaf, so semicolon is used instead.
@@ -30,7 +29,7 @@ public class WebMvcConfiguration extends WebMvcConfigurerAdapter {
     private final String fileStorageDirectory;
     private final MessageSource messageSource;
 
-    public WebMvcConfiguration(@Value("${file.storage.dir}") String fileStorageDirectory, MessageSource messageSource) {
+    public WebMvcConfiguration(@Value("${quantumleap.file.storage.dir}") String fileStorageDirectory, MessageSource messageSource) {
         this.fileStorageDirectory = fileStorageDirectory;
         this.messageSource = messageSource;
     }

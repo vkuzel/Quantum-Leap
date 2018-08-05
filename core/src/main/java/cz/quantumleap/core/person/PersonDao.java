@@ -9,8 +9,6 @@ import cz.quantumleap.core.tables.PersonTable;
 import org.jooq.DSLContext;
 import org.springframework.stereotype.Repository;
 
-import java.util.Optional;
-
 import static cz.quantumleap.core.tables.PersonTable.PERSON;
 
 @Repository
@@ -20,9 +18,9 @@ public class PersonDao extends DaoStub<PersonTable> {
         super(PERSON, PERSON.NAME.coalesce(PERSON.EMAIL), s -> PERSON.NAME.startsWith(s).or(PERSON.EMAIL.startsWith(s)), dslContext, lookupDaoManager, enumManager, recordAuditor);
     }
 
-    public Optional<Person> fetchByEmail(String email) {
+    public Person fetchByEmail(String email) {
         return dslContext.selectFrom(PERSON)
                 .where(PERSON.EMAIL.eq(email))
-                .fetchOptionalInto(Person.class);
+                .fetchAnyInto(Person.class);
     }
 }

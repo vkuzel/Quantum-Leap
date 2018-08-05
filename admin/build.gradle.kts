@@ -1,10 +1,10 @@
 dependencies {
     compile(project(":core"))
 
-    compile("org.webjars.npm:startbootstrap-sb-admin:4.0.0") {
+    implementation("org.webjars.npm:startbootstrap-sb-admin:4.0.0") {
         exclude(group = "org.webjars.npm", module = "datatables.net-bs4")
     }
 
-    testCompile(project(path = ":core", configuration = "testFixturesUsageCompile"))
-    testCompile("org.springframework.boot:spring-boot-starter-test")
+    testImplementation(project(path = ":core", configuration = "testFixturesUsageCompile"))
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
 }

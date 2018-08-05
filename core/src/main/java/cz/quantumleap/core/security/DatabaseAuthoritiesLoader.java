@@ -3,23 +3,38 @@ package cz.quantumleap.core.security;
 import cz.quantumleap.core.person.PersonDao;
 import cz.quantumleap.core.person.transport.Person;
 import cz.quantumleap.core.role.RoleDao;
-import org.springframework.boot.autoconfigure.security.oauth2.resource.AuthoritiesExtractor;
+import org.apache.commons.lang3.Validate;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
+import org.springframework.security.oauth2.core.user.OAuth2UserAuthority;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
+/**
+ * Loads authorities from database for an user authenticated usually by
+ * OAauth 2.0.
+ * <p>
+ * Because Spring Security 5 (at least in version 5.0.6) does not provide any
+ * point that would allow to process an authenticated user's details in a
+ * robust manner, the GrantedAuthoritiesMapper.mapAuthorities is hacked to do
+ * this.
+ * <p>
+ * See https://docs.spring.io/spring-security/site/docs/current/reference/html/oauth2login-advanced.html#oauth2login-advanced-map-authorities
+ */
 @Component
-public class DatabaseAuthoritiesLoader implements AuthoritiesExtractor {
+public class DatabaseAuthoritiesLoader implements GrantedAuthoritiesMapper {
 
     private static final String OAUTH_DETAILS_EMAIL = "email";
     private static final String OAUTH_DETAILS_NAME = "name";
-    private static final String ROLE_PREFIX = "ROLE_"; // TODO Use the constrant from the Spring Security!
+    private static final String ROLE_PREFIX = "ROLE_";
 
     private final PersonDao personDao;
     private final RoleDao roleDao;
@@ -31,64 +46,60 @@ public class DatabaseAuthoritiesLoader implements AuthoritiesExtractor {
 
     @Transactional
     @Override
-    public List<GrantedAuthority> extractAuthorities(Map<String, Object> map) {
-        String email = getEmail(map);
-
-        Optional<Person> personOptional = personDao.fetchByEmail(email);
-        if (personOptional.isPresent()) {
-            Person person = personOptional.get();
-
-            if (StringUtils.isEmpty(person.getName())) {
-                person.setName(getName(map));
-                personDao.save(person);
+    public Collection<? extends GrantedAuthority> mapAuthorities(Collection<? extends GrantedAuthority> authorities) {
+        for (GrantedAuthority authority : authorities) {
+            if (!(authority instanceof OAuth2UserAuthority)) {
+                continue;
             }
 
-            List<String> roles = roleDao.fetchRolesByPersonId(person.getId());
-            return roles.stream()
-                    .map(this::convertToAuthority)
-                    .collect(Collectors.toList());
-        } else {
-            throw new IllegalArgumentException("User " + email + " was not found in database!");
+            OAuth2UserAuthority oAuth2UserAuthority = (OAuth2UserAuthority) authority;
+            Person person = loadAndUpdatePerson(oAuth2UserAuthority.getAttributes());
+            return loadGrantedAuthorities(person);
         }
+
+        String retrievedAuthorities = authorities.stream().map(Object::getClass).map(Class::getName).collect(Collectors.joining(", "));
+        throw new DatabaseAuthoritiesLoadingException("No known granted authority in authorities [" + retrievedAuthorities + "]");
     }
 
-    private GrantedAuthority convertToAuthority(String role) {
-        String authority = ROLE_PREFIX + role;
-        return new GrantedAuthority() {
-            @Override
-            public String getAuthority() {
-                return authority;
-            }
+    private Person loadAndUpdatePerson(Map<String, Object> authorityAttributes) {
+        String email = getAttribute(authorityAttributes, OAUTH_DETAILS_EMAIL);
+        Validate.notNull(email, "Email was not found in OAuth details! " + formatDetails(authorityAttributes));
 
-            @Override
-            public String toString() {
-                return authority;
-            }
-        };
+        Person person = personDao.fetchByEmail(email);
+        if (person == null) {
+            throw new DatabaseAuthoritiesLoadingException("Email " + email + " was not found in database!");
+        }
+
+        String name = getAttribute(authorityAttributes, OAUTH_DETAILS_NAME);
+        if (StringUtils.isEmpty(person.getName()) && !StringUtils.isEmpty(name)) {
+            person.setName(name);
+            personDao.save(person);
+        }
+
+        return person;
     }
 
-    private String getEmail(Map<String, Object> map) {
-        Object email = map.get(OAUTH_DETAILS_EMAIL);
-        if (email == null) {
-            throw new IllegalArgumentException("Email was not found in OAuth details! " + formatDetails(map));
-        }
-        if (!(email instanceof String)) {
-            throw new IllegalArgumentException("Wrong data type of OAuth email detail! " + email.getClass().getSimpleName());
-        }
-        return (String) email;
+    private List<GrantedAuthority> loadGrantedAuthorities(Person person) {
+        return roleDao.fetchRolesByPersonId(person.getId()).stream()
+                .map(role -> new SimpleGrantedAuthority(ROLE_PREFIX + role))
+                .collect(Collectors.toList());
     }
 
-    private String getName(Map<String, Object> map) {
-        Object name = map.get(OAUTH_DETAILS_NAME);
-        if (name instanceof String) {
-            return (String) name;
-        }
-        return null;
+    @SuppressWarnings("unchecked")
+    private <T> T getAttribute(Map<String, Object> attributes, String name) {
+        return (T) attributes.get(name);
     }
 
     private String formatDetails(Map<String, Object> map) {
         return map.entrySet().stream()
                 .map(entry -> entry.getKey() + ": " + entry.getValue())
                 .collect(Collectors.joining(", "));
+    }
+
+    public static class DatabaseAuthoritiesLoadingException extends AuthenticationException {
+
+        private DatabaseAuthoritiesLoadingException(String msg) {
+            super(msg);
+        }
     }
 }

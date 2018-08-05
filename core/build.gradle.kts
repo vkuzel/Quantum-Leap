@@ -7,8 +7,10 @@ dependencies {
     compile("org.springframework.data:spring-data-commons")
     compile("org.springframework.boot:spring-boot-starter-web")
     compile("org.springframework.boot:spring-boot-starter-thymeleaf")
+    compile("nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect")
     compile("org.springframework.boot:spring-boot-starter-security")
-    compile("org.springframework.security.oauth:spring-security-oauth2")
+    compile("org.springframework.security:spring-security-oauth2-client")
+    compile("org.springframework.security:spring-security-oauth2-jose")
     compile("org.thymeleaf.extras:thymeleaf-extras-springsecurity4")
     compile("org.thymeleaf.extras:thymeleaf-extras-java8time")
 
@@ -18,7 +20,7 @@ dependencies {
     compile("com.ibm.icu:icu4j:57.1")
     compile("org.jetbrains:annotations:15.0")
 
-    runtime("org.postgresql:postgresql")
+    runtimeOnly("org.postgresql:postgresql")
 
     testFixturesCompile("org.springframework.boot:spring-boot-starter-test")
     testFixturesCompile("org.springframework.security:spring-security-test")

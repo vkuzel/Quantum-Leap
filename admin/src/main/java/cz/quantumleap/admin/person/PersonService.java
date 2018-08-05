@@ -20,9 +20,11 @@ public class PersonService extends ServiceStub<Person> {
 
     @Override
     public Person save(Person person, Errors errors) {
-        personDao.fetchByEmail(person.getEmail())
-                .filter(p -> !Objects.equals(p.getId(), person.getId()))
-                .ifPresent(p -> errors.rejectValue("email", "admin.table.core.person.email.unique"));
+        Person existingPerson = personDao.fetchByEmail(person.getEmail());
+        if (existingPerson != null && !Objects.equals(existingPerson.getId(), person.getId())) {
+            errors.rejectValue("email", "admin.table.core.person.email.unique");
+        }
+
         if (errors.hasErrors()) {
             return person;
         } else {
