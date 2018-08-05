@@ -4,16 +4,24 @@
 package cz.quantumleap.core;
 
 
-import cz.quantumleap.core.tables.*;
+import cz.quantumleap.core.tables.EnumTable;
+import cz.quantumleap.core.tables.EnumValueTable;
+import cz.quantumleap.core.tables.IncrementTable;
+import cz.quantumleap.core.tables.PersonRoleTable;
+import cz.quantumleap.core.tables.PersonTable;
+import cz.quantumleap.core.tables.RoleTable;
+import cz.quantumleap.core.tables.TablePreferencesTable;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import javax.annotation.Generated;
+
 import org.jooq.Catalog;
 import org.jooq.Sequence;
 import org.jooq.Table;
 import org.jooq.impl.SchemaImpl;
-
-import javax.annotation.Generated;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 
 /**
