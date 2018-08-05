@@ -27,7 +27,7 @@ public class Table<ROW> implements Iterable<ROW> {
     }
 
     public List<Column> getColumns() {
-        List<String> enabledColumns = tablePreferences.getEnabledColumnsAsList();
+        List<String> enabledColumns = tablePreferences.getEnabledColumns();
         if (enabledColumns.isEmpty()) {
             return columns;
         }

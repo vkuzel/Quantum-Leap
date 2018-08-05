@@ -4,6 +4,7 @@ import cz.quantumleap.core.person.PersonDao;
 import cz.quantumleap.core.person.transport.Person;
 import cz.quantumleap.core.role.RoleDao;
 import org.apache.commons.lang3.Validate;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -30,6 +31,7 @@ import java.util.stream.Collectors;
  * See https://docs.spring.io/spring-security/site/docs/current/reference/html/oauth2login-advanced.html#oauth2login-advanced-map-authorities
  */
 @Component
+@ConditionalOnWebApplication
 public class DatabaseAuthoritiesLoader implements GrantedAuthoritiesMapper {
 
     private static final String OAUTH_DETAILS_EMAIL = "email";
