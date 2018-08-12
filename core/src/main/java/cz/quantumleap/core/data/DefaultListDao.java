@@ -85,17 +85,17 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
     }
 
     private SliceRequest setDefaultOrder(SliceRequest sliceRequest) {
-        if (sliceRequest.getSort() == null) {
+        if (sliceRequest.getSort().isUnsorted()) {
             List<Field<Object>> primaryKeyFields = primaryKeyResolver.getPrimaryKeyFields();
             List<Sort.Order> orders = primaryKeyFields.stream()
-                    .map(field -> new Sort.Order(Sort.Direction.DESC, field.getName()))
+                    .map(field -> Sort.Order.desc(field.getName()))
                     .collect(Collectors.toList());
             return new SliceRequest(
                     sliceRequest.getFilter(),
                     sliceRequest.getQuery(),
                     sliceRequest.getOffset(),
                     sliceRequest.getSize(),
-                    !orders.isEmpty() ? new Sort(orders) : null,
+                    Sort.by(orders),
                     sliceRequest.getTablePreferencesId()
             );
         }

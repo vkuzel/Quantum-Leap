@@ -21,7 +21,7 @@ public class DefaultOrderBuilder implements OrderBuilder {
 
     @Override
     public List<SortField<?>> build(Sort sort) {
-        if (sort == null) {
+        if (sort.isUnsorted()) {
             return Collections.emptyList();
         }
 

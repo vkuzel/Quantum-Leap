@@ -1,5 +1,6 @@
 package cz.quantumleap.core.data.transport;
 
+import org.apache.commons.lang3.Validate;
 import org.springframework.data.domain.Sort;
 
 import java.util.Map;
@@ -18,6 +19,7 @@ public class SliceRequest {
     private final Long tablePreferencesId;
 
     public SliceRequest(Map<String, Object> filter, String query, int offset, int size, Sort sort, Long tablePreferencesId) {
+        Validate.notNull(sort);
         this.filter = filter;
         this.query = query;
         this.offset = offset;
