@@ -3,7 +3,12 @@ package cz.quantumleap.admin;
 import cz.quantumleap.admin.menu.AdminMenuItem;
 import cz.quantumleap.admin.menu.AdminMenuItem.State;
 import cz.quantumleap.admin.menu.AdminMenuManager;
+import cz.quantumleap.admin.notification.NotificationService;
+import cz.quantumleap.admin.notification.transport.Notification;
+import cz.quantumleap.admin.person.PersonService;
+import cz.quantumleap.core.person.transport.Person;
 import cz.quantumleap.core.security.WebSecurityExpressionEvaluator;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
 import javax.servlet.http.HttpServletRequest;
@@ -14,10 +19,14 @@ import java.util.List;
 public abstract class AdminController {
 
     private final AdminMenuManager adminMenuManager;
+    private final PersonService personService;
+    private final NotificationService notificationService;
     private final WebSecurityExpressionEvaluator webSecurityExpressionEvaluator;
 
-    public AdminController(AdminMenuManager adminMenuManager, WebSecurityExpressionEvaluator webSecurityExpressionEvaluator) {
+    public AdminController(AdminMenuManager adminMenuManager, PersonService personService, NotificationService notificationService, WebSecurityExpressionEvaluator webSecurityExpressionEvaluator) {
         this.adminMenuManager = adminMenuManager;
+        this.personService = personService;
+        this.notificationService = notificationService;
         this.webSecurityExpressionEvaluator = webSecurityExpressionEvaluator;
     }
 
@@ -25,6 +34,12 @@ public abstract class AdminController {
     public List<AdminMenuItem> getMenuItems(HttpServletRequest request, HttpServletResponse response) {
         List<AdminMenuItem> menuItems = adminMenuManager.getMenuItems();
         return filterInaccessibleMenuItemsAndSetState(menuItems, request, response);
+    }
+
+    @ModelAttribute("unresolvedNotifications")
+    public List<Notification> getUnresolvedNotifications(Authentication authentication) {
+        Person person = personService.fetchByAuthentication(authentication);
+        return notificationService.fetchUnresolvedByPersonId(person.getId());
     }
 
     private List<AdminMenuItem> filterInaccessibleMenuItemsAndSetState(List<AdminMenuItem> adminMenuItems, HttpServletRequest request, HttpServletResponse response) {

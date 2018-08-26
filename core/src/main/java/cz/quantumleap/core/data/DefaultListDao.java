@@ -8,6 +8,7 @@ import cz.quantumleap.core.data.mapper.MapperUtils;
 import cz.quantumleap.core.data.primarykey.PrimaryKeyResolver;
 import cz.quantumleap.core.data.transport.Slice;
 import cz.quantumleap.core.data.transport.SliceRequest;
+import cz.quantumleap.core.data.transport.Table.Column;
 import cz.quantumleap.core.data.transport.TablePreferences;
 import org.jooq.*;
 import org.springframework.data.domain.Sort;
@@ -15,6 +16,7 @@ import org.springframework.data.domain.Sort;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static cz.quantumleap.core.data.list.LimitBuilder.Limit;
@@ -42,12 +44,13 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
         this.mapperFactory = mapperFactory;
     }
 
-    public Slice fetchSlice(SliceRequest sliceRequest) {
+    public Slice<Map<Column, Object>> fetchSlice(SliceRequest sliceRequest) {
         SliceRequest request = setDefaultOrder(sliceRequest);
         Limit limit = limitBuilder.build(sliceRequest);
         Collection<Condition> conditions = joinConditions(
                 filterBuilder.buildForFilter(sliceRequest.getFilter()),
-                filterBuilder.buildForQuery(sliceRequest.getQuery())
+                filterBuilder.buildForQuery(sliceRequest.getQuery()),
+                sliceRequest.getCondition()
         );
 
         return dslContext.selectFrom(table)
@@ -63,7 +66,8 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
         Limit limit = limitBuilder.build(sliceRequest);
         Collection<Condition> conditions = joinConditions(
                 filterBuilder.buildForFilter(sliceRequest.getFilter()),
-                filterBuilder.buildForQuery(sliceRequest.getQuery())
+                filterBuilder.buildForQuery(sliceRequest.getQuery()),
+                sliceRequest.getCondition()
         );
 
         return dslContext.selectFrom(table)
@@ -73,13 +77,16 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
                 .fetch(mapperFactory.createTransportMapper(type)); // TODO Is this mapper optimized for high volume lists?
     }
 
-    private Collection<Condition> joinConditions(Condition condition1, Condition condition2) {
+    private Collection<Condition> joinConditions(Condition condition1, Condition condition2, Condition condition3) {
         List<Condition> conditions = new ArrayList<>(2);
         if (condition1 != null) {
             conditions.add(condition1);
         }
         if (condition2 != null) {
             conditions.add(condition2);
+        }
+        if (condition3 != null) {
+            conditions.add(condition3);
         }
         return conditions;
     }
@@ -93,6 +100,7 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
             return new SliceRequest(
                     sliceRequest.getFilter(),
                     sliceRequest.getQuery(),
+                    sliceRequest.getCondition(),
                     sliceRequest.getOffset(),
                     sliceRequest.getSize(),
                     Sort.by(orders),

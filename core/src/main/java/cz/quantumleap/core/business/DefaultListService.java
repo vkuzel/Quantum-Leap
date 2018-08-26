@@ -3,6 +3,9 @@ package cz.quantumleap.core.business;
 import cz.quantumleap.core.data.ListDao;
 import cz.quantumleap.core.data.transport.Slice;
 import cz.quantumleap.core.data.transport.SliceRequest;
+import cz.quantumleap.core.data.transport.Table;
+
+import java.util.Map;
 
 public final class DefaultListService implements ListService {
 
@@ -13,7 +16,7 @@ public final class DefaultListService implements ListService {
     }
 
     @Override
-    public Slice findSlice(SliceRequest sliceRequest) {
+    public Slice<Map<Table.Column, Object>> findSlice(SliceRequest sliceRequest) {
         return listDao.fetchSlice(sliceRequest);
     }
 }

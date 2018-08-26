@@ -5,6 +5,7 @@ import cz.quantumleap.core.data.ListDao;
 import cz.quantumleap.core.data.LookupDao;
 import cz.quantumleap.core.data.transport.Slice;
 import cz.quantumleap.core.data.transport.SliceRequest;
+import cz.quantumleap.core.data.transport.Table;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.Errors;
 
@@ -36,7 +37,7 @@ public class ServiceStub<T> implements DetailService<T>, ListService, LookupServ
     }
 
     @Override
-    public Slice findSlice(SliceRequest sliceRequest) {
+    public Slice<Map<Table.Column, Object>> findSlice(SliceRequest sliceRequest) {
         return listService.findSlice(sliceRequest);
     }
 

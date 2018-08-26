@@ -3,6 +3,7 @@ package cz.quantumleap.admin.person;
 import cz.quantumleap.admin.AdminController;
 import cz.quantumleap.admin.menu.AdminMenuItemDefinition;
 import cz.quantumleap.admin.menu.AdminMenuManager;
+import cz.quantumleap.admin.notification.NotificationService;
 import cz.quantumleap.admin.personrole.PersonRoleController;
 import cz.quantumleap.admin.personrole.PersonRoleService;
 import cz.quantumleap.core.data.transport.Slice;
@@ -45,8 +46,8 @@ public class PersonController extends AdminController implements LookupControlle
     private final PersonService personService;
     private final PersonRoleService personRoleService;
 
-    public PersonController(AdminMenuManager adminMenuManager, WebSecurityExpressionEvaluator webSecurityExpressionEvaluator, PersonService personService, PersonRoleService personRoleService) {
-        super(adminMenuManager, webSecurityExpressionEvaluator);
+    public PersonController(AdminMenuManager adminMenuManager, WebSecurityExpressionEvaluator webSecurityExpressionEvaluator, PersonService personService, NotificationService notificationService, PersonRoleService personRoleService) {
+        super(adminMenuManager, personService, notificationService, webSecurityExpressionEvaluator);
         this.detailController = new DefaultDetailController<>(Person.class, DETAIL_URL, DETAIL_VIEW, personService);
         this.listController = new DefaultListController(DATABASE_TABLE_NAME_WITH_SCHEMA, LIST_VIEW, AJAX_LIST_VIEW, DETAIL_URL, personService);
         this.lookupController = new DefaultLookupController(DATABASE_TABLE_NAME_WITH_SCHEMA, DETAIL_URL, LOOKUP_LABEL_URL, LOOKUP_LABELS_URL, LOOKUP_LIST_URL, personService);

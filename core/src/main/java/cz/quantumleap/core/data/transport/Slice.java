@@ -18,6 +18,10 @@ public class Slice<ROW> implements Iterable<ROW>  {
         this.canExtend = canExtend;
     }
 
+    public Table<ROW> getTable() {
+        return table;
+    }
+
     public String getName() {
         return table.getDatabaseTableNameWithSchema();
     }

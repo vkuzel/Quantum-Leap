@@ -3,6 +3,8 @@ package cz.quantumleap.admin.role;
 import cz.quantumleap.admin.AdminController;
 import cz.quantumleap.admin.menu.AdminMenuItemDefinition;
 import cz.quantumleap.admin.menu.AdminMenuManager;
+import cz.quantumleap.admin.notification.NotificationService;
+import cz.quantumleap.admin.person.PersonService;
 import cz.quantumleap.core.data.transport.SliceRequest;
 import cz.quantumleap.core.role.transport.Role;
 import cz.quantumleap.core.security.WebSecurityExpressionEvaluator;
@@ -39,8 +41,8 @@ public class RoleController extends AdminController implements LookupController 
     private final ListController listController;
     private final LookupController lookupController;
 
-    public RoleController(AdminMenuManager adminMenuManager, WebSecurityExpressionEvaluator webSecurityExpressionEvaluator, RoleService roleService) {
-        super(adminMenuManager, webSecurityExpressionEvaluator);
+    public RoleController(AdminMenuManager adminMenuManager, PersonService personService, NotificationService notificationService, WebSecurityExpressionEvaluator webSecurityExpressionEvaluator, RoleService roleService) {
+        super(adminMenuManager, personService, notificationService, webSecurityExpressionEvaluator);
         this.detailController = new DefaultDetailController<>(Role.class, DETAIL_URL, DETAIL_VIEW, roleService);
         this.listController = new DefaultListController(DATABASE_TABLE_NAME_WITH_SCHEMA, LIST_VIEW, AJAX_LIST_VIEW, DETAIL_URL, roleService);
         this.lookupController = new DefaultLookupController(DATABASE_TABLE_NAME_WITH_SCHEMA, DETAIL_URL, LOOKUP_LABEL_URL, LOOKUP_LABELS_URL, LOOKUP_LIST_URL, roleService);

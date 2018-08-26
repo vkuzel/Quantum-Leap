@@ -4,10 +4,10 @@
 package cz.quantumleap.core;
 
 
-import javax.annotation.Generated;
-
 import org.jooq.Sequence;
 import org.jooq.impl.SequenceImpl;
+
+import javax.annotation.Generated;
 
 
 /**

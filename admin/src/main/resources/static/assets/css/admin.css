@@ -3,6 +3,14 @@
     color: #fff !important;
 }
 
+.notifications.dropdown .dropdown-menu {
+    min-width: 20rem;
+}
+
+.notifications.dropdown .dropdown-item {
+    white-space: normal;
+}
+
 #loader {
     position: fixed;
     margin: auto;

@@ -7,6 +7,7 @@ import cz.quantumleap.core.data.primarykey.PrimaryKeyResolver;
 import cz.quantumleap.core.data.primarykey.TablePrimaryKeyResolver;
 import cz.quantumleap.core.data.transport.Slice;
 import cz.quantumleap.core.data.transport.SliceRequest;
+import cz.quantumleap.core.data.transport.Table.Column;
 import org.jooq.*;
 
 import java.util.*;
@@ -70,7 +71,7 @@ public class DaoStub<TABLE extends Table<? extends Record>> implements DetailDao
     }
 
     @Override
-    public Slice fetchSlice(SliceRequest sliceRequest) {
+    public Slice<Map<Column, Object>> fetchSlice(SliceRequest sliceRequest) {
         return listDao.fetchSlice(sliceRequest);
     }
 

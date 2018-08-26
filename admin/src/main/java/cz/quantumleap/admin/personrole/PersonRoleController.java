@@ -2,7 +2,9 @@ package cz.quantumleap.admin.personrole;
 
 import cz.quantumleap.admin.AdminController;
 import cz.quantumleap.admin.menu.AdminMenuManager;
+import cz.quantumleap.admin.notification.NotificationService;
 import cz.quantumleap.admin.person.PersonController;
+import cz.quantumleap.admin.person.PersonService;
 import cz.quantumleap.core.data.LookupDao;
 import cz.quantumleap.core.data.LookupDaoManager;
 import cz.quantumleap.core.data.transport.Lookup;
@@ -33,8 +35,8 @@ public class PersonRoleController extends AdminController {
     private final PersonRoleService personRoleService;
     private final DetailController<PersonRole> detailController;
 
-    public PersonRoleController(AdminMenuManager adminMenuManager, WebSecurityExpressionEvaluator webSecurityExpressionEvaluator, LookupDaoManager lookupDaoManager, PersonRoleService personRoleService) {
-        super(adminMenuManager, webSecurityExpressionEvaluator);
+    public PersonRoleController(AdminMenuManager adminMenuManager, PersonService personService, NotificationService notificationService, WebSecurityExpressionEvaluator webSecurityExpressionEvaluator, LookupDaoManager lookupDaoManager, PersonRoleService personRoleService) {
+        super(adminMenuManager, personService, notificationService, webSecurityExpressionEvaluator);
         this.lookupDaoManager = lookupDaoManager;
         this.personRoleService = personRoleService;
         this.detailController = new DefaultDetailController<>(PersonRole.class, DETAIL_URL, DETAIL_VIEW, personRoleService);

@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
 @ConditionalOnWebApplication
 public class DatabaseAuthoritiesLoader implements GrantedAuthoritiesMapper {
 
-    private static final String OAUTH_DETAILS_EMAIL = "email";
+    public static final String OAUTH_DETAILS_EMAIL = "email";
     private static final String OAUTH_DETAILS_NAME = "name";
     private static final String ROLE_PREFIX = "ROLE_";
 

@@ -1,0 +1,80 @@
+package cz.quantumleap.admin.notification;
+
+import cz.quantumleap.admin.notification.transport.Notification;
+import cz.quantumleap.admin.tables.NotificationTable;
+import cz.quantumleap.core.data.DaoStub;
+import cz.quantumleap.core.data.EnumManager;
+import cz.quantumleap.core.data.LookupDaoManager;
+import cz.quantumleap.core.data.RecordAuditor;
+import cz.quantumleap.core.data.transport.Lookup;
+import cz.quantumleap.core.data.transport.Slice;
+import cz.quantumleap.core.data.transport.SliceRequest;
+import cz.quantumleap.core.data.transport.Table;
+import org.jooq.Condition;
+import org.jooq.DSLContext;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Repository;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
+import static cz.quantumleap.admin.tables.NotificationTable.NOTIFICATION;
+import static cz.quantumleap.core.tables.PersonRoleTable.PERSON_ROLE;
+
+@Repository
+public class NotificationDao extends DaoStub<NotificationTable> {
+
+    private static final int MAX_UNRESOLVED_NOTIFICATIONS_TO_SHOW = 10;
+
+    protected NotificationDao(DSLContext dslContext, LookupDaoManager lookupDaoManager, EnumManager enumManager, RecordAuditor recordAuditor) {
+        super(NOTIFICATION, null, s -> null, dslContext, lookupDaoManager, enumManager, recordAuditor);
+    }
+
+    public Notification createNotificationForPerson(String notificationCode, List<String> messageArguments, long personId) {
+        Notification notification = new Notification();
+        notification.setCode(notificationCode);
+        notification.setMessageArguments(messageArguments);
+        notification.setPersonId(Lookup.withoutLabel(personId, "core.person"));
+        return super.save(notification);
+    }
+
+    public Notification createNotificationForRole(String notificationCode, List<String> messageArguments, long roleId) {
+        Notification notification = new Notification();
+        notification.setCode(notificationCode);
+        notification.setMessageArguments(messageArguments);
+        notification.setRoleId(Lookup.withoutLabel(roleId, "core.role"));
+        return super.save(notification);
+    }
+
+    public Notification createNotificationForAll(String notificationCode, List<String> messageArguments) {
+        Notification notification = new Notification();
+        notification.setCode(notificationCode);
+        notification.setMessageArguments(messageArguments);
+        return super.save(notification);
+    }
+
+    public Notification fetch(long personId, long id) {
+        Condition condition = NOTIFICATION.ID.eq(id).and(createPersonNotificationsCondition(personId));
+        return super.fetchByCondition(condition, Notification.class).get();
+    }
+
+    public Slice<Map<Table.Column, Object>> fetchSlice(long personId, SliceRequest sliceRequest) {
+        return super.fetchSlice(sliceRequest.addCondition(createPersonNotificationsCondition(personId)));
+    }
+
+    public List<Notification> fetchUnresolvedByPersonId(long personId) {
+        Condition condition = NOTIFICATION.RESOLVED_AT.isNull().and(createPersonNotificationsCondition(personId));
+        Sort sort = Sort.by(Sort.Direction.DESC, "id");
+        SliceRequest sliceRequest = new SliceRequest(Collections.emptyMap(), null, condition, 0, MAX_UNRESOLVED_NOTIFICATIONS_TO_SHOW, sort, null);
+        return super.fetchList(sliceRequest, Notification.class);
+    }
+
+    private Condition createPersonNotificationsCondition(long personId) {
+        return NOTIFICATION.PERSON_ID.isNull().and(NOTIFICATION.ROLE_ID.isNull())
+                .or(NOTIFICATION.PERSON_ID.eq(personId))
+                .or(NOTIFICATION.ROLE_ID.in(dslContext.select(PERSON_ROLE.ROLE_ID)
+                        .from(PERSON_ROLE)
+                        .where(PERSON_ROLE.PERSON_ID.eq(personId))));
+    }
+}

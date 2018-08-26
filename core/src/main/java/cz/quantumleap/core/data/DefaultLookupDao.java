@@ -4,6 +4,7 @@ import cz.quantumleap.core.data.list.FilterBuilder;
 import cz.quantumleap.core.data.primarykey.PrimaryKeyConditionBuilder;
 import cz.quantumleap.core.data.transport.Slice;
 import cz.quantumleap.core.data.transport.SliceRequest;
+import cz.quantumleap.core.data.transport.Table.Column;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.*;
 
@@ -79,7 +80,7 @@ public final class DefaultLookupDao<TABLE extends Table<? extends Record>> imple
     }
 
     @Override
-    public Slice fetchSlice(SliceRequest sliceRequest) {
+    public Slice<Map<Column, Object>> fetchSlice(SliceRequest sliceRequest) {
         return listDao.fetchSlice(sliceRequest);
     }
 

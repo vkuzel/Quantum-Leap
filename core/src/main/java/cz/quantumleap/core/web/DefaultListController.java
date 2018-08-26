@@ -10,9 +10,9 @@ import javax.servlet.http.HttpServletRequest;
 
 public final class DefaultListController implements ListController {
 
-    private static final String TABLE_SLICE_MODEL_ATTRIBUTE_NAME = "tableSlice";
-    private static final String DATABASE_TABLE_NAME_WITH_SCHEMA_MODEL_ATTRIBUTE_NAME = "databaseTableNameWithSchema";
-    private static final String DETAIL_URL_MODEL_ATTRIBUTE_NAME = "detailUrl";
+    public static final String TABLE_SLICE_MODEL_ATTRIBUTE_NAME = "tableSlice";
+    public static final String DATABASE_TABLE_NAME_WITH_SCHEMA_MODEL_ATTRIBUTE_NAME = "databaseTableNameWithSchema";
+    public static final String DETAIL_URL_MODEL_ATTRIBUTE_NAME = "detailUrl";
 
     private final String databaseTableNameWithSchema;
     private final String listView;

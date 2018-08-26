@@ -4,6 +4,8 @@ import com.google.common.collect.ImmutableList;
 import cz.quantumleap.admin.menu.AdminMenuItem;
 import cz.quantumleap.admin.menu.AdminMenuItemDefinition;
 import cz.quantumleap.admin.menu.AdminMenuManager;
+import cz.quantumleap.admin.notification.NotificationService;
+import cz.quantumleap.admin.person.PersonService;
 import cz.quantumleap.core.security.WebSecurityExpressionEvaluator;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,6 +31,10 @@ public class AdminControllerTest {
     @Mock
     private AdminMenuManager adminMenuManager;
     @Mock
+    private PersonService personService;
+    @Mock
+    private NotificationService notificationService;
+    @Mock
     private WebSecurityExpressionEvaluator webSecurityExpressionEvaluator;
 
     @Test
@@ -53,7 +59,7 @@ public class AdminControllerTest {
         Mockito.doReturn(adminMenuItems).when(adminMenuManager).getMenuItems();
 
         // when
-        AdminController controller = new AdminController(adminMenuManager, webSecurityExpressionEvaluator) {
+        AdminController controller = new AdminController(adminMenuManager, personService, notificationService, webSecurityExpressionEvaluator) {
         };
         List<AdminMenuItem> menuItems = controller.getMenuItems(httpServletRequest, httpServletResponse);
 
@@ -71,6 +77,5 @@ public class AdminControllerTest {
         doReturn(securityExpression).when(preAuthorize).value();
 
         return new AdminMenuItem(requestMappingInfo, adminMenuItemDefinition, preAuthorize, AdminMenuItem.State.NONE, children);
-
     }
 }

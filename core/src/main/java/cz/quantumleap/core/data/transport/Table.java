@@ -3,9 +3,11 @@ package cz.quantumleap.core.data.transport;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.data.domain.Sort;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 public class Table<ROW> implements Iterable<ROW> {
@@ -22,6 +24,10 @@ public class Table<ROW> implements Iterable<ROW> {
         this.tablePreferences = tablePreferences;
     }
 
+    public Builder<ROW> createBuilder() {
+        return new Builder<>(databaseTableNameWithSchema, columns, rows, tablePreferences);
+    }
+
     public String getDatabaseTableNameWithSchema() {
         return databaseTableNameWithSchema;
     }
@@ -35,6 +41,15 @@ public class Table<ROW> implements Iterable<ROW> {
                 .filter(column -> enabledColumns.contains(column.name))
                 .sorted(Comparator.comparingLong(o -> enabledColumns.indexOf(o.name)))
                 .collect(Collectors.toList());
+    }
+
+    public Column getColumnByName(String name) {
+        for (Column column : columns) {
+            if (column.getName().equals(name)) {
+                return column;
+            }
+        }
+        throw new IllegalArgumentException("Column " + name + " not found!");
     }
 
     public List<ROW> getRows() {
@@ -145,6 +160,38 @@ public class Table<ROW> implements Iterable<ROW> {
 
         public String getEnumId() {
             return enumId;
+        }
+    }
+
+    public static class Builder<ROW> {
+
+        private String databaseTableNameWithSchema;
+        private List<Column> columns;
+        private List<ROW> rows;
+        private TablePreferences tablePreferences;
+
+        public Builder(String databaseTableNameWithSchema, List<Column> columns, List<ROW> rows, TablePreferences tablePreferences) {
+            this.databaseTableNameWithSchema = databaseTableNameWithSchema;
+            this.columns = new ArrayList<>(columns);
+            this.rows = new ArrayList<>(rows);
+            this.tablePreferences = tablePreferences;
+        }
+
+        public Builder<ROW> addColumn(Column column, List<Object> values, BiFunction<ROW, Object, ROW> mergeRow) {
+            columns.add(column);
+            for (int i = 0; i < this.rows.size(); i++) {
+                this.rows.set(i, mergeRow.apply(this.rows.get(i), values.get(i)));
+            }
+            return this;
+        }
+
+        public Table<ROW> build() {
+            return new Table<>(
+                    databaseTableNameWithSchema,
+                    columns,
+                    rows,
+                    tablePreferences
+            );
         }
     }
 }
