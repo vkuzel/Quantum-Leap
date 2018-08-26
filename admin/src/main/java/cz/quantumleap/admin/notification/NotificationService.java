@@ -15,10 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -32,9 +29,14 @@ public class NotificationService {
     public NotificationService(MessageSource messageSource, NotificationDao notificationDao, @Autowired(required = false) Collection<NotificationDefinition> notificationDefinitions) {
         this.messageSource = messageSource;
         this.notificationDao = notificationDao;
-        this.notificationDefinitionMap = notificationDefinitions.stream().collect(Collectors.toMap(NotificationDefinition::getNotificationCode, Function.identity(), (ad, ad2) -> {
-            throw new IllegalStateException("Two notification definitions with same code " + ad.getNotificationCode());
-        }));
+        if (notificationDefinitions == null) {
+            this.notificationDefinitionMap = Collections.emptyMap();
+        } else {
+            this.notificationDefinitionMap = notificationDefinitions.stream()
+                    .collect(Collectors.toMap(NotificationDefinition::getNotificationCode, Function.identity(), (ad, ad2) -> {
+                        throw new IllegalStateException("Two notification definitions with same code " + ad.getNotificationCode());
+                    }));
+        }
     }
 
     @Transactional
