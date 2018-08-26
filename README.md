@@ -1,3 +1,9 @@
+# Source code cloning 
+
+* After the code is cloned to your local repository, generate missing domain objects so the project can compile.
+
+    `gradle generateJooqDomainObjects`
+
 # Security
 
 * Security is based on Spring Security 5.
