@@ -1,7 +1,6 @@
 package cz.quantumleap.admin.notification;
 
 import cz.quantumleap.admin.notification.transport.Notification;
-import cz.quantumleap.admin.notification.transport.NotificationDefinition;
 import cz.quantumleap.core.data.transport.Lookup;
 import cz.quantumleap.core.data.transport.Slice;
 import cz.quantumleap.core.data.transport.SliceRequest;

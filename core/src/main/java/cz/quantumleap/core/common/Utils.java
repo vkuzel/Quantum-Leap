@@ -3,7 +3,9 @@ package cz.quantumleap.core.common;
 import com.google.common.io.CharStreams;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.Condition;
+import org.jooq.Field;
 import org.jooq.TableField;
+import org.jooq.impl.DSL;
 import org.springframework.core.io.Resource;
 
 import javax.servlet.http.HttpServletRequest;
@@ -60,12 +62,23 @@ public class Utils {
         return condition;
     }
 
+    public static Condition startsWithIgnoreCase(Field<String> field, String value) {
+        if (StringUtils.isBlank(value)) {
+            return DSL.falseCondition();
+        }
+
+        String binding = escapeLikeBinding(value, '!');
+        return field.likeIgnoreCase(binding + "%");
+    }
+
     public static String escapeLikeBinding(String binding, char escapeChar) {
         if (StringUtils.isBlank(binding)) {
             return binding;
         }
 
+        String escapeString = String.valueOf(escapeChar);
         return binding
+                .replace(escapeString, escapeString + escapeString)
                 .replace("%", escapeChar + "%")
                 .replace("_", escapeChar + "_");
     }
