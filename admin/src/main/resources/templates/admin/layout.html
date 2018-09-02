@@ -50,14 +50,14 @@
                    aria-haspopup="true" aria-expanded="false">
                     <i class="fa fa-fw fa-bell"></i>
                     <span class="d-lg-none"><span th:text="#{admin.notifications.title}">Notifications</span> <span class="badge badge-pill badge-warning" th:text="#{admin.notifications.badge(${#lists.size(unresolvedNotifications)})}">6 New</span></span>
-                    <span th:if="${!#lists.isEmpty(unresolvedNotifications)}" class="indicator text-warning d-none d-lg-block"><i class="fa fa-fw fa-circle"></i></span>
+                    <span th:unless="${#lists.isEmpty(unresolvedNotifications)}" class="indicator text-warning d-none d-lg-block"><i class="fa fa-fw fa-circle"></i></span>
                 </a>
                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="notificationsDropdown">
                     <a th:each="notification : ${unresolvedNotifications}" class="dropdown-item" th:href="@{|/notification/${notification.id}|}">
                         <span class="small text-muted" th:with="pattern=${notification.createdAt.toLocalDate().isEqual(#temporals.createToday())} ? 'HH:mm' : 'yyyy-MM-dd HH:mm'" th:text="${#temporals.format(notification.createdAt, pattern)}">11:21 AM</span>
                         <span th:utext="${#messages.msgWithParams(notification.definition.messageCode, notification.messageArguments)}">Notification message!</span>
                     </a>
-                    <div class="dropdown-divider"></div>
+                    <div th:if="${!#lists.isEmpty(unresolvedNotifications)}" class="dropdown-divider"></div>
                     <a class="dropdown-item small" th:href="@{/notifications}" th:text="#{admin.notifications.all-notifications}">View all notifications</a>
                 </div>
             </li>
