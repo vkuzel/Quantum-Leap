@@ -1,5 +1,6 @@
 package cz.quantumleap.core.role;
 
+import cz.quantumleap.core.common.Utils;
 import cz.quantumleap.core.data.DaoStub;
 import cz.quantumleap.core.data.EnumManager;
 import cz.quantumleap.core.data.LookupDaoManager;
@@ -18,7 +19,7 @@ import static cz.quantumleap.core.tables.RoleTable.ROLE;
 public class RoleDao extends DaoStub<RoleTable> {
 
     protected RoleDao(DSLContext dslContext, LookupDaoManager lookupDaoManager, EnumManager enumManager, RecordAuditor recordAuditor) {
-        super(ROLE, ROLE.NAME, ROLE.NAME::startsWith, dslContext, lookupDaoManager, enumManager, recordAuditor);
+        super(ROLE, ROLE.NAME, s -> Utils.startsWithIgnoreCase(ROLE.NAME, s), dslContext, lookupDaoManager, enumManager, recordAuditor);
     }
 
     public List<String> fetchRolesByPersonId(long personId) {

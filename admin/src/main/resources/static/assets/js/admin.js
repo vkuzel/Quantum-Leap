@@ -51,8 +51,6 @@ function MenuControl(menuSelector) {
     }
 }
 
-MenuControl('#side-menu');
-
 function TableControl(tableSelector, tBodyListenersBinder) {
     var $table = $(tableSelector);
 
@@ -148,22 +146,6 @@ function TableControl(tableSelector, tBodyListenersBinder) {
         tableControl.$searchInput.blur(tableControl.fetchSearchResults.cancel);
     }
 }
-
-$('table.data-table').each(function (i, table) {
-    var tBodyListenersBinder = function ($tBody) {
-        $tBody.find('tr > td').click(function () {
-            var $primaryKeyAnchors = $(this).parent().find('> td.primary-key > a');
-            var $anchors = $(this).children('a');
-            if ($anchors.length) {
-                window.location = $anchors.first().attr('href');
-            } else if ($primaryKeyAnchors.length) {
-                window.location = $primaryKeyAnchors.first().attr('href');
-            }
-        });
-    };
-
-    TableControl(table, tBodyListenersBinder);
-});
 
 function LookupControl(lookupField) {
     var $lookupField = $(lookupField);
@@ -292,10 +274,6 @@ function LookupControl(lookupField) {
     modalControl.bindListeners();
 }
 
-$('div.lookup').each(function (i, lookupField) {
-    LookupControl(lookupField);
-});
-
 function TagsControl(tagsFieldSelector) {
     var $tagsField = $(tagsFieldSelector);
 
@@ -375,10 +353,6 @@ function TagsControl(tagsFieldSelector) {
     modalControl.bindListeners();
 }
 
-$('div.tags').each(function (i, tagsField) {
-    TagsControl(tagsField);
-});
-
 function AsyncFormPartControl(formPartSelector, actionElementsSelector, onFormPartReady) {
     var $formPart = $(formPartSelector);
     var asyncFormPartControl = {
@@ -456,3 +430,33 @@ function DelayedFunctionCall(func, wait) {
         }
     }
 }
+
+$(function () {
+
+    MenuControl('#side-menu');
+
+    $('table.data-table').each(function (i, table) {
+        var tBodyListenersBinder = function ($tBody) {
+            $tBody.find('tr > td').click(function () {
+                var $primaryKeyAnchors = $(this).parent().find('> td.primary-key > a');
+                var $anchors = $(this).children('a');
+                if ($anchors.length) {
+                    window.location = $anchors.first().attr('href');
+                } else if ($primaryKeyAnchors.length) {
+                    window.location = $primaryKeyAnchors.first().attr('href');
+                }
+            });
+        };
+
+        TableControl(table, tBodyListenersBinder);
+    });
+
+    $('div.lookup').each(function (i, lookupField) {
+        LookupControl(lookupField);
+    });
+
+    $('div.tags').each(function (i, tagsField) {
+        TagsControl(tagsField);
+    });
+});
+
