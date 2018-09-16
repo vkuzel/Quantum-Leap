@@ -21,7 +21,7 @@
     </div>
 
     <div th:unless="${#lists.isEmpty(dashboardWidgets.get(position.LEFT)) && #lists.isEmpty(dashboardWidgets.get(position.RIGHT))}" class="row">
-        <div class="col-6 mb-3">
+        <div class="col-md-6 mb-3">
             <div th:each="widget : ${dashboardWidgets.get(position.LEFT)}" class="card mb-3">
                 <div th:replace="__${widget.thymeleafFragmentExpression}__">
                     <div class="card-header">
