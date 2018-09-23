@@ -18,6 +18,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static cz.quantumleap.admin.tables.NotificationTable.NOTIFICATION;
 import static cz.quantumleap.core.tables.PersonRoleTable.PERSON_ROLE;
@@ -32,26 +33,46 @@ public class NotificationDao extends DaoStub<NotificationTable> {
     }
 
     public Notification createNotificationForPerson(String notificationCode, List<String> messageArguments, long personId) {
-        Notification notification = new Notification();
-        notification.setCode(notificationCode);
-        notification.setMessageArguments(messageArguments);
-        notification.setPersonId(Lookup.withoutLabel(personId, "core.person"));
-        return super.save(notification);
+        Condition condition = createUnresolvedNotificationCondition(notificationCode, messageArguments)
+                .and(NOTIFICATION.PERSON_ID.eq(personId));
+        Optional<Notification> optionalNotification = fetchByCondition(condition, Notification.class);
+        if (optionalNotification.isPresent()) {
+            return optionalNotification.get();
+        } else {
+            Notification notification = new Notification();
+            notification.setCode(notificationCode);
+            notification.setMessageArguments(messageArguments);
+            notification.setPersonId(Lookup.withoutLabel(personId, "core.person"));
+            return super.save(notification);
+        }
     }
 
     public Notification createNotificationForRole(String notificationCode, List<String> messageArguments, long roleId) {
-        Notification notification = new Notification();
-        notification.setCode(notificationCode);
-        notification.setMessageArguments(messageArguments);
-        notification.setRoleId(Lookup.withoutLabel(roleId, "core.role"));
-        return super.save(notification);
+        Condition condition = createUnresolvedNotificationCondition(notificationCode, messageArguments)
+                .and(NOTIFICATION.ROLE_ID.eq(roleId));
+        Optional<Notification> optionalNotification = fetchByCondition(condition, Notification.class);
+        if (optionalNotification.isPresent()) {
+            return optionalNotification.get();
+        } else {
+            Notification notification = new Notification();
+            notification.setCode(notificationCode);
+            notification.setMessageArguments(messageArguments);
+            notification.setRoleId(Lookup.withoutLabel(roleId, "core.role"));
+            return super.save(notification);
+        }
     }
 
     public Notification createNotificationForAll(String notificationCode, List<String> messageArguments) {
-        Notification notification = new Notification();
-        notification.setCode(notificationCode);
-        notification.setMessageArguments(messageArguments);
-        return super.save(notification);
+        Condition condition = createUnresolvedNotificationCondition(notificationCode, messageArguments);
+        Optional<Notification> optionalNotification = fetchByCondition(condition, Notification.class);
+        if (optionalNotification.isPresent()) {
+            return optionalNotification.get();
+        } else {
+            Notification notification = new Notification();
+            notification.setCode(notificationCode);
+            notification.setMessageArguments(messageArguments);
+            return super.save(notification);
+        }
     }
 
     public Notification fetch(long personId, long id) {
@@ -61,6 +82,12 @@ public class NotificationDao extends DaoStub<NotificationTable> {
 
     public Slice<Map<Table.Column, Object>> fetchSlice(long personId, SliceRequest sliceRequest) {
         return super.fetchSlice(sliceRequest.addCondition(createPersonNotificationsCondition(personId)));
+    }
+
+    private Condition createUnresolvedNotificationCondition(String notificationCode, List<String> messageArguments) {
+        return NOTIFICATION.RESOLVED_AT.isNull()
+                .and(NOTIFICATION.CODE.eq(notificationCode))
+                .and("message_arguments :: VARCHAR = ? :: VARCHAR", messageArguments);
     }
 
     public List<Notification> fetchUnresolvedByPersonId(long personId) {
