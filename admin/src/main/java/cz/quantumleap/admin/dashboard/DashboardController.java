@@ -10,6 +10,7 @@ import cz.quantumleap.admin.notification.NotificationService;
 import cz.quantumleap.admin.person.PersonService;
 import cz.quantumleap.core.security.WebSecurityExpressionEvaluator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import java.util.List;
 
 @Controller
+@PreAuthorize("hasRole('ADMIN')")
 public class DashboardController extends AdminController {
 
     private final ListMultimap<DashboardWidget.Position, DashboardWidget> dashboardWidgets;

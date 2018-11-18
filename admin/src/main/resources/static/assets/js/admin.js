@@ -6,7 +6,13 @@ var UrlUtils = {
     },
     replaceQueryParam: function (url, name, value) {
         var regExp = new RegExp(name + '=[^&#]+');
-        return url.replace(regExp, name + '=' + value);
+        if (url.match(regExp) != null) {
+            return url.replace(regExp, name + '=' + encodeURIComponent(value));
+        } else if (url.indexOf('?') < 0) {
+            return url + '?' + name + '=' + encodeURIComponent(value);
+        } else {
+            return url + '&' + name + '=' + encodeURIComponent(value);
+        }
     },
     removeQueryParams: function (url, name) {
         for (var i = 1; i < arguments.length; i++) {
