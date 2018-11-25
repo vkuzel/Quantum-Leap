@@ -1,5 +1,7 @@
 package cz.quantumleap.core.data.mapper;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import cz.quantumleap.core.data.EnumManager;
 import cz.quantumleap.core.data.LookupDao;
 import cz.quantumleap.core.data.LookupDaoManager;
@@ -22,6 +24,8 @@ import static com.google.common.base.CaseFormat.LOWER_UNDERSCORE;
 import static com.google.common.base.CaseFormat.UPPER_CAMEL;
 
 public class MapperFactory {
+
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     private final org.jooq.Table<? extends Record> table;
     private final PrimaryKeyResolver primaryKeyResolver;
@@ -74,6 +78,8 @@ public class MapperFactory {
                     value = ((Lookup) value).getId();
                 } else if (value instanceof EnumValue) {
                     value = ((EnumValue) value).getId();
+                } else if (value instanceof Map) {
+                    value = OBJECT_MAPPER.convertValue(value, JsonNode.class);
                 } else {
                     value = getValue(transport, getter.getKey());
                 }
@@ -195,6 +201,11 @@ public class MapperFactory {
                     if (referenceIds != null) {
                         String enumId = MapperUtils.resolveEnumId(field);
                         value = enumManager.createSet(enumId, Arrays.asList(referenceIds));
+                    }
+                } else if (paramType == Map.class) {
+                    JsonNode jsonNode = record.getValue(field, JsonNode.class);
+                    if (!jsonNode.isNull()) {
+                        value = OBJECT_MAPPER.convertValue(jsonNode, Map.class);
                     }
                 } else {
                     value = record.getValue(field, paramType);
