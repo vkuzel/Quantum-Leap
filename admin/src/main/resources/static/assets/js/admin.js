@@ -1,3 +1,5 @@
+var lookupControlRegister = {};
+
 var UrlUtils = {
     getQueryParam: function (url, name) {
         var regExp = new RegExp(name + "=([^&#]+)");
@@ -160,14 +162,28 @@ function LookupControl(lookupField) {
         $lookupField: $lookupField,
 
         $dataInput: $lookupField.find(':hidden'),
-        $labelInput: $lookupField.find(':text')
+        $labelInput: $lookupField.find(':text'),
+        $resetButtonWrapper: $lookupField.find('.reset-wrapper'),
+        $resetButton: $lookupField.find('.reset-wrapper > button')
     };
+
+    lookupControlRegister[lookupControl.$labelInput.attr('id')] = lookupControl;
 
     lookupControl.setValues = function (id, label) {
         var json = JSON.stringify({id: id, label: label});
         lookupControl.$dataInput.val(json);
         lookupControl.$labelInput.val(label);
+        lookupControl.$resetButtonWrapper.attr('hidden', !id);
         lookupControl.$dataInput.trigger('change');
+    };
+
+    lookupControl.resetValues = function () {
+        lookupControl.setValues(null, null);
+    };
+
+    lookupControl.getId = function() {
+        var value = lookupControl.$dataInput.val();
+        return JSON.parse(value).id;
     };
 
     var dropDownControl = {
@@ -178,6 +194,7 @@ function LookupControl(lookupField) {
     dropDownControl.bindListeners = function () {
         lookupControl.$labelInput.keyup(dropDownControl.fetchLabels.call);
         lookupControl.$labelInput.blur(dropDownControl.fieldLostFocus);
+        lookupControl.$resetButton.click(lookupControl.resetValues);
     };
 
     dropDownControl.selectDropdownItem = function (a) {
