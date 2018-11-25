@@ -385,25 +385,31 @@ function AsyncFormPartControl(formPartSelector, actionElementsSelector, onFormPa
     };
 
     asyncFormPartControl.bindListeners = function () {
-        this.$actionElements.off('click', '*', this.clickActionButton);
-        this.$actionElements.click(this.clickActionButton);
+        this.$actionElements.off('click', '*', this.onActionButtonClick);
+        this.$actionElements.click(this.onActionButtonClick);
+        this.$actionElements.change(this.onActionElementChange);
     };
 
-    asyncFormPartControl.clickActionButton = function (event) {
+    asyncFormPartControl.onActionButtonClick = function (event) {
         event.preventDefault();
-        asyncFormPartControl.requestFormPart(this);
+        var $actionButton = $(this);
+        var additionalData = '&' + encodeURI($actionButton.attr('name'));
+        var actionButtonValue = $actionButton.val();
+        if (actionButtonValue) {
+            additionalData += '=' + encodeURI(actionButtonValue);
+        }
+        asyncFormPartControl.requestFormPart(additionalData);
     };
 
-    asyncFormPartControl.requestFormPart = function (actionElement) {
+    asyncFormPartControl.onActionElementChange = function () {
+        var additionalData = $(this).attr('data-async-form-action');
+        asyncFormPartControl.requestFormPart(additionalData);
+    };
+
+    asyncFormPartControl.requestFormPart = function (additionalData) {
         var action = asyncFormPartControl.$form.attr('action');
         var data = asyncFormPartControl.$form.serialize();
-        var $actionElement = $(actionElement);
-        data += '&' + encodeURI($actionElement.attr('name'));
-        var actionButtonValue = $actionElement.val();
-        if (actionButtonValue) {
-            data += '=' + encodeURI(actionButtonValue);
-        }
-
+        data += '&' + additionalData;
         $.post(action, data, asyncFormPartControl.replaceFormPartContent);
     };
 
