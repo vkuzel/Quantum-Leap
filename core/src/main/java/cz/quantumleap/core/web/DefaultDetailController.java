@@ -30,8 +30,8 @@ public final class DefaultDetailController<T> implements DetailController<T> {
 
     private T createDetail() {
         try {
-            return transportType.newInstance();
-        } catch (InstantiationException | IllegalAccessException e) {
+            return transportType.getDeclaredConstructor().newInstance();
+        } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
             throw new IllegalStateException(e);
         }
     }
