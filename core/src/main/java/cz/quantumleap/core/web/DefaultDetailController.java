@@ -37,12 +37,14 @@ public final class DefaultDetailController<T> implements DetailController<T> {
     }
 
     @Override
-    public String save(T transport, Errors errors) {
+    public String save(T transport, Model model, Errors errors) {
         if (errors.hasErrors()) {
+            model.addAttribute(transport);
             return detailView;
         }
         T saved = detailService.save(transport, errors);
         if (errors.hasErrors()) {
+            model.addAttribute(transport);
             return detailView;
         }
         return "redirect:" + detailUrl + "/" + getDetailId(saved);

@@ -82,7 +82,7 @@ public class ResourceManager {
             }
         }
         if (resourceWithModule == null) {
-            throw new IllegalStateException("No module has not been found for resource " + resourceUrl.toString() +
+            throw new IllegalStateException("No module has been found for resource " + resourceUrl.toString() +
                     " Please make sure that gradle discoverProjectDependencies task has been executed.");
         }
         return resourceWithModule;

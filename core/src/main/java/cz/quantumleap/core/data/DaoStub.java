@@ -10,7 +10,10 @@ import cz.quantumleap.core.data.transport.SliceRequest;
 import cz.quantumleap.core.data.transport.Table.Column;
 import org.jooq.*;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 
 public class DaoStub<TABLE extends Table<? extends Record>> implements DetailDao<TABLE>, ListDao<TABLE>, LookupDao<TABLE> {
@@ -46,12 +49,12 @@ public class DaoStub<TABLE extends Table<? extends Record>> implements DetailDao
     }
 
     @Override
-    public <T> Optional<T> fetchById(Object id, Class<T> type) {
+    public <T> T fetchById(Object id, Class<T> type) {
         return detailDao.fetchById(id, type);
     }
 
     @Override
-    public <T> Optional<T> fetchByCondition(Condition condition, Class<T> type) {
+    public <T> T fetchByCondition(Condition condition, Class<T> type) {
         return detailDao.fetchByCondition(condition, type);
     }
 
@@ -63,6 +66,11 @@ public class DaoStub<TABLE extends Table<? extends Record>> implements DetailDao
     @Override
     public void deleteById(Object id) {
         detailDao.deleteById(id);
+    }
+
+    @Override
+    public void deleteByCondition(Condition condition) {
+        detailDao.deleteByCondition(condition);
     }
 
     @Override

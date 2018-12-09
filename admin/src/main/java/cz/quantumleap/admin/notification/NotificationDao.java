@@ -18,7 +18,6 @@ import org.springframework.stereotype.Repository;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import static cz.quantumleap.admin.tables.NotificationTable.NOTIFICATION;
 import static cz.quantumleap.core.tables.PersonRoleTable.PERSON_ROLE;
@@ -35,11 +34,11 @@ public class NotificationDao extends DaoStub<NotificationTable> {
     public Notification createNotificationForPerson(String notificationCode, List<String> messageArguments, long personId) {
         Condition condition = createUnresolvedNotificationCondition(notificationCode, messageArguments)
                 .and(NOTIFICATION.PERSON_ID.eq(personId));
-        Optional<Notification> optionalNotification = fetchByCondition(condition, Notification.class);
-        if (optionalNotification.isPresent()) {
-            return optionalNotification.get();
+        Notification notification = fetchByCondition(condition, Notification.class);
+        if (notification != null) {
+            return notification;
         } else {
-            Notification notification = new Notification();
+            notification = new Notification();
             notification.setCode(notificationCode);
             notification.setMessageArguments(messageArguments);
             notification.setPersonId(Lookup.withoutLabel(personId, "core.person"));
@@ -50,11 +49,11 @@ public class NotificationDao extends DaoStub<NotificationTable> {
     public Notification createNotificationForRole(String notificationCode, List<String> messageArguments, long roleId) {
         Condition condition = createUnresolvedNotificationCondition(notificationCode, messageArguments)
                 .and(NOTIFICATION.ROLE_ID.eq(roleId));
-        Optional<Notification> optionalNotification = fetchByCondition(condition, Notification.class);
-        if (optionalNotification.isPresent()) {
-            return optionalNotification.get();
+        Notification notification = fetchByCondition(condition, Notification.class);
+        if (notification != null) {
+            return notification;
         } else {
-            Notification notification = new Notification();
+            notification = new Notification();
             notification.setCode(notificationCode);
             notification.setMessageArguments(messageArguments);
             notification.setRoleId(Lookup.withoutLabel(roleId, "core.role"));
@@ -64,11 +63,11 @@ public class NotificationDao extends DaoStub<NotificationTable> {
 
     public Notification createNotificationForAll(String notificationCode, List<String> messageArguments) {
         Condition condition = createUnresolvedNotificationCondition(notificationCode, messageArguments);
-        Optional<Notification> optionalNotification = fetchByCondition(condition, Notification.class);
-        if (optionalNotification.isPresent()) {
-            return optionalNotification.get();
+        Notification notification = fetchByCondition(condition, Notification.class);
+        if (notification != null) {
+            return notification;
         } else {
-            Notification notification = new Notification();
+            notification = new Notification();
             notification.setCode(notificationCode);
             notification.setMessageArguments(messageArguments);
             return super.save(notification);
@@ -77,7 +76,7 @@ public class NotificationDao extends DaoStub<NotificationTable> {
 
     public Notification fetch(long personId, long id) {
         Condition condition = NOTIFICATION.ID.eq(id).and(createPersonNotificationsCondition(personId));
-        return super.fetchByCondition(condition, Notification.class).get();
+        return super.fetchByCondition(condition, Notification.class);
     }
 
     public Slice<Map<Table.Column, Object>> fetchSlice(long personId, SliceRequest sliceRequest) {

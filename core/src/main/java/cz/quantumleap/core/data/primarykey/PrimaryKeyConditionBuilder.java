@@ -6,7 +6,6 @@ import org.jooq.Field;
 import org.jooq.Record;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 public class PrimaryKeyConditionBuilder {
@@ -17,7 +16,7 @@ public class PrimaryKeyConditionBuilder {
         this.primaryKeyResolver = primaryKeyResolver;
     }
 
-    public Optional<Condition> buildFromRecord(Record record) {
+    public Condition buildFromRecord(Record record) {
         List<Field<Object>> fields = primaryKeyResolver.getPrimaryKeyFields();
         Validate.isTrue(fields.size() > 0, "No primary key fields has been found!");
 
@@ -26,7 +25,7 @@ public class PrimaryKeyConditionBuilder {
         for (Field<Object> field : fields) {
             Object value = record.getValue(field);
             if (value == null) {
-                return Optional.empty();
+                return null;
             }
 
             if (condition == null) {
@@ -36,7 +35,7 @@ public class PrimaryKeyConditionBuilder {
             }
         }
 
-        return Optional.of(condition);
+        return condition;
     }
 
     public Condition buildFromId(Object id) {

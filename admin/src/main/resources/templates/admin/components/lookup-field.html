@@ -12,11 +12,11 @@
         modalTitle ... Title of lookup modal window.
         queryPrefix ... Prefix prepend to every filter query (optional)
 */-->
-<div th:fragment="lookup(databaseTableNameWithSchema, fieldName, fieldId, field, modalTitle)" th:assert="${field}"
-     th:object="${field}" class="lookup dropdown">
+<div th:fragment="lookup(databaseTableNameWithSchema, fieldName, fieldId, field, modalTitle)" th:assert="${field}" class="lookup dropdown">
     <input type="hidden" th:assert="${fieldName}" th:name="${fieldName}" th:value="${@jacksonObjectMapper.writeValueAsString(field)}">
     <div class="input-group" th:with="lookupController=${@lookupControllerManager.getControllerForTable(databaseTableNameWithSchema)}">
-        <input type="text" th:assert="${fieldId}" th:id="${fieldId}" th:value="*{label}" class="form-control"
+        <input type="text" th:assert="${fieldId}" th:id="${fieldId}" th:value="${field.label}" class="form-control"
+               th:classappend="${#fields.hasErrors('__${fieldName}__')}? 'is-invalid'"
                th:data-lookup-labels-url="@{${lookupController.getLookupLabelsUrl()}}"
                th:data-query-prefix="${queryPrefix}" autocomplete="off">
         <div th:hidden="${#strings.isEmpty(field.id)}" class="input-group-prepend input-group-append reset-wrapper">
@@ -31,6 +31,7 @@
                 <i class="fa fa-search"></i>
             </button>
         </div>
+        <div class="invalid-feedback" th:each="err : ${#fields.errors('__${fieldName}__')}" th:text="${err}">Error</div>
     </div>
 
     <div class="dropdown-menu">

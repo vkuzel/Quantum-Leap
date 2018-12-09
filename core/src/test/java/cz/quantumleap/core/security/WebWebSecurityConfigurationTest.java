@@ -41,7 +41,6 @@ public class WebWebSecurityConfigurationTest {
 
     @Test
     public void accessAsUnauthenticated() throws Exception {
-
         mvc.perform(get("/endpoint-for-unauthenticated"))
                 .andExpect(status().isOk());
 

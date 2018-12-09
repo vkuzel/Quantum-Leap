@@ -7,6 +7,5 @@ public interface DetailController<T> {
 
     String show(Object id, Model model);
 
-    String save(T detail, Errors errors);
-
+    String save(T detail, Model model, Errors errors);
 }

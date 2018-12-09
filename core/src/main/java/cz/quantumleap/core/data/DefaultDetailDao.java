@@ -23,17 +23,20 @@ public final class DefaultDetailDao<TABLE extends Table<? extends Record>> imple
         this.recordAuditor = recordAuditor;
     }
 
-    public <T> Optional<T> fetchById(Object id, Class<T> type) {
+    @Override
+    public <T> T fetchById(Object id, Class<T> type) {
         Condition condition = primaryKeyConditionBuilder.buildFromId(id);
         return fetchByCondition(condition, type);
     }
 
-    public <T> Optional<T> fetchByCondition(Condition condition, Class<T> type) {
+    @Override
+    public <T> T fetchByCondition(Condition condition, Class<T> type) {
         return dslContext.selectFrom(table)
                 .where(condition)
-                .fetchOptional(mapperFactory.createTransportMapper(type));
+                .fetchOne(mapperFactory.createTransportMapper(type));
     }
 
+    @Override
     public <T> T save(T detail) {
         Validate.notNull(detail);
 
@@ -43,9 +46,9 @@ public final class DefaultDetailDao<TABLE extends Table<? extends Record>> imple
                 .createTransportUnMapper(transportType)
                 .unMap(detail, dslContext.newRecord(table));
 
-        Optional<Condition> condition = primaryKeyConditionBuilder.buildFromRecord(record);
-        if (condition.isPresent()) {
-            return update(record, condition.get(), transportType);
+        Condition condition = primaryKeyConditionBuilder.buildFromRecord(record);
+        if (condition != null) {
+            return update(record, condition, transportType);
         } else {
             return insert(record, transportType);
         }
@@ -86,8 +89,14 @@ public final class DefaultDetailDao<TABLE extends Table<? extends Record>> imple
         return changedValues;
     }
 
+    @Override
     public void deleteById(Object id) {
         Condition condition = primaryKeyConditionBuilder.buildFromId(id);
+        deleteByCondition(condition);
+    }
+
+    @Override
+    public void deleteByCondition(Condition condition) {
         dslContext.delete(table)
                 .where(condition)
                 .execute();
@@ -113,9 +122,9 @@ public final class DefaultDetailDao<TABLE extends Table<? extends Record>> imple
                 .execute();
 
         for (Record record : records) {
-            Optional<Condition> condition = primaryKeyConditionBuilder.buildFromRecord(record);
-            if (condition.isPresent()) {
-                result.add(update(record, condition.get(), detailType));
+            Condition condition = primaryKeyConditionBuilder.buildFromRecord(record);
+            if (condition != null) {
+                result.add(update(record, condition, detailType));
             } else {
                 result.add(insert(record, detailType));
             }
