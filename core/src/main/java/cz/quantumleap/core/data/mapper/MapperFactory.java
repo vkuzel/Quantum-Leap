@@ -84,7 +84,10 @@ public class MapperFactory {
                     value = getValue(transport, getter.getKey());
                 }
 
-                record.setValue(castField(field), value);
+                DataType<?> dataType = field.getDataType();
+                if (value != null || dataType.nullable()) {
+                    record.setValue(castField(field), value);
+                }
             }
         }
 
