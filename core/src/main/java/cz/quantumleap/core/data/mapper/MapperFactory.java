@@ -9,8 +9,8 @@ import cz.quantumleap.core.data.primarykey.PrimaryKeyResolver;
 import cz.quantumleap.core.data.transport.*;
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.tuple.Pair;
-import org.jooq.*;
 import org.jooq.Table;
+import org.jooq.*;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -84,9 +84,7 @@ public class MapperFactory {
                     value = getValue(transport, getter.getKey());
                 }
 
-                if (value != null) {
-                    record.setValue(castField(field), value);
-                }
+                record.setValue(castField(field), value);
             }
         }
 
