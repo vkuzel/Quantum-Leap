@@ -1,6 +1,7 @@
 build/
 out/
 classes/
+generated/
 .idea
 .gradle
 .DS_Store
