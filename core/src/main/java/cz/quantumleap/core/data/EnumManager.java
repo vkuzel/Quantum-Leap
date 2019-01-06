@@ -9,7 +9,7 @@ import cz.quantumleap.core.data.transport.Set;
 import cz.quantumleap.core.data.transport.Set.Value;
 import org.jooq.DSLContext;
 import org.jooq.Record3;
-import org.springframework.context.event.ContextStartedEvent;
+import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
@@ -60,8 +60,8 @@ public class EnumManager {
         return new Set(enumId, values);
     }
 
-    @EventListener(ContextStartedEvent.class)
-    private void loadEnums() {
+    @EventListener(ContextRefreshedEvent.class)
+    public void loadEnums() {
         enumValueLabels = dslContext.select(ENUM_VALUE.ENUM_ID, ENUM_VALUE.ID, ENUM_VALUE.LABEL)
                 .from(ENUM_VALUE)
                 .fetchStream()
