@@ -37,7 +37,7 @@ public final class DefaultDetailController<T> implements DetailController<T> {
     }
 
     @Override
-    public String save(T transport, Model model, Errors errors) {
+    public String save(T transport, Errors errors, Model model) {
         if (errors.hasErrors()) {
             model.addAttribute(transport);
             return detailView;

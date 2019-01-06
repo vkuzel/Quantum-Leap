@@ -58,7 +58,7 @@ public class PersonRoleController extends AdminController {
     }
 
     @PostMapping(path = {DETAIL_URL, DETAIL_URL + "/{id}"})
-    public String savePersonRole(@PathVariable long personId, @Valid PersonRole personRole, Model model, Errors errors) {
-        return detailController.save(personRole, model, errors);
+    public String savePersonRole(@PathVariable long personId, @Valid PersonRole personRole, Errors errors, Model model) {
+        return detailController.save(personRole, errors, model);
     }
 }

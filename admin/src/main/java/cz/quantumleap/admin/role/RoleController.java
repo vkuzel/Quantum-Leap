@@ -54,8 +54,8 @@ public class RoleController extends AdminController implements LookupController 
     }
 
     @PostMapping(path = {DETAIL_URL, DETAIL_URL + "/{id}"})
-    public String saveRole(@Valid Role role, Model model, Errors errors) {
-        return detailController.save(role, model, errors);
+    public String saveRole(@Valid Role role, Errors errors, Model model) {
+        return detailController.save(role, errors, model);
     }
 
     @AdminMenuItemDefinition(title = "admin.menu.roles", parentByTitle = "admin.menu.people", fontAwesomeIcon = "fa-id-card")

@@ -64,8 +64,8 @@ public class PersonController extends AdminController implements LookupControlle
     }
 
     @PostMapping(path = {DETAIL_URL, DETAIL_URL + "/{id}"})
-    public String savePerson(@Valid Person person, @Qualifier("personRole") SliceRequest personRoleSliceRequest, Model model, Errors errors) {
-        String view = detailController.save(person, model, errors);
+    public String savePerson(@Valid Person person, Errors errors, @Qualifier("personRole") SliceRequest personRoleSliceRequest, Model model) {
+        String view = detailController.save(person, errors, model);
         if (errors.hasErrors() && person.getId() != null) {
             addPersonRoleTableAttributes(person.getId(), personRoleSliceRequest, model);
         }
