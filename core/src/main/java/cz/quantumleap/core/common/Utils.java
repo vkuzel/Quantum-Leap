@@ -11,6 +11,10 @@ import org.springframework.core.io.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 public class Utils {
 
@@ -81,5 +85,21 @@ public class Utils {
                 .replace(escapeString, escapeString + escapeString)
                 .replace("%", escapeChar + "%")
                 .replace("_", escapeChar + "_");
+    }
+
+    public static String generateSqlBindingPlaceholdersForCollection(Collection<?> collection) {
+        return String.join(", ", Collections.nCopies(collection.size(), "?"));
+    }
+
+    public static Object[] createSqlBindings(Object... params) {
+        List<Object> bindings = new ArrayList<>(params.length);
+        for (Object param : params) {
+            if (param instanceof Collection) {
+                bindings.addAll((Collection)param);
+            } else {
+                bindings.add(param);
+            }
+        }
+        return bindings.toArray();
     }
 }
