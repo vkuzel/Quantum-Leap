@@ -253,7 +253,7 @@ public class MapperFactory {
         private boolean hasComplexValueSetters() {
             for (Pair<Method, Class<?>> setter : transportSetters.values()) {
                 Class<?> type = setter.getValue();
-                if (type == Lookup.class || type == EnumValue.class || type == Set.class) {
+                if (type == Lookup.class || type == EnumValue.class || type == Set.class || type == Map.class) {
                     return true;
                 }
             }
