@@ -107,7 +107,7 @@ public class MapperFactory {
         private boolean hasComplexValueGetters() {
             for (Pair<Method, Class<?>> getter : transportGetters.values()) {
                 Class<?> type = getter.getValue();
-                if (type == Lookup.class || type == EnumValue.class || type == Set.class) {
+                if (type == Lookup.class || type == EnumValue.class || type == Set.class || type == Map.class) {
                     return true;
                 }
             }
