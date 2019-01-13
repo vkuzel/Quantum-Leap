@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -64,8 +65,8 @@ public class PersonController extends AdminController implements LookupControlle
     }
 
     @PostMapping(path = {DETAIL_URL, DETAIL_URL + "/{id}"})
-    public String savePerson(@Valid Person person, Errors errors, @Qualifier("personRole") SliceRequest personRoleSliceRequest, Model model) {
-        String view = detailController.save(person, errors, model);
+    public String savePerson(@Valid Person person, Errors errors, @Qualifier("personRole") SliceRequest personRoleSliceRequest, Model model, RedirectAttributes redirectAttributes) {
+        String view = detailController.save(person, errors, model, redirectAttributes);
         if (errors.hasErrors() && person.getId() != null) {
             addPersonRoleTableAttributes(person.getId(), personRoleSliceRequest, model);
         }

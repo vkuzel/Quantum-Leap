@@ -3,6 +3,7 @@ package cz.quantumleap.core.web;
 import cz.quantumleap.core.business.DetailService;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -37,7 +38,7 @@ public final class DefaultDetailController<T> implements DetailController<T> {
     }
 
     @Override
-    public String save(T transport, Errors errors, Model model) {
+    public String save(T transport, Errors errors, Model model, RedirectAttributes redirectAttributes) {
         if (errors.hasErrors()) {
             model.addAttribute(transport);
             return detailView;
@@ -47,6 +48,7 @@ public final class DefaultDetailController<T> implements DetailController<T> {
             model.addAttribute(transport);
             return detailView;
         }
+        redirectAttributes.addFlashAttribute("saved", true);
         return "redirect:" + detailUrl + "/" + getDetailId(saved);
     }
 

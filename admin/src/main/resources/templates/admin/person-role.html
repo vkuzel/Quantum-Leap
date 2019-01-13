@@ -14,6 +14,14 @@
         <div class="card-body">
             <form th:action="@{|/person/${personId}/person-role|}" th:object="${personRole}" method="post">
                 <input type="hidden" th:if="*{id}" th:field="*{id}">
+
+                <div th:if="${saved}" th:text="#{admin.saved-msg}" class="alert alert-success" role="alert">
+                    Detail has been successfully saved!
+                </div>
+                <div class="alert alert-danger" role="alert" th:if="${#fields.hasGlobalErrors()}" th:each="err : ${#fields.globalErrors()}" th:text="${err}">
+                    This is a danger alert—check it out!
+                </div>
+
                 <div class="form-group row">
                     <label for="personId" class="col-md-4 col-form-label"
                            th:text="#{admin.person-role.person}">Person</label>

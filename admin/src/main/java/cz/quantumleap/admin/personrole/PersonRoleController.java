@@ -19,6 +19,7 @@ import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 
@@ -58,7 +59,7 @@ public class PersonRoleController extends AdminController {
     }
 
     @PostMapping(path = {DETAIL_URL, DETAIL_URL + "/{id}"})
-    public String savePersonRole(@PathVariable long personId, @Valid PersonRole personRole, Errors errors, Model model) {
-        return detailController.save(personRole, errors, model);
+    public String savePersonRole(@PathVariable long personId, @Valid PersonRole personRole, Errors errors, Model model, RedirectAttributes redirectAttributes) {
+        return detailController.save(personRole, errors, model, redirectAttributes);
     }
 }
