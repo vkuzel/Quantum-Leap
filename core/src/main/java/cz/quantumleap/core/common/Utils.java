@@ -42,7 +42,7 @@ public class Utils {
         }
 
         Condition condition = null;
-        String binding = Utils.escapeLikeBinding(word, '!');
+        String binding = Utils.escapeSqlLikeBinding(word, '!');
 
         for (TableField<?, String> field : fields) {
             condition = joinConditions(ConditionOperator.OR, condition, field.likeIgnoreCase(word + "%", '!'), field.likeIgnoreCase("% " + binding + "%", '!'));
@@ -71,11 +71,11 @@ public class Utils {
             return DSL.falseCondition();
         }
 
-        String binding = escapeLikeBinding(value, '!');
+        String binding = escapeSqlLikeBinding(value, '!');
         return field.likeIgnoreCase(binding + "%");
     }
 
-    public static String escapeLikeBinding(String binding, char escapeChar) {
+    public static String escapeSqlLikeBinding(String binding, char escapeChar) {
         if (StringUtils.isBlank(binding)) {
             return binding;
         }
@@ -87,7 +87,7 @@ public class Utils {
                 .replace("_", escapeChar + "_");
     }
 
-    public static String generateSqlBindingPlaceholdersForCollection(Collection<?> collection) {
+    public static String generateSqlBindingPlaceholders(Collection<?> collection) {
         return String.join(", ", Collections.nCopies(collection.size(), "?"));
     }
 
