@@ -11,7 +11,8 @@ dependencies {
     compile("org.springframework.boot:spring-boot-starter-security")
     compile("org.springframework.security:spring-security-oauth2-client")
     compile("org.springframework.security:spring-security-oauth2-jose")
-    compile("org.thymeleaf.extras:thymeleaf-extras-springsecurity4")
+    compile("org.springframework.session:spring-session-core")
+    compile("org.thymeleaf.extras:thymeleaf-extras-springsecurity5")
     compile("org.thymeleaf.extras:thymeleaf-extras-java8time")
 
     compile("com.google.guava:guava:24.1-jre")
