@@ -5,7 +5,9 @@ import org.springframework.data.domain.Sort;
 
 import java.util.List;
 
-public interface OrderBuilder {
+public interface SortingBuilder {
 
     List<SortField<?>> build(Sort sort);
+
+    List<SortField<?>> buildForLookup();
 }

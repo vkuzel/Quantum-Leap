@@ -2,7 +2,7 @@ package cz.quantumleap.core.data;
 
 import cz.quantumleap.core.data.list.FilterBuilder;
 import cz.quantumleap.core.data.list.LimitBuilder;
-import cz.quantumleap.core.data.list.OrderBuilder;
+import cz.quantumleap.core.data.list.SortingBuilder;
 import cz.quantumleap.core.data.mapper.MapperFactory;
 import cz.quantumleap.core.data.mapper.MapperUtils;
 import cz.quantumleap.core.data.primarykey.PrimaryKeyResolver;
@@ -29,17 +29,17 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
 
     private final PrimaryKeyResolver primaryKeyResolver;
     private final FilterBuilder filterBuilder;
-    private final OrderBuilder orderBuilder;
+    private final SortingBuilder sortingBuilder;
     private final LimitBuilder limitBuilder;
     private final MapperFactory mapperFactory;
 
-    public DefaultListDao(Table<? extends Record> table, DSLContext dslContext, PrimaryKeyResolver primaryKeyResolver, FilterBuilder filterBuilder, OrderBuilder orderBuilder, LimitBuilder limitBuilder, MapperFactory mapperFactory) {
+    public DefaultListDao(Table<? extends Record> table, DSLContext dslContext, PrimaryKeyResolver primaryKeyResolver, FilterBuilder filterBuilder, SortingBuilder sortingBuilder, LimitBuilder limitBuilder, MapperFactory mapperFactory) {
         this.table = table;
         this.dslContext = dslContext;
 
         this.primaryKeyResolver = primaryKeyResolver;
         this.filterBuilder = filterBuilder;
-        this.orderBuilder = orderBuilder;
+        this.sortingBuilder = sortingBuilder;
         this.limitBuilder = limitBuilder;
         this.mapperFactory = mapperFactory;
     }
@@ -55,7 +55,7 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
 
         return dslContext.selectFrom(table)
                 .where(conditions)
-                .orderBy(orderBuilder.build(request.getSort()))
+                .orderBy(sortingBuilder.build(request.getSort()))
                 .limit(limit.getOffset(), limit.getNumberOfRows())
                 .fetchInto(mapperFactory.createSliceMapper(request, fetchTablePreferences())) // TODO Request?
                 .intoSlice();
@@ -72,7 +72,7 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
 
         return dslContext.selectFrom(table)
                 .where(conditions)
-                .orderBy(orderBuilder.build(request.getSort()))
+                .orderBy(sortingBuilder.build(request.getSort()))
                 .limit(limit.getOffset(), limit.getNumberOfRows())
                 .fetch(mapperFactory.createTransportMapper(type)); // TODO Is this mapper optimized for high volume lists?
     }

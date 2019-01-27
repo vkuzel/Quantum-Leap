@@ -1,6 +1,7 @@
 package cz.quantumleap.core.data;
 
 import cz.quantumleap.core.data.list.FilterBuilder;
+import cz.quantumleap.core.data.list.SortingBuilder;
 import cz.quantumleap.core.data.primarykey.PrimaryKeyConditionBuilder;
 import cz.quantumleap.core.data.transport.Slice;
 import cz.quantumleap.core.data.transport.SliceRequest;
@@ -23,16 +24,18 @@ public final class DefaultLookupDao<TABLE extends Table<? extends Record>> imple
 
     private final PrimaryKeyConditionBuilder primaryKeyConditionBuilder;
     private final FilterBuilder filterBuilder;
+    private final SortingBuilder sortingBuilder;
 
     private final ListDao<TABLE> listDao;
 
-    public DefaultLookupDao(TABLE table, Field<String> labelField, DSLContext dslContext, PrimaryKeyConditionBuilder primaryKeyConditionBuilder, FilterBuilder filterBuilder, ListDao<TABLE> listDao) {
+    public DefaultLookupDao(TABLE table, Field<String> labelField, DSLContext dslContext, PrimaryKeyConditionBuilder primaryKeyConditionBuilder, FilterBuilder filterBuilder, SortingBuilder sortingBuilder, ListDao<TABLE> listDao) {
         this.table = table;
         this.labelField = labelField;
         this.dslContext = dslContext;
 
         this.primaryKeyConditionBuilder = primaryKeyConditionBuilder;
         this.filterBuilder = filterBuilder;
+        this.sortingBuilder = sortingBuilder;
 
         this.listDao = listDao;
     }
@@ -47,7 +50,7 @@ public final class DefaultLookupDao<TABLE extends Table<? extends Record>> imple
         return dslContext.select(labelField)
                 .from(table)
                 .where(condition)
-                .orderBy(labelField.asc())
+                .orderBy(sortingBuilder.buildForLookup())
                 .fetchOneInto(String.class);
     }
 
@@ -58,7 +61,7 @@ public final class DefaultLookupDao<TABLE extends Table<? extends Record>> imple
         return dslContext.select(primaryKey, labelField)
                 .from(table)
                 .where(condition)
-                .orderBy(labelField.asc())
+                .orderBy(sortingBuilder.buildForLookup())
                 .fetchMap(Record2::value1, Record2::value2);
     }
 
@@ -74,7 +77,7 @@ public final class DefaultLookupDao<TABLE extends Table<? extends Record>> imple
         return dslContext.select(primaryKey, labelField)
                 .from(table)
                 .where(condition)
-                .orderBy(labelField.asc())
+                .orderBy(sortingBuilder.buildForLookup())
                 .limit(MAX_FILTERED_ROWS)
                 .fetchMap(Record2::value1, Record2::value2);
     }

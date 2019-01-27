@@ -24,7 +24,7 @@ public class DaoStub<TABLE extends Table<? extends Record>> implements DetailDao
     protected final PrimaryKeyResolver primaryKeyResolver;
     protected final PrimaryKeyConditionBuilder primaryKeyConditionBuilder;
     protected final FilterBuilder filterBuilder;
-    protected final OrderBuilder orderBuilder;
+    protected final SortingBuilder sortingBuilder;
     protected final LimitBuilder limitBuilder;
     protected final MapperFactory mapperFactory;
 
@@ -39,13 +39,13 @@ public class DaoStub<TABLE extends Table<? extends Record>> implements DetailDao
         this.primaryKeyResolver = new TablePrimaryKeyResolver(table);
         this.primaryKeyConditionBuilder = new PrimaryKeyConditionBuilder(primaryKeyResolver);
         this.filterBuilder = new DefaultFilterBuilder(table, wordConditionBuilder);
-        this.orderBuilder = new DefaultOrderBuilder(table);
+        this.sortingBuilder = new DefaultSortingBuilder(table, lookupLabelField);
         this.limitBuilder = LimitBuilder.DEFAULT;
         this.mapperFactory = new MapperFactory(table, primaryKeyResolver, lookupDaoManager, enumManager);
 
         detailDao = new DefaultDetailDao<>(table, dslContext, primaryKeyConditionBuilder, mapperFactory, recordAuditor);
-        listDao = new DefaultListDao<>(table, dslContext, primaryKeyResolver, filterBuilder, orderBuilder, limitBuilder, mapperFactory);
-        lookupDao = new DefaultLookupDao<>(table, lookupLabelField, dslContext, primaryKeyConditionBuilder, filterBuilder, listDao);
+        listDao = new DefaultListDao<>(table, dslContext, primaryKeyResolver, filterBuilder, sortingBuilder, limitBuilder, mapperFactory);
+        lookupDao = new DefaultLookupDao<>(table, lookupLabelField, dslContext, primaryKeyConditionBuilder, filterBuilder, sortingBuilder, listDao);
     }
 
     @Override

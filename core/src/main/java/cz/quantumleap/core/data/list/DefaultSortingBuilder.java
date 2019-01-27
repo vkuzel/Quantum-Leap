@@ -10,13 +10,15 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class DefaultOrderBuilder implements OrderBuilder {
+public class DefaultSortingBuilder implements SortingBuilder {
 
     private final Map<String, Field<?>> sortableFields;
+    private final Field<String> labelField;
 
-    public DefaultOrderBuilder(Table<? extends Record> table) {
+    public DefaultSortingBuilder(Table<? extends Record> table, Field<String> labelField) {
         sortableFields = Stream.of(table.fields())
                 .collect(Collectors.toMap(field -> field.getName().toLowerCase(), field -> field));
+        this.labelField = labelField;
     }
 
     @Override
@@ -36,5 +38,10 @@ public class DefaultOrderBuilder implements OrderBuilder {
         }
 
         return sortFields;
+    }
+
+    @Override
+    public List<SortField<?>> buildForLookup() {
+        return Collections.singletonList(labelField.asc());
     }
 }
