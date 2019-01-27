@@ -1,22 +1,18 @@
 package cz.quantumleap.core.security;
 
+import cz.quantumleap.core.security.mock.SecuredMethodsTestController;
+import cz.quantumleap.core.security.mock.SecuredTypeTestController;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.stereotype.Controller;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -25,9 +21,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
-@WebMvcTest(controllers = {
-        WebWebSecurityConfigurationTest.SecuredMethodsTestController.class,
-        WebWebSecurityConfigurationTest.SecuredTypeTestController.class
+@WebMvcTest({
+        SecuredMethodsTestController.class,
+        SecuredTypeTestController.class
 })
 @Import(WebSecurityConfiguration.class)
 @TestPropertySource(properties = "quantumleap.security.loginPageUrl=/test-login-page")
@@ -128,58 +124,5 @@ public class WebWebSecurityConfigurationTest {
 
         mvc.perform(get("/type-endpoint-for-admin"))
                 .andExpect(status().isOk());
-    }
-
-    @Controller
-    public static class SecuredMethodsTestController {
-
-        @RequestMapping("/endpoint-for-unauthenticated")
-        @PreAuthorize("permitAll()")
-        @ResponseBody
-        public void endpointForUnauthenticated() {
-        }
-
-        @RequestMapping("/endpoint-for-authenticated")
-        @ResponseBody
-        public void endpointForAuthenticated() {
-        }
-
-        @GetMapping(value = "/method-endpoint")
-        @PreAuthorize("permitAll()")
-        @ResponseBody
-        public void getMethodEndpointForUnauthenticated() {
-        }
-
-        @PostMapping(value = "/method-endpoint")
-        @ResponseBody
-        public void postMethodEndpointForAuthenticated() {
-        }
-
-        @RequestMapping("/endpoint-for-admin")
-        @PreAuthorize("hasRole('ADMIN')")
-        @ResponseBody
-        public void endpointForAdmin() {
-        }
-
-        @RequestMapping({"/assets"})
-        @ResponseBody
-        public void staticContentEndpointForUnauthenticated() {
-        }
-    }
-
-    @Controller
-    @PreAuthorize("hasRole('ADMIN')")
-    public static class SecuredTypeTestController {
-
-        @RequestMapping("/type-endpoint-for-unauthenticated")
-        @PreAuthorize("permitAll()")
-        @ResponseBody
-        public void endpointForUnauthenticated() {
-        }
-
-        @RequestMapping("/type-endpoint-for-admin")
-        @ResponseBody
-        public void endpointForAuthenticated() {
-        }
     }
 }

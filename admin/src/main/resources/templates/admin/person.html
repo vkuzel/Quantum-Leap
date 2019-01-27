@@ -2,17 +2,25 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{admin/layout}">
 <head>
+    <script type="text/javascript">
+
+        $(function () {
+            var actionElementsSelector = 'button[name="invalidateSession"]';
+            AsyncFormPartControl('#sessions', actionElementsSelector);
+        });
+
+    </script>
 </head>
 <body>
 
 <div layout:fragment="content">
-    <div class="card mb-3">
-        <div class="card-header">
-            <i class="fa fa-user"></i>
-            <span th:text="#{admin.title.person}">Person</span>
-        </div>
-        <div class="card-body">
-            <form th:action="${#httpServletRequest.requestURI}" th:object="${person}" method="post">
+    <form th:action="${#httpServletRequest.requestURI}" th:object="${person}" method="post">
+        <div class="card mb-3">
+            <div class="card-header">
+                <i class="fa fa-user"></i>
+                <span th:text="#{admin.title.person}">Person</span>
+            </div>
+            <div class="card-body">
                 <input type="hidden" th:if="*{id}" th:field="*{id}">
 
                 <div th:if="${saved}" th:text="#{admin.saved-msg}" class="alert alert-success" role="alert">
@@ -40,26 +48,65 @@
 
                 <div class="text-right">
                     <a th:href="@{/people}" class="btn btn-secondary" th:text="#{admin.cancel}">Cancel</a>
-                    <input type="submit" class="btn btn-success" value="Save" th:value="#{admin.save}">
+                    <input type="submit" class="btn btn-success" name="save" value="Save" th:value="#{admin.save}">
                 </div>
-            </form>
-        </div>
-    </div>
-
-    <div class="card mb-3" th:if="${person.id}">
-        <div class="card-header">
-            <i class="fa fa-users"></i>
-            <span th:text="#{admin.table.title.core.roles}">Table</span>
-
-            <a th:href="@{|/person/${person.id}/person-role|}" class="btn btn-success btn-sm float-right"
-               th:text="#{admin.table.title.new-record}"></a>
-        </div>
-        <div class="card-body table-container">
-            <div class="table-responsive"
-                 th:insert="admin/components/table::table(qualifier='personRole',databaseTableNameWithSchema=${personRoleDatabaseTableNameWithSchema},tableSlice=${personRoleTableSlice},detailUrl=${personRoleDetailUrl})">
             </div>
         </div>
-    </div>
+
+        <div class="card mb-3" th:if="${person.id}">
+            <div class="card-header">
+                <i class="fa fa-users"></i>
+                <span th:text="#{admin.table.title.core.roles}">Table</span>
+
+                <a th:href="@{|/person/${person.id}/person-role|}" class="btn btn-success btn-sm float-right"
+                   th:text="#{admin.table.title.new-record}"></a>
+            </div>
+            <div class="card-body table-container">
+                <div class="table-responsive"
+                     th:insert="admin/components/table::table(qualifier='personRole',databaseTableNameWithSchema=${personRoleDatabaseTableNameWithSchema},tableSlice=${personRoleTableSlice},detailUrl=${personRoleDetailUrl})">
+                </div>
+            </div>
+        </div>
+
+        <div id="sessions" class="card mb-3" th:if="${person.id}">
+            <div class="card-header">
+                <i class="fa fa-key"></i>
+                <span th:text="#{admin.table.title.core.sessions}">Table</span>
+            </div>
+            <div class="card-body table-container">
+                <div class="table-responsive">
+                    <table class="table table-striped table-bordered table-hover data-table">
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            <th th:text="#{admin.table.core.sessions.created-at}">Created at</th>
+                            <th th:text="#{admin.table.core.sessions.last-access-at}">Last access at</th>
+                            <th th:text="#{admin.table.core.sessions.expire-at}">Expire at</th>
+                            <th th:text="#{admin.table.core.sessions.remote-address}">Remote address</th>
+                            <th th:text="#{admin.table.core.sessions.user-agent-browser}">Browser</th>
+                            <th th:text="#{admin.table.core.sessions.user-agent-operating-system}">OS</th>
+                            <th th:text="#{admin.table.core.sessions.user-agent-device}">Device</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="sessionDetail : ${sessions}" th:if="${!sessionDetail.expired}">
+                            <td th:text="${#strings.abbreviate(sessionDetail.id, 7)}" th:title="${sessionDetail.id}" class="primary-key"></td>
+                            <td th:text="${#temporals.format(sessionDetail.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
+                            <td th:text="${#temporals.format(sessionDetail.lastAccessAt, 'yyyy-MM-dd HH:mm')}"></td>
+                            <td th:text="${#temporals.format(sessionDetail.expireAt, 'yyyy-MM-dd HH:mm')}"></td>
+                            <td th:text="${sessionDetail.remoteAddress}"></td>
+                            <td th:text="${sessionDetail.userAgentBrowser}"></td>
+                            <td th:text="${sessionDetail.userAgentOperatingSystem}"></td>
+                            <td th:text="${sessionDetail.userAgentDevice}"></td>
+                            <td><button th:if="${#session.id != sessionDetail.id}" type="submit" class="btn btn-danger" name="invalidateSession" th:value="${sessionDetail.id}" th:title="#{admin.delete}"><i class="fa fa-times"></i></button></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </form>
 </div>
 
 </body>

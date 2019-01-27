@@ -20,6 +20,7 @@ dependencies {
     compile("commons-io:commons-io:2.6")
     compile("com.ibm.icu:icu4j:57.1")
     compile("org.jetbrains:annotations:15.0")
+    compile("eu.bitwalker:UserAgentUtils:1.21")
 
     runtimeOnly("org.postgresql:postgresql")
 
