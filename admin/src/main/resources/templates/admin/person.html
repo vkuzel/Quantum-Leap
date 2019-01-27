@@ -99,7 +99,7 @@
                             <td th:text="${sessionDetail.userAgentBrowser}"></td>
                             <td th:text="${sessionDetail.userAgentOperatingSystem}"></td>
                             <td th:text="${sessionDetail.userAgentDevice}"></td>
-                            <td><button th:if="${#session.id != sessionDetail.id}" type="submit" class="btn btn-danger" name="invalidateSession" th:value="${sessionDetail.id}" th:title="#{admin.delete}"><i class="fa fa-times"></i></button></td>
+                            <td><button th:if="${#session.id != sessionDetail.id}" type="submit" class="btn btn-outline-danger" name="invalidateSession" th:value="${sessionDetail.id}" th:title="#{admin.delete}"><i class="fa fa-trash"></i></button></td>
                         </tr>
                         </tbody>
                     </table>
