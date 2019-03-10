@@ -40,6 +40,13 @@ public class EnumManager {
                 .collect(Collectors.toList());
     }
 
+    public EnumValue getDefaultEnumValue(String enumId) {
+        for (IdLabel valueLabel : getValueLabels(enumId)) {
+            return new EnumValue(enumId, String.valueOf(valueLabel.getId()), valueLabel.getLabel());
+        }
+        return new EnumValue();
+    }
+
     public EnumValue createEnumValue(String enumId, String valueId) {
         String label = enumValueLabels.get(enumId, valueId);
         return new EnumValue(enumId, valueId, label != null ? label : valueId);
