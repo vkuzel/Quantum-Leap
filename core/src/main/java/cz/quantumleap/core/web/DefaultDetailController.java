@@ -49,7 +49,7 @@ public final class DefaultDetailController<T> implements DetailController<T> {
             return detailView;
         }
         redirectAttributes.addFlashAttribute("saved", true);
-        return "redirect:" + detailUrl + "/" + getDetailId(saved);
+        return "redirect:" + detailUrl + '/' + getDetailId(saved);
     }
 
     // TODO This is "just for fun" solution!
