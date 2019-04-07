@@ -14,7 +14,8 @@
     <tr>
         <th th:each="column : ${tableSlice.getColumns()}"
             th:object="${column}"
-            th:class="*{order} ? (*{order.direction.isAscending()} ? 'sorting_asc' : 'sorting_desc') : 'sorting'">
+            class="sorting"
+            th:classappend="*{order} ? (*{order.direction.isAscending()} ? 'asc' : 'desc')">
             <a th:with="sortValue=*{name} + (*{order} and *{order.direction.isAscending()} ? ';desc' : '')"
                th:href="${urlBuilder.fromCurrentRequest().replaceQueryParam('sort', '__${sortValue}__').replaceQueryParam('offset').build()}"
                th:assert="${databaseTableNameWithSchema}"

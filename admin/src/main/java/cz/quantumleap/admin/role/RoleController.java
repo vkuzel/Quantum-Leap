@@ -1,6 +1,7 @@
 package cz.quantumleap.admin.role;
 
 import cz.quantumleap.admin.AdminController;
+import cz.quantumleap.admin.menu.AdminMenuItemActive;
 import cz.quantumleap.admin.menu.AdminMenuItemDefinition;
 import cz.quantumleap.admin.menu.AdminMenuManager;
 import cz.quantumleap.admin.notification.NotificationService;
@@ -49,6 +50,7 @@ public class RoleController extends AdminController implements LookupController 
         this.lookupController = new DefaultLookupController(DATABASE_TABLE_NAME_WITH_SCHEMA, DETAIL_URL, LOOKUP_LABEL_URL, LOOKUP_LABELS_URL, LOOKUP_LIST_URL, roleService);
     }
 
+    @AdminMenuItemActive("admin.menu.roles")
     @GetMapping(path = {DETAIL_URL, DETAIL_URL + "/{id}"})
     public String showRole(@PathVariable(required = false) Long id, Model model) {
         return detailController.show(id, model);
@@ -59,7 +61,7 @@ public class RoleController extends AdminController implements LookupController 
         return detailController.save(role, errors, model, redirectAttributes);
     }
 
-    @AdminMenuItemDefinition(title = "admin.menu.roles", parentByTitle = "admin.menu.people", fontAwesomeIcon = "fa-id-card")
+    @AdminMenuItemDefinition(title = "admin.menu.roles", parentByTitle = "admin.menu.people", fontAwesomeIcon = "far fa-id-card")
     @GetMapping(LIST_URL)
     public String showRoles(SliceRequest sliceRequest, Model model, HttpServletRequest request) {
         return listController.list(sliceRequest, model, request);

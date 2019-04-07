@@ -21,14 +21,14 @@
                th:data-query-prefix="${queryPrefix}" autocomplete="off">
         <div th:hidden="${#strings.isEmpty(field.id)}" class="input-group-prepend input-group-append reset-wrapper">
             <button class="btn btn-outline-danger" type="button">
-                <i class="fa fa-times"></i>
+                <i class="fas fa-times"></i>
             </button>
         </div>
         <div class="input-group-append">
             <button class="btn btn-outline-secondary" type="button"
                     th:data-lookup-list-url="@{${lookupController.getLookupListUrl()}}"
                     th:data-lookup-label-url="@{${lookupController.getLookupLabelUrl()}}">
-                <i class="fa fa-search"></i>
+                <i class="fas fa-search"></i>
             </button>
         </div>
         <div class="invalid-feedback" th:each="err : ${#fields.errors('__${fieldName}__')}" th:text="${err}">Error</div>

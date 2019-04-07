@@ -34,31 +34,6 @@ var Loader = {
     }
 };
 
-function MenuControl(menuSelector) {
-    var $menu = $(menuSelector);
-    var $activeAnchor = $menu.find('li > a.active');
-
-    if ($activeAnchor.length > 0) {
-        var href = $activeAnchor.attr('href');
-        sessionStorage.setItem("lastActiveMenuItemHref", href);
-    } else {
-        var lastActiveMenuItemHref = sessionStorage.getItem("lastActiveMenuItemHref");
-        if (lastActiveMenuItemHref) {
-            $activeAnchor = $menu.find('a[href="' + lastActiveMenuItemHref + '"]');
-            $activeAnchor.addClass('active');
-            $activeAnchor.next('ul').addClass('show');
-            $activeAnchor.parentsUntil(menuSelector, 'ul').addClass('show');
-        }
-    }
-
-    if ($activeAnchor.length > 0) {
-        $activeAnchor
-            .parents('li.nav-item')
-            .children('a.nav-link-collapse.collapsed')
-            .removeClass('collapsed');
-    }
-}
-
 function TableControl(tableSelector, tBodyListenersBinder) {
     var $table = $(tableSelector);
 
@@ -461,9 +436,6 @@ function DelayedFunctionCall(func, wait) {
 }
 
 $(function () {
-
-    MenuControl('#side-menu');
-
     $('table.data-table').each(function (i, table) {
         var tBodyListenersBinder = function ($tBody) {
             $tBody.find('tr > td').click(function () {

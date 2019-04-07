@@ -1,6 +1,7 @@
 package cz.quantumleap.admin.person;
 
 import cz.quantumleap.admin.AdminController;
+import cz.quantumleap.admin.menu.AdminMenuItemActive;
 import cz.quantumleap.admin.menu.AdminMenuItemDefinition;
 import cz.quantumleap.admin.menu.AdminMenuManager;
 import cz.quantumleap.admin.notification.NotificationService;
@@ -60,6 +61,7 @@ public class PersonController extends AdminController implements LookupControlle
         this.sessionService = sessionService;
     }
 
+    @AdminMenuItemActive("admin.menu.people")
     @GetMapping(path = {DETAIL_URL, DETAIL_URL + "/{id}"})
     public String showPerson(@PathVariable(required = false) Long id, @Qualifier("personRole") SliceRequest personRoleSliceRequest, Model model) {
         Person person = id != null ? personService.get(id) : new Person();
@@ -99,7 +101,7 @@ public class PersonController extends AdminController implements LookupControlle
         model.addAttribute("sessions", sessions);
     }
 
-    @AdminMenuItemDefinition(title = "admin.menu.people", fontAwesomeIcon = "fa-user")
+    @AdminMenuItemDefinition(title = "admin.menu.people", fontAwesomeIcon = "fas fa-users")
     @GetMapping(LIST_URL)
     public String showPeople(SliceRequest sliceRequest, Model model, HttpServletRequest request) {
         return listController.list(sliceRequest, model, request);

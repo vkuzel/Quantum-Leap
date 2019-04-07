@@ -41,6 +41,9 @@ public class AdminControllerTest {
     public void getMenuItems() throws Exception {
         // given
         HttpServletRequest httpServletRequest = mock(HttpServletRequest.class);
+        doReturn("/").when(httpServletRequest).getContextPath();
+        doReturn("/").when(httpServletRequest).getServletPath();
+        doReturn("/path").when(httpServletRequest).getRequestURI();
         HttpServletResponse httpServletResponse = mock(HttpServletResponse.class);
 
         doReturn(true).when(webSecurityExpressionEvaluator).evaluate("authorized", httpServletRequest, httpServletResponse);
@@ -67,15 +70,15 @@ public class AdminControllerTest {
         assertThat(menuItems.size(), equalTo(1));
         AdminMenuItem menuItem = menuItems.get(0);
         assertThat(menuItem.getChildren().size(), equalTo(1));
-        assertThat(menuItem.getChildren().get(0).getPaths(), equalTo(accessibleMenuItem.getPaths()));
+        assertThat(menuItem.getChildren().get(0).getPath(), equalTo(accessibleMenuItem.getPath()));
     }
 
     private AdminMenuItem createMenuItem(String securityExpression, List<AdminMenuItem> children) {
-        RequestMappingInfo requestMappingInfo = RequestMappingInfo.paths("path").build();
+        List<RequestMappingInfo> requestMappingInfoList = Collections.singletonList(RequestMappingInfo.paths("path").build());
         AdminMenuItemDefinition adminMenuItemDefinition = mock(AdminMenuItemDefinition.class);
         PreAuthorize preAuthorize = mock(PreAuthorize.class);
         doReturn(securityExpression).when(preAuthorize).value();
 
-        return new AdminMenuItem(requestMappingInfo, adminMenuItemDefinition, preAuthorize, AdminMenuItem.State.NONE, children);
+        return new AdminMenuItem(requestMappingInfoList, adminMenuItemDefinition, preAuthorize, AdminMenuItem.State.NONE, children);
     }
 }

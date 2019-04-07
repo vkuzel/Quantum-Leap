@@ -39,18 +39,27 @@ public class AdminMenuManager {
         Map<RequestMappingInfo, HandlerMethod> handlerMethodMap = requestMappingHandlerMapping.getHandlerMethods();
         Map<String, MappingDefinitionAuthorize> map = new HashMap<>();
 
-        for (Map.Entry<RequestMappingInfo, HandlerMethod> entry : handlerMethodMap.entrySet()) {
-            RequestMappingInfo requestMappingInfo = entry.getKey();
-            HandlerMethod handlerMethod = entry.getValue();
+        handlerMethodMap.forEach((requestMappingInfo, handlerMethod) -> {
             Method method = handlerMethod.getMethod();
             AdminMenuItemDefinition adminMenuItemDefinition = AnnotationUtils.findAnnotation(method, AdminMenuItemDefinition.class);
             if (adminMenuItemDefinition == null) {
-                continue;
+                return;
             }
-
             PreAuthorize preAuthorize = findPreAuthorize(handlerMethod);
             map.put(adminMenuItemDefinition.title(), new MappingDefinitionAuthorize(requestMappingInfo, adminMenuItemDefinition, preAuthorize));
-        }
+        });
+
+        handlerMethodMap.forEach((requestMappingInfo, handlerMethod) -> {
+            Method method = handlerMethod.getMethod();
+            AdminMenuItemActive adminMenuItemActive = AnnotationUtils.findAnnotation(method, AdminMenuItemActive.class);
+            if (adminMenuItemActive == null) {
+                return;
+            }
+            MappingDefinitionAuthorize mappingDefinitionAuthorize = map.get(adminMenuItemActive.value());
+            if (mappingDefinitionAuthorize != null) {
+                mappingDefinitionAuthorize.addRequestMappingInfo(requestMappingInfo);
+            }
+        });
 
         for (MappingDefinitionAuthorize mappingDefinitionAuthorize : map.values()) {
             String parentByTitle = mappingDefinitionAuthorize.getParentByTitle();
@@ -80,16 +89,20 @@ public class AdminMenuManager {
 
     private static class MappingDefinitionAuthorize {
 
-        private final RequestMappingInfo requestMappingInfo;
+        private final List<RequestMappingInfo> requestMappingInfoList = new ArrayList<>();
         private final AdminMenuItemDefinition adminMenuItemDefinition;
         private final PreAuthorize preAuthorize;
         private final List<MappingDefinitionAuthorize> children = new ArrayList<>();
         private boolean isChild = false;
 
         private MappingDefinitionAuthorize(RequestMappingInfo requestMappingInfo, AdminMenuItemDefinition adminMenuItemDefinition, PreAuthorize preAuthorize) {
-            this.requestMappingInfo = requestMappingInfo;
+            this.requestMappingInfoList.add(requestMappingInfo);
             this.adminMenuItemDefinition = adminMenuItemDefinition;
             this.preAuthorize = preAuthorize;
+        }
+
+        private void addRequestMappingInfo(RequestMappingInfo requestMappingInfo) {
+            requestMappingInfoList.add(requestMappingInfo);
         }
 
         private String getParentByTitle() {
@@ -106,7 +119,7 @@ public class AdminMenuManager {
 
         private AdminMenuItem toAdminMenuItem() {
             List<AdminMenuItem> childrenItems = children.stream().sorted(MENU_ITEM_COMPARATOR).map(MappingDefinitionAuthorize::toAdminMenuItem).collect(Collectors.toList());
-            return new AdminMenuItem(requestMappingInfo, adminMenuItemDefinition, preAuthorize, AdminMenuItem.State.NONE, childrenItems);
+            return new AdminMenuItem(requestMappingInfoList, adminMenuItemDefinition, preAuthorize, AdminMenuItem.State.NONE, childrenItems);
         }
     }
 }

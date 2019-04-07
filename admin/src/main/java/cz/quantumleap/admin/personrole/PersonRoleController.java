@@ -1,6 +1,7 @@
 package cz.quantumleap.admin.personrole;
 
 import cz.quantumleap.admin.AdminController;
+import cz.quantumleap.admin.menu.AdminMenuItemActive;
 import cz.quantumleap.admin.menu.AdminMenuManager;
 import cz.quantumleap.admin.notification.NotificationService;
 import cz.quantumleap.admin.person.PersonController;
@@ -43,6 +44,7 @@ public class PersonRoleController extends AdminController {
         this.detailController = new DefaultDetailController<>(PersonRole.class, DETAIL_URL, DETAIL_VIEW, personRoleService);
     }
 
+    @AdminMenuItemActive("admin.menu.people")
     @GetMapping(path = {DETAIL_URL, DETAIL_URL + "/{id}"})
     public String showPersonRole (@PathVariable long personId, @PathVariable(required = false) Long id, Model model) {
         PersonRole detail;

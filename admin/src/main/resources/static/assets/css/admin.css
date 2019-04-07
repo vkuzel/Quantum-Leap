@@ -1,14 +1,5 @@
 .navbar .active {
     font-weight: bold;
-    color: #fff !important;
-}
-
-.notifications.dropdown .dropdown-menu {
-    min-width: 20rem;
-}
-
-.notifications.dropdown .dropdown-item {
-    white-space: normal;
 }
 
 #loader {
@@ -58,9 +49,9 @@
     right: 0.4em;
     top: 50%;
     transform: translateY(-50%);
-    content: "\f0dc";
     color: #ccc;
-    font-family: fontawesome;
+    font-family: "Font Awesome 5 Free";
+    content: "\f0dc";
 }
 
 .table th.sorting.asc:after {

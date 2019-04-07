@@ -9,7 +9,10 @@ import cz.quantumleap.admin.person.PersonService;
 import cz.quantumleap.core.person.transport.Person;
 import cz.quantumleap.core.security.WebSecurityExpressionEvaluator;
 import org.springframework.security.core.Authentication;
+import org.springframework.util.AntPathMatcher;
+import org.springframework.util.PathMatcher;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.servlet.mvc.condition.PatternsRequestCondition;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -22,6 +25,7 @@ public abstract class AdminController {
     private final PersonService personService;
     private final NotificationService notificationService;
     private final WebSecurityExpressionEvaluator webSecurityExpressionEvaluator;
+    private final PathMatcher pathMatcher = new AntPathMatcher();
 
     public AdminController(AdminMenuManager adminMenuManager, PersonService personService, NotificationService notificationService, WebSecurityExpressionEvaluator webSecurityExpressionEvaluator) {
         this.adminMenuManager = adminMenuManager;
@@ -50,7 +54,7 @@ public abstract class AdminController {
             }
 
             AdminMenuItem.Builder builder = AdminMenuItem.fromMenuItem(adminMenuItem);
-            if (adminMenuItem.getPaths().contains(request.getRequestURI())) {
+            if (adminMenuItem.matchesRequest(request)) {
                 builder.setState(State.ACTIVE);
             }
             if (!adminMenuItem.getChildren().isEmpty()) {

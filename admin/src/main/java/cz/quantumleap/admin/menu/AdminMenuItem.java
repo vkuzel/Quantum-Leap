@@ -1,11 +1,14 @@
 package cz.quantumleap.admin.menu;
 
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.servlet.mvc.condition.PatternsRequestCondition;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class AdminMenuItem {
 
@@ -13,20 +16,20 @@ public class AdminMenuItem {
         NONE, OPEN, ACTIVE
     }
 
-    private final RequestMappingInfo requestMappingInfo;
+    private final List<RequestMappingInfo> requestMappingInfoList;
     private final AdminMenuItemDefinition adminMenuItemDefinition;
     private final PreAuthorize preAuthorize;
     private final State state;
     private final List<AdminMenuItem> children;
 
     public AdminMenuItem(
-            RequestMappingInfo requestMappingInfo,
+            List<RequestMappingInfo> requestMappingInfoList,
             AdminMenuItemDefinition adminMenuItemDefinition,
             PreAuthorize preAuthorize,
             State state,
             List<AdminMenuItem> children
     ) {
-        this.requestMappingInfo = requestMappingInfo;
+        this.requestMappingInfoList = requestMappingInfoList;
         this.adminMenuItemDefinition = adminMenuItemDefinition;
         this.preAuthorize = preAuthorize;
         this.state = state;
@@ -34,13 +37,21 @@ public class AdminMenuItem {
     }
 
     public String getPath() {
-        return requestMappingInfo.getPatternsCondition().getPatterns().stream()
-                .findFirst()
-                .orElse("/");
+        for (RequestMappingInfo requestMappingInfo : requestMappingInfoList) {
+            for (String pattern : requestMappingInfo.getPatternsCondition().getPatterns()) {
+                return pattern;
+            }
+        }
+        return "/";
     }
 
-    public Set<String> getPaths() {
-        return requestMappingInfo.getPatternsCondition().getPatterns();
+    public boolean matchesRequest(HttpServletRequest request) {
+        for (RequestMappingInfo requestMappingInfo : requestMappingInfoList) {
+            if (requestMappingInfo.getMatchingCondition(request) != null) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public String getTitle() {
@@ -65,7 +76,7 @@ public class AdminMenuItem {
 
     public static Builder fromMenuItem(AdminMenuItem adminMenuItem) {
         Builder builder = new Builder();
-        builder.requestMappingInfo = adminMenuItem.requestMappingInfo;
+        builder.requestMappingInfoList = adminMenuItem.requestMappingInfoList;
         builder.adminMenuItemDefinition = adminMenuItem.adminMenuItemDefinition;
         builder.preAuthorize = adminMenuItem.preAuthorize;
         builder.state = adminMenuItem.state;
@@ -74,7 +85,7 @@ public class AdminMenuItem {
     }
 
     public static class Builder {
-        private RequestMappingInfo requestMappingInfo;
+        private List<RequestMappingInfo> requestMappingInfoList;
         private AdminMenuItemDefinition adminMenuItemDefinition;
         private PreAuthorize preAuthorize;
         private List<AdminMenuItem> children;
@@ -91,7 +102,7 @@ public class AdminMenuItem {
         }
 
         public AdminMenuItem build() {
-            return new AdminMenuItem(requestMappingInfo, adminMenuItemDefinition, preAuthorize, state, children);
+            return new AdminMenuItem(requestMappingInfoList, adminMenuItemDefinition, preAuthorize, state, children);
         }
     }
 }

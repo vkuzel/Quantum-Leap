@@ -2,16 +2,15 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{admin/layout}">
 <head>
-    <script th:src="@{/webjars/jquery.easing/1.4.1/jquery.easing.min.js}"></script>
-    <script th:src="@{/webjars/chart.js/2.7.1/dist/Chart.min.js}"></script>
+    <script th:src="@{/webjars/chart.js/2.7.3/dist/Chart.min.js}"></script>
 </head>
 <body>
 
-<div layout:fragment="content" class="container-fluid" th:with="position=${T(cz.quantumleap.admin.dashboard.DashboardWidget.Position)}">
+<main layout:fragment="content" th:with="position=${T(cz.quantumleap.admin.dashboard.DashboardWidget.Position)}">
     <div th:each="widget : ${dashboardWidgets.get(position.TOP)}" class="card mb-3">
         <div th:replace="__${widget.thymeleafFragmentExpression}__">
             <div class="card-header">
-                <i class="fa fa-area-chart"></i> Area Chart Example
+                <i class="fas fa-chart-area"></i> Area Chart Example
             </div>
             <div class="card-body">
                 <canvas id="myAreaChart" width="100%" height="30"></canvas>
@@ -25,7 +24,7 @@
             <div th:each="widget : ${dashboardWidgets.get(position.LEFT)}" class="card mb-3">
                 <div th:replace="__${widget.thymeleafFragmentExpression}__">
                     <div class="card-header">
-                        <i class="fa fa-bell-o"></i> Feed Example
+                        <i class="fas fa-bell"></i> Feed Example
                     </div>
                     <div class="list-group list-group-flush small">
                         <a class="list-group-item list-group-item-action" href="#">
@@ -61,7 +60,7 @@
                             <div class="media">
                                 <img class="d-flex mr-3 rounded-circle" src="http://placehold.it/45x45" alt="">
                                 <div class="media-body">
-                                    <i class="fa fa-code-fork"></i>
+                                    <i class="fas fa-code-branch"></i>
                                     <strong>Monica Dennis</strong>forked the
                                     <strong>startbootstrap-sb-admin</strong>repository on
                                     <strong>GitHub</strong>.
@@ -80,7 +79,7 @@
             <div th:each="widget : ${dashboardWidgets.get(position.RIGHT)}" class="card mb-3">
                 <div th:replace="__${widget.thymeleafFragmentExpression}__">
                     <div class="card-header">
-                        <i class="fa fa-pie-chart"></i> Pie Chart Example
+                        <i class="fas fa-chart-pie"></i> Pie Chart Example
                     </div>
                     <div class="card-body">
                         <canvas id="myPieChart" width="100%" height="100"></canvas>
@@ -94,7 +93,7 @@
     <div th:each="widget : ${dashboardWidgets.get(position.BOTTOM)}" class="card mb-3">
         <div th:replace="__${widget.thymeleafFragmentExpression}__">
             <div class="card-header">
-                <i class="fa fa-bar-chart"></i> Bar Chart Example
+                <i class="fas fa-chart-bar"></i> Bar Chart Example
             </div>
             <div class="card-body">
                 <div class="row">
@@ -116,7 +115,7 @@
             <div class="card-footer small text-muted">Updated yesterday at 11:59 PM</div>
         </div>
     </div>
-</div>
+</main>
 
 </body>
 </html>

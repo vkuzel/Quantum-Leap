@@ -5,12 +5,12 @@
 </head>
 <body>
 
-<div layout:fragment="content">
+<main layout:fragment="content">
     <div class="card mb-3">
         <div class="card-header">
             <div class="row">
                 <div class="d-none d-sm-block col-sm-4 mb-3 mb-sm-0">
-                    <i class="fa fa-user"></i>
+                    <i class="fas fa-users"></i>
                     <span th:text="#{admin.table.title.core.people}">Table</span>
                 </div>
                 <div class="col-sm-4 mb-3 mb-sm-0">
@@ -20,7 +20,7 @@
                     <div class="input-group input-group-sm">
                         <div class="input-group-prepend">
                             <div class="input-group-text" id="search-label">
-                                <i class="fa fa-search"></i>
+                                <i class="fas fa-search"></i>
                             </div>
                         </div>
                         <input type="text" id="search" class="form-control"
@@ -35,7 +35,7 @@
             </div>
         </div>
     </div>
-</div>
+</main>
 
 </body>
 </html>

@@ -28,7 +28,7 @@ public class DashboardController extends AdminController {
         this.dashboardWidgets = dashboardWidgets != null ? Multimaps.index(dashboardWidgets, DashboardWidget::getPosition) : ImmutableListMultimap.of();
     }
 
-    @AdminMenuItemDefinition(title = "admin.menu.dashboard", fontAwesomeIcon = "fa-dashboard", priority = Integer.MAX_VALUE)
+    @AdminMenuItemDefinition(title = "admin.menu.dashboard", fontAwesomeIcon = "fas fa-tachometer-alt", priority = Integer.MAX_VALUE)
     @GetMapping("/dashboard")
     public String dashboard(Model model) {
         model.addAttribute("dashboardWidgets", dashboardWidgets);

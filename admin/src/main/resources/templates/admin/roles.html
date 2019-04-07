@@ -5,10 +5,10 @@
 </head>
 <body>
 
-<div layout:fragment="content" id="page-wrapper">
+<main layout:fragment="content">
     <div class="card">
         <div class="card-header">
-            <i class="fa fa-id-card"></i>
+            <i class="fas fa-id-card"></i>
             <span th:text="#{admin.table.title.core.role}">Table</span>
             <a th:href="@{|/role|}" class="btn btn-success btn-sm float-right" th:text="#{admin.table.title.new-record}"></a>
         </div>
@@ -17,7 +17,7 @@
             </div>
         </div>
     </div>
-</div>
+</main>
 
 </body>
 </html>

@@ -13,11 +13,11 @@
 </head>
 <body>
 
-<div layout:fragment="content">
+<main layout:fragment="content">
     <form th:action="${#httpServletRequest.requestURI}" th:object="${person}" method="post">
         <div class="card mb-3">
             <div class="card-header">
-                <i class="fa fa-user"></i>
+                <i class="fas fa-user"></i>
                 <span th:text="#{admin.title.person}">Person</span>
             </div>
             <div class="card-body">
@@ -55,7 +55,7 @@
 
         <div class="card mb-3" th:if="${person.id}">
             <div class="card-header">
-                <i class="fa fa-users"></i>
+                <i class="fas fa-user-tag"></i>
                 <span th:text="#{admin.table.title.core.roles}">Table</span>
 
                 <a th:href="@{|/person/${person.id}/person-role|}" class="btn btn-success btn-sm float-right"
@@ -70,7 +70,7 @@
 
         <div id="sessions" class="card mb-3" th:if="${person.id}">
             <div class="card-header">
-                <i class="fa fa-key"></i>
+                <i class="fas fa-key"></i>
                 <span th:text="#{admin.table.title.core.sessions}">Table</span>
             </div>
             <div class="card-body table-container">
@@ -99,7 +99,7 @@
                             <td th:text="${sessionDetail.userAgentBrowser}"></td>
                             <td th:text="${sessionDetail.userAgentOperatingSystem}"></td>
                             <td th:text="${sessionDetail.userAgentDevice}"></td>
-                            <td><button th:if="${#session.id != sessionDetail.id}" type="submit" class="btn btn-outline-danger" name="invalidateSession" th:value="${sessionDetail.id}" th:title="#{admin.delete}"><i class="fa fa-trash"></i></button></td>
+                            <td><button th:if="${#session.id != sessionDetail.id}" type="submit" class="btn btn-outline-danger" name="invalidateSession" th:value="${sessionDetail.id}" th:title="#{admin.delete}"><i class="fas fa-trash-alt"></i></button></td>
                         </tr>
                         </tbody>
                     </table>
@@ -107,7 +107,7 @@
             </div>
         </div>
     </form>
-</div>
+</main>
 
 </body>
 </html>
