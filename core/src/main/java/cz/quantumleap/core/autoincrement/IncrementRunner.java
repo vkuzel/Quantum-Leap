@@ -7,6 +7,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.env.Environment;
+import org.springframework.core.env.Profiles;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
@@ -37,7 +38,7 @@ public class IncrementRunner {
 
     @PostConstruct
     public void runIncrements() {
-        if (!environment.acceptsProfiles("test")) {
+        if (!environment.acceptsProfiles(Profiles.of("test"))) {
             Map<String, Integer> lastIncrements = incrementDao.loadLastIncrementVersionForModules();
             List<IncrementService.IncrementScript> incrementScripts = incrementService.findAllIncrementsInClasspath();
 

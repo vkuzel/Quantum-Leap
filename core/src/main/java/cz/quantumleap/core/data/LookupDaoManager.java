@@ -1,6 +1,7 @@
 package cz.quantumleap.core.data;
 
 import cz.quantumleap.core.data.mapper.MapperUtils;
+import org.apache.commons.lang3.Validate;
 import org.jooq.Record;
 import org.jooq.Table;
 import org.springframework.context.ApplicationContext;
@@ -31,13 +32,22 @@ public class LookupDaoManager {
         Map<String, LookupDao> beans = applicationContext.getBeansOfType(LookupDao.class);
         for (LookupDao lookupDao : beans.values()) {
             String tableName = MapperUtils.resolveDatabaseTableNameWithSchema(lookupDao.getTable());
-            lookupDaoMap.put(tableName, lookupDao); // TODO What if table already exists?
+            addDao(tableName, lookupDao);
         }
     }
 
     public void registerDaoForTable(Table<?> table, LookupDao lookupDao) {
         String tableName = MapperUtils.resolveDatabaseTableNameWithSchema(table);
-        lookupDaoMap.put(tableName, lookupDao); // TODO What if table already exists?
+        addDao(tableName, lookupDao);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void addDao(String tableName, LookupDao lookupDao) {
+        LookupDao previousDao = lookupDaoMap.get(tableName);
+        if (previousDao != null) {
+            throw new IllegalArgumentException("Two DAOs for a table " + tableName + ", original: " + previousDao + ", new: " + lookupDao);
+        }
+        lookupDaoMap.put(tableName, lookupDao);
     }
 
     @SuppressWarnings("unchecked")

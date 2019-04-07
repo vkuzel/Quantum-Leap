@@ -86,7 +86,7 @@ public class NotificationDao extends DaoStub<NotificationTable> {
     private Condition createUnresolvedNotificationCondition(String notificationCode, List<String> messageArguments) {
         return NOTIFICATION.RESOLVED_AT.isNull()
                 .and(NOTIFICATION.CODE.eq(notificationCode))
-                .and("message_arguments :: VARCHAR = ? :: VARCHAR", messageArguments);
+                .and("message_arguments :: VARCHAR = ? :: VARCHAR", messageArguments.toArray());
     }
 
     public List<Notification> fetchUnresolvedByPersonId(long personId) {
