@@ -351,7 +351,7 @@ function TagsControl(tagsFieldSelector) {
     modalControl.bindListeners();
 }
 
-function AsyncFormPartControl(formPartSelector, actionElementsSelector, onFormPartReady) {
+function AsyncFormPartControl(formPartSelector, actionElementsSelector, formPartPromiseConsumer) {
     var $formPart = $(formPartSelector);
     var asyncFormPartControl = {
         $formPart: $formPart,
@@ -360,8 +360,8 @@ function AsyncFormPartControl(formPartSelector, actionElementsSelector, onFormPa
     };
 
     asyncFormPartControl.bindListeners = function () {
-        this.$actionElements.off('click', '*', this.onActionButtonClick);
-        this.$actionElements.click(this.onActionButtonClick);
+        this.$actionElements.off('click', this.onActionButtonClick);
+        this.$actionElements.on('click', this.onActionButtonClick);
         this.$actionElements.change(this.onActionElementChange);
     };
 
@@ -385,7 +385,10 @@ function AsyncFormPartControl(formPartSelector, actionElementsSelector, onFormPa
         var action = asyncFormPartControl.$form.attr('action');
         var data = asyncFormPartControl.$form.serialize();
         data += '&' + additionalData;
-        $.post(action, data, asyncFormPartControl.replaceFormPartContent);
+        var formPartPromise = $.post(action, data).done(asyncFormPartControl.replaceFormPartContent);
+        if (formPartPromiseConsumer) {
+            formPartPromiseConsumer(formPartPromise, asyncFormPartControl);
+        }
     };
 
     asyncFormPartControl.replaceFormPartContent = function (html) {
@@ -399,15 +402,79 @@ function AsyncFormPartControl(formPartSelector, actionElementsSelector, onFormPa
         asyncFormPartControl.$formPart.find('div.lookup').each(function (i, lookupField) {
             LookupControl(lookupField);
         });
-        if (onFormPartReady) {
-            onFormPartReady(asyncFormPartControl.$formPart);
-        }
     };
 
     asyncFormPartControl.bindListeners();
-    if (onFormPartReady) {
-        onFormPartReady(asyncFormPartControl.$formPart);
+    if (formPartPromiseConsumer) {
+        var formPartPromise = $.Deferred();
+        formPartPromiseConsumer(formPartPromise, asyncFormPartControl);
+        formPartPromise.resolve(asyncFormPartControl.$formPart);
     }
+}
+
+function ModalFormControl(modalSelector, openModalButtonsSelector, submitPromiseConsumer) {
+    var $modal = $(modalSelector);
+
+    var modalFormControl = {
+        $modal: $modal,
+        $modalBody: $modal.find('.modal-body'),
+        $openModalButtons: $(openModalButtonsSelector),
+        $submitModalButtons: $()
+    };
+
+    modalFormControl.bindListeners = function () {
+        this.$openModalButtons.off('click', this.onOpenModalButtonClick);
+        this.$openModalButtons.on('click', this.onOpenModalButtonClick);
+        this.$submitModalButtons.off('click', this.onSubmitModalButtonClick);
+        this.$submitModalButtons.on('click', this.onSubmitModalButtonClick);
+    };
+
+    modalFormControl.onOpenModalButtonClick = function (event) {
+        event.preventDefault();
+        modalFormControl.fetchModal();
+    };
+
+    modalFormControl.onSubmitModalButtonClick = function (event) {
+        event.preventDefault();
+        var $actionButton = $(this);
+        var additionalData = '&' + encodeURI($actionButton.attr('name'));
+        var actionButtonValue = $actionButton.val();
+        if (actionButtonValue) {
+            additionalData += '=' + encodeURI(actionButtonValue);
+        }
+        modalFormControl.submitModal(additionalData);
+    };
+
+    modalFormControl.replaceModalContent = function (html) {
+        var $modalBodyReplacement = $(html);
+
+        modalFormControl.$modalBody.replaceWith($modalBodyReplacement);
+        modalFormControl.$modalBody = $modalBodyReplacement;
+        modalFormControl.$submitModalButtons = modalFormControl.$modal.find('input[type="submit"],button[type="submit"]');
+
+        modalFormControl.bindListeners();
+        modalFormControl.$modalBody.find('form div.lookup').each(function (i, lookupField) {
+            LookupControl(lookupField);
+        });
+    };
+
+    modalFormControl.fetchModal = function () {
+        var url = modalFormControl.$openModalButtons.attr('data-modal-url');
+        $.get(url, {}, modalFormControl.replaceModalContent);
+    };
+
+    modalFormControl.submitModal = function (additionalData) {
+        var $form = modalFormControl.$modalBody.find('form');
+        var action = $form.attr('action');
+        var data = $form.serialize();
+        data += '&' + additionalData;
+        var submitPromise = $.post(action, data).done(modalFormControl.replaceModalContent);
+        if (submitPromiseConsumer) {
+            submitPromiseConsumer(submitPromise, modalFormControl);
+        }
+    };
+
+    modalFormControl.bindListeners();
 }
 
 function DelayedFunctionCall(func, wait) {
