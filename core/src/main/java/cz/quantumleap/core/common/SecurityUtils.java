@@ -2,13 +2,12 @@ package cz.quantumleap.core.common;
 
 import org.apache.commons.lang3.Validate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.codec.Hex;
-import org.springframework.security.crypto.encrypt.Encryptors;
+import org.springframework.security.crypto.util.EncodingUtils;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
+import javax.crypto.*;
+import javax.crypto.spec.GCMParameterSpec;
+import javax.crypto.spec.PBEKeySpec;
+import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.security.*;
 import java.security.spec.InvalidKeySpecException;
@@ -20,6 +19,7 @@ public class SecurityUtils {
 
     private static final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     private static final int PASSWORD_SALT_LENGTH_BYTES = 16;
+    private static final int IV_LENGTH_BYTES = 16;
 
     public static String encodePassword(String password) {
         return passwordEncoder.encode(password);
@@ -31,23 +31,44 @@ public class SecurityUtils {
 
     public static byte[] encryptMessageByPassword(String password, String message) {
         try {
+            SecureRandom secureRandom = SecureRandom.getInstanceStrong();
             byte[] salt = new byte[PASSWORD_SALT_LENGTH_BYTES];
-            SecureRandom.getInstanceStrong().nextBytes(salt);
-            byte[] encrypted = Encryptors.stronger(password, new String(Hex.encode(salt))).encrypt(message.getBytes(StandardCharsets.UTF_8));
-            byte[] encryptedMessage = Arrays.copyOf(salt, salt.length + encrypted.length);
-            System.arraycopy(encrypted, 0, encryptedMessage, salt.length, encrypted.length);
-            return encryptedMessage;
-        } catch (NoSuchAlgorithmException e) {
+            secureRandom.nextBytes(salt);
+            byte[] iv = new byte[IV_LENGTH_BYTES];
+            secureRandom.nextBytes(iv);
+
+            Cipher cipher = createAesCipher(Cipher.ENCRYPT_MODE, salt, iv, password);
+            byte[] encrypted = cipher.doFinal(message.getBytes());
+            return EncodingUtils.concatenate(salt, iv, encrypted);
+        } catch (NoSuchAlgorithmException | InvalidKeyException | InvalidAlgorithmParameterException | NoSuchPaddingException | BadPaddingException | InvalidKeySpecException | IllegalBlockSizeException e) {
             throw new IllegalStateException(e);
         }
     }
 
     public static String decryptMessageByPassword(String password, byte[] encryptedMessage) {
-        Validate.isTrue(encryptedMessage.length > PASSWORD_SALT_LENGTH_BYTES);
-        byte[] salt = Arrays.copyOfRange(encryptedMessage, 0, PASSWORD_SALT_LENGTH_BYTES);
-        byte[] encrypted = Arrays.copyOfRange(encryptedMessage, PASSWORD_SALT_LENGTH_BYTES, encryptedMessage.length);
-        byte[] decrypted = Encryptors.stronger(password, new String(Hex.encode(salt))).decrypt(encrypted);
-        return new String(decrypted, StandardCharsets.UTF_8);
+        try {
+            Validate.isTrue(encryptedMessage.length > PASSWORD_SALT_LENGTH_BYTES);
+            byte[] salt = Arrays.copyOfRange(encryptedMessage, 0, PASSWORD_SALT_LENGTH_BYTES);
+            byte[] iv = Arrays.copyOfRange(encryptedMessage, PASSWORD_SALT_LENGTH_BYTES, PASSWORD_SALT_LENGTH_BYTES + IV_LENGTH_BYTES);
+            byte[] encrypted = Arrays.copyOfRange(encryptedMessage, PASSWORD_SALT_LENGTH_BYTES + IV_LENGTH_BYTES, encryptedMessage.length);
+
+            Cipher cipher = createAesCipher(Cipher.DECRYPT_MODE, salt, iv, password);
+            byte[] decrypted = cipher.doFinal(encrypted);
+            return new String(decrypted, StandardCharsets.UTF_8);
+        } catch (NoSuchAlgorithmException | InvalidKeyException | InvalidAlgorithmParameterException | NoSuchPaddingException | BadPaddingException | InvalidKeySpecException | IllegalBlockSizeException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    private static Cipher createAesCipher(int mode, byte[] salt, byte[] iv, String password) throws InvalidAlgorithmParameterException, InvalidKeyException, InvalidKeySpecException, NoSuchPaddingException, NoSuchAlgorithmException {
+        PBEKeySpec keySpec = new PBEKeySpec(password.toCharArray(), salt, 1024, 256);
+        SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
+        SecretKey secretKey = factory.generateSecret(keySpec);
+        SecretKeySpec secretKeySpec = new SecretKeySpec(secretKey.getEncoded(), "AES");
+
+        Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
+        cipher.init(mode, secretKeySpec, new GCMParameterSpec(128, iv));
+        return cipher;
     }
 
     public static PrivateKey createPrivateKey(byte[] pkcs8EncodedKey) {
