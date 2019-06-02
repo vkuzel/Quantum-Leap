@@ -1,5 +1,6 @@
 package cz.quantumleap.core.security;
 
+import cz.quantumleap.core.security.config.IgnoreCsrfProtectionRequestMatcher;
 import cz.quantumleap.core.security.config.MappingInfoRequestMatcher;
 import cz.quantumleap.core.security.config.SkipLoginPageEntryPointConfigurer;
 import org.springframework.beans.factory.annotation.Value;
@@ -36,6 +37,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .requestMatchers(new MappingInfoRequestMatcher.Builder(handlerMethods).build())
                 .authenticated()
+                .and().csrf().ignoringRequestMatchers(new IgnoreCsrfProtectionRequestMatcher.Builder(handlerMethods).build())
                 .and().oauth2Login().loginPage(loginPageUrl)
                 .and().apply(new SkipLoginPageEntryPointConfigurer<>()) // This prevents configuring default login page in DefaultLoginPageConfigurer.configure()
                 .and().logout().logoutSuccessUrl("/");
