@@ -16,6 +16,10 @@ public class EnumValue {
         this.label = label;
     }
 
+    public static EnumValue fromEnum(Enum enumValue) {
+        return new EnumValue(null, enumValue.name(), null);
+    }
+
     public String getEnumId() {
         return enumId;
     }
@@ -28,7 +32,7 @@ public class EnumValue {
         return id;
     }
 
-    public <T extends java.lang.Enum<T>> T asEnum(Class<T> type) {
+    public <T extends Enum<T>> T asEnum(Class<T> type) {
         return T.valueOf(type, id);
     }
 

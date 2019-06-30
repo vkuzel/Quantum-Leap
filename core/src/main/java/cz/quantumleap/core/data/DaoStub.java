@@ -88,6 +88,10 @@ public class DaoStub<TABLE extends Table<? extends Record>> implements DetailDao
         return listDao.fetchList(sliceRequest, type);
     }
 
+    public <T> List<T> fetchListByCondition(Condition condition, Class<T> type) {
+        return listDao.fetchListByCondition(condition, type);
+    }
+
     @Override
     public TABLE getTable() {
         return lookupDao.getTable();

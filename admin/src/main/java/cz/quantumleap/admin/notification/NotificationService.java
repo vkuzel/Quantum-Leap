@@ -6,6 +6,7 @@ import cz.quantumleap.core.data.transport.Slice;
 import cz.quantumleap.core.data.transport.SliceRequest;
 import cz.quantumleap.core.data.transport.Table;
 import cz.quantumleap.core.data.transport.Table.Column;
+import cz.quantumleap.core.tables.PersonTable;
 import org.apache.commons.lang3.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -76,7 +77,7 @@ public class NotificationService {
     public void resolve(long personId, long id) {
         Notification notification = get(personId, id);
         Validate.isTrue(notification.getResolvedAt() == null);
-        notification.setResolvedBy(Lookup.withoutLabel(personId, "core.person"));
+        notification.setResolvedBy(Lookup.withoutLabel(personId, PersonTable.PERSON));
         notification.setResolvedAt(LocalDateTime.now());
         notificationDao.save(notification);
     }

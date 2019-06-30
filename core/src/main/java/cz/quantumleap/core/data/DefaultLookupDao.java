@@ -91,4 +91,9 @@ public final class DefaultLookupDao<TABLE extends Table<? extends Record>> imple
     public <T> List<T> fetchList(SliceRequest sliceRequest, Class<T> type) {
         return listDao.fetchList(sliceRequest, type);
     }
+
+    @Override
+    public <T> List<T> fetchListByCondition(Condition condition, Class<T> type) {
+        return listDao.fetchListByCondition(condition, type);
+    }
 }

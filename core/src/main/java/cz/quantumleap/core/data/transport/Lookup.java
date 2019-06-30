@@ -1,5 +1,8 @@
 package cz.quantumleap.core.data.transport;
 
+import org.jooq.Name;
+import org.jooq.Table;
+
 public class Lookup {
 
     private Object id;
@@ -15,8 +18,9 @@ public class Lookup {
         this.databaseTableNameWithSchema = databaseTableNameWithSchema;
     }
 
-    public static Lookup withoutLabel(Object id, String databaseTableNameWithSchema) {
-        return new Lookup(id, null, databaseTableNameWithSchema);
+    public static Lookup withoutLabel(Object id, Table table) {
+        Name name = table.getQualifiedName();
+        return new Lookup(id, null, name.toString());
     }
 
     public Object getId() {

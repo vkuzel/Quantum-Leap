@@ -10,6 +10,8 @@ import cz.quantumleap.core.data.transport.Lookup;
 import cz.quantumleap.core.data.transport.Slice;
 import cz.quantumleap.core.data.transport.SliceRequest;
 import cz.quantumleap.core.data.transport.Table;
+import cz.quantumleap.core.tables.PersonTable;
+import cz.quantumleap.core.tables.RoleTable;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.springframework.data.domain.Sort;
@@ -41,7 +43,7 @@ public class NotificationDao extends DaoStub<NotificationTable> {
             notification = new Notification();
             notification.setCode(notificationCode);
             notification.setMessageArguments(messageArguments);
-            notification.setPersonId(Lookup.withoutLabel(personId, "core.person"));
+            notification.setPersonId(Lookup.withoutLabel(personId, PersonTable.PERSON));
             return super.save(notification);
         }
     }
@@ -56,7 +58,7 @@ public class NotificationDao extends DaoStub<NotificationTable> {
             notification = new Notification();
             notification.setCode(notificationCode);
             notification.setMessageArguments(messageArguments);
-            notification.setRoleId(Lookup.withoutLabel(roleId, "core.role"));
+            notification.setRoleId(Lookup.withoutLabel(roleId, RoleTable.ROLE));
             return super.save(notification);
         }
     }
