@@ -3,7 +3,7 @@ package cz.quantumleap.core.session;
 import cz.quantumleap.core.security.AuthenticationEmailResolver;
 import cz.quantumleap.core.session.transport.SessionDetail;
 import org.apache.commons.lang3.Validate;
-import org.springframework.boot.autoconfigure.session.SessionProperties;
+import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.Authentication;
@@ -18,7 +18,7 @@ import java.time.Duration;
 import java.util.*;
 
 @Repository
-@EnableConfigurationProperties(SessionProperties.class)
+@EnableConfigurationProperties(ServerProperties.class)
 public class SessionDao implements SessionRepository<MapSession> {
 
     public static final String EMAIL_ATTRIBUTE = "EMAIL";
@@ -29,11 +29,12 @@ public class SessionDao implements SessionRepository<MapSession> {
     private final MapSessionRepository repository;
     private final AuthenticationEmailResolver authenticationEmailResolver = new AuthenticationEmailResolver();
 
-    public SessionDao(SessionProperties sessionProperties) {
+    public SessionDao(ServerProperties serverProperties) {
         this.sessionMap = new HashMap<>();
         this.repository = new MapSessionRepository(sessionMap);
-        if (sessionProperties.getTimeout() != null) {
-            this.repository.setDefaultMaxInactiveInterval((int) sessionProperties.getTimeout().getSeconds());
+        Duration sessionTimeout = serverProperties.getServlet().getSession().getTimeout();
+        if (sessionTimeout != null) {
+            this.repository.setDefaultMaxInactiveInterval((int) sessionTimeout.getSeconds());
         }
     }
 
