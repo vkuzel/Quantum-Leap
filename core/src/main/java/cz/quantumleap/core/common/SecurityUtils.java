@@ -31,7 +31,10 @@ public class SecurityUtils {
 
     public static byte[] encryptMessageByPassword(String password, String message) {
         try {
-            SecureRandom secureRandom = SecureRandom.getInstanceStrong();
+            // SecureRandom.getInstanceStrong() hangs on a machines with too
+            // little entropy as generator waits for entropy to initialize.
+            // This can lead (and often leads) to request timeouts, etc.
+            SecureRandom secureRandom = new SecureRandom();
             byte[] salt = new byte[PASSWORD_SALT_LENGTH_BYTES];
             secureRandom.nextBytes(salt);
             byte[] iv = new byte[IV_LENGTH_BYTES];
