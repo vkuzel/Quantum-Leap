@@ -64,13 +64,13 @@ public class DaoStub<TABLE extends Table<? extends Record>> implements DetailDao
     }
 
     @Override
-    public void deleteById(Object id) {
-        detailDao.deleteById(id);
+    public int deleteById(Object id) {
+        return detailDao.deleteById(id);
     }
 
     @Override
-    public void deleteByCondition(Condition condition) {
-        detailDao.deleteByCondition(condition);
+    public int deleteByCondition(Condition condition) {
+        return detailDao.deleteByCondition(condition);
     }
 
     @Override

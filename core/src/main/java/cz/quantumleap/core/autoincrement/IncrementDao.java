@@ -59,13 +59,13 @@ public class IncrementDao implements DetailDao<IncrementTable> {
     }
 
     @Override
-    public void deleteById(Object id) {
-        detailDao.deleteById(id);
+    public int deleteById(Object id) {
+        return detailDao.deleteById(id);
     }
 
     @Override
-    public void deleteByCondition(Condition condition) {
-        detailDao.deleteByCondition(condition);
+    public int deleteByCondition(Condition condition) {
+        return detailDao.deleteByCondition(condition);
     }
 
     @Override

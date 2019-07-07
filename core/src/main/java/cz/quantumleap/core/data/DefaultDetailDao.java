@@ -90,14 +90,14 @@ public final class DefaultDetailDao<TABLE extends Table<? extends Record>> imple
     }
 
     @Override
-    public void deleteById(Object id) {
+    public int deleteById(Object id) {
         Condition condition = primaryKeyConditionBuilder.buildFromId(id);
-        deleteByCondition(condition);
+        return deleteByCondition(condition);
     }
 
     @Override
-    public void deleteByCondition(Condition condition) {
-        dslContext.delete(table)
+    public int deleteByCondition(Condition condition) {
+        return dslContext.delete(table)
                 .where(condition)
                 .execute();
     }
