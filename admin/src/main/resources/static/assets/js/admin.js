@@ -419,6 +419,7 @@ function ModalFormControl(modalSelector, openModalButtonsSelector, submitPromise
         $modal: $modal,
         $modalBody: $modal.find('.modal-body'),
         $openModalButtons: $(openModalButtonsSelector),
+        $modalForm: $(),
         $submitModalButtons: $()
     };
 
@@ -427,6 +428,8 @@ function ModalFormControl(modalSelector, openModalButtonsSelector, submitPromise
         this.$openModalButtons.on('click', this.onOpenModalButtonClick);
         this.$submitModalButtons.off('click', this.onSubmitModalButtonClick);
         this.$submitModalButtons.on('click', this.onSubmitModalButtonClick);
+        this.$modalBody.find('form').off('submit', this.onSubmitModal);
+        this.$modalBody.find('form').on('submit', this.onSubmitModal);
     };
 
     modalFormControl.onOpenModalButtonClick = function (event) {
@@ -445,11 +448,17 @@ function ModalFormControl(modalSelector, openModalButtonsSelector, submitPromise
         modalFormControl.submitModal(additionalData);
     };
 
+    modalFormControl.onSubmitModal = function (event) {
+        event.preventDefault();
+        modalFormControl.submitModal();
+    };
+
     modalFormControl.replaceModalContent = function (html) {
         var $modalBodyReplacement = $(html);
 
         modalFormControl.$modalBody.replaceWith($modalBodyReplacement);
         modalFormControl.$modalBody = $modalBodyReplacement;
+        modalFormControl.$modalForm = modalFormControl.$modal.find('form');
         modalFormControl.$submitModalButtons = modalFormControl.$modal.find('input[type="submit"],button[type="submit"]');
 
         modalFormControl.bindListeners();
@@ -464,10 +473,12 @@ function ModalFormControl(modalSelector, openModalButtonsSelector, submitPromise
     };
 
     modalFormControl.submitModal = function (additionalData) {
-        var $form = modalFormControl.$modalBody.find('form');
+        var $form = modalFormControl.$modalForm;
         var action = $form.attr('action');
         var data = $form.serialize();
-        data += '&' + additionalData;
+        if (additionalData) {
+            data += '&' + additionalData;
+        }
         var submitPromise = $.post(action, data).done(modalFormControl.replaceModalContent);
         if (submitPromiseConsumer) {
             submitPromiseConsumer(submitPromise, modalFormControl);
