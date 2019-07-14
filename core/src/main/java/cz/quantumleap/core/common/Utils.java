@@ -51,7 +51,7 @@ public class Utils {
         return condition;
     }
 
-    public static Condition joinConditions(ConditionOperator operator,  Condition... conditions) {
+    public static Condition joinConditions(ConditionOperator operator, Condition... conditions) {
         Condition condition = null;
         for (Condition cond : conditions) {
             if (cond == null) {
@@ -95,11 +95,47 @@ public class Utils {
         List<Object> bindings = new ArrayList<>(params.length);
         for (Object param : params) {
             if (param instanceof Collection) {
-                bindings.addAll((Collection)param);
+                bindings.addAll((Collection) param);
             } else {
                 bindings.add(param);
             }
         }
         return bindings.toArray();
+    }
+
+    /**
+     * Null is more than any value.
+     */
+    @SafeVarargs
+    public static <T extends Comparable<? super T>> T min(T... items) {
+        T min = null;
+        for (T item : items) {
+            if (item != null) {
+                if (min == null) {
+                    min = item;
+                } else if (item.compareTo(min) < 0) {
+                    min = item;
+                }
+            }
+        }
+        return min;
+    }
+
+    /**
+     * Null is less than any value.
+     */
+    @SafeVarargs
+    public static <T extends Comparable<? super T>> T max(T... items) {
+        T max = null;
+        for (T item : items) {
+            if (item != null) {
+                if (max == null) {
+                    max = item;
+                } else if (item.compareTo(max) > 0) {
+                    max = item;
+                }
+            }
+        }
+        return max;
     }
 }
