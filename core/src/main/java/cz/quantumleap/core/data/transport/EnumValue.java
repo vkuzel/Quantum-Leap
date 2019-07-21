@@ -20,6 +20,10 @@ public class EnumValue {
         return new EnumValue(null, enumValue.name(), null);
     }
 
+    public boolean isEmpty() {
+        return id == null;
+    }
+
     public String getEnumId() {
         return enumId;
     }

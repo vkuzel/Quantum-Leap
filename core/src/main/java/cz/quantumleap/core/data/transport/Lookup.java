@@ -23,6 +23,10 @@ public class Lookup {
         return new Lookup(id, null, name.toString());
     }
 
+    public boolean isEmpty() {
+        return id == null;
+    }
+
     public Object getId() {
         return id;
     }
