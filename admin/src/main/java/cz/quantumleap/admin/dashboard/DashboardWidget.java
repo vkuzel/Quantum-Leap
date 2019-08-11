@@ -13,7 +13,7 @@ public interface DashboardWidget<MODEL> {
 
     String getThymeleafFragmentExpression();
 
-    ModelAttribute<MODEL> getModelModelAttribute();
+    ModelAttribute<MODEL> getModelAttribute();
 
     class ModelAttribute<MODEL> {
 

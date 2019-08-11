@@ -41,8 +41,8 @@ CREATE TABLE core.enum (
 );
 
 CREATE TABLE core.enum_value (
-  id      VARCHAR(255) NOT NULL PRIMARY KEY,
+  id      VARCHAR(255) NOT NULL,
   enum_id VARCHAR(255) NOT NULL REFERENCES core.enum,
   label   VARCHAR(255) NOT NULL,
-  UNIQUE (id, enum_id)
+  PRIMARY KEY (id, enum_id)
 );

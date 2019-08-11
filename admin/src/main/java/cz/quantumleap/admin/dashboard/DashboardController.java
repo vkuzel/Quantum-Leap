@@ -33,7 +33,7 @@ public class DashboardController extends AdminController {
     public String dashboard(Model model) {
         model.addAttribute("dashboardWidgets", dashboardWidgets);
         for (DashboardWidget widget : dashboardWidgets.values()) {
-            DashboardWidget.ModelAttribute modelAttribute = widget.getModelModelAttribute();
+            DashboardWidget.ModelAttribute modelAttribute = widget.getModelAttribute();
             if (model.containsAttribute(modelAttribute.getName())) {
                 throw new IllegalStateException("Dashboard widget model attribute " + modelAttribute.getName() + " is specified twice!");
             }
