@@ -1,9 +1,11 @@
 package cz.quantumleap.admin.dashboard;
 
+import java.util.Map;
+
 /**
  * To order the widgets within a position group, use an @Order annotation.
  */
-public interface DashboardWidget<MODEL> {
+public interface DashboardWidget {
 
     enum Position {
         TOP, LEFT, RIGHT, BOTTOM
@@ -13,24 +15,5 @@ public interface DashboardWidget<MODEL> {
 
     String getThymeleafFragmentExpression();
 
-    ModelAttribute<MODEL> getModelAttribute();
-
-    class ModelAttribute<MODEL> {
-
-        private final String name;
-        private final MODEL value;
-
-        public ModelAttribute(String name, MODEL value) {
-            this.name = name;
-            this.value = value;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public MODEL getValue() {
-            return value;
-        }
-    }
+    Map<String, Object> getModelAttributes();
 }

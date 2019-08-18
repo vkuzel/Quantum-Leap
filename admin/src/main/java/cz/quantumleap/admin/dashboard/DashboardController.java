@@ -33,11 +33,12 @@ public class DashboardController extends AdminController {
     public String dashboard(Model model) {
         model.addAttribute("dashboardWidgets", dashboardWidgets);
         for (DashboardWidget widget : dashboardWidgets.values()) {
-            DashboardWidget.ModelAttribute modelAttribute = widget.getModelAttribute();
-            if (model.containsAttribute(modelAttribute.getName())) {
-                throw new IllegalStateException("Dashboard widget model attribute " + modelAttribute.getName() + " is specified twice!");
-            }
-            model.addAttribute(modelAttribute.getName(), modelAttribute.getValue());
+            widget.getModelAttributes().forEach((attributeName, attributeValue) -> {
+                if (model.containsAttribute(attributeName)) {
+                    throw new IllegalStateException("Dashboard widget model attribute " + attributeName + " is specified twice!");
+                }
+                model.addAttribute(attributeName, attributeValue);
+            });
         }
         return "admin/dashboard";
     }
