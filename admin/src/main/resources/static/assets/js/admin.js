@@ -98,9 +98,13 @@ function TableControl(tableSelector, tBodyListenersBinder) {
 
     tableControl.fetchMore = function () {
         var offset = tableControl.$tBody.find('tr').length;
-        var url = UrlUtils.removeQueryParams(this.href, qualifyParamName(tableControl.qualifier, 'size'), qualifyParamName(tableControl.qualifier, 'offset'));
+        var offsetParamName = qualifyParamName(tableControl.qualifier, 'offset');
 
-        $.get(url, {offset: offset}, tableControl.appendContent);
+        var url = UrlUtils.removeQueryParams(this.href, qualifyParamName(tableControl.qualifier, 'size'), offsetParamName);
+        var data = {};
+        data[offsetParamName] = offset;
+
+        $.get(url, data, tableControl.appendContent);
 
         return false;
     };
@@ -116,9 +120,13 @@ function TableControl(tableSelector, tBodyListenersBinder) {
 
     tableControl.sort = function () {
         var size = tableControl.$tBody.find('tr').length;
-        var url = UrlUtils.removeQueryParams(this.href, qualifyParamName(tableControl.qualifier, 'size'), qualifyParamName(tableControl.qualifier, 'offset'));
+        var sizeParamName = qualifyParamName(tableControl.qualifier, 'size');
 
-        $.get(url, {size: size}, tableControl.replaceContent);
+        var url = UrlUtils.removeQueryParams(this.href, sizeParamName, qualifyParamName(tableControl.qualifier, 'offset'));
+        var data = {};
+        data[sizeParamName] = size;
+
+        $.get(url, data, tableControl.replaceContent);
 
         return false;
     };
