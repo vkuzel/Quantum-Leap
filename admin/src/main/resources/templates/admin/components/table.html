@@ -30,13 +30,13 @@
     </thead>
     <tbody>
     <tr th:each="row : ${tableSlice}">
-        <td th:each="column : ${tableSlice.getColumns()}" th:classappend="${column.primaryKey} ? 'primary-key'" th:switch="${column.type}">
-            <a th:if="${column.primaryKey}" th:href="@{|${detailUrl}/${row.get(column)}|}" th:text="${{row.get(column)}}">id</a>
+        <td th:each="column : ${tableSlice.getColumns()}" th:with="primaryKey=${column.primaryKey && !#strings.isEmpty(detailUrl)}" th:classappend="${primaryKey} ? 'primary-key'" th:switch="${column.type}">
+            <a th:if="${primaryKey}" th:href="@{|${detailUrl}/${row.get(column)}|}" th:text="${{row.get(column)}}">id</a>
             <span th:case="${T(cz.quantumleap.core.data.transport.EnumValue)}" th:text="${{row.get(column).label}}">Enum value</span>
             <span th:case="${T(cz.quantumleap.core.data.transport.Set)}"><span th:each="value : ${row.get(column).values}" th:text="${{value.label}}">Set item</span></span>
             <a th:case="${T(cz.quantumleap.core.data.transport.Lookup)}" th:if="${!#strings.isEmpty(row.get(column).id)}" th:with="detailUrl=${@lookupControllerManager.getControllerForTable(row.get(column).databaseTableNameWithSchema).getDetailUrl()}"
                   th:href="|${detailUrl}/${row.get(column).id}|" th:text="${{row.get(column).label}}">Lookup</a>
-            <span th:case="*" th:if="${!column.primaryKey && cellTemplate__${column.name}__ == null}" th:text="${{row.get(column)}}" th:remove="tag">Standard column</span>
+            <span th:case="*" th:if="${!primaryKey && cellTemplate__${column.name}__ == null}" th:text="${{row.get(column)}}" th:remove="tag">Standard column</span>
             <span th:replace="${__|cellTemplate${column.name}|__} ?: ~{}">Custom column</span>
         </td>
     </tr>
