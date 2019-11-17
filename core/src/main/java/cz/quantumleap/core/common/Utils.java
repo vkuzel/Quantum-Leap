@@ -104,7 +104,7 @@ public class Utils {
     }
 
     /**
-     * Null is more than any value.
+     * Null is more than any other value.
      */
     @SafeVarargs
     public static <T extends Comparable<? super T>> T min(T... items) {
@@ -122,7 +122,7 @@ public class Utils {
     }
 
     /**
-     * Null is less than any value.
+     * Null is less than any other value.
      */
     @SafeVarargs
     public static <T extends Comparable<? super T>> T max(T... items) {
