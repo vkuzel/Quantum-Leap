@@ -64,6 +64,11 @@ public class DaoStub<TABLE extends Table<? extends Record>> implements DetailDao
     }
 
     @Override
+    public <T> List<T> saveAll(List<T> details) {
+        return detailDao.saveAll(details);
+    }
+
+    @Override
     public int deleteById(Object id) {
         return detailDao.deleteById(id);
     }

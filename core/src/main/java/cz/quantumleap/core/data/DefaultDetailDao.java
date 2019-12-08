@@ -39,19 +39,43 @@ public final class DefaultDetailDao<TABLE extends Table<? extends Record>> imple
     @Override
     public <T> T save(T detail) {
         Validate.notNull(detail);
+        return saveAll(Collections.singletonList(detail)).get(0);
+    }
 
-        Class<T> transportType = (Class<T>) detail.getClass();
-
-        Record record = mapperFactory
-                .createTransportUnMapper(transportType)
-                .unMap(detail, dslContext.newRecord(table));
-
-        Condition condition = primaryKeyConditionBuilder.buildFromRecord(record);
-        if (condition != null) {
-            return update(record, condition, transportType);
-        } else {
-            return insert(record, transportType);
+    @Override
+    public <T> List<T> saveAll(List<T> details) {
+        if (details.isEmpty()) {
+            return Collections.emptyList();
         }
+
+        Class<T> detailType = (Class<T>) details.get(0).getClass();
+        List<Record> records = new ArrayList<>(details.size());
+
+        for (T detail : details) {
+            Record record = mapperFactory
+                    .createTransportUnMapper(detailType)
+                    .unMap(detail, dslContext.newRecord(table));
+            records.add(record);
+        }
+
+        return saveRecords(records, detailType);
+    }
+
+    private <T> List<T> saveRecords(List<Record> records, Class<T> detailType) {
+        List<T> results = new ArrayList<>(records.size());
+
+        // TODO Implement bulk insert using https://www.jooq.org/doc/3.12/manual/sql-building/sql-statements/insert-statement/insert-values/
+        // TODO Preserve order.
+        for (Record record : records) {
+            Condition condition = primaryKeyConditionBuilder.buildFromRecord(record);
+            if (condition != null) {
+                results.add(update(record, condition, detailType));
+            } else {
+                results.add(insert(record, detailType));
+            }
+        }
+
+        return results;
     }
 
     private <T> T insert(Record record, Class<T> resultType) {
@@ -102,6 +126,7 @@ public final class DefaultDetailDao<TABLE extends Table<? extends Record>> imple
                 .execute();
     }
 
+    @Override
     public <T> List<T> saveDetailsAssociatedBy(TableField foreignKey, Object foreignId, Collection<T> details, Class<T> detailType) {
         MapperFactory.TransportUnMapper<T> unMapper = mapperFactory.createTransportUnMapper(detailType);
         Field<Object> primaryKeyField = primaryKeyConditionBuilder.getPrimaryKeyField();
@@ -121,14 +146,8 @@ public final class DefaultDetailDao<TABLE extends Table<? extends Record>> imple
                 .where(foreignKey.eq(foreignId).andNot(primaryKeyField.in(ids)))
                 .execute();
 
-        for (Record record : records) {
-            Condition condition = primaryKeyConditionBuilder.buildFromRecord(record);
-            if (condition != null) {
-                result.add(update(record, condition, detailType));
-            } else {
-                result.add(insert(record, detailType));
-            }
-        }
+
+        saveRecords(records, detailType);
 
         return result;
     }

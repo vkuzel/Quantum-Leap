@@ -59,6 +59,11 @@ public class IncrementDao implements DetailDao<IncrementTable> {
     }
 
     @Override
+    public <T> List<T> saveAll(List<T> details) {
+        return detailDao.saveAll(details);
+    }
+
+    @Override
     public int deleteById(Object id) {
         return detailDao.deleteById(id);
     }
