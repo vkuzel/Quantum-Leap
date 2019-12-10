@@ -133,7 +133,6 @@ public final class DefaultDetailDao<TABLE extends Table<? extends Record>> imple
 
         List<Record> records = new ArrayList<>(details.size());
         Set<Object> ids = new HashSet<>(details.size());
-        List<T> result = new ArrayList<>(details.size());
 
         for (T detail : details) {
             Record record = unMapper.unMap(detail, dslContext.newRecord(table));
@@ -146,9 +145,6 @@ public final class DefaultDetailDao<TABLE extends Table<? extends Record>> imple
                 .where(foreignKey.eq(foreignId).andNot(primaryKeyField.in(ids)))
                 .execute();
 
-
-        saveRecords(records, detailType);
-
-        return result;
+        return saveRecords(records, detailType);
     }
 }
