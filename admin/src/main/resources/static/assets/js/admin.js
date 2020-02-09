@@ -425,9 +425,7 @@ function ModalFormControl(modalSelector, openModalButtonsSelector, submitPromise
 
     var modalFormControl = {
         $modal: $modal,
-        $modalBody: $modal.find('.modal-body'),
         $openModalButtons: $(openModalButtonsSelector),
-        $modalForm: $(),
         $submitModalButtons: $()
     };
 
@@ -436,8 +434,8 @@ function ModalFormControl(modalSelector, openModalButtonsSelector, submitPromise
         this.$openModalButtons.on('click', this.onOpenModalButtonClick);
         this.$submitModalButtons.off('click', this.onSubmitModalButtonClick);
         this.$submitModalButtons.on('click', this.onSubmitModalButtonClick);
-        this.$modalBody.find('form').off('submit', this.onSubmitModal);
-        this.$modalBody.find('form').on('submit', this.onSubmitModal);
+        this.$modal.find('.modal-body form').off('submit', this.onSubmitModal);
+        this.$modal.find('.modal-body form').on('submit', this.onSubmitModal);
     };
 
     modalFormControl.onOpenModalButtonClick = function (event) {
@@ -463,14 +461,12 @@ function ModalFormControl(modalSelector, openModalButtonsSelector, submitPromise
 
     modalFormControl.replaceModalContent = function (html) {
         var $modalBodyReplacement = $(html);
+        var $modalBody = modalFormControl.$modal.find('.modal-body');
 
-        modalFormControl.$modalBody.replaceWith($modalBodyReplacement);
-        modalFormControl.$modalBody = $modalBodyReplacement;
-        modalFormControl.$modalForm = modalFormControl.$modal.find('form');
+        $modalBody.replaceWith($modalBodyReplacement);
         modalFormControl.$submitModalButtons = modalFormControl.$modal.find('input[type="submit"],button[type="submit"]');
-
         modalFormControl.bindListeners();
-        modalFormControl.$modalBody.find('form div.lookup').each(function (i, lookupField) {
+        $modalBodyReplacement.find('form div.lookup').each(function (i, lookupField) {
             LookupControl(lookupField);
         });
     };
@@ -481,7 +477,7 @@ function ModalFormControl(modalSelector, openModalButtonsSelector, submitPromise
     };
 
     modalFormControl.submitModal = function (additionalData) {
-        var $form = modalFormControl.$modalForm;
+        var $form = modalFormControl.$modal.find('form');
         var action = $form.attr('action');
         var data = $form.serialize();
         if (additionalData) {
