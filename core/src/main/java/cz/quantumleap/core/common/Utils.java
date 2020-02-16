@@ -15,11 +15,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Utils {
 
     public enum ConditionOperator {AND, OR}
 
+    private static final Pattern SQL_REGEXP_SPECIAL_CHARACTERS_PATTERN = Pattern.compile("[!$()*+.:<=>?\\\\\\[\\]^{|}\\-]");
     private static final String AJAX_HEADER_NAME = "X-Requested-With";
     private static final String AJAX_HEADER_VALUE = "XMLHttpRequest";
 
@@ -42,10 +45,10 @@ public class Utils {
         }
 
         Condition condition = null;
-        String binding = Utils.escapeSqlLikeBinding(word, '!');
+        String pattern = "(^|[^a-z0-9])" + escapeSqlRegexpBinding(word);
 
         for (TableField<?, String> field : fields) {
-            condition = joinConditions(ConditionOperator.OR, condition, field.likeIgnoreCase(word + "%", '!'), field.likeIgnoreCase("% " + binding + "%", '!'));
+            condition = joinConditions(ConditionOperator.OR, condition, DSL.condition("{0} ~* {1}", field, pattern));
         }
 
         return condition;
@@ -85,6 +88,15 @@ public class Utils {
                 .replace(escapeString, escapeString + escapeString)
                 .replace("%", escapeChar + "%")
                 .replace("_", escapeChar + "_");
+    }
+
+    public static String escapeSqlRegexpBinding(String binding) {
+        if (StringUtils.isBlank(binding)) {
+            return binding;
+        }
+
+        Matcher matcher = SQL_REGEXP_SPECIAL_CHARACTERS_PATTERN.matcher(binding);
+        return matcher.replaceAll("\\\\$0");
     }
 
     public static String generateSqlBindingPlaceholders(Collection<?> collection) {
