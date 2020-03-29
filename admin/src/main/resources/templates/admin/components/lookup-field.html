@@ -5,16 +5,16 @@
 <body>
 <!--/*
     Template params:
-        databaseTableNameWithSchema ... Used to identify the lookup and to get controller from LookupControllerManager.
+        entityIdentifier ... Used to identify the lookup and to get controller from LookupControllerManager.
         fieldName ... Name of input field.
         fieldId ... Id of input field.
         field ... Field of type Lookup.
         modalTitle ... Title of lookup modal window.
         queryPrefix ... Prefix prepend to every filter query (optional)
 */-->
-<div th:fragment="lookup(databaseTableNameWithSchema, fieldName, fieldId, field, modalTitle)" th:assert="${field}" class="lookup dropdown">
+<div th:fragment="lookup(entityIdentifier, fieldName, fieldId, field, modalTitle)" th:assert="${field}" class="lookup dropdown">
     <input type="hidden" th:assert="${fieldName}" th:name="${fieldName}" th:value="${@jacksonObjectMapper.writeValueAsString(field)}">
-    <div class="input-group" th:with="lookupController=${@lookupControllerManager.getControllerForTable(databaseTableNameWithSchema)}">
+    <div class="input-group" th:with="lookupController=${@lookupControllerManager.getControllerForEntityIdentifier(entityIdentifier)}">
         <input type="text" th:assert="${fieldId}" th:id="${fieldId}" th:value="${field.label}" class="form-control"
                th:classappend="${#fields.hasErrors('__${fieldName}__')}? 'is-invalid'"
                th:data-lookup-labels-url="@{${lookupController.getLookupLabelsUrl()}}"

@@ -28,11 +28,11 @@ CREATE TABLE core.person_role (
 );
 
 CREATE TABLE core.table_preferences (
-  id                              BIGSERIAL PRIMARY KEY,
-  database_table_name_with_schema VARCHAR(128) NOT NULL,
-  is_default                      BOOLEAN      NOT NULL,
-  enabled_columns                 VARCHAR []   NOT NULL DEFAULT '{}',
-  UNIQUE (database_table_name_with_schema, is_default)
+  id                BIGSERIAL PRIMARY KEY,
+  entity_identifier VARCHAR(128) NOT NULL,
+  is_default        BOOLEAN      NOT NULL,
+  enabled_columns   VARCHAR[]    NOT NULL DEFAULT '{}',
+  UNIQUE (entity_identifier, is_default)
 );
 
 CREATE TABLE core.enum (

@@ -1,5 +1,6 @@
 package cz.quantumleap.core.data.transport;
 
+import cz.quantumleap.core.data.entity.EntityIdentifier;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.data.domain.Sort;
 
@@ -12,24 +13,24 @@ import java.util.stream.Collectors;
 
 public class Table<ROW> implements Iterable<ROW> {
 
-    private final String databaseTableNameWithSchema;
+    private final EntityIdentifier entityIdentifier;
     private final List<Column> columns;
     private final List<ROW> rows;
     private final TablePreferences tablePreferences;
 
-    public Table(String databaseTableNameWithSchema, List<Column> columns, List<ROW> rows, TablePreferences tablePreferences) {
-        this.databaseTableNameWithSchema = databaseTableNameWithSchema;
+    public Table(EntityIdentifier entityIdentifier, List<Column> columns, List<ROW> rows, TablePreferences tablePreferences) {
+        this.entityIdentifier = entityIdentifier;
         this.columns = columns;
         this.rows = rows;
         this.tablePreferences = tablePreferences;
     }
 
     public Builder<ROW> createBuilder() {
-        return new Builder<>(databaseTableNameWithSchema, columns, rows, tablePreferences);
+        return new Builder<>(entityIdentifier, columns, rows, tablePreferences);
     }
 
-    public String getDatabaseTableNameWithSchema() {
-        return databaseTableNameWithSchema;
+    public EntityIdentifier getEntityIdentifier() {
+        return entityIdentifier;
     }
 
     public List<Column> getColumns() {
@@ -123,15 +124,15 @@ public class Table<ROW> implements Iterable<ROW> {
 
     public static class LookupColumn extends Column {
 
-        private final String databaseTableNameWithSchema;
+        private final EntityIdentifier entityIdentifier;
 
-        public LookupColumn(String name, Sort.Order order, String databaseTableNameWithSchema) {
+        public LookupColumn(String name, Sort.Order order, EntityIdentifier entityIdentifier) {
             super(Lookup.class, name, false, order);
-            this.databaseTableNameWithSchema = databaseTableNameWithSchema;
+            this.entityIdentifier = entityIdentifier;
         }
 
-        public String getDatabaseTableNameWithSchema() {
-            return databaseTableNameWithSchema;
+        public EntityIdentifier getEntityIdentifier() {
+            return entityIdentifier;
         }
     }
 
@@ -165,13 +166,13 @@ public class Table<ROW> implements Iterable<ROW> {
 
     public static class Builder<ROW> {
 
-        private String databaseTableNameWithSchema;
+        private EntityIdentifier entityIdentifier;
         private List<Column> columns;
         private List<ROW> rows;
         private TablePreferences tablePreferences;
 
-        public Builder(String databaseTableNameWithSchema, List<Column> columns, List<ROW> rows, TablePreferences tablePreferences) {
-            this.databaseTableNameWithSchema = databaseTableNameWithSchema;
+        public Builder(EntityIdentifier entityIdentifier, List<Column> columns, List<ROW> rows, TablePreferences tablePreferences) {
+            this.entityIdentifier = entityIdentifier;
             this.columns = new ArrayList<>(columns);
             this.rows = new ArrayList<>(rows);
             this.tablePreferences = tablePreferences;
@@ -187,7 +188,7 @@ public class Table<ROW> implements Iterable<ROW> {
 
         public Table<ROW> build() {
             return new Table<>(
-                    databaseTableNameWithSchema,
+                    entityIdentifier,
                     columns,
                     rows,
                     tablePreferences

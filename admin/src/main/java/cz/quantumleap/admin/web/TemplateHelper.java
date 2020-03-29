@@ -5,20 +5,20 @@ import cz.quantumleap.core.web.controllerargument.SliceRequestControllerArgument
 
 public class TemplateHelper {
 
-    public static TemplateTable createTemplateTable(String qualifier, String databaseTableNameWithSchema, Slice tableSlice, String detailUrl) {
-        return new TemplateTable(qualifier, databaseTableNameWithSchema, tableSlice, detailUrl);
+    public static TemplateTable createTemplateTable(String qualifier, String entityIdentifier, Slice tableSlice, String detailUrl) {
+        return new TemplateTable(qualifier, entityIdentifier, tableSlice, detailUrl);
     }
 
     public static class TemplateTable {
 
         private final String qualifier;
-        private final String databaseTableNameWithSchema;
+        private final String entityIdentifier;
         private final Slice tableSlice;
         private final String detailUrl;
 
-        public TemplateTable(String qualifier, String databaseTableNameWithSchema, Slice tableSlice, String detailUrl) {
+        public TemplateTable(String qualifier, String entityIdentifier, Slice tableSlice, String detailUrl) {
             this.qualifier = qualifier;
-            this.databaseTableNameWithSchema = databaseTableNameWithSchema;
+            this.entityIdentifier = entityIdentifier;
             this.tableSlice = tableSlice;
             this.detailUrl = detailUrl;
         }

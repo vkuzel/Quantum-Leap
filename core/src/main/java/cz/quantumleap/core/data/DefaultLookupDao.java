@@ -1,8 +1,7 @@
 package cz.quantumleap.core.data;
 
-import cz.quantumleap.core.data.list.FilterBuilder;
-import cz.quantumleap.core.data.list.SortingBuilder;
-import cz.quantumleap.core.data.primarykey.PrimaryKeyConditionBuilder;
+import cz.quantumleap.core.data.entity.Entity;
+import cz.quantumleap.core.data.entity.EntityIdentifier;
 import cz.quantumleap.core.data.transport.Slice;
 import cz.quantumleap.core.data.transport.SliceRequest;
 import cz.quantumleap.core.data.transport.Table.Column;
@@ -18,50 +17,39 @@ public final class DefaultLookupDao<TABLE extends Table<? extends Record>> imple
 
     private static final int MAX_FILTERED_ROWS = 10;
 
-    private final TABLE table;
-    private final Field<String> labelField;
+    private final Entity<TABLE> entity;
     private final DSLContext dslContext;
-
-    private final PrimaryKeyConditionBuilder primaryKeyConditionBuilder;
-    private final FilterBuilder filterBuilder;
-    private final SortingBuilder sortingBuilder;
-
     private final ListDao<TABLE> listDao;
 
-    public DefaultLookupDao(TABLE table, Field<String> labelField, DSLContext dslContext, PrimaryKeyConditionBuilder primaryKeyConditionBuilder, FilterBuilder filterBuilder, SortingBuilder sortingBuilder, ListDao<TABLE> listDao) {
-        this.table = table;
-        this.labelField = labelField;
+    public DefaultLookupDao(Entity<TABLE> entity, DSLContext dslContext, ListDao<TABLE> listDao) {
+        this.entity = entity;
         this.dslContext = dslContext;
-
-        this.primaryKeyConditionBuilder = primaryKeyConditionBuilder;
-        this.filterBuilder = filterBuilder;
-        this.sortingBuilder = sortingBuilder;
-
         this.listDao = listDao;
     }
 
-    public TABLE getTable() {
-        return table;
+    @Override
+    public EntityIdentifier getEntityIdentifier() {
+        return entity.getIdentifier();
     }
 
     public String fetchLabelById(Object id) {
-        Condition condition = primaryKeyConditionBuilder.buildFromId(id);
+        Condition condition = entity.getPrimaryKeyConditionBuilder().buildFromId(id);
 
-        return dslContext.select(labelField)
-                .from(table)
+        return dslContext.select(entity.getLookupLabelField())
+                .from(getTable())
                 .where(condition)
-                .orderBy(sortingBuilder.buildForLookup())
+                .orderBy(entity.getSortingBuilder().buildForLookup())
                 .fetchOneInto(String.class);
     }
 
     public Map<Object, String> fetchLabelsById(Set<Object> ids) {
-        Field<Object> primaryKey = primaryKeyConditionBuilder.getPrimaryKeyField();
-        Condition condition = primaryKeyConditionBuilder.buildFromIds(ids);
+        Field<Object> primaryKey = entity.getPrimaryKeyConditionBuilder().getPrimaryKeyField();
+        Condition condition = entity.getPrimaryKeyConditionBuilder().buildFromIds(ids);
 
-        return dslContext.select(primaryKey, labelField)
-                .from(table)
+        return dslContext.select(primaryKey, entity.getLookupLabelField())
+                .from(getTable())
                 .where(condition)
-                .orderBy(sortingBuilder.buildForLookup())
+                .orderBy(entity.getSortingBuilder().buildForLookup())
                 .fetchMap(Record2::value1, Record2::value2);
     }
 
@@ -71,13 +59,13 @@ public final class DefaultLookupDao<TABLE extends Table<? extends Record>> imple
             return Collections.emptyMap();
         }
 
-        Field<Object> primaryKey = primaryKeyConditionBuilder.getPrimaryKeyField();
-        Condition condition = filterBuilder.buildForQuery(query);
+        Field<Object> primaryKey = entity.getPrimaryKeyConditionBuilder().getPrimaryKeyField();
+        Condition condition = entity.getFilterBuilder().buildForQuery(query);
 
-        return dslContext.select(primaryKey, labelField)
-                .from(table)
+        return dslContext.select(primaryKey, entity.getLookupLabelField())
+                .from(getTable())
                 .where(condition)
-                .orderBy(sortingBuilder.buildForLookup())
+                .orderBy(entity.getSortingBuilder().buildForLookup())
                 .limit(MAX_FILTERED_ROWS)
                 .fetchMap(Record2::value1, Record2::value2);
     }
@@ -95,5 +83,9 @@ public final class DefaultLookupDao<TABLE extends Table<? extends Record>> imple
     @Override
     public <T> List<T> fetchListByCondition(Condition condition, Class<T> type) {
         return listDao.fetchListByCondition(condition, type);
+    }
+
+    private Table<? extends Record> getTable() {
+        return entity.getTable();
     }
 }

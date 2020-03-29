@@ -1,5 +1,6 @@
 package cz.quantumleap.core.web;
 
+import cz.quantumleap.core.data.entity.EntityIdentifier;
 import cz.quantumleap.core.data.transport.SliceRequest;
 import org.springframework.ui.Model;
 
@@ -7,7 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 
 public interface LookupController {
 
-    String supportedDatabaseTableNameWithSchema();
+    EntityIdentifier getEntityIdentifier();
 
     String getDetailUrl();
 

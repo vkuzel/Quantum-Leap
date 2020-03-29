@@ -1,26 +1,30 @@
 package cz.quantumleap.core.data.transport;
 
-import org.jooq.Name;
+import cz.quantumleap.core.data.entity.EntityIdentifier;
+import org.jooq.Record;
 import org.jooq.Table;
 
-public class Lookup {
+public class Lookup<TABLE extends Table<? extends Record>> {
 
     private Object id;
     private String label;
-    private String databaseTableNameWithSchema;
+    private EntityIdentifier<TABLE> entityIdentifier;
 
     public Lookup() {
     }
 
-    public Lookup(Object id, String label, String databaseTableNameWithSchema) {
+    public Lookup(Object id, String label, EntityIdentifier<TABLE> entityIdentifier) {
         this.id = id;
         this.label = label;
-        this.databaseTableNameWithSchema = databaseTableNameWithSchema;
+        this.entityIdentifier = entityIdentifier;
     }
 
-    public static Lookup withoutLabel(Object id, Table table) {
-        Name name = table.getQualifiedName();
-        return new Lookup(id, null, name.toString());
+    public static <TABLE extends Table<? extends Record>> Lookup<TABLE> withoutLabel(Object id, TABLE table) {
+        return new Lookup<>(id, null, EntityIdentifier.forTable(table));
+    }
+
+    public static <TABLE extends Table<? extends Record>> Lookup<TABLE> withoutLabel(Object id, EntityIdentifier<TABLE> entityIdentifier) {
+        return new Lookup<>(id, null, entityIdentifier);
     }
 
     public boolean isEmpty() {
@@ -43,11 +47,11 @@ public class Lookup {
         this.label = label;
     }
 
-    public String getDatabaseTableNameWithSchema() {
-        return databaseTableNameWithSchema;
+    public EntityIdentifier<TABLE> getEntityIdentifier() {
+        return entityIdentifier;
     }
 
-    public void setDatabaseTableNameWithSchema(String databaseTableNameWithSchema) {
-        this.databaseTableNameWithSchema = databaseTableNameWithSchema;
+    public void setEntityIdentifier(EntityIdentifier<TABLE> entityIdentifier) {
+        this.entityIdentifier = entityIdentifier;
     }
 }

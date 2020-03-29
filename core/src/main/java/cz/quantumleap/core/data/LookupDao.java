@@ -1,5 +1,6 @@
 package cz.quantumleap.core.data;
 
+import cz.quantumleap.core.data.entity.EntityIdentifier;
 import org.jooq.Record;
 import org.jooq.Table;
 
@@ -8,7 +9,7 @@ import java.util.Set;
 
 public interface LookupDao<TABLE extends Table<? extends Record>> extends ListDao<TABLE> {
 
-    TABLE getTable();
+    EntityIdentifier getEntityIdentifier();
 
     String fetchLabelById(Object id);
 

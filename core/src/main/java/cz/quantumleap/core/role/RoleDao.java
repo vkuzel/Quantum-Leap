@@ -5,6 +5,7 @@ import cz.quantumleap.core.data.DaoStub;
 import cz.quantumleap.core.data.EnumManager;
 import cz.quantumleap.core.data.LookupDaoManager;
 import cz.quantumleap.core.data.RecordAuditor;
+import cz.quantumleap.core.data.entity.Entity;
 import cz.quantumleap.core.tables.RoleTable;
 import org.jooq.DSLContext;
 import org.jooq.Record;
@@ -19,7 +20,12 @@ import static cz.quantumleap.core.tables.RoleTable.ROLE;
 public class RoleDao extends DaoStub<RoleTable> {
 
     protected RoleDao(DSLContext dslContext, LookupDaoManager lookupDaoManager, EnumManager enumManager, RecordAuditor recordAuditor) {
-        super(ROLE, ROLE.NAME, s -> Utils.startsWithIgnoreCase(ROLE.NAME, s), dslContext, lookupDaoManager, enumManager, recordAuditor);
+        super(createEntity(), dslContext, lookupDaoManager, enumManager, recordAuditor);
+    }
+
+    private static Entity<RoleTable> createEntity() {
+        return Entity.createBuilder(ROLE).setLookupLabelField(ROLE.NAME)
+                .setWordConditionBuilder(s -> Utils.startsWithIgnoreCase(ROLE.NAME, s)).build();
     }
 
     public List<String> fetchRolesByPersonId(long personId) {

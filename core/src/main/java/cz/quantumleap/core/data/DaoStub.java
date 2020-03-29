@@ -1,10 +1,8 @@
 package cz.quantumleap.core.data;
 
-import cz.quantumleap.core.data.list.*;
+import cz.quantumleap.core.data.entity.Entity;
+import cz.quantumleap.core.data.entity.EntityIdentifier;
 import cz.quantumleap.core.data.mapper.MapperFactory;
-import cz.quantumleap.core.data.primarykey.PrimaryKeyConditionBuilder;
-import cz.quantumleap.core.data.primarykey.PrimaryKeyResolver;
-import cz.quantumleap.core.data.primarykey.TablePrimaryKeyResolver;
 import cz.quantumleap.core.data.transport.Slice;
 import cz.quantumleap.core.data.transport.SliceRequest;
 import cz.quantumleap.core.data.transport.Table.Column;
@@ -14,38 +12,24 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Function;
 
 public class DaoStub<TABLE extends Table<? extends Record>> implements DetailDao<TABLE>, ListDao<TABLE>, LookupDao<TABLE> {
 
-    protected final TABLE table;
+    protected final Entity<TABLE> entity;
     protected final DSLContext dslContext;
 
-    protected final PrimaryKeyResolver primaryKeyResolver;
-    protected final PrimaryKeyConditionBuilder primaryKeyConditionBuilder;
-    protected final FilterBuilder filterBuilder;
-    protected final SortingBuilder sortingBuilder;
-    protected final LimitBuilder limitBuilder;
-    protected final MapperFactory mapperFactory;
-
+    protected final MapperFactory<TABLE> mapperFactory;
     protected final DetailDao<TABLE> detailDao;
     protected final ListDao<TABLE> listDao;
     protected final LookupDao<TABLE> lookupDao;
 
-    protected DaoStub(TABLE table, Field<String> lookupLabelField, Function<String, Condition> wordConditionBuilder, DSLContext dslContext, LookupDaoManager lookupDaoManager, EnumManager enumManager, RecordAuditor recordAuditor) {
+    protected DaoStub(Entity<TABLE> entity, DSLContext dslContext, LookupDaoManager lookupDaoManager, EnumManager enumManager, RecordAuditor recordAuditor) {
+        this.entity = entity;
         this.dslContext = dslContext;
-        this.table = table;
-
-        this.primaryKeyResolver = new TablePrimaryKeyResolver(table);
-        this.primaryKeyConditionBuilder = new PrimaryKeyConditionBuilder(primaryKeyResolver);
-        this.filterBuilder = new DefaultFilterBuilder(table, wordConditionBuilder);
-        this.sortingBuilder = new DefaultSortingBuilder(table, lookupLabelField);
-        this.limitBuilder = LimitBuilder.DEFAULT;
-        this.mapperFactory = new MapperFactory(table, primaryKeyResolver, lookupDaoManager, enumManager);
-
-        detailDao = new DefaultDetailDao<>(table, dslContext, primaryKeyConditionBuilder, mapperFactory, recordAuditor);
-        listDao = new DefaultListDao<>(table, dslContext, primaryKeyResolver, filterBuilder, sortingBuilder, limitBuilder, mapperFactory);
-        lookupDao = new DefaultLookupDao<>(table, lookupLabelField, dslContext, primaryKeyConditionBuilder, filterBuilder, sortingBuilder, listDao);
+        this.mapperFactory = new MapperFactory<>(entity, lookupDaoManager, enumManager);
+        this.detailDao = new DefaultDetailDao<>(entity, dslContext, mapperFactory, recordAuditor);
+        this.listDao = new DefaultListDao<>(entity, dslContext, mapperFactory);
+        this.lookupDao = new DefaultLookupDao<>(entity, dslContext, listDao);
     }
 
     @Override
@@ -98,8 +82,8 @@ public class DaoStub<TABLE extends Table<? extends Record>> implements DetailDao
     }
 
     @Override
-    public TABLE getTable() {
-        return lookupDao.getTable();
+    public EntityIdentifier getEntityIdentifier() {
+        return lookupDao.getEntityIdentifier();
     }
 
     @Override

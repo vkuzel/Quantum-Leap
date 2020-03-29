@@ -1,6 +1,7 @@
 package cz.quantumleap.core.web;
 
 import cz.quantumleap.core.business.LookupService;
+import cz.quantumleap.core.data.entity.EntityIdentifier;
 import cz.quantumleap.core.data.transport.Slice;
 import cz.quantumleap.core.data.transport.SliceRequest;
 import org.springframework.ui.Model;
@@ -15,18 +16,18 @@ public final class DefaultLookupController implements LookupController {
     private static final String LOOKUP_LABELS_VIEW = "admin/components/lookup-labels";
 
     private static final String TABLE_SLICE_MODEL_ATTRIBUTE_NAME = "tableSlice";
-    private static final String DATABASE_TABLE_NAME_WITH_SCHEMA_ATTRIBUTE_NAME = "databaseTableNameWithSchema";
+    private static final String ENTITY_IDENTIFIER_MODEL_ATTRIBUTE_NAME = "entityIdentifier";
     private static final String LOOKUP_LIST_VIEW = "admin/components/lookup-modal-table";
 
-    private final String databaseTableNameWithSchema;
+    private final EntityIdentifier entityIdentifier;
     private final String detailUrl;
     private final String lookupLabelUrl;
     private final String lookupLabelsUrl;
     private final String lookupListUrl;
     private final LookupService lookupService;
 
-    public DefaultLookupController(String databaseTableNameWithSchema, String detailUrl, String lookupLabelUrl, String lookupLabelsUrl, String lookupListUrl, LookupService lookupService) {
-        this.databaseTableNameWithSchema = databaseTableNameWithSchema;
+    public DefaultLookupController(EntityIdentifier entityIdentifier, String detailUrl, String lookupLabelUrl, String lookupLabelsUrl, String lookupListUrl, LookupService lookupService) {
+        this.entityIdentifier = entityIdentifier;
         this.detailUrl = detailUrl;
         this.lookupLabelUrl = lookupLabelUrl;
         this.lookupLabelsUrl = lookupLabelsUrl;
@@ -35,8 +36,8 @@ public final class DefaultLookupController implements LookupController {
     }
 
     @Override
-    public String supportedDatabaseTableNameWithSchema() {
-        return databaseTableNameWithSchema;
+    public EntityIdentifier getEntityIdentifier() {
+        return entityIdentifier;
     }
 
     @Override
@@ -77,7 +78,7 @@ public final class DefaultLookupController implements LookupController {
     public String lookupList(SliceRequest sliceRequest, Model model, HttpServletRequest request) {
         Slice slice = lookupService.findSlice(sliceRequest);
         model.addAttribute(TABLE_SLICE_MODEL_ATTRIBUTE_NAME, slice);
-        model.addAttribute(DATABASE_TABLE_NAME_WITH_SCHEMA_ATTRIBUTE_NAME, databaseTableNameWithSchema);
+        model.addAttribute(ENTITY_IDENTIFIER_MODEL_ATTRIBUTE_NAME, entityIdentifier.toString());
         model.addAttribute(DETAIL_URL_MODEL_ATTRIBUTE_NAME, detailUrl);
 
         return LOOKUP_LIST_VIEW;

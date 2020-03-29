@@ -5,7 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import cz.quantumleap.core.data.EnumManager;
 import cz.quantumleap.core.data.LookupDao;
 import cz.quantumleap.core.data.LookupDaoManager;
-import cz.quantumleap.core.data.primarykey.PrimaryKeyResolver;
+import cz.quantumleap.core.data.entity.Entity;
+import cz.quantumleap.core.data.entity.EntityIdentifier;
 import cz.quantumleap.core.data.transport.*;
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.tuple.Pair;
@@ -23,24 +24,22 @@ import java.util.Map;
 import static com.google.common.base.CaseFormat.LOWER_UNDERSCORE;
 import static com.google.common.base.CaseFormat.UPPER_CAMEL;
 
-public class MapperFactory {
+public class MapperFactory<TABLE extends Table<? extends Record>> {
 
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
-    private final org.jooq.Table<? extends Record> table;
-    private final PrimaryKeyResolver primaryKeyResolver;
+    private final Entity<TABLE> entity;
     private final LookupDaoManager lookupDaoManager;
     private final EnumManager enumManager;
 
-    public MapperFactory(Table<? extends Record> table, PrimaryKeyResolver primaryKeyResolver, LookupDaoManager lookupDaoManager, EnumManager enumManager) {
-        this.table = table;
-        this.primaryKeyResolver = primaryKeyResolver;
+    public MapperFactory(Entity<TABLE> entity, LookupDaoManager lookupDaoManager, EnumManager enumManager) {
+        this.entity = entity;
         this.lookupDaoManager = lookupDaoManager;
         this.enumManager = enumManager;
     }
 
-    public SliceMapper createSliceMapper(SliceRequest sliceRequest, List<TablePreferences> tablePreferencesList) {
-        return new SliceMapper(table, primaryKeyResolver, lookupDaoManager, enumManager, sliceRequest, tablePreferencesList);
+    public SliceMapper<TABLE> createSliceMapper(SliceRequest sliceRequest, List<TablePreferences> tablePreferencesList) {
+        return new SliceMapper<>(entity, lookupDaoManager, enumManager, sliceRequest, tablePreferencesList);
     }
 
     public <T> TransportUnMapper<T> createTransportUnMapper(Class<T> transportType) {
@@ -183,13 +182,12 @@ public class MapperFactory {
                     Object referenceId = record.getValue(field);
                     if (referenceId != null) {
                         String fieldName = field.getName();
-
-                        String databaseTableNameWithSchema = convertFieldToDatabaseTableNameWithSchema(field);
-                        LookupDao lookupDao = lookupDaoManager.getDaoByDatabaseTableNameWithSchema(databaseTableNameWithSchema);
+                        EntityIdentifier entityIdentifier = convertFieldToLookupIdentifier(field);
+                        LookupDao lookupDao = lookupDaoManager.getDaoByLookupIdentifier(entityIdentifier);
                         Validate.notNull(lookupDao, "LookupDao for field " + transport.getClass().getSimpleName() + "." + fieldName + " was not found!");
 
                         String label = lookupDao.fetchLabelById(referenceId);
-                        value = new Lookup(referenceId, label, databaseTableNameWithSchema);
+                        value = new Lookup(referenceId, label, entityIdentifier);
                     }
                 } else if (paramType == EnumValue.class) {
                     String referenceId = record.getValue(field, String.class);
@@ -218,18 +216,23 @@ public class MapperFactory {
             }
         }
 
-        private String convertFieldToDatabaseTableNameWithSchema(Field<?> field) {
-            for (ForeignKey<? extends Record, ?> foreignKey : table.getReferences()) {
-                if (foreignKey.getFields().size() != 1) {
+        private EntityIdentifier convertFieldToLookupIdentifier(Field<?> field) {
+            EntityIdentifier entityIdentifier = entity.getLookupFieldsMap().get(field);
+            if (entityIdentifier != null) {
+                return entityIdentifier;
+            }
+
+            for (ForeignKey<? extends Record, ?> reference : entity.getTable().getReferences()) {
+                if (reference.getFields().size() != 1) {
                     continue;
                 }
 
-                TableField<? extends Record, ?> tableField = foreignKey.getFields().get(0);
+                TableField<? extends Record, ?> tableField = reference.getFields().get(0);
                 if (!tableField.equals(field)) {
                     continue;
                 }
 
-                return MapperUtils.resolveDatabaseTableNameWithSchema(foreignKey.getKey().getTable());
+                return EntityIdentifier.forTable(reference.getKey().getTable());
             }
             return null;
         }

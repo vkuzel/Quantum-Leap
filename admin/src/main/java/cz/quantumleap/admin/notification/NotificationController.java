@@ -4,7 +4,9 @@ import cz.quantumleap.admin.AdminController;
 import cz.quantumleap.admin.menu.AdminMenuManager;
 import cz.quantumleap.admin.notification.transport.Notification;
 import cz.quantumleap.admin.person.PersonService;
+import cz.quantumleap.admin.tables.NotificationTable;
 import cz.quantumleap.core.common.Utils;
+import cz.quantumleap.core.data.entity.EntityIdentifier;
 import cz.quantumleap.core.data.transport.Slice;
 import cz.quantumleap.core.data.transport.SliceRequest;
 import cz.quantumleap.core.person.transport.Person;
@@ -19,6 +21,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.servlet.http.HttpServletRequest;
 
+import static cz.quantumleap.admin.tables.NotificationTable.NOTIFICATION;
+
 @Controller
 public class NotificationController extends AdminController {
 
@@ -28,7 +32,7 @@ public class NotificationController extends AdminController {
     private static final String LIST_URL = "/notifications";
     private static final String LIST_VIEW = "admin/notifications";
     private static final String AJAX_LIST_VIEW = "admin/components/table";
-    private static final String DATABASE_TABLE_NAME_WITH_SCHEMA = "admin.notification";
+    private static final EntityIdentifier<NotificationTable> ENTITY_IDENTIFIER = EntityIdentifier.forTable(NOTIFICATION);
 
     private final NotificationService notificationService;
     private final PersonService personService;
@@ -59,7 +63,7 @@ public class NotificationController extends AdminController {
         Person person = personService.fetchByAuthentication(authentication);
         Slice slice = notificationService.findSlice(person.getId(), sliceRequest);
         model.addAttribute(DefaultListController.TABLE_SLICE_MODEL_ATTRIBUTE_NAME, slice);
-        model.addAttribute(DefaultListController.DATABASE_TABLE_NAME_WITH_SCHEMA_MODEL_ATTRIBUTE_NAME, DATABASE_TABLE_NAME_WITH_SCHEMA);
+        model.addAttribute(DefaultListController.ENTITY_IDENTIFIER_MODEL_ATTRIBUTE_NAME, ENTITY_IDENTIFIER.toString());
         model.addAttribute(DefaultListController.DETAIL_URL_MODEL_ATTRIBUTE_NAME, DETAIL_URL);
 
         return Utils.isAjaxRequest(request) ? AJAX_LIST_VIEW : LIST_VIEW;

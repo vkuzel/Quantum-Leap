@@ -1,0 +1,5 @@
+ALTER TABLE core.table_preferences
+  RENAME database_table_name_with_schema TO entity_identifier;
+
+ALTER TABLE core.table_preferences
+  RENAME CONSTRAINT table_preferences_database_table_name_with_schema_is_defaul_key TO table_preferences_entity_identifier_is_default_key;

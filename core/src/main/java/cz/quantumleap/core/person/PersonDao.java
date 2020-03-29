@@ -5,6 +5,7 @@ import cz.quantumleap.core.data.DaoStub;
 import cz.quantumleap.core.data.EnumManager;
 import cz.quantumleap.core.data.LookupDaoManager;
 import cz.quantumleap.core.data.RecordAuditor;
+import cz.quantumleap.core.data.entity.Entity;
 import cz.quantumleap.core.person.transport.Person;
 import cz.quantumleap.core.tables.PersonTable;
 import org.jooq.DSLContext;
@@ -16,7 +17,13 @@ import static cz.quantumleap.core.tables.PersonTable.PERSON;
 public class PersonDao extends DaoStub<PersonTable> {
 
     protected PersonDao(DSLContext dslContext, LookupDaoManager lookupDaoManager, EnumManager enumManager, RecordAuditor recordAuditor) {
-        super(PERSON, PERSON.NAME.coalesce(PERSON.EMAIL), s -> Utils.startsWithIgnoreCase(PERSON.NAME, s).or(Utils.startsWithIgnoreCase(PERSON.EMAIL, s)), dslContext, lookupDaoManager, enumManager, recordAuditor);
+        super(createEntity(), dslContext, lookupDaoManager, enumManager, recordAuditor);
+    }
+
+    private static Entity<PersonTable> createEntity() {
+        return Entity.createBuilder(PERSON).setLookupLabelField(PERSON.NAME.coalesce(PERSON.EMAIL))
+                .setWordConditionBuilder(s -> Utils.startsWithIgnoreCase(PERSON.NAME, s).or(Utils.startsWithIgnoreCase(PERSON.EMAIL, s)))
+                .build();
     }
 
     public Person fetchByEmail(String email) {

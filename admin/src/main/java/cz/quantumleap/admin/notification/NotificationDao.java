@@ -6,6 +6,7 @@ import cz.quantumleap.core.data.DaoStub;
 import cz.quantumleap.core.data.EnumManager;
 import cz.quantumleap.core.data.LookupDaoManager;
 import cz.quantumleap.core.data.RecordAuditor;
+import cz.quantumleap.core.data.entity.Entity;
 import cz.quantumleap.core.data.transport.Lookup;
 import cz.quantumleap.core.data.transport.Slice;
 import cz.quantumleap.core.data.transport.SliceRequest;
@@ -30,7 +31,11 @@ public class NotificationDao extends DaoStub<NotificationTable> {
     private static final int MAX_UNRESOLVED_NOTIFICATIONS_TO_SHOW = 10;
 
     protected NotificationDao(DSLContext dslContext, LookupDaoManager lookupDaoManager, EnumManager enumManager, RecordAuditor recordAuditor) {
-        super(NOTIFICATION, null, s -> null, dslContext, lookupDaoManager, enumManager, recordAuditor);
+        super(createEntity(), dslContext, lookupDaoManager, enumManager, recordAuditor);
+    }
+
+    private static Entity<NotificationTable> createEntity() {
+        return Entity.createBuilder(NOTIFICATION).build();
     }
 
     public Notification createNotificationForPerson(String notificationCode, List<String> messageArguments, long personId) {

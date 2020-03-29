@@ -8,9 +8,11 @@ import cz.quantumleap.admin.person.PersonController;
 import cz.quantumleap.admin.person.PersonService;
 import cz.quantumleap.core.data.LookupDao;
 import cz.quantumleap.core.data.LookupDaoManager;
+import cz.quantumleap.core.data.entity.EntityIdentifier;
 import cz.quantumleap.core.data.transport.Lookup;
 import cz.quantumleap.core.personrole.transport.PersonRole;
 import cz.quantumleap.core.security.WebSecurityExpressionEvaluator;
+import cz.quantumleap.core.tables.PersonRoleTable;
 import cz.quantumleap.core.web.DefaultDetailController;
 import cz.quantumleap.core.web.DetailController;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -24,6 +26,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 
+import static cz.quantumleap.core.tables.PersonRoleTable.PERSON_ROLE;
+
 @Controller
 @PreAuthorize("hasRole('ADMIN')")
 public class PersonRoleController extends AdminController {
@@ -31,7 +35,7 @@ public class PersonRoleController extends AdminController {
     public static final String DETAIL_URL = "/person/{personId}/person-role";
     private static final String DETAIL_VIEW = "admin/person-role";
 
-    public static final String DATABASE_TABLE_NAME_WITH_SCHEMA = "core.person-role";
+    public static final EntityIdentifier<PersonRoleTable> ENTITY_IDENTIFIER = EntityIdentifier.forTable(PERSON_ROLE);
 
     private final LookupDaoManager lookupDaoManager;
     private final PersonRoleService personRoleService;
@@ -50,9 +54,9 @@ public class PersonRoleController extends AdminController {
         PersonRole detail;
         if (id == null) {
             detail = new PersonRole();
-            LookupDao lookupDao = lookupDaoManager.getDaoByDatabaseTableNameWithSchema(PersonController.DATABASE_TABLE_NAME_WITH_SCHEMA);
+            LookupDao lookupDao = lookupDaoManager.getDaoByLookupIdentifier(PersonController.ENTITY_IDENTIFIER);
             String personLabel = lookupDao.fetchLabelById(personId);
-            detail.setPersonId(new Lookup(personId, personLabel, PersonController.DATABASE_TABLE_NAME_WITH_SCHEMA));
+            detail.setPersonId(new Lookup<>(personId, personLabel, ENTITY_IDENTIFIER));
         } else {
             detail = personRoleService.get(id);
         }

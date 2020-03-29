@@ -8,6 +8,7 @@ import cz.quantumleap.admin.notification.NotificationService;
 import cz.quantumleap.admin.personrole.PersonRoleController;
 import cz.quantumleap.admin.personrole.PersonRoleService;
 import cz.quantumleap.core.common.Utils;
+import cz.quantumleap.core.data.entity.EntityIdentifier;
 import cz.quantumleap.core.data.transport.Slice;
 import cz.quantumleap.core.data.transport.SliceRequest;
 import cz.quantumleap.core.person.transport.Person;
@@ -27,6 +28,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.List;
 
+import static cz.quantumleap.core.tables.PersonTable.PERSON;
+
 @Controller
 @PreAuthorize("hasRole('ADMIN')")
 public class PersonController extends AdminController implements LookupController {
@@ -38,7 +41,7 @@ public class PersonController extends AdminController implements LookupControlle
     private static final String LIST_URL = "/people";
     private static final String LIST_VIEW = "admin/people";
     private static final String AJAX_LIST_VIEW = "admin/components/table";
-    public static final String DATABASE_TABLE_NAME_WITH_SCHEMA = "core.person";
+    public static final EntityIdentifier ENTITY_IDENTIFIER = EntityIdentifier.forTable(PERSON);
 
     private static final String LOOKUP_LABEL_URL = "/person-lookup-label";
     private static final String LOOKUP_LABELS_URL = "/people-lookup-labels";
@@ -54,8 +57,8 @@ public class PersonController extends AdminController implements LookupControlle
     public PersonController(AdminMenuManager adminMenuManager, WebSecurityExpressionEvaluator webSecurityExpressionEvaluator, PersonService personService, NotificationService notificationService, PersonRoleService personRoleService, SessionService sessionService) {
         super(adminMenuManager, personService, notificationService, webSecurityExpressionEvaluator);
         this.detailController = new DefaultDetailController<>(Person.class, DETAIL_URL, DETAIL_VIEW, personService);
-        this.listController = new DefaultListController(DATABASE_TABLE_NAME_WITH_SCHEMA, LIST_VIEW, AJAX_LIST_VIEW, DETAIL_URL, personService);
-        this.lookupController = new DefaultLookupController(DATABASE_TABLE_NAME_WITH_SCHEMA, DETAIL_URL, LOOKUP_LABEL_URL, LOOKUP_LABELS_URL, LOOKUP_LIST_URL, personService);
+        this.listController = new DefaultListController(ENTITY_IDENTIFIER, LIST_VIEW, AJAX_LIST_VIEW, DETAIL_URL, personService);
+        this.lookupController = new DefaultLookupController(ENTITY_IDENTIFIER, DETAIL_URL, LOOKUP_LABEL_URL, LOOKUP_LABELS_URL, LOOKUP_LIST_URL, personService);
         this.personService = personService;
         this.personRoleService = personRoleService;
         this.sessionService = sessionService;
@@ -95,7 +98,7 @@ public class PersonController extends AdminController implements LookupControlle
         personRoleSliceRequest.getFilter().put("person_id", person.getId());
         Slice slice = personRoleService.findSlice(personRoleSliceRequest);
         model.addAttribute("personRoleTableSlice", slice);
-        model.addAttribute("personRoleDatabaseTableNameWithSchema", PersonRoleController.DATABASE_TABLE_NAME_WITH_SCHEMA);
+        model.addAttribute("personRoleEntityIdentifier", PersonRoleController.ENTITY_IDENTIFIER.toString());
         model.addAttribute("personRoleDetailUrl", PersonRoleController.DETAIL_URL.replace("{personId}", String.valueOf(person.getId())));
         List<SessionDetail> sessions = sessionService.fetchListByEmail(person.getEmail());
         model.addAttribute("sessions", sessions);
@@ -108,8 +111,8 @@ public class PersonController extends AdminController implements LookupControlle
     }
 
     @Override
-    public String supportedDatabaseTableNameWithSchema() {
-        return lookupController.supportedDatabaseTableNameWithSchema();
+    public EntityIdentifier getEntityIdentifier() {
+        return lookupController.getEntityIdentifier();
     }
 
     @Override

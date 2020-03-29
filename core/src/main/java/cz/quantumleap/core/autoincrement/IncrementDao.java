@@ -1,10 +1,8 @@
 package cz.quantumleap.core.autoincrement;
 
 import cz.quantumleap.core.data.*;
+import cz.quantumleap.core.data.entity.Entity;
 import cz.quantumleap.core.data.mapper.MapperFactory;
-import cz.quantumleap.core.data.primarykey.PrimaryKeyConditionBuilder;
-import cz.quantumleap.core.data.primarykey.PrimaryKeyResolver;
-import cz.quantumleap.core.data.primarykey.TablePrimaryKeyResolver;
 import cz.quantumleap.core.tables.IncrementTable;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
@@ -28,10 +26,9 @@ public class IncrementDao implements DetailDao<IncrementTable> {
 
     public IncrementDao(DSLContext dslContext, LookupDaoManager lookupDaoManager, EnumManager enumManager, RecordAuditor recordAuditor) {
         this.dslContext = dslContext;
-        PrimaryKeyResolver primaryKeyResolver = new TablePrimaryKeyResolver(INCREMENT);
-        PrimaryKeyConditionBuilder primaryKeyConditionBuilder = new PrimaryKeyConditionBuilder(primaryKeyResolver);
-        MapperFactory mapperFactory = new MapperFactory(INCREMENT, primaryKeyResolver, lookupDaoManager, enumManager);
-        this.detailDao = new DefaultDetailDao<>(INCREMENT, dslContext, primaryKeyConditionBuilder, mapperFactory, recordAuditor);
+        Entity<IncrementTable> entity = Entity.createBuilder(INCREMENT).build();
+        MapperFactory<IncrementTable> mapperFactory = new MapperFactory<>(entity, lookupDaoManager, enumManager);
+        this.detailDao = new DefaultDetailDao<>(entity, dslContext, mapperFactory, recordAuditor);
     }
 
     public Map<String, Integer> loadLastIncrementVersionForModules() {

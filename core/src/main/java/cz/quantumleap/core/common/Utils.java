@@ -11,10 +11,8 @@ import org.springframework.core.io.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -149,5 +147,17 @@ public class Utils {
             }
         }
         return max;
+    }
+
+    public static <T> String createAbbreviation(Collection<T> items, int maxSize, Function<T, String> mapToText) {
+        Set<String> textItems = new LinkedHashSet<>(maxSize);
+        for (T item : items) {
+            textItems.add(mapToText.apply(item));
+            if (textItems.size() >= maxSize - 1) {
+                textItems.add("...");
+                break;
+            }
+        }
+        return String.join(", ", textItems);
     }
 }

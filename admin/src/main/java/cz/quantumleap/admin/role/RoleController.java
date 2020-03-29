@@ -6,6 +6,7 @@ import cz.quantumleap.admin.menu.AdminMenuItemDefinition;
 import cz.quantumleap.admin.menu.AdminMenuManager;
 import cz.quantumleap.admin.notification.NotificationService;
 import cz.quantumleap.admin.person.PersonService;
+import cz.quantumleap.core.data.entity.EntityIdentifier;
 import cz.quantumleap.core.data.transport.SliceRequest;
 import cz.quantumleap.core.role.transport.Role;
 import cz.quantumleap.core.security.WebSecurityExpressionEvaluator;
@@ -23,6 +24,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import static cz.quantumleap.core.tables.RoleTable.ROLE;
+
 @Controller
 @PreAuthorize("hasRole('ADMIN')")
 public class RoleController extends AdminController implements LookupController {
@@ -33,7 +36,7 @@ public class RoleController extends AdminController implements LookupController 
     private static final String LIST_URL = "/roles";
     private static final String LIST_VIEW = "admin/roles";
     private static final String AJAX_LIST_VIEW = "admin/components/table";
-    private static final String DATABASE_TABLE_NAME_WITH_SCHEMA = "core.role";
+    private static final EntityIdentifier ENTITY_IDENTIFIER = EntityIdentifier.forTable(ROLE);
 
     private static final String LOOKUP_LABEL_URL = "/role-lookup-label";
     private static final String LOOKUP_LABELS_URL = "/roles-lookup-labels";
@@ -46,8 +49,8 @@ public class RoleController extends AdminController implements LookupController 
     public RoleController(AdminMenuManager adminMenuManager, PersonService personService, NotificationService notificationService, WebSecurityExpressionEvaluator webSecurityExpressionEvaluator, RoleService roleService) {
         super(adminMenuManager, personService, notificationService, webSecurityExpressionEvaluator);
         this.detailController = new DefaultDetailController<>(Role.class, DETAIL_URL, DETAIL_VIEW, roleService);
-        this.listController = new DefaultListController(DATABASE_TABLE_NAME_WITH_SCHEMA, LIST_VIEW, AJAX_LIST_VIEW, DETAIL_URL, roleService);
-        this.lookupController = new DefaultLookupController(DATABASE_TABLE_NAME_WITH_SCHEMA, DETAIL_URL, LOOKUP_LABEL_URL, LOOKUP_LABELS_URL, LOOKUP_LIST_URL, roleService);
+        this.listController = new DefaultListController(ENTITY_IDENTIFIER, LIST_VIEW, AJAX_LIST_VIEW, DETAIL_URL, roleService);
+        this.lookupController = new DefaultLookupController(ENTITY_IDENTIFIER, DETAIL_URL, LOOKUP_LABEL_URL, LOOKUP_LABELS_URL, LOOKUP_LIST_URL, roleService);
     }
 
     @AdminMenuItemActive("admin.menu.roles")
@@ -68,8 +71,8 @@ public class RoleController extends AdminController implements LookupController 
     }
 
     @Override
-    public String supportedDatabaseTableNameWithSchema() {
-        return lookupController.supportedDatabaseTableNameWithSchema();
+    public EntityIdentifier getEntityIdentifier() {
+        return lookupController.getEntityIdentifier();
     }
 
     @Override

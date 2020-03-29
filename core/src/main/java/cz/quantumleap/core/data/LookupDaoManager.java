@@ -1,9 +1,10 @@
 package cz.quantumleap.core.data;
 
-import cz.quantumleap.core.data.mapper.MapperUtils;
-import org.apache.commons.lang3.Validate;
+import cz.quantumleap.core.data.entity.EntityIdentifier;
 import org.jooq.Record;
 import org.jooq.Table;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
@@ -15,39 +16,43 @@ import java.util.Map;
 @Component
 public class LookupDaoManager {
 
+    private static final Logger log = LoggerFactory.getLogger(LookupDaoManager.class);
+
     private final ApplicationContext applicationContext;
 
-    private Map<String, LookupDao<Table<? extends Record>>> lookupDaoMap = new HashMap<>();
+    private Map<EntityIdentifier<?>, LookupDao<Table<? extends Record>>> lookupDaoMap = new HashMap<>();
 
     public LookupDaoManager(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
     }
 
-    public LookupDao<Table<? extends Record>> getDaoByDatabaseTableNameWithSchema(String databaseTableNameWithSchema) {
-        return lookupDaoMap.get(databaseTableNameWithSchema);
+    public LookupDao<Table<? extends Record>> getDaoByLookupIdentifier(EntityIdentifier<?> entityIdentifier) {
+        return lookupDaoMap.get(entityIdentifier);
     }
 
     @EventListener(ContextRefreshedEvent.class)
     public void initializeLookupDaoMap() {
         Map<String, LookupDao> beans = applicationContext.getBeansOfType(LookupDao.class);
         for (LookupDao lookupDao : beans.values()) {
-            String tableName = MapperUtils.resolveDatabaseTableNameWithSchema(lookupDao.getTable());
-            addDao(tableName, lookupDao);
+            EntityIdentifier entityIdentifier = lookupDao.getEntityIdentifier();
+            if (entityIdentifier != null) {
+                addDao(entityIdentifier, lookupDao);
+            }
         }
     }
 
-    public void registerDaoForTable(Table<?> table, LookupDao lookupDao) {
-        String tableName = MapperUtils.resolveDatabaseTableNameWithSchema(table);
-        addDao(tableName, lookupDao);
+    public void registerDao(EntityIdentifier entityIdentifier, LookupDao lookupDao) {
+        addDao(entityIdentifier, lookupDao);
     }
 
     @SuppressWarnings("unchecked")
-    private void addDao(String tableName, LookupDao lookupDao) {
-        LookupDao previousDao = lookupDaoMap.get(tableName);
-        if (previousDao != null) {
-            throw new IllegalArgumentException("Two DAOs for a table " + tableName + ", original: " + previousDao + ", new: " + lookupDao);
+    private void addDao(EntityIdentifier entityIdentifier, LookupDao lookupDao) {
+        LookupDao previousDao = lookupDaoMap.get(entityIdentifier);
+        if (previousDao == null) {
+            lookupDaoMap.put(entityIdentifier, lookupDao);
+        } else {
+            log.error("Two DAOs for a table {}, existing: {}, skipped: {}", entityIdentifier, previousDao, lookupDao);
         }
-        lookupDaoMap.put(tableName, lookupDao);
     }
 
     @SuppressWarnings("unchecked")

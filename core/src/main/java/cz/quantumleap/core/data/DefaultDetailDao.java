@@ -1,7 +1,7 @@
 package cz.quantumleap.core.data;
 
+import cz.quantumleap.core.data.entity.Entity;
 import cz.quantumleap.core.data.mapper.MapperFactory;
-import cz.quantumleap.core.data.primarykey.PrimaryKeyConditionBuilder;
 import org.apache.commons.lang3.Validate;
 import org.jooq.*;
 
@@ -9,28 +9,27 @@ import java.util.*;
 
 public final class DefaultDetailDao<TABLE extends Table<? extends Record>> implements DetailDao<TABLE> {
 
-    private final Table<? extends Record> table;
+    private final Entity<TABLE> entity;
     private final DSLContext dslContext;
-    private final PrimaryKeyConditionBuilder primaryKeyConditionBuilder;
-    private final MapperFactory mapperFactory;
+    private final MapperFactory<TABLE> mapperFactory;
     private final RecordAuditor recordAuditor;
 
-    public DefaultDetailDao(Table<? extends Record> table, DSLContext dslContext, PrimaryKeyConditionBuilder primaryKeyConditionBuilder, MapperFactory mapperFactory, RecordAuditor recordAuditor) {
-        this.table = table;
+    public DefaultDetailDao(Entity<TABLE> entity, DSLContext dslContext, MapperFactory<TABLE> mapperFactory, RecordAuditor recordAuditor) {
+        this.entity = entity;
         this.dslContext = dslContext;
-        this.primaryKeyConditionBuilder = primaryKeyConditionBuilder;
         this.mapperFactory = mapperFactory;
         this.recordAuditor = recordAuditor;
     }
 
     @Override
     public <T> T fetchById(Object id, Class<T> type) {
-        Condition condition = primaryKeyConditionBuilder.buildFromId(id);
+        Condition condition = entity.getPrimaryKeyConditionBuilder().buildFromId(id);
         return fetchByCondition(condition, type);
     }
 
     @Override
     public <T> T fetchByCondition(Condition condition, Class<T> type) {
+        Table<? extends Record> table =  entity.getTable();
         return dslContext.selectFrom(table)
                 .where(condition)
                 .fetchOne(mapperFactory.createTransportMapper(type));
@@ -54,7 +53,7 @@ public final class DefaultDetailDao<TABLE extends Table<? extends Record>> imple
         for (T detail : details) {
             Record record = mapperFactory
                     .createTransportUnMapper(detailType)
-                    .unMap(detail, dslContext.newRecord(table));
+                    .unMap(detail, dslContext.newRecord((Table<?>) entity.getTable()));
             records.add(record);
         }
 
@@ -67,7 +66,7 @@ public final class DefaultDetailDao<TABLE extends Table<? extends Record>> imple
         // TODO Implement bulk insert using https://www.jooq.org/doc/3.12/manual/sql-building/sql-statements/insert-statement/insert-values/
         // TODO Preserve order.
         for (Record record : records) {
-            Condition condition = primaryKeyConditionBuilder.buildFromRecord(record);
+            Condition condition = entity.getPrimaryKeyConditionBuilder().buildFromRecord(record);
             if (condition != null) {
                 results.add(update(record, condition, detailType));
             } else {
@@ -83,6 +82,7 @@ public final class DefaultDetailDao<TABLE extends Table<? extends Record>> imple
 
         Map<? extends Field<?>, ?> changedValues = getChangedValues(record);
 
+        Table<? extends Record> table =  entity.getTable();
         return dslContext.insertInto(table)
                 .set(changedValues)
                 .returning(table.fields())
@@ -95,6 +95,7 @@ public final class DefaultDetailDao<TABLE extends Table<? extends Record>> imple
 
         Map<Field<?>, Object> changedValues = getChangedValues(record);
 
+        Table<? extends Record> table =  entity.getTable();
         return dslContext.update(table)
                 .set(changedValues)
                 .where(condition)
@@ -115,12 +116,13 @@ public final class DefaultDetailDao<TABLE extends Table<? extends Record>> imple
 
     @Override
     public int deleteById(Object id) {
-        Condition condition = primaryKeyConditionBuilder.buildFromId(id);
+        Condition condition = entity.getPrimaryKeyConditionBuilder().buildFromId(id);
         return deleteByCondition(condition);
     }
 
     @Override
     public int deleteByCondition(Condition condition) {
+        Table<? extends Record> table =  entity.getTable();
         return dslContext.delete(table)
                 .where(condition)
                 .execute();
@@ -128,8 +130,9 @@ public final class DefaultDetailDao<TABLE extends Table<? extends Record>> imple
 
     @Override
     public <T> List<T> saveDetailsAssociatedBy(TableField foreignKey, Object foreignId, Collection<T> details, Class<T> detailType) {
-        MapperFactory.TransportUnMapper<T> unMapper = mapperFactory.createTransportUnMapper(detailType);
-        Field<Object> primaryKeyField = primaryKeyConditionBuilder.getPrimaryKeyField();
+        MapperFactory<TABLE>.TransportUnMapper<T> unMapper = mapperFactory.createTransportUnMapper(detailType);
+        Table<? extends Record> table =  entity.getTable();
+        Field<Object> primaryKeyField = entity.getPrimaryKeyConditionBuilder().getPrimaryKeyField();
 
         List<Record> records = new ArrayList<>(details.size());
         Set<Object> ids = new HashSet<>(details.size());

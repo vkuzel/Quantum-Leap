@@ -23,7 +23,7 @@ public class Slice<ROW> implements Iterable<ROW>  {
     }
 
     public String getName() {
-        return table.getDatabaseTableNameWithSchema();
+        return table.getEntityIdentifier().toString();
     }
 
     public List<Column> getColumns() {

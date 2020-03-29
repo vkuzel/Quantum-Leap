@@ -4,6 +4,7 @@ import cz.quantumleap.core.data.DaoStub;
 import cz.quantumleap.core.data.EnumManager;
 import cz.quantumleap.core.data.LookupDaoManager;
 import cz.quantumleap.core.data.RecordAuditor;
+import cz.quantumleap.core.data.entity.Entity;
 import cz.quantumleap.core.tables.PersonRoleTable;
 import org.jooq.DSLContext;
 import org.springframework.stereotype.Repository;
@@ -14,6 +15,10 @@ import static cz.quantumleap.core.tables.PersonRoleTable.PERSON_ROLE;
 public class PersonRoleDao extends DaoStub<PersonRoleTable> {
 
     protected PersonRoleDao(DSLContext dslContext, LookupDaoManager lookupDaoManager, EnumManager enumManager, RecordAuditor recordAuditor) {
-        super(PERSON_ROLE, null, s -> null, dslContext, lookupDaoManager, enumManager, recordAuditor);
+        super(createEntity(), dslContext, lookupDaoManager, enumManager, recordAuditor);
+    }
+
+    private static Entity<PersonRoleTable> createEntity() {
+        return Entity.createBuilder(PERSON_ROLE).build();
     }
 }
