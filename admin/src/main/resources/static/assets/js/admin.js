@@ -236,7 +236,7 @@ function LookupControl(lookupField) {
         lookupLabelUrl: $lookupButton.attr('data-lookup-label-url'),
         $modal: $modal,
 
-        $modalBody: $modal.find('.modal-body')
+        $modalBody: $modal.find('.modal-body').first()
     };
 
     modalControl.bindListeners = function () {
@@ -434,8 +434,8 @@ function ModalFormControl(modalSelector, openModalButtonsSelector, submitPromise
         this.$openModalButtons.on('click', this.onOpenModalButtonClick);
         this.$submitModalButtons.off('click', this.onSubmitModalButtonClick);
         this.$submitModalButtons.on('click', this.onSubmitModalButtonClick);
-        this.$modal.find('.modal-body form').off('submit', this.onSubmitModal);
-        this.$modal.find('.modal-body form').on('submit', this.onSubmitModal);
+        this.$modal.find('.modal-body form').first().off('submit', this.onSubmitModal);
+        this.$modal.find('.modal-body form').first().on('submit', this.onSubmitModal);
     };
 
     modalFormControl.onOpenModalButtonClick = function (event) {
@@ -461,7 +461,7 @@ function ModalFormControl(modalSelector, openModalButtonsSelector, submitPromise
 
     modalFormControl.replaceModalContent = function (html) {
         var $modalBodyReplacement = $(html);
-        var $modalBody = modalFormControl.$modal.find('.modal-body');
+        var $modalBody = modalFormControl.$modal.find('.modal-body').first();
 
         $modalBody.replaceWith($modalBodyReplacement);
         modalFormControl.$submitModalButtons = modalFormControl.$modal.find('input[type="submit"],button[type="submit"]');
