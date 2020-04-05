@@ -65,6 +65,7 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
 
     @Override
     public <T> List<T> fetchListByCondition(Condition condition, Class<T> type) {
+        // TODO Default condition...
         return dslContext.selectFrom(getTable())
                 .where(condition)
                 .fetch(mapperFactory.createTransportMapper(type)); // TODO Is this mapper optimized for high volume lists?
