@@ -97,6 +97,7 @@ public class Entity<TABLE extends Table<? extends Record>> {
         private Map<Field<?>, EntityIdentifier<?>> lookupFieldsMap = new HashMap<>();
         private Field<String> lookupLabelField = null;
         private Function<String, Condition> wordConditionBuilder = s -> null;
+        private SortingBuilder sortingBuilder = null;
 
         public Builder(EntityIdentifier<TABLE> entityIdentifier) {
             Validate.notNull(entityIdentifier);
@@ -128,6 +129,11 @@ public class Entity<TABLE extends Table<? extends Record>> {
             return this;
         }
 
+        public Builder<TABLE> setSortingBuilder(SortingBuilder sortingBuilder) {
+            this.sortingBuilder = sortingBuilder;
+            return this;
+        }
+
         public Entity<TABLE> build() {
             TABLE table = entityIdentifier.getTable();
             PrimaryKeyResolver primaryKeyResolver;
@@ -136,6 +142,12 @@ public class Entity<TABLE extends Table<? extends Record>> {
             } else {
                 primaryKeyResolver = new TablePrimaryKeyResolver(table);
             }
+            SortingBuilder sortingBuilder;
+            if (this.sortingBuilder != null) {
+                sortingBuilder = this.sortingBuilder;
+            } else {
+                sortingBuilder = new DefaultSortingBuilder(table, lookupLabelField);
+            }
             return new Entity<>(
                     entityIdentifier,
                     primaryKeyResolver,
@@ -143,7 +155,7 @@ public class Entity<TABLE extends Table<? extends Record>> {
                     lookupLabelField,
                     lookupFieldsMap,
                     new DefaultFilterBuilder(table, defaultFilterCondition, wordConditionBuilder),
-                    new DefaultSortingBuilder(table, lookupLabelField),
+                    sortingBuilder,
                     LimitBuilder.DEFAULT
             );
         }
