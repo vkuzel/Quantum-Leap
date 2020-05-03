@@ -67,10 +67,10 @@ public class PersonController extends AdminController implements LookupControlle
     @AdminMenuItemActive("admin.menu.people")
     @GetMapping(path = {DETAIL_URL, DETAIL_URL + "/{id}"})
     public String showPerson(@PathVariable(required = false) Long id, @Qualifier("personRole") SliceRequest personRoleSliceRequest, Model model) {
-        Person person = id != null ? personService.get(id) : new Person();
-        model.addAttribute(person);
-        addPersonRoleTableAttributes(person, personRoleSliceRequest, model);
-        return DETAIL_VIEW;
+        return detailController.show(id, model, (p) -> {
+            addPersonRoleTableAttributes(p, personRoleSliceRequest, model);
+            return DETAIL_VIEW;
+        });
     }
 
     @PostMapping(params = "save", path = {DETAIL_URL, DETAIL_URL + "/{id}"})

@@ -7,6 +7,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.function.Function;
 
 public final class DefaultDetailController<T> implements DetailController<T> {
 
@@ -24,9 +25,14 @@ public final class DefaultDetailController<T> implements DetailController<T> {
 
     @Override
     public String show(Object id, Model model) {
+        return show(id, model, (detail) -> detailView);
+    }
+
+    @Override
+    public String show(Object id, Model model, Function<T, String> viewFunction) {
         T detail = id != null ? detailService.get(id) : createDetail();
         model.addAttribute(detail);
-        return detailView;
+        return viewFunction.apply(detail);
     }
 
     private T createDetail() {
