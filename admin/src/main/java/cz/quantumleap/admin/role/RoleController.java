@@ -18,7 +18,6 @@ import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
@@ -28,7 +27,7 @@ import static cz.quantumleap.core.tables.RoleTable.ROLE;
 
 @Controller
 @PreAuthorize("hasRole('ADMIN')")
-public class RoleController extends AdminController implements LookupController {
+public class RoleController extends AdminController {
 
     private static final String DETAIL_URL = "/role";
     private static final String DETAIL_VIEW = "admin/role";
@@ -36,7 +35,7 @@ public class RoleController extends AdminController implements LookupController 
     private static final String LIST_URL = "/roles";
     private static final String LIST_VIEW = "admin/roles";
     private static final String AJAX_LIST_VIEW = "admin/components/table";
-    private static final EntityIdentifier ENTITY_IDENTIFIER = EntityIdentifier.forTable(ROLE);
+    private static final EntityIdentifier<?> ENTITY_IDENTIFIER = EntityIdentifier.forTable(ROLE);
 
     private static final String LOOKUP_LABEL_URL = "/role-lookup-label";
     private static final String LOOKUP_LABELS_URL = "/roles-lookup-labels";
@@ -44,13 +43,13 @@ public class RoleController extends AdminController implements LookupController 
 
     private final DetailController<Role> detailController;
     private final ListController listController;
-    private final LookupController lookupController;
 
-    public RoleController(AdminMenuManager adminMenuManager, PersonService personService, NotificationService notificationService, WebSecurityExpressionEvaluator webSecurityExpressionEvaluator, RoleService roleService) {
+    public RoleController(AdminMenuManager adminMenuManager, PersonService personService, NotificationService notificationService, WebSecurityExpressionEvaluator webSecurityExpressionEvaluator, LookupControllerManager lookupControllerManager, RoleService roleService) {
         super(adminMenuManager, personService, notificationService, webSecurityExpressionEvaluator);
         this.detailController = new DefaultDetailController<>(Role.class, DETAIL_URL, DETAIL_VIEW, roleService);
         this.listController = new DefaultListController(ENTITY_IDENTIFIER, LIST_VIEW, AJAX_LIST_VIEW, DETAIL_URL, roleService);
-        this.lookupController = new DefaultLookupController(ENTITY_IDENTIFIER, DETAIL_URL, LOOKUP_LABEL_URL, LOOKUP_LABELS_URL, LOOKUP_LIST_URL, roleService);
+        LookupController lookupController = new DefaultLookupController(webSecurityExpressionEvaluator, ENTITY_IDENTIFIER, DETAIL_URL, LOOKUP_LABEL_URL, LOOKUP_LABELS_URL, LOOKUP_LIST_URL, roleService);
+        lookupControllerManager.registerController(lookupController);
     }
 
     @AdminMenuItemActive("admin.menu.roles")
@@ -68,49 +67,5 @@ public class RoleController extends AdminController implements LookupController 
     @GetMapping(LIST_URL)
     public String showRoles(SliceRequest sliceRequest, Model model, HttpServletRequest request) {
         return listController.list(sliceRequest, model, request);
-    }
-
-    @Override
-    public EntityIdentifier getEntityIdentifier() {
-        return lookupController.getEntityIdentifier();
-    }
-
-    @Override
-    public String getDetailUrl() {
-        return lookupController.getDetailUrl();
-    }
-
-    @Override
-    public String getLookupLabelUrl() {
-        return lookupController.getLookupLabelUrl();
-    }
-
-    @Override
-    public String getLookupLabelsUrl() {
-        return lookupController.getLookupLabelsUrl();
-    }
-
-    @Override
-    public String getLookupListUrl() {
-        return lookupController.getLookupListUrl();
-    }
-
-    @GetMapping(LOOKUP_LABEL_URL)
-    @ResponseBody
-    @Override
-    public String resolveLookupLabel(String id) {
-        return lookupController.resolveLookupLabel(id);
-    }
-
-    @GetMapping(LOOKUP_LABELS_URL)
-    @Override
-    public String findLookupLabels(String query, Model model, HttpServletRequest request) {
-        return lookupController.findLookupLabels(query, model, request);
-    }
-
-    @GetMapping(LOOKUP_LIST_URL)
-    @Override
-    public String lookupList(SliceRequest sliceRequest, Model model, HttpServletRequest request) {
-        return lookupController.lookupList(sliceRequest, model, request);
     }
 }

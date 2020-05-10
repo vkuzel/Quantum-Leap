@@ -13,6 +13,7 @@ import cz.quantumleap.core.data.transport.Lookup;
 import cz.quantumleap.core.personrole.transport.PersonRole;
 import cz.quantumleap.core.security.WebSecurityExpressionEvaluator;
 import cz.quantumleap.core.tables.PersonRoleTable;
+import cz.quantumleap.core.tables.PersonTable;
 import cz.quantumleap.core.web.DefaultDetailController;
 import cz.quantumleap.core.web.DetailController;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -54,7 +55,7 @@ public class PersonRoleController extends AdminController {
         PersonRole detail;
         if (id == null) {
             detail = new PersonRole();
-            LookupDao lookupDao = lookupDaoManager.getDaoByLookupIdentifier(PersonController.ENTITY_IDENTIFIER);
+            LookupDao<PersonTable> lookupDao = lookupDaoManager.getDaoByLookupIdentifier(PersonController.ENTITY_IDENTIFIER);
             String personLabel = lookupDao.fetchLabelById(personId);
             detail.setPersonId(new Lookup<>(personId, personLabel, ENTITY_IDENTIFIER));
         } else {

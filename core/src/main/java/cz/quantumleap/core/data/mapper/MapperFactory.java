@@ -182,12 +182,12 @@ public class MapperFactory<TABLE extends Table<? extends Record>> {
                     Object referenceId = record.getValue(field);
                     if (referenceId != null) {
                         String fieldName = field.getName();
-                        EntityIdentifier entityIdentifier = convertFieldToLookupIdentifier(field);
-                        LookupDao lookupDao = lookupDaoManager.getDaoByLookupIdentifier(entityIdentifier);
+                        EntityIdentifier<?> entityIdentifier = convertFieldToLookupIdentifier(field);
+                        LookupDao<?> lookupDao = lookupDaoManager.getDaoByLookupIdentifier(entityIdentifier);
                         Validate.notNull(lookupDao, "LookupDao for field " + transport.getClass().getSimpleName() + "." + fieldName + " was not found!");
 
                         String label = lookupDao.fetchLabelById(referenceId);
-                        value = new Lookup(referenceId, label, entityIdentifier);
+                        value = new Lookup<>(referenceId, label, entityIdentifier);
                     }
                 } else if (paramType == EnumValue.class) {
                     String referenceId = record.getValue(field, String.class);

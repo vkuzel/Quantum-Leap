@@ -15,13 +15,17 @@ import cz.quantumleap.core.person.transport.Person;
 import cz.quantumleap.core.security.WebSecurityExpressionEvaluator;
 import cz.quantumleap.core.session.SessionService;
 import cz.quantumleap.core.session.transport.SessionDetail;
+import cz.quantumleap.core.tables.PersonTable;
 import cz.quantumleap.core.web.*;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
@@ -32,7 +36,7 @@ import static cz.quantumleap.core.tables.PersonTable.PERSON;
 
 @Controller
 @PreAuthorize("hasRole('ADMIN')")
-public class PersonController extends AdminController implements LookupController {
+public class PersonController extends AdminController {
 
     private static final String DETAIL_URL = "/person";
     private static final String DETAIL_VIEW = "admin/person";
@@ -41,7 +45,7 @@ public class PersonController extends AdminController implements LookupControlle
     private static final String LIST_URL = "/people";
     private static final String LIST_VIEW = "admin/people";
     private static final String AJAX_LIST_VIEW = "admin/components/table";
-    public static final EntityIdentifier ENTITY_IDENTIFIER = EntityIdentifier.forTable(PERSON);
+    public static final EntityIdentifier<PersonTable> ENTITY_IDENTIFIER = EntityIdentifier.forTable(PERSON);
 
     private static final String LOOKUP_LABEL_URL = "/person-lookup-label";
     private static final String LOOKUP_LABELS_URL = "/people-lookup-labels";
@@ -49,16 +53,16 @@ public class PersonController extends AdminController implements LookupControlle
 
     private final DetailController<Person> detailController;
     private final ListController listController;
-    private final LookupController lookupController;
     private final PersonService personService;
     private final PersonRoleService personRoleService;
     private final SessionService sessionService;
 
-    public PersonController(AdminMenuManager adminMenuManager, WebSecurityExpressionEvaluator webSecurityExpressionEvaluator, PersonService personService, NotificationService notificationService, PersonRoleService personRoleService, SessionService sessionService) {
+    public PersonController(AdminMenuManager adminMenuManager, WebSecurityExpressionEvaluator webSecurityExpressionEvaluator, LookupControllerManager lookupControllerManager, PersonService personService, NotificationService notificationService, PersonRoleService personRoleService, SessionService sessionService) {
         super(adminMenuManager, personService, notificationService, webSecurityExpressionEvaluator);
         this.detailController = new DefaultDetailController<>(Person.class, DETAIL_URL, DETAIL_VIEW, personService);
         this.listController = new DefaultListController(ENTITY_IDENTIFIER, LIST_VIEW, AJAX_LIST_VIEW, DETAIL_URL, personService);
-        this.lookupController = new DefaultLookupController(ENTITY_IDENTIFIER, DETAIL_URL, LOOKUP_LABEL_URL, LOOKUP_LABELS_URL, LOOKUP_LIST_URL, personService);
+        LookupController lookupController = new DefaultLookupController(webSecurityExpressionEvaluator, ENTITY_IDENTIFIER, DETAIL_URL, LOOKUP_LABEL_URL, LOOKUP_LABELS_URL, LOOKUP_LIST_URL, personService);
+        lookupControllerManager.registerController(lookupController);
         this.personService = personService;
         this.personRoleService = personRoleService;
         this.sessionService = sessionService;
@@ -108,49 +112,5 @@ public class PersonController extends AdminController implements LookupControlle
     @GetMapping(LIST_URL)
     public String showPeople(SliceRequest sliceRequest, Model model, HttpServletRequest request) {
         return listController.list(sliceRequest, model, request);
-    }
-
-    @Override
-    public EntityIdentifier getEntityIdentifier() {
-        return lookupController.getEntityIdentifier();
-    }
-
-    @Override
-    public String getDetailUrl() {
-        return lookupController.getDetailUrl();
-    }
-
-    @Override
-    public String getLookupLabelUrl() {
-        return lookupController.getLookupLabelUrl();
-    }
-
-    @Override
-    public String getLookupLabelsUrl() {
-        return lookupController.getLookupLabelsUrl();
-    }
-
-    @Override
-    public String getLookupListUrl() {
-        return lookupController.getLookupListUrl();
-    }
-
-    @GetMapping(LOOKUP_LABEL_URL)
-    @ResponseBody
-    @Override
-    public String resolveLookupLabel(String id) {
-        return lookupController.resolveLookupLabel(id);
-    }
-
-    @GetMapping(LOOKUP_LABELS_URL)
-    @Override
-    public String findLookupLabels(String query, Model model, HttpServletRequest request) {
-        return lookupController.findLookupLabels(query, model, request);
-    }
-
-    @GetMapping(LOOKUP_LIST_URL)
-    @Override
-    public String lookupList(SliceRequest sliceRequest, Model model, HttpServletRequest request) {
-        return lookupController.lookupList(sliceRequest, model, request);
     }
 }

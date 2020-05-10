@@ -73,8 +73,8 @@ public class TableMapper<TABLE extends org.jooq.Table<? extends Record>> impleme
     private HashBasedTable<Object, Column, String> fetchLookupLabels() {
         HashBasedTable<Object, Column, String> valueColumnLabels = HashBasedTable.create();
         for (LookupColumn lookupColumn : lookupReferenceIds.keys()) {
-            EntityIdentifier entityIdentifier = lookupColumn.getEntityIdentifier();
-            LookupDao<org.jooq.Table<? extends Record>> lookupDao = lookupDaoManager.getDaoByLookupIdentifier(entityIdentifier);
+            EntityIdentifier<?> entityIdentifier = lookupColumn.getEntityIdentifier();
+            LookupDao<?> lookupDao = lookupDaoManager.getDaoByLookupIdentifier(entityIdentifier);
             Map<Object, String> labels = lookupDao.fetchLabelsById(lookupReferenceIds.get(lookupColumn));
             labels.forEach((referenceId, label) -> valueColumnLabels.put(referenceId, lookupColumn, label));
         }
@@ -88,7 +88,7 @@ public class TableMapper<TABLE extends org.jooq.Table<? extends Record>> impleme
             row.forEach((column, value) -> {
                 if (column.isLookupColumn()) {
                     LookupColumn lookupColumn = column.asLookupColumn();
-                    rowWithComplexValues.put(column, new Lookup(
+                    rowWithComplexValues.put(column, new Lookup<>(
                             value,
                             lookupLabels.get(value, column),
                             lookupColumn.getEntityIdentifier()
@@ -114,7 +114,7 @@ public class TableMapper<TABLE extends org.jooq.Table<? extends Record>> impleme
 
         private final Map<Field<?>, Column> fieldColumnMap;
 
-        private TableColumnHandler(EntityIdentifier entityIdentifier, Sort sort) {
+        private TableColumnHandler(EntityIdentifier<?> entityIdentifier, Sort sort) {
             this.sort = sort;
             this.fieldColumnMap = Maps.newLinkedHashMapWithExpectedSize(entityIdentifier.getTable().fields().length);
 

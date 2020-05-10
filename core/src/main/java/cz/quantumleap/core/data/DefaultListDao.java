@@ -72,7 +72,7 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
     }
 
     private Collection<Condition> joinConditions(Condition condition1, Condition condition2, Condition condition3) {
-        List<Condition> conditions = new ArrayList<>(2);
+        List<Condition> conditions = new ArrayList<>(3);
         if (condition1 != null) {
             conditions.add(condition1);
         }

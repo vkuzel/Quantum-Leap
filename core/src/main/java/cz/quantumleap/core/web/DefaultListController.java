@@ -15,13 +15,13 @@ public final class DefaultListController implements ListController {
     public static final String ENTITY_IDENTIFIER_MODEL_ATTRIBUTE_NAME = "entityIdentifier";
     public static final String DETAIL_URL_MODEL_ATTRIBUTE_NAME = "detailUrl";
 
-    private final EntityIdentifier entityIdentifier;
+    private final EntityIdentifier<?> entityIdentifier;
     private final String listView;
     private final String ajaxListView;
     private final String detailUrl;
     private final ListService listService;
 
-    public DefaultListController(EntityIdentifier entityIdentifier, String listView, String ajaxListView, String detailUrl, ListService listService) {
+    public DefaultListController(EntityIdentifier<?> entityIdentifier, String listView, String ajaxListView, String detailUrl, ListService listService) {
         this.entityIdentifier = entityIdentifier;
         this.listView = listView;
         this.ajaxListView = ajaxListView;
@@ -31,7 +31,7 @@ public final class DefaultListController implements ListController {
 
     @Override
     public String list(SliceRequest sliceRequest, Model model, HttpServletRequest request) {
-        Slice slice = listService.findSlice(sliceRequest);
+        Slice<?> slice = listService.findSlice(sliceRequest);
         model.addAttribute(TABLE_SLICE_MODEL_ATTRIBUTE_NAME, slice);
         model.addAttribute(ENTITY_IDENTIFIER_MODEL_ATTRIBUTE_NAME, entityIdentifier.toString());
         model.addAttribute(DETAIL_URL_MODEL_ATTRIBUTE_NAME, detailUrl);

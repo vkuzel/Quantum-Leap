@@ -20,43 +20,38 @@ public class LookupDaoManager {
 
     private final ApplicationContext applicationContext;
 
-    private Map<EntityIdentifier<?>, LookupDao<Table<? extends Record>>> lookupDaoMap = new HashMap<>();
+    private final Map<EntityIdentifier<?>, LookupDao<?>> lookupDaoMap = new HashMap<>();
 
     public LookupDaoManager(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
     }
 
-    public LookupDao<Table<? extends Record>> getDaoByLookupIdentifier(EntityIdentifier<?> entityIdentifier) {
-        return lookupDaoMap.get(entityIdentifier);
+    @SuppressWarnings("unchecked")
+    public <T extends Table<? extends Record>> LookupDao<T> getDaoByLookupIdentifier(EntityIdentifier<T> entityIdentifier) {
+        return (LookupDao<T>) lookupDaoMap.get(entityIdentifier);
     }
 
     @EventListener(ContextRefreshedEvent.class)
     public void initializeLookupDaoMap() {
         Map<String, LookupDao> beans = applicationContext.getBeansOfType(LookupDao.class);
-        for (LookupDao lookupDao : beans.values()) {
-            EntityIdentifier entityIdentifier = lookupDao.getEntityIdentifier();
+        for (LookupDao<?> lookupDao : beans.values()) {
+            EntityIdentifier<?> entityIdentifier = lookupDao.getEntityIdentifier();
             if (entityIdentifier != null) {
                 addDao(entityIdentifier, lookupDao);
             }
         }
     }
 
-    public void registerDao(EntityIdentifier entityIdentifier, LookupDao lookupDao) {
+    public void registerDao(EntityIdentifier<?> entityIdentifier, LookupDao<?> lookupDao) {
         addDao(entityIdentifier, lookupDao);
     }
 
-    @SuppressWarnings("unchecked")
-    private void addDao(EntityIdentifier entityIdentifier, LookupDao lookupDao) {
-        LookupDao previousDao = lookupDaoMap.get(entityIdentifier);
-        if (previousDao == null) {
+    private void addDao(EntityIdentifier<?> entityIdentifier, LookupDao<?> lookupDao) {
+        LookupDao<?> registeredDao = lookupDaoMap.get(entityIdentifier);
+        if (registeredDao == null) {
             lookupDaoMap.put(entityIdentifier, lookupDao);
         } else {
-            log.error("Two DAOs for a table {}, existing: {}, skipped: {}", entityIdentifier, previousDao, lookupDao);
+            log.error("Two DAOs exists for an entity {}, first: {}, second: {}", entityIdentifier, registeredDao, lookupDao);
         }
-    }
-
-    @SuppressWarnings("unchecked")
-    private LookupDao<Table<? extends Record>> toGenericDao(LookupDao lookupDao) {
-        return (LookupDao<Table<? extends Record>>) lookupDao;
     }
 }

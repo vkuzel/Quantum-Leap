@@ -8,6 +8,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 public final class DefaultDetailController<T> implements DetailController<T> {
 
@@ -15,12 +16,18 @@ public final class DefaultDetailController<T> implements DetailController<T> {
     private final String detailUrl;
     private final String detailView;
     private final DetailService<T> detailService;
+    private final Supplier<T> detailSupplier;
 
     public DefaultDetailController(Class<T> transportType, String detailUrl, String detailView, DetailService<T> detailService) {
+        this(transportType, detailUrl, detailView, detailService, null);
+    }
+
+    public DefaultDetailController(Class<T> transportType, String detailUrl, String detailView, DetailService<T> detailService, Supplier<T> detailSupplier) {
         this.transportType = transportType;
         this.detailUrl = detailUrl;
         this.detailView = detailView;
         this.detailService = detailService;
+        this.detailSupplier = detailSupplier;
     }
 
     @Override
@@ -30,7 +37,12 @@ public final class DefaultDetailController<T> implements DetailController<T> {
 
     @Override
     public String show(Object id, Model model, Function<T, String> viewFunction) {
-        T detail = id != null ? detailService.get(id) : createDetail();
+        T detail;
+        if (id != null) {
+            detail = detailService.get(id);
+        } else {
+            detail = detailSupplier != null ? detailSupplier.get() : createDetail();
+        }
         model.addAttribute(detail);
         return viewFunction.apply(detail);
     }
@@ -58,7 +70,6 @@ public final class DefaultDetailController<T> implements DetailController<T> {
         return "redirect:" + detailUrl + '/' + getDetailId(saved);
     }
 
-    // TODO This is "just for fun" solution!
     private Object getDetailId(T transport) {
         try {
             Method method = transport.getClass().getMethod("getId");
@@ -67,5 +78,4 @@ public final class DefaultDetailController<T> implements DetailController<T> {
             throw new IllegalStateException(e);
         }
     }
-
 }

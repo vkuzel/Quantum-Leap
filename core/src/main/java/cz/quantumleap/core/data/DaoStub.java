@@ -82,8 +82,8 @@ public class DaoStub<TABLE extends Table<? extends Record>> implements DetailDao
     }
 
     @Override
-    public EntityIdentifier getEntityIdentifier() {
-        return lookupDao.getEntityIdentifier();
+    public EntityIdentifier<TABLE> getEntityIdentifier() {
+        return entity.getIdentifier();
     }
 
     @Override

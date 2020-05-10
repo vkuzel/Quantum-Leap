@@ -28,7 +28,7 @@ public final class DefaultLookupDao<TABLE extends Table<? extends Record>> imple
     }
 
     @Override
-    public EntityIdentifier getEntityIdentifier() {
+    public EntityIdentifier<TABLE> getEntityIdentifier() {
         return entity.getIdentifier();
     }
 
