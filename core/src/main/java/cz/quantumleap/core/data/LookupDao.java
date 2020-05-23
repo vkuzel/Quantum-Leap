@@ -1,17 +1,23 @@
 package cz.quantumleap.core.data;
 
 import cz.quantumleap.core.data.entity.EntityIdentifier;
+import cz.quantumleap.core.data.transport.Slice;
 import cz.quantumleap.core.data.transport.SliceRequest;
+import cz.quantumleap.core.data.transport.Table.Column;
 import org.jooq.Record;
 import org.jooq.Table;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public interface LookupDao<TABLE extends Table<? extends Record>> extends ListDao<TABLE> {
+public interface LookupDao<TABLE extends Table<? extends Record>> {
 
-    EntityIdentifier<TABLE> getEntityIdentifier();
+    /**
+     * LookupDao can return an entity identifier different than an entity
+     * identifier of a TABLE. This will allow to register a lookup DAO based on
+     * an view for a table.
+     */
+    EntityIdentifier<?> getLookupEntityIdentifier();
 
     String fetchLabelById(Object id);
 
@@ -19,5 +25,5 @@ public interface LookupDao<TABLE extends Table<? extends Record>> extends ListDa
 
     Map<Object, String> fetchLabelsByFilter(String query);
 
-    <T> List<T> fetchList(SliceRequest sliceRequest, Class<T> type);
+    Slice<Map<Column, Object>> fetchSlice(SliceRequest sliceRequest);
 }

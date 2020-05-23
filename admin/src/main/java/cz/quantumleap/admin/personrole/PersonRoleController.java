@@ -46,7 +46,7 @@ public class PersonRoleController extends AdminController {
         super(adminMenuManager, personService, notificationService, webSecurityExpressionEvaluator);
         this.lookupDaoManager = lookupDaoManager;
         this.personRoleService = personRoleService;
-        this.detailController = new DefaultDetailController<>(PersonRole.class, DETAIL_URL, DETAIL_VIEW, personRoleService);
+        this.detailController = new DefaultDetailController<>(PersonRole.class, personRoleService, DETAIL_URL, DETAIL_VIEW);
     }
 
     @AdminMenuItemActive("admin.menu.people")

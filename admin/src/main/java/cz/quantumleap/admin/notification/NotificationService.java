@@ -1,6 +1,8 @@
 package cz.quantumleap.admin.notification;
 
 import cz.quantumleap.admin.notification.transport.Notification;
+import cz.quantumleap.admin.tables.NotificationTable;
+import cz.quantumleap.core.data.entity.EntityIdentifier;
 import cz.quantumleap.core.data.transport.Lookup;
 import cz.quantumleap.core.data.transport.Slice;
 import cz.quantumleap.core.data.transport.SliceRequest;
@@ -37,6 +39,10 @@ public class NotificationService {
                         throw new IllegalStateException("Two notification definitions with same code " + ad.getNotificationCode());
                     }));
         }
+    }
+
+    public EntityIdentifier<NotificationTable> getListEntityIdentifier() {
+        return notificationDao.getListEntityIdentifier();
     }
 
     @Transactional

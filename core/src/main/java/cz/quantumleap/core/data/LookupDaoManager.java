@@ -35,7 +35,7 @@ public class LookupDaoManager {
     public void initializeLookupDaoMap() {
         Map<String, LookupDao> beans = applicationContext.getBeansOfType(LookupDao.class);
         for (LookupDao<?> lookupDao : beans.values()) {
-            EntityIdentifier<?> entityIdentifier = lookupDao.getEntityIdentifier();
+            EntityIdentifier<?> entityIdentifier = lookupDao.getLookupEntityIdentifier();
             if (entityIdentifier != null) {
                 addDao(entityIdentifier, lookupDao);
             }

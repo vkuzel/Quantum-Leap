@@ -21,30 +21,28 @@ public final class DefaultLookupController implements LookupController {
     private static final String LOOKUP_LABELS_VIEW = "admin/components/lookup-labels";
 
     private static final String TABLE_SLICE_MODEL_ATTRIBUTE_NAME = "tableSlice";
-    private static final String ENTITY_IDENTIFIER_MODEL_ATTRIBUTE_NAME = "entityIdentifier";
+    private static final String LIST_ENTITY_IDENTIFIER_MODEL_ATTRIBUTE_NAME = "entityIdentifier";
     private static final String LOOKUP_LIST_VIEW = "admin/components/lookup-modal-table";
 
     private final WebSecurityExpressionEvaluator webSecurityExpressionEvaluator;
-    private final EntityIdentifier<?> entityIdentifier;
+    private final LookupService lookupService;
     private final String detailUrl;
     private final String lookupLabelUrl;
     private final String lookupLabelsUrl;
     private final String lookupListUrl;
-    private final LookupService lookupService;
 
-    public DefaultLookupController(WebSecurityExpressionEvaluator webSecurityExpressionEvaluator, EntityIdentifier<?> entityIdentifier, String detailUrl, String lookupLabelUrl, String lookupLabelsUrl, String lookupListUrl, LookupService lookupService) {
+    public DefaultLookupController(WebSecurityExpressionEvaluator webSecurityExpressionEvaluator, LookupService lookupService, String detailUrl, String lookupLabelUrl, String lookupLabelsUrl, String lookupListUrl) {
         this.webSecurityExpressionEvaluator = webSecurityExpressionEvaluator;
-        this.entityIdentifier = entityIdentifier;
+        this.lookupService = lookupService;
         this.detailUrl = detailUrl;
-        this.lookupLabelUrl = lookupLabelUrl;
         this.lookupLabelsUrl = lookupLabelsUrl;
         this.lookupListUrl = lookupListUrl;
-        this.lookupService = lookupService;
+        this.lookupLabelUrl = lookupLabelUrl;
     }
 
     @Override
-    public EntityIdentifier<?> getEntityIdentifier() {
-        return entityIdentifier;
+    public EntityIdentifier<?> getLookupEntityIdentifier() {
+        return lookupService.getLookupEntityIdentifier();
     }
 
     @Override
@@ -91,7 +89,7 @@ public final class DefaultLookupController implements LookupController {
 
         Slice slice = lookupService.findSlice(sliceRequest);
         model.addAttribute(TABLE_SLICE_MODEL_ATTRIBUTE_NAME, slice);
-        model.addAttribute(ENTITY_IDENTIFIER_MODEL_ATTRIBUTE_NAME, entityIdentifier.toString());
+        model.addAttribute(LIST_ENTITY_IDENTIFIER_MODEL_ATTRIBUTE_NAME, lookupService.getListEntityIdentifier().toString());
         model.addAttribute(DETAIL_URL_MODEL_ATTRIBUTE_NAME, detailUrl);
 
         return LOOKUP_LIST_VIEW;

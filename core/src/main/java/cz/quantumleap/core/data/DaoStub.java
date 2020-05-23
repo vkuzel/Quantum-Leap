@@ -33,6 +33,21 @@ public class DaoStub<TABLE extends Table<? extends Record>> implements DetailDao
     }
 
     @Override
+    public EntityIdentifier<TABLE> getDetailEntityIdentifier() {
+        return detailDao.getDetailEntityIdentifier();
+    }
+
+    @Override
+    public EntityIdentifier<TABLE> getListEntityIdentifier() {
+        return listDao.getListEntityIdentifier();
+    }
+
+    @Override
+    public EntityIdentifier<?> getLookupEntityIdentifier() {
+        return lookupDao.getLookupEntityIdentifier();
+    }
+
+    @Override
     public <T> T fetchById(Object id, Class<T> type) {
         return detailDao.fetchById(id, type);
     }
@@ -79,11 +94,6 @@ public class DaoStub<TABLE extends Table<? extends Record>> implements DetailDao
 
     public <T> List<T> fetchListByCondition(Condition condition, Class<T> type) {
         return listDao.fetchListByCondition(condition, type);
-    }
-
-    @Override
-    public EntityIdentifier<TABLE> getEntityIdentifier() {
-        return entity.getIdentifier();
     }
 
     @Override

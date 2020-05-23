@@ -1,6 +1,7 @@
 package cz.quantumleap.core.data;
 
 import cz.quantumleap.core.data.entity.Entity;
+import cz.quantumleap.core.data.entity.EntityIdentifier;
 import cz.quantumleap.core.data.mapper.MapperFactory;
 import org.apache.commons.lang3.Validate;
 import org.jooq.*;
@@ -19,6 +20,11 @@ public final class DefaultDetailDao<TABLE extends Table<? extends Record>> imple
         this.dslContext = dslContext;
         this.mapperFactory = mapperFactory;
         this.recordAuditor = recordAuditor;
+    }
+
+    @Override
+    public EntityIdentifier<TABLE> getDetailEntityIdentifier() {
+        return entity.getIdentifier();
     }
 
     @Override

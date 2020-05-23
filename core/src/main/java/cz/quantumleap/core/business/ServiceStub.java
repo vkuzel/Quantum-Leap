@@ -3,6 +3,7 @@ package cz.quantumleap.core.business;
 import cz.quantumleap.core.data.DetailDao;
 import cz.quantumleap.core.data.ListDao;
 import cz.quantumleap.core.data.LookupDao;
+import cz.quantumleap.core.data.entity.EntityIdentifier;
 import cz.quantumleap.core.data.transport.Slice;
 import cz.quantumleap.core.data.transport.SliceRequest;
 import cz.quantumleap.core.data.transport.Table;
@@ -23,6 +24,21 @@ public class ServiceStub<T> implements DetailService<T>, ListService, LookupServ
         this.detailService = new DefaultDetailService<>(transportType, detailDao);
         this.listService = new DefaultListService(listDao);
         this.lookupService = new DefaultLookupService(lookupDao, listService);
+    }
+
+    @Override
+    public EntityIdentifier<?> getDetailEntityIdentifier() {
+        return detailService.getDetailEntityIdentifier();
+    }
+
+    @Override
+    public EntityIdentifier<?> getLookupEntityIdentifier() {
+        return lookupService.getLookupEntityIdentifier();
+    }
+
+    @Override
+    public EntityIdentifier<?> getListEntityIdentifier() {
+        return listService.getListEntityIdentifier();
     }
 
     @Override

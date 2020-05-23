@@ -9,7 +9,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.jooq.*;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -28,7 +27,7 @@ public final class DefaultLookupDao<TABLE extends Table<? extends Record>> imple
     }
 
     @Override
-    public EntityIdentifier<TABLE> getEntityIdentifier() {
+    public EntityIdentifier<TABLE> getLookupEntityIdentifier() {
         return entity.getIdentifier();
     }
 
@@ -73,16 +72,6 @@ public final class DefaultLookupDao<TABLE extends Table<? extends Record>> imple
     @Override
     public Slice<Map<Column, Object>> fetchSlice(SliceRequest sliceRequest) {
         return listDao.fetchSlice(sliceRequest);
-    }
-
-    @Override
-    public <T> List<T> fetchList(SliceRequest sliceRequest, Class<T> type) {
-        return listDao.fetchList(sliceRequest, type);
-    }
-
-    @Override
-    public <T> List<T> fetchListByCondition(Condition condition, Class<T> type) {
-        return listDao.fetchListByCondition(condition, type);
     }
 
     private Table<? extends Record> getTable() {

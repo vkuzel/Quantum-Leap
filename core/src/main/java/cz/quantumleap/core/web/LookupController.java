@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 
 public interface LookupController {
 
-    EntityIdentifier getEntityIdentifier();
+    EntityIdentifier<?> getLookupEntityIdentifier();
 
     String getDetailUrl();
 

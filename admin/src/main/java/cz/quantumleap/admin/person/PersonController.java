@@ -59,9 +59,9 @@ public class PersonController extends AdminController {
 
     public PersonController(AdminMenuManager adminMenuManager, WebSecurityExpressionEvaluator webSecurityExpressionEvaluator, LookupControllerManager lookupControllerManager, PersonService personService, NotificationService notificationService, PersonRoleService personRoleService, SessionService sessionService) {
         super(adminMenuManager, personService, notificationService, webSecurityExpressionEvaluator);
-        this.detailController = new DefaultDetailController<>(Person.class, DETAIL_URL, DETAIL_VIEW, personService);
-        this.listController = new DefaultListController(ENTITY_IDENTIFIER, LIST_VIEW, AJAX_LIST_VIEW, DETAIL_URL, personService);
-        LookupController lookupController = new DefaultLookupController(webSecurityExpressionEvaluator, ENTITY_IDENTIFIER, DETAIL_URL, LOOKUP_LABEL_URL, LOOKUP_LABELS_URL, LOOKUP_LIST_URL, personService);
+        this.detailController = new DefaultDetailController<>(Person.class, personService, DETAIL_URL, DETAIL_VIEW);
+        this.listController = new DefaultListController(personService, LIST_VIEW, AJAX_LIST_VIEW, DETAIL_URL);
+        LookupController lookupController = new DefaultLookupController(webSecurityExpressionEvaluator, personService, DETAIL_URL, LOOKUP_LABEL_URL, LOOKUP_LABELS_URL, LOOKUP_LIST_URL);
         lookupControllerManager.registerController(lookupController);
         this.personService = personService;
         this.personRoleService = personRoleService;

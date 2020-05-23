@@ -29,6 +29,7 @@ public class LookupControllerManager {
     private final ApplicationContext applicationContext;
 
     private final Map<EntityIdentifier<?>, LookupController> lookupControllerMap = new HashMap<>();
+
     private final RequestMappingHandlerMapping requestMappingHandlerMapping;
 
     public LookupControllerManager(ApplicationContext applicationContext, RequestMappingHandlerMapping requestMappingHandlerMapping) {
@@ -44,7 +45,7 @@ public class LookupControllerManager {
             // that a controller's getEntityIdentifier() method is protected by
             // Spring Security and a security context is not accessible from
             // this place. Make sure the method is accessible.
-            EntityIdentifier<?> entityIdentifier = lookupController.getEntityIdentifier();
+            EntityIdentifier<?> entityIdentifier = lookupController.getLookupEntityIdentifier();
             if (entityIdentifier != null) {
                 addController(entityIdentifier, lookupController);
             }
@@ -52,23 +53,25 @@ public class LookupControllerManager {
     }
 
     public void registerController(LookupController lookupController) {
-        registerController(lookupController.getEntityIdentifier(), lookupController);
+        registerController(lookupController.getLookupEntityIdentifier(), lookupController);
     }
 
     public void registerController(EntityIdentifier<?> entityIdentifier, LookupController lookupController) {
+        if (!lookupControllerMap.containsValue(lookupController)) {
+            RequestMappingInfo labelMapping = RequestMappingInfo.paths(lookupController.getLookupLabelUrl()).methods(RequestMethod.GET).build();
+            Method resolveLookupLabelMethod = getLookupControllerMethod(lookupController.getClass(), "resolveLookupLabel", String.class, HttpServletRequest.class, HttpServletResponse.class);
+            requestMappingHandlerMapping.registerMapping(labelMapping, lookupController, resolveLookupLabelMethod);
+
+            RequestMappingInfo labelsMapping = RequestMappingInfo.paths(lookupController.getLookupLabelsUrl()).methods(RequestMethod.GET).build();
+            Method findLookupLabelsMethod = getLookupControllerMethod(lookupController.getClass(), "findLookupLabels", String.class, Model.class, HttpServletRequest.class, HttpServletResponse.class);
+            requestMappingHandlerMapping.registerMapping(labelsMapping, lookupController, findLookupLabelsMethod);
+
+            RequestMappingInfo listMapping = RequestMappingInfo.paths(lookupController.getLookupListUrl()).methods(RequestMethod.GET).build();
+            Method lookupListMethod = getLookupControllerMethod(lookupController.getClass(), "lookupList", SliceRequest.class, Model.class, HttpServletRequest.class, HttpServletResponse.class);
+            requestMappingHandlerMapping.registerMapping(listMapping, lookupController, lookupListMethod);
+        }
+
         addController(entityIdentifier, lookupController);
-
-        RequestMappingInfo labelMapping = RequestMappingInfo.paths(lookupController.getLookupLabelUrl()).methods(RequestMethod.GET).build();
-        Method resolveLookupLabelMethod = getLookupControllerMethod(lookupController.getClass(), "resolveLookupLabel", String.class, HttpServletRequest.class, HttpServletResponse.class);
-        requestMappingHandlerMapping.registerMapping(labelMapping, lookupController, resolveLookupLabelMethod);
-
-        RequestMappingInfo labelsMapping = RequestMappingInfo.paths(lookupController.getLookupLabelsUrl()).methods(RequestMethod.GET).build();
-        Method findLookupLabelsMethod = getLookupControllerMethod(lookupController.getClass(), "findLookupLabels", String.class, Model.class, HttpServletRequest.class, HttpServletResponse.class);
-        requestMappingHandlerMapping.registerMapping(labelsMapping, lookupController, findLookupLabelsMethod);
-
-        RequestMappingInfo listMapping = RequestMappingInfo.paths(lookupController.getLookupListUrl()).methods(RequestMethod.GET).build();
-        Method lookupListMethod = getLookupControllerMethod(lookupController.getClass(), "lookupList", SliceRequest.class, Model.class, HttpServletRequest.class, HttpServletResponse.class);
-        requestMappingHandlerMapping.registerMapping(listMapping, lookupController, lookupListMethod);
     }
 
     private Method getLookupControllerMethod(Class<?> clazz, String methodName, Class<?>... parameterTypes) {

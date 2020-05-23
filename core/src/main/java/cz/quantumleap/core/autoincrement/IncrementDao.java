@@ -2,6 +2,7 @@ package cz.quantumleap.core.autoincrement;
 
 import cz.quantumleap.core.data.*;
 import cz.quantumleap.core.data.entity.Entity;
+import cz.quantumleap.core.data.entity.EntityIdentifier;
 import cz.quantumleap.core.data.mapper.MapperFactory;
 import cz.quantumleap.core.tables.IncrementTable;
 import org.jooq.Condition;
@@ -21,14 +22,24 @@ import static cz.quantumleap.core.tables.IncrementTable.INCREMENT;
 @Repository
 public class IncrementDao implements DetailDao<IncrementTable> {
 
+    private final Entity<IncrementTable> entity;
     private final DSLContext dslContext;
     private final DetailDao<IncrementTable> detailDao;
 
     public IncrementDao(DSLContext dslContext, LookupDaoManager lookupDaoManager, EnumManager enumManager, RecordAuditor recordAuditor) {
         this.dslContext = dslContext;
-        Entity<IncrementTable> entity = Entity.createBuilder(INCREMENT).build();
+        this.entity = createEntity();
         MapperFactory<IncrementTable> mapperFactory = new MapperFactory<>(entity, lookupDaoManager, enumManager);
         this.detailDao = new DefaultDetailDao<>(entity, dslContext, mapperFactory, recordAuditor);
+    }
+
+    private Entity<IncrementTable> createEntity() {
+        return Entity.createBuilder(INCREMENT).build();
+    }
+
+    @Override
+    public EntityIdentifier<IncrementTable> getDetailEntityIdentifier() {
+        return entity.getIdentifier();
     }
 
     public Map<String, Integer> loadLastIncrementVersionForModules() {

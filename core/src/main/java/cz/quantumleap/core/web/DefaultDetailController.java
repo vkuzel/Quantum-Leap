@@ -13,21 +13,21 @@ import java.util.function.Supplier;
 public final class DefaultDetailController<T> implements DetailController<T> {
 
     private final Class<T> transportType;
-    private final String detailUrl;
-    private final String detailView;
     private final DetailService<T> detailService;
     private final Supplier<T> detailSupplier;
+    private final String detailUrl;
+    private final String detailView;
 
-    public DefaultDetailController(Class<T> transportType, String detailUrl, String detailView, DetailService<T> detailService) {
-        this(transportType, detailUrl, detailView, detailService, null);
+    public DefaultDetailController(Class<T> transportType, DetailService<T> detailService, String detailUrl, String detailView) {
+        this(transportType, detailService, null, detailUrl, detailView);
     }
 
-    public DefaultDetailController(Class<T> transportType, String detailUrl, String detailView, DetailService<T> detailService, Supplier<T> detailSupplier) {
+    public DefaultDetailController(Class<T> transportType, DetailService<T> detailService, Supplier<T> detailSupplier, String detailUrl, String detailView) {
         this.transportType = transportType;
-        this.detailUrl = detailUrl;
-        this.detailView = detailView;
         this.detailService = detailService;
         this.detailSupplier = detailSupplier;
+        this.detailUrl = detailUrl;
+        this.detailView = detailView;
     }
 
     @Override

@@ -1,6 +1,7 @@
 package cz.quantumleap.core.business;
 
 import cz.quantumleap.core.data.DetailDao;
+import cz.quantumleap.core.data.entity.EntityIdentifier;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.Errors;
 
@@ -12,6 +13,11 @@ public final class DefaultDetailService<T> implements DetailService<T> {
     public DefaultDetailService(Class<T> transportType, DetailDao<?> detailDao) {
         this.transportType = transportType;
         this.detailDao = detailDao;
+    }
+
+    @Override
+    public EntityIdentifier<?> getDetailEntityIdentifier() {
+        return detailDao.getDetailEntityIdentifier();
     }
 
     @Override

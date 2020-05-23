@@ -1,5 +1,6 @@
 package cz.quantumleap.core.business;
 
+import cz.quantumleap.core.data.ListDao;
 import cz.quantumleap.core.data.LookupDao;
 import cz.quantumleap.core.data.entity.EntityIdentifier;
 import cz.quantumleap.core.data.transport.Slice;
@@ -8,19 +9,19 @@ import cz.quantumleap.core.data.transport.Table;
 
 import java.util.Map;
 
-public final class DefaultLookupService implements LookupService {
+public class LookupListServiceStub implements ListService, LookupService {
 
-    private final LookupDao<?> lookupDao;
-    private final ListService listService;
+    protected final ListService listService;
+    protected final LookupService lookupService;
 
-    public DefaultLookupService(LookupDao<?> lookupDao, ListService listService) {
-        this.lookupDao = lookupDao;
-        this.listService = listService;
+    public LookupListServiceStub(ListDao<?> listDao, LookupDao<?> lookupDao) {
+        this.listService = new DefaultListService(listDao);
+        this.lookupService = new DefaultLookupService(lookupDao, listService);
     }
 
     @Override
     public EntityIdentifier<?> getLookupEntityIdentifier() {
-        return lookupDao.getLookupEntityIdentifier();
+        return lookupService.getLookupEntityIdentifier();
     }
 
     @Override
@@ -30,12 +31,12 @@ public final class DefaultLookupService implements LookupService {
 
     @Override
     public String findLookupLabel(Object id) {
-        return lookupDao.fetchLabelById(id);
+        return lookupService.findLookupLabel(id);
     }
 
     @Override
     public Map<Object, String> findLookupLabels(String query) {
-        return lookupDao.fetchLabelsByFilter(query);
+        return lookupService.findLookupLabels(query);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package cz.quantumleap.core.data;
 
+import cz.quantumleap.core.data.entity.EntityIdentifier;
 import cz.quantumleap.core.data.transport.Slice;
 import cz.quantumleap.core.data.transport.SliceRequest;
 import cz.quantumleap.core.data.transport.Table.Column;
@@ -11,6 +12,8 @@ import java.util.List;
 import java.util.Map;
 
 public interface ListDao<TABLE extends Table<? extends Record>> {
+
+    EntityIdentifier<TABLE> getListEntityIdentifier();
 
     Slice<Map<Column, Object>> fetchSlice(SliceRequest sliceRequest);
 
