@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<configuration xmlns="http://www.jooq.org/xsd/jooq-codegen-3.11.0.xsd">
+<configuration xmlns="https://www.jooq.org/xsd/jooq-codegen-3.13.0.xsd">
     <jdbc>
         <driver>org.postgresql.Driver</driver>
         <!-- Url, username and password will be filled from application.properties in jooq.gradle script. -->
@@ -19,7 +19,7 @@
 
             <forcedTypes>
                 <forcedType>
-                    <types>JSON</types>
+                    <includeTypes>JSON</includeTypes>
                     <userType>com.fasterxml.jackson.databind.JsonNode</userType>
                     <binding>cz.quantumleap.core.data.binding.JsonBinding</binding>
                 </forcedType>
@@ -45,7 +45,6 @@
         </strategy>
 
         <target>
-            <!-- TODO Also this is going to be replaced by code generator! -->
             <packageName>cz.quantumleap</packageName>
             <directory>src/generated/java</directory>
             <encoding>UTF-8</encoding>

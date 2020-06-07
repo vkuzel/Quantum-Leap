@@ -12,15 +12,15 @@ import java.sql.SQLFeatureNotSupportedException;
 import java.sql.Types;
 import java.util.Objects;
 
-public class JsonBinding implements Binding<Object, JsonNode> {
+public class JsonBinding implements Binding<JSON, JsonNode> {
 
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     @Override
-    public Converter<Object, JsonNode> converter() {
-        return new Converter<Object, JsonNode>() {
+    public Converter<JSON, JsonNode> converter() {
+        return new Converter<JSON, JsonNode>() {
             @Override
-            public JsonNode from(Object databaseObject) {
+            public JsonNode from(JSON databaseObject) {
                 try {
                     return databaseObject != null ? OBJECT_MAPPER.readValue("" + databaseObject, JsonNode.class) : null;
                 } catch (IOException e) {
@@ -29,17 +29,22 @@ public class JsonBinding implements Binding<Object, JsonNode> {
             }
 
             @Override
-            public Object to(JsonNode userObject) {
+            public JSON to(JsonNode userObject) {
                 try {
-                    return userObject != null ? OBJECT_MAPPER.writeValueAsString(userObject) : null;
+                    if (userObject != null) {
+                        String jsonString = OBJECT_MAPPER.writeValueAsString(userObject);
+                        return stringToJson(jsonString);
+                    } else {
+                        return null;
+                    }
                 } catch (JsonProcessingException e) {
                     throw new IllegalStateException(e);
                 }
             }
 
             @Override
-            public Class<Object> fromType() {
-                return Object.class;
+            public Class<JSON> fromType() {
+                return JSON.class;
             }
 
             @Override
@@ -71,16 +76,22 @@ public class JsonBinding implements Binding<Object, JsonNode> {
 
     @Override
     public void get(BindingGetResultSetContext<JsonNode> ctx) throws SQLException {
-        ctx.convert(converter()).value(ctx.resultSet().getString(ctx.index()));
+        String jsonString = ctx.resultSet().getString(ctx.index());
+        ctx.convert(converter()).value(stringToJson(jsonString));
     }
 
     @Override
     public void get(BindingGetStatementContext<JsonNode> ctx) throws SQLException {
-        ctx.convert(converter()).value(ctx.statement().getString(ctx.index()));
+        String jsonString = ctx.statement().getString(ctx.index());
+        ctx.convert(converter()).value(stringToJson(jsonString));
     }
 
     @Override
     public void get(BindingGetSQLInputContext<JsonNode> ctx) throws SQLException {
         throw new SQLFeatureNotSupportedException();
+    }
+
+    private JSON stringToJson(String jsonString) {
+        return jsonString != null ? JSON.valueOf(jsonString) : null;
     }
 }
