@@ -51,7 +51,7 @@ public class EnvironmentBuilder {
 
         List<ResourceWithModule> scripts = resourceManager.findInClasspath(SCRIPTS_LOCATION_PATTERN);
         scripts.forEach(script -> {
-            log.debug("Executing script {}", script.getResourcePath());
+            log.info("Executing script {}", script.getResourcePath());
             String sql = Utils.readResourceToString(script.getResource());
             dslContext.execute(sql);
         });
@@ -75,7 +75,7 @@ public class EnvironmentBuilder {
 
         for (String moduleName : moduleDependencyManager.getModuleNames()) {
             String schemaName = moduleName.replace('-', '_');
-            log.debug("Dropping schema {}", schemaName);
+            log.info("Dropping schema {}", schemaName);
             environmentDao.dropSchema(schemaName);
         }
     }

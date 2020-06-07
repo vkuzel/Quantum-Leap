@@ -44,10 +44,10 @@ public class DefaultFilterBuilderTest {
         List<String> tokens = Arrays.asList("id", ">", "1", "(", "name", "=", "Forename Surname", "or", "email", "=", "Surname@company.cx", ")", "Title");
         Condition condition = defaultFilterBuilder.createCondition(tokens);
         Assert.assertEquals("(\n" +
-                "  \"core\".\"person\".\"id\" > 1\n" +
+                "  cast(\"core\".\"person\".\"id\" as bigint) > 1\n" +
                 "  and (\n" +
-                "    \"core\".\"person\".\"name\" = 'Forename Surname'\n" +
-                "    or \"core\".\"person\".\"email\" = 'Surname@company.cx'\n" +
+                "    cast(\"core\".\"person\".\"name\" as varchar) = 'Forename Surname'\n" +
+                "    or cast(\"core\".\"person\".\"email\" as varchar) = 'Surname@company.cx'\n" +
                 "  )\n" +
                 "  and \"core\".\"person\".\"name\" like 'Title%'\n" +
                 ")", condition.toString());
@@ -60,9 +60,9 @@ public class DefaultFilterBuilderTest {
         List<String> tokens = Arrays.asList("id", ">", "1", "(", "name", "=", "Forename Surname", "or", "Title");
         Condition condition = defaultFilterBuilder.createCondition(tokens);
         Assert.assertEquals("(\n" +
-                "  \"core\".\"person\".\"id\" > 1\n" +
+                "  cast(\"core\".\"person\".\"id\" as bigint) > 1\n" +
                 "  and (\n" +
-                "    \"core\".\"person\".\"name\" = 'Forename Surname'\n" +
+                "    cast(\"core\".\"person\".\"name\" as varchar) = 'Forename Surname'\n" +
                 "    or \"core\".\"person\".\"name\" like 'Title%'\n" +
                 "  )\n" +
                 ")", condition.toString());

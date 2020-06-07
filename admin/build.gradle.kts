@@ -1,5 +1,5 @@
 dependencies {
-    compile(project(":core"))
+    implementation(project(":core"))
 
     implementation("org.webjars:bootstrap:4.3.1") {
         exclude(group = "org.webjars", module = "jquery")
@@ -8,6 +8,6 @@ dependencies {
     implementation("org.webjars:jquery:3.3.1-2")
     implementation("org.webjars.bower:chart.js:2.7.3")
 
-    testImplementation(project(path = ":core", configuration = "testFixturesUsageCompile"))
+    testImplementation(project(":coretest"))
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
