@@ -14,9 +14,6 @@
                     <span th:text="#{admin.table.title.core.people}">Table</span>
                 </div>
                 <div class="col-sm-4 mb-3 mb-sm-0">
-                    <a th:href="@{|/person|}" class="btn btn-success btn-sm" th:text="#{admin.table.title.new-record}">New record</a>
-                </div>
-                <div class="col-sm-4">
                     <div class="input-group input-group-sm">
                         <div class="input-group-prepend">
                             <div class="input-group-text" id="search-label">
@@ -27,6 +24,10 @@
                                th:placeholder="#{admin.table.title.core.search-people}"
                                th:aria-label="#{admin.table.title.core.search-people}" aria-describedby="search-label">
                     </div>
+                </div>
+                <div class="col-sm-4">
+                    <a th:href="@{|/person|}" class="btn btn-success btn-sm float-right"
+                       th:text="#{admin.table.title.new-record}">New record</a>
                 </div>
             </div>
         </div>
