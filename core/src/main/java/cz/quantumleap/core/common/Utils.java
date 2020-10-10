@@ -2,6 +2,7 @@ package cz.quantumleap.core.common;
 
 import com.google.common.io.CharStreams;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Validate;
 import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.TableField;
@@ -11,6 +12,8 @@ import org.springframework.core.io.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.*;
 import java.util.function.Function;
 import java.util.regex.Matcher;
@@ -105,7 +108,7 @@ public class Utils {
         List<Object> bindings = new ArrayList<>(params.length);
         for (Object param : params) {
             if (param instanceof Collection) {
-                bindings.addAll((Collection) param);
+                bindings.addAll((Collection<?>) param);
             } else {
                 bindings.add(param);
             }
@@ -159,5 +162,22 @@ public class Utils {
             }
         }
         return String.join(", ", textItems);
+    }
+
+    public static List<LocalDate> generateDaysBetween(LocalDate start, LocalDate end) {
+        if (end == null) {
+            end = start;
+        }
+
+        int daysCount = Period.between(start, end).getDays();
+        Validate.isTrue(daysCount < 1000);
+
+        LocalDate date = start;
+        List<LocalDate> daysBetween = new ArrayList<>(daysCount);
+        while (date.isBefore(end) || date.isEqual(end)) {
+            daysBetween.add(date);
+            date = date.plusDays(1);
+        }
+        return daysBetween;
     }
 }
