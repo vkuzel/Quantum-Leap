@@ -1,53 +1,53 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<configuration xmlns="https://www.jooq.org/xsd/jooq-codegen-3.13.0.xsd">
-    <jdbc>
-        <driver>org.postgresql.Driver</driver>
+<tns:configuration xmlns:tns="http://www.jooq.org/xsd/jooq-codegen-3.13.0.xsd">
+    <tns:jdbc>
+        <tns:driver>org.postgresql.Driver</tns:driver>
         <!-- Url, username and password will be filled from application.properties in jooq.gradle script. -->
-        <url/>
-        <user/>
-        <password/>
-    </jdbc>
+        <tns:url/>
+        <tns:user/>
+        <tns:password/>
+    </tns:jdbc>
 
-    <generator>
-        <name>org.jooq.codegen.JavaGenerator</name>
+    <tns:generator>
+        <tns:name>org.jooq.codegen.JavaGenerator</tns:name>
 
-        <database>
-            <name>org.jooq.meta.postgres.PostgresDatabase</name>
+        <tns:database>
+            <tns:name>org.jooq.meta.postgres.PostgresDatabase</tns:name>
 
-            <includes>.*</includes>
-            <excludes/>
+            <tns:includes>.*</tns:includes>
+            <tns:excludes/>
 
-            <forcedTypes>
-                <forcedType>
-                    <includeTypes>JSON</includeTypes>
-                    <userType>com.fasterxml.jackson.databind.JsonNode</userType>
-                    <binding>cz.quantumleap.core.data.binding.JsonBinding</binding>
-                </forcedType>
-            </forcedTypes>
-        </database>
+            <tns:forcedTypes>
+                <tns:forcedType>
+                    <tns:includeTypes>JSON</tns:includeTypes>
+                    <tns:userType>com.fasterxml.jackson.databind.JsonNode</tns:userType>
+                    <tns:binding>cz.quantumleap.core.data.binding.JsonBinding</tns:binding>
+                </tns:forcedType>
+            </tns:forcedTypes>
+        </tns:database>
 
-        <generate>
+        <tns:generate>
             <!--<records>false</records>-->
-            <javaTimeTypes>true</javaTimeTypes>
-        </generate>
+            <tns:javaTimeTypes>true</tns:javaTimeTypes>
+        </tns:generate>
 
-        <strategy>
-            <matchers>
-                <tables>
-                    <table>
-                        <tableClass>
-                            <transform>PASCAL</transform>
-                            <expression>$0_table</expression>
-                        </tableClass>
-                    </table>
-                </tables>
-            </matchers>
-        </strategy>
+        <tns:strategy>
+            <tns:matchers>
+                <tns:tables>
+                    <tns:table>
+                        <tns:tableClass>
+                            <tns:transform>PASCAL</tns:transform>
+                            <tns:expression>$0_table</tns:expression>
+                        </tns:tableClass>
+                    </tns:table>
+                </tns:tables>
+            </tns:matchers>
+        </tns:strategy>
 
-        <target>
-            <packageName>cz.quantumleap</packageName>
-            <directory>src/generated/java</directory>
-            <encoding>UTF-8</encoding>
-        </target>
-    </generator>
-</configuration>
+        <tns:target>
+            <tns:packageName>cz.quantumleap</tns:packageName>
+            <tns:directory>src/generated/java</tns:directory>
+            <tns:encoding>UTF-8</tns:encoding>
+        </tns:target>
+    </tns:generator>
+</tns:configuration>
