@@ -8,7 +8,9 @@ import cz.quantumleap.core.data.RecordAuditor;
 import cz.quantumleap.core.data.entity.Entity;
 import cz.quantumleap.core.person.transport.Person;
 import cz.quantumleap.core.tables.PersonTable;
+import org.jooq.Condition;
 import org.jooq.DSLContext;
+import org.jooq.impl.DSL;
 import org.springframework.stereotype.Repository;
 
 import static cz.quantumleap.core.tables.PersonTable.PERSON;
@@ -21,9 +23,14 @@ public class PersonDao extends DaoStub<PersonTable> {
     }
 
     private static Entity<PersonTable> createEntity() {
-        return Entity.createBuilder(PERSON).setLookupLabelField(PERSON.NAME.coalesce(PERSON.EMAIL))
-                .setWordConditionBuilder(s -> Utils.startsWithIgnoreCase(PERSON.NAME, s).or(Utils.startsWithIgnoreCase(PERSON.EMAIL, s)))
+        return Entity.createBuilder(PERSON).setLookupLabelField(DSL.coalesce(PERSON.NAME, PERSON.EMAIL))
+                .setWordConditionBuilder(PersonDao::createWordCondition)
                 .build();
+    }
+
+    private static Condition createWordCondition(String text) {
+        return Utils.startsWithIgnoreCase(PERSON.NAME, text)
+                .or(Utils.startsWithIgnoreCase(PERSON.EMAIL, text));
     }
 
     public Person fetchByEmail(String email) {
