@@ -102,7 +102,7 @@ public class LookupControllerManager {
         if (lookupController != null) {
             return lookupController;
         } else {
-            throw new IllegalArgumentException("No accessible lookup controller with support of " + entityIdentifier + " was not found!");
+            throw new IllegalArgumentException("No accessible lookup controller with support of " + entityIdentifier + " was found!");
         }
     }
 }
