@@ -9,6 +9,7 @@ import cz.quantumleap.core.Keys;
 import cz.quantumleap.core.tables.records.EnumRecord;
 import org.jooq.*;
 import org.jooq.impl.DSL;
+import org.jooq.impl.SQLDataType;
 import org.jooq.impl.TableImpl;
 
 import java.util.Arrays;
@@ -21,7 +22,7 @@ import java.util.List;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class EnumTable extends TableImpl<EnumRecord> {
 
-    private static final long serialVersionUID = -1406407473;
+    private static final long serialVersionUID = 1L;
 
     /**
      * The reference instance of <code>core.enum</code>
@@ -39,18 +40,19 @@ public class EnumTable extends TableImpl<EnumRecord> {
     /**
      * The column <code>core.enum.id</code>.
      */
-    public final TableField<EnumRecord, String> ID = createField(DSL.name("id"), org.jooq.impl.SQLDataType.VARCHAR(255).nullable(false), this, "");
+    public final TableField<EnumRecord, String> ID = createField(DSL.name("id"), SQLDataType.VARCHAR(255).nullable(false), this, "");
 
     /**
      * The column <code>core.enum.name</code>.
      */
-    public final TableField<EnumRecord, String> NAME = createField(DSL.name("name"), org.jooq.impl.SQLDataType.VARCHAR(255).nullable(false), this, "");
+    public final TableField<EnumRecord, String> NAME = createField(DSL.name("name"), SQLDataType.VARCHAR(255).nullable(false), this, "");
 
-    /**
-     * Create a <code>core.enum</code> table reference
-     */
-    public EnumTable() {
-        this(DSL.name("enum"), null);
+    private EnumTable(Name alias, Table<EnumRecord> aliased) {
+        this(alias, aliased, null);
+    }
+
+    private EnumTable(Name alias, Table<EnumRecord> aliased, Field<?>[] parameters) {
+        super(alias, null, aliased, parameters, DSL.comment(""), TableOptions.table());
     }
 
     /**
@@ -67,12 +69,11 @@ public class EnumTable extends TableImpl<EnumRecord> {
         this(alias, ENUM);
     }
 
-    private EnumTable(Name alias, Table<EnumRecord> aliased) {
-        this(alias, aliased, null);
-    }
-
-    private EnumTable(Name alias, Table<EnumRecord> aliased, Field<?>[] parameters) {
-        super(alias, null, aliased, parameters, DSL.comment(""), TableOptions.table());
+    /**
+     * Create a <code>core.enum</code> table reference
+     */
+    public EnumTable() {
+        this(DSL.name("enum"), null);
     }
 
     public <O extends Record> EnumTable(Table<O> child, ForeignKey<O, EnumRecord> key) {

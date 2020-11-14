@@ -9,6 +9,7 @@ import cz.quantumleap.core.Keys;
 import cz.quantumleap.core.tables.records.RoleRecord;
 import org.jooq.*;
 import org.jooq.impl.DSL;
+import org.jooq.impl.SQLDataType;
 import org.jooq.impl.TableImpl;
 
 import java.util.Arrays;
@@ -21,7 +22,7 @@ import java.util.List;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class RoleTable extends TableImpl<RoleRecord> {
 
-    private static final long serialVersionUID = 1193539586;
+    private static final long serialVersionUID = 1L;
 
     /**
      * The reference instance of <code>core.role</code>
@@ -39,18 +40,19 @@ public class RoleTable extends TableImpl<RoleRecord> {
     /**
      * The column <code>core.role.id</code>.
      */
-    public final TableField<RoleRecord, Long> ID = createField(DSL.name("id"), org.jooq.impl.SQLDataType.BIGINT.nullable(false).defaultValue(org.jooq.impl.DSL.field("nextval('core.role_id_seq'::regclass)", org.jooq.impl.SQLDataType.BIGINT)), this, "");
+    public final TableField<RoleRecord, Long> ID = createField(DSL.name("id"), SQLDataType.BIGINT.nullable(false).identity(true), this, "");
 
     /**
      * The column <code>core.role.name</code>.
      */
-    public final TableField<RoleRecord, String> NAME = createField(DSL.name("name"), org.jooq.impl.SQLDataType.VARCHAR(255).nullable(false), this, "");
+    public final TableField<RoleRecord, String> NAME = createField(DSL.name("name"), SQLDataType.VARCHAR(255).nullable(false), this, "");
 
-    /**
-     * Create a <code>core.role</code> table reference
-     */
-    public RoleTable() {
-        this(DSL.name("role"), null);
+    private RoleTable(Name alias, Table<RoleRecord> aliased) {
+        this(alias, aliased, null);
+    }
+
+    private RoleTable(Name alias, Table<RoleRecord> aliased, Field<?>[] parameters) {
+        super(alias, null, aliased, parameters, DSL.comment(""), TableOptions.table());
     }
 
     /**
@@ -67,12 +69,11 @@ public class RoleTable extends TableImpl<RoleRecord> {
         this(alias, ROLE);
     }
 
-    private RoleTable(Name alias, Table<RoleRecord> aliased) {
-        this(alias, aliased, null);
-    }
-
-    private RoleTable(Name alias, Table<RoleRecord> aliased, Field<?>[] parameters) {
-        super(alias, null, aliased, parameters, DSL.comment(""), TableOptions.table());
+    /**
+     * Create a <code>core.role</code> table reference
+     */
+    public RoleTable() {
+        this(DSL.name("role"), null);
     }
 
     public <O extends Record> RoleTable(Table<O> child, ForeignKey<O, RoleRecord> key) {
@@ -86,7 +87,7 @@ public class RoleTable extends TableImpl<RoleRecord> {
 
     @Override
     public Identity<RoleRecord, Long> getIdentity() {
-        return Keys.IDENTITY_ROLE;
+        return (Identity<RoleRecord, Long>) super.getIdentity();
     }
 
     @Override

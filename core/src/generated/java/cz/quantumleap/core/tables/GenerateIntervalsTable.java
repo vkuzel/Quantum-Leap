@@ -8,6 +8,7 @@ import cz.quantumleap.core.Core;
 import cz.quantumleap.core.tables.records.GenerateIntervalsRecord;
 import org.jooq.*;
 import org.jooq.impl.DSL;
+import org.jooq.impl.SQLDataType;
 import org.jooq.impl.TableImpl;
 
 import java.time.LocalDate;
@@ -20,7 +21,7 @@ import java.time.LocalDateTime;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class GenerateIntervalsTable extends TableImpl<GenerateIntervalsRecord> {
 
-    private static final long serialVersionUID = 981687631;
+    private static final long serialVersionUID = 1L;
 
     /**
      * The reference instance of <code>core.generate_intervals</code>
@@ -38,18 +39,19 @@ public class GenerateIntervalsTable extends TableImpl<GenerateIntervalsRecord> {
     /**
      * The column <code>core.generate_intervals.interval_start</code>.
      */
-    public final TableField<GenerateIntervalsRecord, LocalDateTime> INTERVAL_START = createField(DSL.name("interval_start"), org.jooq.impl.SQLDataType.LOCALDATETIME, this, "");
+    public final TableField<GenerateIntervalsRecord, LocalDateTime> INTERVAL_START = createField(DSL.name("interval_start"), SQLDataType.LOCALDATETIME(0), this, "");
 
     /**
      * The column <code>core.generate_intervals.interval_end</code>.
      */
-    public final TableField<GenerateIntervalsRecord, LocalDateTime> INTERVAL_END = createField(DSL.name("interval_end"), org.jooq.impl.SQLDataType.LOCALDATETIME, this, "");
+    public final TableField<GenerateIntervalsRecord, LocalDateTime> INTERVAL_END = createField(DSL.name("interval_end"), SQLDataType.LOCALDATETIME(0), this, "");
 
-    /**
-     * Create a <code>core.generate_intervals</code> table reference
-     */
-    public GenerateIntervalsTable() {
-        this(DSL.name("generate_intervals"), null);
+    private GenerateIntervalsTable(Name alias, Table<GenerateIntervalsRecord> aliased) {
+        this(alias, aliased, new Field[3]);
+    }
+
+    private GenerateIntervalsTable(Name alias, Table<GenerateIntervalsRecord> aliased, Field<?>[] parameters) {
+        super(alias, null, aliased, parameters, DSL.comment(""), TableOptions.function());
     }
 
     /**
@@ -66,16 +68,11 @@ public class GenerateIntervalsTable extends TableImpl<GenerateIntervalsRecord> {
         this(alias, GENERATE_INTERVALS);
     }
 
-    private GenerateIntervalsTable(Name alias, Table<GenerateIntervalsRecord> aliased) {
-        this(alias, aliased, new Field[3]);
-    }
-
-    private GenerateIntervalsTable(Name alias, Table<GenerateIntervalsRecord> aliased, Field<?>[] parameters) {
-        super(alias, null, aliased, parameters, DSL.comment(""), TableOptions.function());
-    }
-
-    public <O extends Record> GenerateIntervalsTable(Table<O> child, ForeignKey<O, GenerateIntervalsRecord> key) {
-        super(child, key, GENERATE_INTERVALS);
+    /**
+     * Create a <code>core.generate_intervals</code> table reference
+     */
+    public GenerateIntervalsTable() {
+        this(DSL.name("generate_intervals"), null);
     }
 
     @Override
@@ -121,22 +118,34 @@ public class GenerateIntervalsTable extends TableImpl<GenerateIntervalsRecord> {
     /**
      * Call this table-valued function
      */
-    public GenerateIntervalsTable call(LocalDate intervalsStart, LocalDate intervalsEnd, String step) {
-        return new GenerateIntervalsTable(DSL.name(getName()), null, new Field[] { 
-              DSL.val(intervalsStart, org.jooq.impl.SQLDataType.LOCALDATE)
-            , DSL.val(intervalsEnd, org.jooq.impl.SQLDataType.LOCALDATE)
-            , DSL.val(step, org.jooq.impl.SQLDataType.VARCHAR)
+    public GenerateIntervalsTable call(
+          LocalDate intervalsStart
+        , LocalDate intervalsEnd
+        , String step
+    ) {
+        GenerateIntervalsTable result = new GenerateIntervalsTable(DSL.name("generate_intervals"), null, new Field[] {
+              DSL.val(intervalsStart, SQLDataType.LOCALDATE)
+            , DSL.val(intervalsEnd, SQLDataType.LOCALDATE)
+            , DSL.val(step, SQLDataType.VARCHAR)
         });
+
+        return aliased() ? result.as(getUnqualifiedName()) : result;
     }
 
     /**
      * Call this table-valued function
      */
-    public GenerateIntervalsTable call(Field<LocalDate> intervalsStart, Field<LocalDate> intervalsEnd, Field<String> step) {
-        return new GenerateIntervalsTable(DSL.name(getName()), null, new Field[] { 
+    public GenerateIntervalsTable call(
+          Field<LocalDate> intervalsStart
+        , Field<LocalDate> intervalsEnd
+        , Field<String> step
+    ) {
+        GenerateIntervalsTable result = new GenerateIntervalsTable(DSL.name("generate_intervals"), null, new Field[] {
               intervalsStart
             , intervalsEnd
             , step
         });
+
+        return aliased() ? result.as(getUnqualifiedName()) : result;
     }
 }

@@ -18,7 +18,7 @@ import org.jooq.impl.UpdatableRecordImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class TablePreferencesRecord extends UpdatableRecordImpl<TablePreferencesRecord> implements Record4<Long, String, Boolean, String[]> {
 
-    private static final long serialVersionUID = 817903327;
+    private static final long serialVersionUID = 1L;
 
     /**
      * Setter for <code>core.table_preferences.id</code>.
@@ -209,9 +209,9 @@ public class TablePreferencesRecord extends UpdatableRecordImpl<TablePreferences
     public TablePreferencesRecord(Long id, String entityIdentifier, Boolean isDefault, String[] enabledColumns) {
         super(TablePreferencesTable.TABLE_PREFERENCES);
 
-        set(0, id);
-        set(1, entityIdentifier);
-        set(2, isDefault);
-        set(3, enabledColumns);
+        setId(id);
+        setEntityIdentifier(entityIdentifier);
+        setIsDefault(isDefault);
+        setEnabledColumns(enabledColumns);
     }
 }

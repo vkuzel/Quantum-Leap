@@ -6,10 +6,11 @@ package cz.quantumleap.admin;
 
 import org.jooq.Sequence;
 import org.jooq.impl.Internal;
+import org.jooq.impl.SQLDataType;
 
 
 /**
- * Convenience access to all sequences in admin
+ * Convenience access to all sequences in admin.
  */
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Sequences {
@@ -17,5 +18,5 @@ public class Sequences {
     /**
      * The sequence <code>admin.notification_id_seq</code>
      */
-    public static final Sequence<Long> NOTIFICATION_ID_SEQ = Internal.createSequence("notification_id_seq", Admin.ADMIN, org.jooq.impl.SQLDataType.BIGINT.nullable(false), null, null, null, null, false, null);
+    public static final Sequence<Long> NOTIFICATION_ID_SEQ = Internal.createSequence("notification_id_seq", Admin.ADMIN, SQLDataType.BIGINT.nullable(false), null, null, null, null, false, null);
 }

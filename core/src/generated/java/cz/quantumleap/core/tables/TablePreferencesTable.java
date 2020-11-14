@@ -9,6 +9,7 @@ import cz.quantumleap.core.Keys;
 import cz.quantumleap.core.tables.records.TablePreferencesRecord;
 import org.jooq.*;
 import org.jooq.impl.DSL;
+import org.jooq.impl.SQLDataType;
 import org.jooq.impl.TableImpl;
 
 import java.util.Arrays;
@@ -21,7 +22,7 @@ import java.util.List;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class TablePreferencesTable extends TableImpl<TablePreferencesRecord> {
 
-    private static final long serialVersionUID = -1322832219;
+    private static final long serialVersionUID = 1L;
 
     /**
      * The reference instance of <code>core.table_preferences</code>
@@ -39,28 +40,29 @@ public class TablePreferencesTable extends TableImpl<TablePreferencesRecord> {
     /**
      * The column <code>core.table_preferences.id</code>.
      */
-    public final TableField<TablePreferencesRecord, Long> ID = createField(DSL.name("id"), org.jooq.impl.SQLDataType.BIGINT.nullable(false).defaultValue(org.jooq.impl.DSL.field("nextval('core.table_preferences_id_seq'::regclass)", org.jooq.impl.SQLDataType.BIGINT)), this, "");
+    public final TableField<TablePreferencesRecord, Long> ID = createField(DSL.name("id"), SQLDataType.BIGINT.nullable(false).identity(true), this, "");
 
     /**
      * The column <code>core.table_preferences.entity_identifier</code>.
      */
-    public final TableField<TablePreferencesRecord, String> ENTITY_IDENTIFIER = createField(DSL.name("entity_identifier"), org.jooq.impl.SQLDataType.VARCHAR(128).nullable(false), this, "");
+    public final TableField<TablePreferencesRecord, String> ENTITY_IDENTIFIER = createField(DSL.name("entity_identifier"), SQLDataType.VARCHAR(128).nullable(false), this, "");
 
     /**
      * The column <code>core.table_preferences.is_default</code>.
      */
-    public final TableField<TablePreferencesRecord, Boolean> IS_DEFAULT = createField(DSL.name("is_default"), org.jooq.impl.SQLDataType.BOOLEAN.nullable(false), this, "");
+    public final TableField<TablePreferencesRecord, Boolean> IS_DEFAULT = createField(DSL.name("is_default"), SQLDataType.BOOLEAN.nullable(false), this, "");
 
     /**
      * The column <code>core.table_preferences.enabled_columns</code>.
      */
-    public final TableField<TablePreferencesRecord, String[]> ENABLED_COLUMNS = createField(DSL.name("enabled_columns"), org.jooq.impl.SQLDataType.VARCHAR.getArrayDataType(), this, "");
+    public final TableField<TablePreferencesRecord, String[]> ENABLED_COLUMNS = createField(DSL.name("enabled_columns"), SQLDataType.VARCHAR.getArrayDataType(), this, "");
 
-    /**
-     * Create a <code>core.table_preferences</code> table reference
-     */
-    public TablePreferencesTable() {
-        this(DSL.name("table_preferences"), null);
+    private TablePreferencesTable(Name alias, Table<TablePreferencesRecord> aliased) {
+        this(alias, aliased, null);
+    }
+
+    private TablePreferencesTable(Name alias, Table<TablePreferencesRecord> aliased, Field<?>[] parameters) {
+        super(alias, null, aliased, parameters, DSL.comment(""), TableOptions.table());
     }
 
     /**
@@ -77,12 +79,11 @@ public class TablePreferencesTable extends TableImpl<TablePreferencesRecord> {
         this(alias, TABLE_PREFERENCES);
     }
 
-    private TablePreferencesTable(Name alias, Table<TablePreferencesRecord> aliased) {
-        this(alias, aliased, null);
-    }
-
-    private TablePreferencesTable(Name alias, Table<TablePreferencesRecord> aliased, Field<?>[] parameters) {
-        super(alias, null, aliased, parameters, DSL.comment(""), TableOptions.table());
+    /**
+     * Create a <code>core.table_preferences</code> table reference
+     */
+    public TablePreferencesTable() {
+        this(DSL.name("table_preferences"), null);
     }
 
     public <O extends Record> TablePreferencesTable(Table<O> child, ForeignKey<O, TablePreferencesRecord> key) {
@@ -96,7 +97,7 @@ public class TablePreferencesTable extends TableImpl<TablePreferencesRecord> {
 
     @Override
     public Identity<TablePreferencesRecord, Long> getIdentity() {
-        return Keys.IDENTITY_TABLE_PREFERENCES;
+        return (Identity<TablePreferencesRecord, Long>) super.getIdentity();
     }
 
     @Override

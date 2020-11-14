@@ -9,6 +9,7 @@ import cz.quantumleap.core.Keys;
 import cz.quantumleap.core.tables.records.EnumValueRecord;
 import org.jooq.*;
 import org.jooq.impl.DSL;
+import org.jooq.impl.SQLDataType;
 import org.jooq.impl.TableImpl;
 
 import java.util.Arrays;
@@ -21,7 +22,7 @@ import java.util.List;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class EnumValueTable extends TableImpl<EnumValueRecord> {
 
-    private static final long serialVersionUID = -1452766706;
+    private static final long serialVersionUID = 1L;
 
     /**
      * The reference instance of <code>core.enum_value</code>
@@ -39,23 +40,24 @@ public class EnumValueTable extends TableImpl<EnumValueRecord> {
     /**
      * The column <code>core.enum_value.id</code>.
      */
-    public final TableField<EnumValueRecord, String> ID = createField(DSL.name("id"), org.jooq.impl.SQLDataType.VARCHAR(255).nullable(false), this, "");
+    public final TableField<EnumValueRecord, String> ID = createField(DSL.name("id"), SQLDataType.VARCHAR(255).nullable(false), this, "");
 
     /**
      * The column <code>core.enum_value.enum_id</code>.
      */
-    public final TableField<EnumValueRecord, String> ENUM_ID = createField(DSL.name("enum_id"), org.jooq.impl.SQLDataType.VARCHAR(255).nullable(false), this, "");
+    public final TableField<EnumValueRecord, String> ENUM_ID = createField(DSL.name("enum_id"), SQLDataType.VARCHAR(255).nullable(false), this, "");
 
     /**
      * The column <code>core.enum_value.label</code>.
      */
-    public final TableField<EnumValueRecord, String> LABEL = createField(DSL.name("label"), org.jooq.impl.SQLDataType.VARCHAR(255).nullable(false), this, "");
+    public final TableField<EnumValueRecord, String> LABEL = createField(DSL.name("label"), SQLDataType.VARCHAR(255).nullable(false), this, "");
 
-    /**
-     * Create a <code>core.enum_value</code> table reference
-     */
-    public EnumValueTable() {
-        this(DSL.name("enum_value"), null);
+    private EnumValueTable(Name alias, Table<EnumValueRecord> aliased) {
+        this(alias, aliased, null);
+    }
+
+    private EnumValueTable(Name alias, Table<EnumValueRecord> aliased, Field<?>[] parameters) {
+        super(alias, null, aliased, parameters, DSL.comment(""), TableOptions.table());
     }
 
     /**
@@ -72,12 +74,11 @@ public class EnumValueTable extends TableImpl<EnumValueRecord> {
         this(alias, ENUM_VALUE);
     }
 
-    private EnumValueTable(Name alias, Table<EnumValueRecord> aliased) {
-        this(alias, aliased, null);
-    }
-
-    private EnumValueTable(Name alias, Table<EnumValueRecord> aliased, Field<?>[] parameters) {
-        super(alias, null, aliased, parameters, DSL.comment(""), TableOptions.table());
+    /**
+     * Create a <code>core.enum_value</code> table reference
+     */
+    public EnumValueTable() {
+        this(DSL.name("enum_value"), null);
     }
 
     public <O extends Record> EnumValueTable(Table<O> child, ForeignKey<O, EnumValueRecord> key) {

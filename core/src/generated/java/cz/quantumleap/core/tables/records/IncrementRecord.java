@@ -20,7 +20,7 @@ import java.time.LocalDateTime;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class IncrementRecord extends UpdatableRecordImpl<IncrementRecord> implements Record5<Long, String, Integer, String, LocalDateTime> {
 
-    private static final long serialVersionUID = -211523279;
+    private static final long serialVersionUID = 1L;
 
     /**
      * Setter for <code>core.increment.id</code>.
@@ -247,10 +247,10 @@ public class IncrementRecord extends UpdatableRecordImpl<IncrementRecord> implem
     public IncrementRecord(Long id, String module, Integer version, String fileName, LocalDateTime createdAt) {
         super(IncrementTable.INCREMENT);
 
-        set(0, id);
-        set(1, module);
-        set(2, version);
-        set(3, fileName);
-        set(4, createdAt);
+        setId(id);
+        setModule(module);
+        setVersion(version);
+        setFileName(fileName);
+        setCreatedAt(createdAt);
     }
 }

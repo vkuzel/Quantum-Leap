@@ -9,6 +9,7 @@ import cz.quantumleap.core.Keys;
 import cz.quantumleap.core.tables.records.PersonRecord;
 import org.jooq.*;
 import org.jooq.impl.DSL;
+import org.jooq.impl.SQLDataType;
 import org.jooq.impl.TableImpl;
 
 import java.time.LocalDateTime;
@@ -22,7 +23,7 @@ import java.util.List;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class PersonTable extends TableImpl<PersonRecord> {
 
-    private static final long serialVersionUID = 1344816099;
+    private static final long serialVersionUID = 1L;
 
     /**
      * The reference instance of <code>core.person</code>
@@ -40,28 +41,29 @@ public class PersonTable extends TableImpl<PersonRecord> {
     /**
      * The column <code>core.person.id</code>.
      */
-    public final TableField<PersonRecord, Long> ID = createField(DSL.name("id"), org.jooq.impl.SQLDataType.BIGINT.nullable(false).defaultValue(org.jooq.impl.DSL.field("nextval('core.person_id_seq'::regclass)", org.jooq.impl.SQLDataType.BIGINT)), this, "");
+    public final TableField<PersonRecord, Long> ID = createField(DSL.name("id"), SQLDataType.BIGINT.nullable(false).identity(true), this, "");
 
     /**
      * The column <code>core.person.email</code>.
      */
-    public final TableField<PersonRecord, String> EMAIL = createField(DSL.name("email"), org.jooq.impl.SQLDataType.VARCHAR(255).nullable(false), this, "");
+    public final TableField<PersonRecord, String> EMAIL = createField(DSL.name("email"), SQLDataType.VARCHAR(255).nullable(false), this, "");
 
     /**
      * The column <code>core.person.name</code>.
      */
-    public final TableField<PersonRecord, String> NAME = createField(DSL.name("name"), org.jooq.impl.SQLDataType.VARCHAR(255), this, "");
+    public final TableField<PersonRecord, String> NAME = createField(DSL.name("name"), SQLDataType.VARCHAR(255), this, "");
 
     /**
      * The column <code>core.person.created_at</code>.
      */
-    public final TableField<PersonRecord, LocalDateTime> CREATED_AT = createField(DSL.name("created_at"), org.jooq.impl.SQLDataType.LOCALDATETIME.nullable(false), this, "");
+    public final TableField<PersonRecord, LocalDateTime> CREATED_AT = createField(DSL.name("created_at"), SQLDataType.LOCALDATETIME(6).nullable(false), this, "");
 
-    /**
-     * Create a <code>core.person</code> table reference
-     */
-    public PersonTable() {
-        this(DSL.name("person"), null);
+    private PersonTable(Name alias, Table<PersonRecord> aliased) {
+        this(alias, aliased, null);
+    }
+
+    private PersonTable(Name alias, Table<PersonRecord> aliased, Field<?>[] parameters) {
+        super(alias, null, aliased, parameters, DSL.comment(""), TableOptions.table());
     }
 
     /**
@@ -78,12 +80,11 @@ public class PersonTable extends TableImpl<PersonRecord> {
         this(alias, PERSON);
     }
 
-    private PersonTable(Name alias, Table<PersonRecord> aliased) {
-        this(alias, aliased, null);
-    }
-
-    private PersonTable(Name alias, Table<PersonRecord> aliased, Field<?>[] parameters) {
-        super(alias, null, aliased, parameters, DSL.comment(""), TableOptions.table());
+    /**
+     * Create a <code>core.person</code> table reference
+     */
+    public PersonTable() {
+        this(DSL.name("person"), null);
     }
 
     public <O extends Record> PersonTable(Table<O> child, ForeignKey<O, PersonRecord> key) {
@@ -97,7 +98,7 @@ public class PersonTable extends TableImpl<PersonRecord> {
 
     @Override
     public Identity<PersonRecord, Long> getIdentity() {
-        return Keys.IDENTITY_PERSON;
+        return (Identity<PersonRecord, Long>) super.getIdentity();
     }
 
     @Override

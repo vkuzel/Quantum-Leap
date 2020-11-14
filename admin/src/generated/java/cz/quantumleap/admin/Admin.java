@@ -20,7 +20,7 @@ import java.util.List;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Admin extends SchemaImpl {
 
-    private static final long serialVersionUID = -429030397;
+    private static final long serialVersionUID = 1L;
 
     /**
      * The reference instance of <code>admin</code>

@@ -17,7 +17,7 @@ import java.util.List;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class DefaultCatalog extends CatalogImpl {
 
-    private static final long serialVersionUID = 2141832333;
+    private static final long serialVersionUID = 1L;
 
     /**
      * The reference instance of <code>DEFAULT_CATALOG</code>

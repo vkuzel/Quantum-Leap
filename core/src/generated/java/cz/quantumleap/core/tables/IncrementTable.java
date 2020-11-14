@@ -9,6 +9,7 @@ import cz.quantumleap.core.Keys;
 import cz.quantumleap.core.tables.records.IncrementRecord;
 import org.jooq.*;
 import org.jooq.impl.DSL;
+import org.jooq.impl.SQLDataType;
 import org.jooq.impl.TableImpl;
 
 import java.time.LocalDateTime;
@@ -22,7 +23,7 @@ import java.util.List;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class IncrementTable extends TableImpl<IncrementRecord> {
 
-    private static final long serialVersionUID = -1409988248;
+    private static final long serialVersionUID = 1L;
 
     /**
      * The reference instance of <code>core.increment</code>
@@ -40,33 +41,34 @@ public class IncrementTable extends TableImpl<IncrementRecord> {
     /**
      * The column <code>core.increment.id</code>.
      */
-    public final TableField<IncrementRecord, Long> ID = createField(DSL.name("id"), org.jooq.impl.SQLDataType.BIGINT.nullable(false).defaultValue(org.jooq.impl.DSL.field("nextval('core.increment_id_seq'::regclass)", org.jooq.impl.SQLDataType.BIGINT)), this, "");
+    public final TableField<IncrementRecord, Long> ID = createField(DSL.name("id"), SQLDataType.BIGINT.nullable(false).identity(true), this, "");
 
     /**
      * The column <code>core.increment.module</code>.
      */
-    public final TableField<IncrementRecord, String> MODULE = createField(DSL.name("module"), org.jooq.impl.SQLDataType.VARCHAR(255).nullable(false), this, "");
+    public final TableField<IncrementRecord, String> MODULE = createField(DSL.name("module"), SQLDataType.VARCHAR(255).nullable(false), this, "");
 
     /**
      * The column <code>core.increment.version</code>.
      */
-    public final TableField<IncrementRecord, Integer> VERSION = createField(DSL.name("version"), org.jooq.impl.SQLDataType.INTEGER.nullable(false), this, "");
+    public final TableField<IncrementRecord, Integer> VERSION = createField(DSL.name("version"), SQLDataType.INTEGER.nullable(false), this, "");
 
     /**
      * The column <code>core.increment.file_name</code>.
      */
-    public final TableField<IncrementRecord, String> FILE_NAME = createField(DSL.name("file_name"), org.jooq.impl.SQLDataType.VARCHAR(255).nullable(false), this, "");
+    public final TableField<IncrementRecord, String> FILE_NAME = createField(DSL.name("file_name"), SQLDataType.VARCHAR(255).nullable(false), this, "");
 
     /**
      * The column <code>core.increment.created_at</code>.
      */
-    public final TableField<IncrementRecord, LocalDateTime> CREATED_AT = createField(DSL.name("created_at"), org.jooq.impl.SQLDataType.LOCALDATETIME.nullable(false), this, "");
+    public final TableField<IncrementRecord, LocalDateTime> CREATED_AT = createField(DSL.name("created_at"), SQLDataType.LOCALDATETIME(6).nullable(false), this, "");
 
-    /**
-     * Create a <code>core.increment</code> table reference
-     */
-    public IncrementTable() {
-        this(DSL.name("increment"), null);
+    private IncrementTable(Name alias, Table<IncrementRecord> aliased) {
+        this(alias, aliased, null);
+    }
+
+    private IncrementTable(Name alias, Table<IncrementRecord> aliased, Field<?>[] parameters) {
+        super(alias, null, aliased, parameters, DSL.comment(""), TableOptions.table());
     }
 
     /**
@@ -83,12 +85,11 @@ public class IncrementTable extends TableImpl<IncrementRecord> {
         this(alias, INCREMENT);
     }
 
-    private IncrementTable(Name alias, Table<IncrementRecord> aliased) {
-        this(alias, aliased, null);
-    }
-
-    private IncrementTable(Name alias, Table<IncrementRecord> aliased, Field<?>[] parameters) {
-        super(alias, null, aliased, parameters, DSL.comment(""), TableOptions.table());
+    /**
+     * Create a <code>core.increment</code> table reference
+     */
+    public IncrementTable() {
+        this(DSL.name("increment"), null);
     }
 
     public <O extends Record> IncrementTable(Table<O> child, ForeignKey<O, IncrementRecord> key) {
@@ -102,7 +103,7 @@ public class IncrementTable extends TableImpl<IncrementRecord> {
 
     @Override
     public Identity<IncrementRecord, Long> getIdentity() {
-        return Keys.IDENTITY_INCREMENT;
+        return (Identity<IncrementRecord, Long>) super.getIdentity();
     }
 
     @Override

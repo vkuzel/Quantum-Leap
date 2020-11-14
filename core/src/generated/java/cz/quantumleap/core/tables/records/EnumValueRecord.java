@@ -18,7 +18,7 @@ import org.jooq.impl.UpdatableRecordImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class EnumValueRecord extends UpdatableRecordImpl<EnumValueRecord> implements Record3<String, String, String> {
 
-    private static final long serialVersionUID = -1099263562;
+    private static final long serialVersionUID = 1L;
 
     /**
      * Setter for <code>core.enum_value.id</code>.
@@ -173,8 +173,8 @@ public class EnumValueRecord extends UpdatableRecordImpl<EnumValueRecord> implem
     public EnumValueRecord(String id, String enumId, String label) {
         super(EnumValueTable.ENUM_VALUE);
 
-        set(0, id);
-        set(1, enumId);
-        set(2, label);
+        setId(id);
+        setEnumId(enumId);
+        setLabel(label);
     }
 }

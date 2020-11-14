@@ -18,7 +18,7 @@ import org.jooq.impl.UpdatableRecordImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class PersonRoleRecord extends UpdatableRecordImpl<PersonRoleRecord> implements Record3<Long, Long, Long> {
 
-    private static final long serialVersionUID = 1061676613;
+    private static final long serialVersionUID = 1L;
 
     /**
      * Setter for <code>core.person_role.id</code>.
@@ -173,8 +173,8 @@ public class PersonRoleRecord extends UpdatableRecordImpl<PersonRoleRecord> impl
     public PersonRoleRecord(Long id, Long personId, Long roleId) {
         super(PersonRoleTable.PERSON_ROLE);
 
-        set(0, id);
-        set(1, personId);
-        set(2, roleId);
+        setId(id);
+        setPersonId(personId);
+        setRoleId(roleId);
     }
 }

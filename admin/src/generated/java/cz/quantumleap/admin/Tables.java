@@ -8,7 +8,7 @@ import cz.quantumleap.admin.tables.NotificationTable;
 
 
 /**
- * Convenience access to all tables in admin
+ * Convenience access to all tables in admin.
  */
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Tables {

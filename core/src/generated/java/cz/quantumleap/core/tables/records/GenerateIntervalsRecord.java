@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class GenerateIntervalsRecord extends TableRecordImpl<GenerateIntervalsRecord> implements Record2<LocalDateTime, LocalDateTime> {
 
-    private static final long serialVersionUID = -2094186345;
+    private static final long serialVersionUID = 1L;
 
     /**
      * Setter for <code>core.generate_intervals.interval_start</code>.
@@ -129,7 +129,7 @@ public class GenerateIntervalsRecord extends TableRecordImpl<GenerateIntervalsRe
     public GenerateIntervalsRecord(LocalDateTime intervalStart, LocalDateTime intervalEnd) {
         super(GenerateIntervalsTable.GENERATE_INTERVALS);
 
-        set(0, intervalStart);
-        set(1, intervalEnd);
+        setIntervalStart(intervalStart);
+        setIntervalEnd(intervalEnd);
     }
 }

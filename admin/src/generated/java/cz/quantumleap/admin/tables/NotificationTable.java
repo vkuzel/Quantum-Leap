@@ -9,6 +9,7 @@ import cz.quantumleap.admin.Keys;
 import cz.quantumleap.admin.tables.records.NotificationRecord;
 import org.jooq.*;
 import org.jooq.impl.DSL;
+import org.jooq.impl.SQLDataType;
 import org.jooq.impl.TableImpl;
 
 import java.time.LocalDateTime;
@@ -22,7 +23,7 @@ import java.util.List;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class NotificationTable extends TableImpl<NotificationRecord> {
 
-    private static final long serialVersionUID = -123610709;
+    private static final long serialVersionUID = 1L;
 
     /**
      * The reference instance of <code>admin.notification</code>
@@ -40,48 +41,49 @@ public class NotificationTable extends TableImpl<NotificationRecord> {
     /**
      * The column <code>admin.notification.id</code>.
      */
-    public final TableField<NotificationRecord, Long> ID = createField(DSL.name("id"), org.jooq.impl.SQLDataType.BIGINT.nullable(false).defaultValue(org.jooq.impl.DSL.field("nextval('admin.notification_id_seq'::regclass)", org.jooq.impl.SQLDataType.BIGINT)), this, "");
+    public final TableField<NotificationRecord, Long> ID = createField(DSL.name("id"), SQLDataType.BIGINT.nullable(false).identity(true), this, "");
 
     /**
      * The column <code>admin.notification.code</code>.
      */
-    public final TableField<NotificationRecord, String> CODE = createField(DSL.name("code"), org.jooq.impl.SQLDataType.VARCHAR.nullable(false), this, "");
+    public final TableField<NotificationRecord, String> CODE = createField(DSL.name("code"), SQLDataType.VARCHAR.nullable(false), this, "");
 
     /**
      * The column <code>admin.notification.message_arguments</code>.
      */
-    public final TableField<NotificationRecord, String[]> MESSAGE_ARGUMENTS = createField(DSL.name("message_arguments"), org.jooq.impl.SQLDataType.VARCHAR.getArrayDataType(), this, "");
+    public final TableField<NotificationRecord, String[]> MESSAGE_ARGUMENTS = createField(DSL.name("message_arguments"), SQLDataType.VARCHAR.getArrayDataType(), this, "");
 
     /**
      * The column <code>admin.notification.person_id</code>.
      */
-    public final TableField<NotificationRecord, Long> PERSON_ID = createField(DSL.name("person_id"), org.jooq.impl.SQLDataType.BIGINT, this, "");
+    public final TableField<NotificationRecord, Long> PERSON_ID = createField(DSL.name("person_id"), SQLDataType.BIGINT, this, "");
 
     /**
      * The column <code>admin.notification.role_id</code>.
      */
-    public final TableField<NotificationRecord, Long> ROLE_ID = createField(DSL.name("role_id"), org.jooq.impl.SQLDataType.BIGINT, this, "");
+    public final TableField<NotificationRecord, Long> ROLE_ID = createField(DSL.name("role_id"), SQLDataType.BIGINT, this, "");
 
     /**
      * The column <code>admin.notification.created_at</code>.
      */
-    public final TableField<NotificationRecord, LocalDateTime> CREATED_AT = createField(DSL.name("created_at"), org.jooq.impl.SQLDataType.LOCALDATETIME.nullable(false), this, "");
+    public final TableField<NotificationRecord, LocalDateTime> CREATED_AT = createField(DSL.name("created_at"), SQLDataType.LOCALDATETIME(6).nullable(false), this, "");
 
     /**
      * The column <code>admin.notification.resolved_at</code>.
      */
-    public final TableField<NotificationRecord, LocalDateTime> RESOLVED_AT = createField(DSL.name("resolved_at"), org.jooq.impl.SQLDataType.LOCALDATETIME, this, "");
+    public final TableField<NotificationRecord, LocalDateTime> RESOLVED_AT = createField(DSL.name("resolved_at"), SQLDataType.LOCALDATETIME(6), this, "");
 
     /**
      * The column <code>admin.notification.resolved_by</code>.
      */
-    public final TableField<NotificationRecord, Long> RESOLVED_BY = createField(DSL.name("resolved_by"), org.jooq.impl.SQLDataType.BIGINT, this, "");
+    public final TableField<NotificationRecord, Long> RESOLVED_BY = createField(DSL.name("resolved_by"), SQLDataType.BIGINT, this, "");
 
-    /**
-     * Create a <code>admin.notification</code> table reference
-     */
-    public NotificationTable() {
-        this(DSL.name("notification"), null);
+    private NotificationTable(Name alias, Table<NotificationRecord> aliased) {
+        this(alias, aliased, null);
+    }
+
+    private NotificationTable(Name alias, Table<NotificationRecord> aliased, Field<?>[] parameters) {
+        super(alias, null, aliased, parameters, DSL.comment(""), TableOptions.table());
     }
 
     /**
@@ -98,12 +100,11 @@ public class NotificationTable extends TableImpl<NotificationRecord> {
         this(alias, NOTIFICATION);
     }
 
-    private NotificationTable(Name alias, Table<NotificationRecord> aliased) {
-        this(alias, aliased, null);
-    }
-
-    private NotificationTable(Name alias, Table<NotificationRecord> aliased, Field<?>[] parameters) {
-        super(alias, null, aliased, parameters, DSL.comment(""), TableOptions.table());
+    /**
+     * Create a <code>admin.notification</code> table reference
+     */
+    public NotificationTable() {
+        this(DSL.name("notification"), null);
     }
 
     public <O extends Record> NotificationTable(Table<O> child, ForeignKey<O, NotificationRecord> key) {
@@ -117,7 +118,7 @@ public class NotificationTable extends TableImpl<NotificationRecord> {
 
     @Override
     public Identity<NotificationRecord, Long> getIdentity() {
-        return Keys.IDENTITY_NOTIFICATION;
+        return (Identity<NotificationRecord, Long>) super.getIdentity();
     }
 
     @Override

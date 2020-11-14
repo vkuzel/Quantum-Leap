@@ -14,7 +14,7 @@ import java.time.LocalDate;
 
 
 /**
- * Convenience access to all stored procedures and functions in core
+ * Convenience access to all stored procedures and functions in core.
  */
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Routines {
@@ -22,21 +22,46 @@ public class Routines {
     /**
      * Call <code>core.generate_intervals</code>.
      */
-    public static Result<GenerateIntervalsRecord> generateIntervals(Configuration configuration, LocalDate intervalsStart, LocalDate intervalsEnd, String step) {
-        return configuration.dsl().selectFrom(cz.quantumleap.core.tables.GenerateIntervalsTable.GENERATE_INTERVALS.call(intervalsStart, intervalsEnd, step)).fetch();
+    public static Result<GenerateIntervalsRecord> generateIntervals(
+          Configuration configuration
+        , LocalDate intervalsStart
+        , LocalDate intervalsEnd
+        , String step
+    ) {
+        return configuration.dsl().selectFrom(cz.quantumleap.core.tables.GenerateIntervalsTable.GENERATE_INTERVALS.call(
+              intervalsStart
+            , intervalsEnd
+            , step
+        )).fetch();
     }
 
     /**
      * Get <code>core.generate_intervals</code> as a table.
      */
-    public static GenerateIntervalsTable generateIntervals(LocalDate intervalsStart, LocalDate intervalsEnd, String step) {
-        return cz.quantumleap.core.tables.GenerateIntervalsTable.GENERATE_INTERVALS.call(intervalsStart, intervalsEnd, step);
+    public static GenerateIntervalsTable generateIntervals(
+          LocalDate intervalsStart
+        , LocalDate intervalsEnd
+        , String step
+    ) {
+        return cz.quantumleap.core.tables.GenerateIntervalsTable.GENERATE_INTERVALS.call(
+              intervalsStart
+            , intervalsEnd
+            , step
+        );
     }
 
     /**
      * Get <code>core.generate_intervals</code> as a table.
      */
-    public static GenerateIntervalsTable generateIntervals(Field<LocalDate> intervalsStart, Field<LocalDate> intervalsEnd, Field<String> step) {
-        return cz.quantumleap.core.tables.GenerateIntervalsTable.GENERATE_INTERVALS.call(intervalsStart, intervalsEnd, step);
+    public static GenerateIntervalsTable generateIntervals(
+          Field<LocalDate> intervalsStart
+        , Field<LocalDate> intervalsEnd
+        , Field<String> step
+    ) {
+        return cz.quantumleap.core.tables.GenerateIntervalsTable.GENERATE_INTERVALS.call(
+              intervalsStart
+            , intervalsEnd
+            , step
+        );
     }
 }

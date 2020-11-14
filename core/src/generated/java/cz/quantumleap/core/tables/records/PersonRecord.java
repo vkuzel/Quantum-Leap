@@ -20,7 +20,7 @@ import java.time.LocalDateTime;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class PersonRecord extends UpdatableRecordImpl<PersonRecord> implements Record4<Long, String, String, LocalDateTime> {
 
-    private static final long serialVersionUID = -1303557052;
+    private static final long serialVersionUID = 1L;
 
     /**
      * Setter for <code>core.person.id</code>.
@@ -211,9 +211,9 @@ public class PersonRecord extends UpdatableRecordImpl<PersonRecord> implements R
     public PersonRecord(Long id, String email, String name, LocalDateTime createdAt) {
         super(PersonTable.PERSON);
 
-        set(0, id);
-        set(1, email);
-        set(2, name);
-        set(3, createdAt);
+        setId(id);
+        setEmail(email);
+        setName(name);
+        setCreatedAt(createdAt);
     }
 }
