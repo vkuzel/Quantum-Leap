@@ -7,10 +7,10 @@ import cz.quantumleap.core.data.entity.EntityIdentifier;
 
 import java.io.IOException;
 
-public class EntityIdentifierDeserializer extends JsonDeserializer<EntityIdentifier> {
+public class EntityIdentifierDeserializer extends JsonDeserializer<EntityIdentifier<?>> {
 
     @Override
-    public EntityIdentifier deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
+    public EntityIdentifier<?> deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
         String valueAsString = p.getValueAsString();
         return EntityIdentifier.parse(valueAsString);
     }
