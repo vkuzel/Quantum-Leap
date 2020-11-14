@@ -13,6 +13,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.jooq.Table;
 import org.jooq.*;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -247,8 +248,9 @@ public class MapperFactory<TABLE extends Table<? extends Record>> {
 
         private T createTransportObject() {
             try {
-                return transportType.newInstance();
-            } catch (InstantiationException | IllegalAccessException e) {
+                Constructor<T> constructor = transportType.getConstructor();
+                return constructor.newInstance();
+            } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
                 throw new IllegalStateException(e);
             }
         }
