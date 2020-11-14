@@ -1,8 +1,8 @@
 package cz.quantumleap.core.security;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.Expression;
@@ -22,7 +22,7 @@ public class WebSecurityExpressionEvaluatorTest {
     private HttpServletRequest httpServletRequest;
     private HttpServletResponse httpServletResponse;
 
-    @Before
+    @BeforeEach
     public void mockBeans() {
         httpServletRequest = Mockito.mock(HttpServletRequest.class);
         httpServletResponse = Mockito.mock(HttpServletResponse.class);
@@ -43,7 +43,7 @@ public class WebSecurityExpressionEvaluatorTest {
         boolean result = evaluator.evaluate("expression", httpServletRequest, httpServletResponse);
 
         // then
-        Assert.assertTrue(result);
+        Assertions.assertTrue(result);
     }
 
     private static class TestSecurityExpressionHandler implements SecurityExpressionHandler<FilterInvocation> {

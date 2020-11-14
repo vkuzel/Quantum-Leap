@@ -2,11 +2,13 @@ package cz.quantumleap.core.data.list;
 
 import cz.quantumleap.core.tables.PersonTable;
 import org.jooq.Condition;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 public class DefaultFilterBuilderTest {
 
@@ -17,7 +19,7 @@ public class DefaultFilterBuilderTest {
 
         List<String> tokens = defaultFilterBuilder.tokenize(query);
 
-        Assert.assertArrayEquals(new String[]{"id", ">", "1", "(", "name", "=", "Forename Surname", "or", "email", "=", "Surname@company.cx", ")", "Title"}, tokens.toArray());
+        assertArrayEquals(new String[]{"id", ">", "1", "(", "name", "=", "Forename Surname", "or", "email", "=", "Surname@company.cx", ")", "Title"}, tokens.toArray());
     }
 
     @Test
@@ -27,7 +29,7 @@ public class DefaultFilterBuilderTest {
 
         List<String> tokens = defaultFilterBuilder.tokenize(query);
 
-        Assert.assertArrayEquals(new String[]{"id", ">", "1", "(", "name", "=", "Forename Surname", "or", "email", "=", "Surname@company.cx", ")", "Title"}, tokens.toArray());
+        assertArrayEquals(new String[]{"id", ">", "1", "(", "name", "=", "Forename Surname", "or", "email", "=", "Surname@company.cx", ")", "Title"}, tokens.toArray());
     }
 
     @Test
@@ -37,7 +39,7 @@ public class DefaultFilterBuilderTest {
 
         List<String> tokens = defaultFilterBuilder.tokenize(query);
 
-        Assert.assertArrayEquals(new String[]{"first", "second  "}, tokens.toArray());
+        assertArrayEquals(new String[]{"first", "second  "}, tokens.toArray());
     }
 
     @Test
@@ -47,7 +49,7 @@ public class DefaultFilterBuilderTest {
 
         Condition condition = defaultFilterBuilder.createCondition(tokens);
 
-        Assert.assertEquals("(\n" +
+        Assertions.assertEquals("(\n" +
                 "  cast(\"core\".\"person\".\"id\" as bigint) > 1\n" +
                 "  and (\n" +
                 "    cast(\"core\".\"person\".\"name\" as varchar) = 'Forename Surname'\n" +
@@ -64,7 +66,7 @@ public class DefaultFilterBuilderTest {
 
         Condition condition = defaultFilterBuilder.createCondition(tokens);
 
-        Assert.assertEquals("(\n" +
+        Assertions.assertEquals("(\n" +
                 "  cast(\"core\".\"person\".\"id\" as bigint) > 1\n" +
                 "  and (\n" +
                 "    cast(\"core\".\"person\".\"name\" as varchar) = 'Forename Surname'\n" +

@@ -1,8 +1,7 @@
 package cz.quantumleap.core.common;
 
 import com.google.common.io.ByteStreams;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
 import java.io.IOException;
@@ -10,8 +9,8 @@ import java.io.InputStream;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SecurityUtilsTest {
 
@@ -46,7 +45,7 @@ public class SecurityUtilsTest {
         byte[] encrypted = SecurityUtils.encryptMessageByKey(publicKey, message);
         String decrypted = SecurityUtils.decryptMessageByKey(privateKey, encrypted);
 
-        Assert.assertEquals(message, decrypted);
+        assertEquals(message, decrypted);
     }
 
     @Test
@@ -57,7 +56,7 @@ public class SecurityUtilsTest {
 
         byte[] signature = SecurityUtils.signMessageByKey(privateKey, message);
 
-        Assert.assertTrue(SecurityUtils.verifySignatureByKey(publicKey, message, signature));
+        assertTrue(SecurityUtils.verifySignatureByKey(publicKey, message, signature));
     }
 
     private byte[] loadResource(String location) {

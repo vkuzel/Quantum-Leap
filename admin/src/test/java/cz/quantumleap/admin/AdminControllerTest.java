@@ -7,12 +7,12 @@ import cz.quantumleap.admin.menu.AdminMenuManager;
 import cz.quantumleap.admin.notification.NotificationService;
 import cz.quantumleap.admin.person.PersonService;
 import cz.quantumleap.core.security.WebSecurityExpressionEvaluator;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 
@@ -24,7 +24,7 @@ import java.util.List;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class AdminControllerTest {
 
     @Mock
@@ -66,10 +66,10 @@ public class AdminControllerTest {
         List<AdminMenuItem> menuItems = controller.getMenuItems(httpServletRequest, httpServletResponse);
 
         // then
-        Assert.assertEquals(1, menuItems.size());
+        Assertions.assertEquals(1, menuItems.size());
         AdminMenuItem menuItem = menuItems.get(0);
-        Assert.assertEquals(1, menuItem.getChildren().size());
-        Assert.assertEquals(accessibleMenuItem.getPath(), menuItem.getChildren().get(0).getPath());
+        Assertions.assertEquals(1, menuItem.getChildren().size());
+        Assertions.assertEquals(accessibleMenuItem.getPath(), menuItem.getChildren().get(0).getPath());
     }
 
     private AdminMenuItem createMenuItem(String securityExpression, List<AdminMenuItem> children) {

@@ -2,8 +2,7 @@ package cz.quantumleap.core.security;
 
 import cz.quantumleap.core.security.mock.SecuredMethodsTestController;
 import cz.quantumleap.core.security.mock.SecuredTypeTestController;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -11,7 +10,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -20,7 +18,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrlPattern;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@RunWith(SpringRunner.class)
 @WebMvcTest({
         SecuredMethodsTestController.class,
         SecuredTypeTestController.class
@@ -33,6 +30,7 @@ public class WebWebSecurityConfigurationTest {
     private MockMvc mvc;
 
     @MockBean
+    @SuppressWarnings("unused")
     private ClientRegistrationRepository clientRegistrationRepository;
 
     @Test

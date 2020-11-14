@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<tns:configuration xmlns:tns="http://www.jooq.org/xsd/jooq-codegen-3.13.0.xsd">
+<tns:configuration xmlns:tns="http://www.jooq.org/xsd/jooq-codegen-3.14.0.xsd">
     <tns:jdbc>
         <tns:driver>org.postgresql.Driver</tns:driver>
         <!-- Url, username and password will be filled from application.properties in jooq.gradle script. -->

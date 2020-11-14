@@ -2,12 +2,13 @@ package cz.quantumleap.core.web.template;
 
 import cz.quantumleap.core.web.template.ResizableImageTagProcessor.ResizeCrop;
 import cz.quantumleap.core.web.template.ResizableImageTagProcessor.ResizeLimit;
-import org.junit.Assert;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.stream.Stream;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ResizableImageTagProcessorTest {
 
@@ -19,8 +20,8 @@ public class ResizableImageTagProcessorTest {
         ResizeLimit resizeLimit = new ResizeLimit(originalWidth, originalHeight, widht, height);
 
         // Then
-        Assert.assertEquals(expectedWidth, resizeLimit.getCalculatedWidth());
-        Assert.assertEquals(expectedHeight, resizeLimit.getCalculatedHeight());
+        assertEquals(expectedWidth, resizeLimit.getCalculatedWidth());
+        assertEquals(expectedHeight, resizeLimit.getCalculatedHeight());
     }
 
     private static Stream<Arguments> provideArgumentsForLimitTest() {
@@ -46,10 +47,10 @@ public class ResizableImageTagProcessorTest {
         ResizeCrop resizeCrop = new ResizeCrop(originalWidth,originalHeight, width, height);
 
         // Then
-        Assert.assertEquals(expectedX, resizeCrop.getX());
-        Assert.assertEquals(expectedY, resizeCrop.getY());
-        Assert.assertEquals(expectedWidth, resizeCrop.getCropWidth());
-        Assert.assertEquals(expectedHeight, resizeCrop.getCropHeight());
+        assertEquals(expectedX, resizeCrop.getX());
+        assertEquals(expectedY, resizeCrop.getY());
+        assertEquals(expectedWidth, resizeCrop.getCropWidth());
+        assertEquals(expectedHeight, resizeCrop.getCropHeight());
     }
 
     private static Stream<Arguments> provideArgumentsForCropTest() {

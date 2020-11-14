@@ -7,10 +7,8 @@ import cz.quantumleap.core.module.ModuleDependencies;
 import cz.quantumleap.core.resource.ResourceWithModule;
 import cz.quantumleap.core.test.CoreSpringBootTest;
 import cz.quantumleap.core.test.common.TestUtils;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,9 +16,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.jdbc.BadSqlGrammarException;
-import org.springframework.test.context.junit4.SpringRunner;
 
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
@@ -30,7 +26,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 
-@RunWith(SpringRunner.class)
 @CoreSpringBootTest
 public class IncrementRunnerTest {
 
@@ -72,10 +67,10 @@ public class IncrementRunnerTest {
 
         // then
         transactionExecutor.execute(dslContext -> {
-            Assert.assertEquals(2, countRowsInTable(dslContext, "core.increment"));
-            Assert.assertEquals(0, countRowsInTable(dslContext, "core.test_entity"));
-            Assert.assertEquals(0, countRowsInTable(dslContext, "core.related_test_entity"));
-            Assert.assertEquals(2, (int) fetchFirst(dslContext, "SELECT core.increment(1)"));
+            Assertions.assertEquals(2, countRowsInTable(dslContext, "core.increment"));
+            Assertions.assertEquals(0, countRowsInTable(dslContext, "core.test_entity"));
+            Assertions.assertEquals(0, countRowsInTable(dslContext, "core.related_test_entity"));
+            Assertions.assertEquals(2, (int) fetchFirst(dslContext, "SELECT core.increment(1)"));
         });
     }
 

@@ -5,9 +5,9 @@ import cz.quantumleap.core.person.PersonDao;
 import cz.quantumleap.core.person.transport.Person;
 import cz.quantumleap.core.role.RoleDao;
 import cz.quantumleap.core.security.DatabaseAuthoritiesLoader.DatabaseAuthoritiesLoadingException;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2UserAuthority;
@@ -27,7 +27,7 @@ public class DatabaseAuthoritiesLoaderTest {
     private RoleDao roleDao;
     private Person person;
 
-    @Before
+    @BeforeEach
     public void mockBeans() {
         personDao = mock(PersonDao.class);
 
@@ -55,26 +55,28 @@ public class DatabaseAuthoritiesLoaderTest {
         verify(personDao, times(1)).fetchByEmail(USER_EMAIL);
         verify(personDao, times(1)).save(person);
         verify(roleDao, times(1)).fetchRolesByPersonId(1L);
-        Assert.assertTrue(authorities.stream().anyMatch(i -> i.getAuthority().equals("ROLE_USER")));
+        Assertions.assertTrue(authorities.stream().anyMatch(i -> i.getAuthority().equals("ROLE_USER")));
     }
 
-    @Test(expected = DatabaseAuthoritiesLoadingException.class)
+    @Test
     public void unsupportedAuthorityMappingFails() {
         // given
         GrantedAuthority oauthAuthority = new SimpleGrantedAuthority("ASD");
         Collection<GrantedAuthority> oauthAuthorities = Collections.singleton(oauthAuthority);
         DatabaseAuthoritiesLoader loader = new DatabaseAuthoritiesLoader(personDao, roleDao);
 
-        // when
-        loader.mapAuthorities(oauthAuthorities);
+        // when...then
+        Assertions.assertThrows(DatabaseAuthoritiesLoadingException.class, () ->
+                loader.mapAuthorities(oauthAuthorities));
     }
 
-    @Test(expected = DatabaseAuthoritiesLoadingException.class)
+    @Test
     public void missingAuthorityMappingFails() {
         // Given
         DatabaseAuthoritiesLoader loader = new DatabaseAuthoritiesLoader(personDao, roleDao);
 
-        // when
-        loader.mapAuthorities(Collections.emptySet());
+        // when...then
+        Assertions.assertThrows(DatabaseAuthoritiesLoadingException.class, () ->
+                loader.mapAuthorities(Collections.emptySet()));
     }
 }
