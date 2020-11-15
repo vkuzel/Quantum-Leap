@@ -1,14 +1,12 @@
 package cz.quantumleap.admin.menu;
 
+import cz.quantumleap.core.web.WebUtils;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.servlet.mvc.condition.PatternsRequestCondition;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 public class AdminMenuItem {
 
@@ -46,6 +44,7 @@ public class AdminMenuItem {
     }
 
     public boolean matchesRequest(HttpServletRequest request) {
+        WebUtils.cacheRequestPath(request);
         for (RequestMappingInfo requestMappingInfo : requestMappingInfoList) {
             if (requestMappingInfo.getMatchingCondition(request) != null) {
                 return true;

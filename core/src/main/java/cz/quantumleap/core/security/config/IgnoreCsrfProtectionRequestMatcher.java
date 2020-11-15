@@ -1,6 +1,7 @@
 package cz.quantumleap.core.security.config;
 
 import cz.quantumleap.core.security.IgnoreCsrfProtection;
+import cz.quantumleap.core.web.WebUtils;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.method.HandlerMethod;
@@ -23,6 +24,7 @@ public class IgnoreCsrfProtectionRequestMatcher implements RequestMatcher {
 
     @Override
     public boolean matches(HttpServletRequest request) {
+        WebUtils.cacheRequestPath(request);
         for (RequestMappingInfo requestMappingInfo : mappingInfo) {
             if (requestMappingInfo.getMatchingCondition(request) != null) {
                 return true;
