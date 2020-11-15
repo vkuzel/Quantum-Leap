@@ -1,5 +1,5 @@
 ext {
-    set("mainClassName", "cz.quantumleap.QuantumLeapApplication")
+    set("mainClass", "cz.quantumleap.QuantumLeapApplication")
 }
 
 dependencies {
