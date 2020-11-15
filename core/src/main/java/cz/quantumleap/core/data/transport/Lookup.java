@@ -54,4 +54,13 @@ public class Lookup<TABLE extends Table<? extends Record>> {
     public void setEntityIdentifier(EntityIdentifier<TABLE> entityIdentifier) {
         this.entityIdentifier = entityIdentifier;
     }
+
+    @Override
+    public String toString() {
+        return "Lookup{" +
+                "id=" + id +
+                ", label='" + label + '\'' +
+                ", entityIdentifier=" + entityIdentifier +
+                '}';
+    }
 }
