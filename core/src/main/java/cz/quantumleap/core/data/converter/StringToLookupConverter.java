@@ -11,7 +11,7 @@ import org.springframework.util.StringUtils;
 import java.io.IOException;
 
 @Component
-public class StringToLookupConverter implements Converter<String, Lookup> {
+public class StringToLookupConverter implements Converter<String, Lookup<?>> {
 
     private static final Logger log = LoggerFactory.getLogger(StringToLookupConverter.class);
 
@@ -22,9 +22,9 @@ public class StringToLookupConverter implements Converter<String, Lookup> {
     }
 
     @Override
-    public Lookup convert(String source) {
-        if (StringUtils.isEmpty(source)) {
-            return new Lookup();
+    public Lookup<?> convert(String source) {
+        if (StringUtils.hasLength(source)) {
+            return new Lookup<>();
         }
 
         try {

@@ -6,6 +6,7 @@ import cz.quantumleap.admin.person.PersonService;
 import cz.quantumleap.core.common.Utils;
 import cz.quantumleap.core.data.transport.Slice;
 import cz.quantumleap.core.data.transport.SliceRequest;
+import cz.quantumleap.core.data.transport.Table.Column;
 import cz.quantumleap.core.notification.transport.Notification;
 import cz.quantumleap.core.person.transport.Person;
 import cz.quantumleap.core.security.WebSecurityExpressionEvaluator;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
 
 @Controller
 public class NotificationController extends AdminController {
@@ -56,7 +58,7 @@ public class NotificationController extends AdminController {
     @GetMapping(LIST_URL)
     public String showNotifications(SliceRequest sliceRequest, Model model, HttpServletRequest request, Authentication authentication) {
         Person person = personService.fetchByAuthentication(authentication);
-        Slice slice = notificationService.findSlice(person.getId(), sliceRequest);
+        Slice<Map<Column, Object>> slice = notificationService.findSlice(person.getId(), sliceRequest);
         model.addAttribute(DefaultListController.TABLE_SLICE_MODEL_ATTRIBUTE_NAME, slice);
         model.addAttribute(DefaultListController.ENTITY_IDENTIFIER_MODEL_ATTRIBUTE_NAME, notificationService.getListEntityIdentifier().toString());
         model.addAttribute(DefaultListController.DETAIL_URL_MODEL_ATTRIBUTE_NAME, DETAIL_URL);

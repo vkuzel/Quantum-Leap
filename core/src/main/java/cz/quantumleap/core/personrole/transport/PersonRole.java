@@ -1,12 +1,14 @@
 package cz.quantumleap.core.personrole.transport;
 
 import cz.quantumleap.core.data.transport.Lookup;
+import cz.quantumleap.core.tables.PersonTable;
+import cz.quantumleap.core.tables.RoleTable;
 
 public class PersonRole {
 
     private Long id;
-    private Lookup personId = new Lookup();
-    private Lookup roleId = new Lookup();
+    private Lookup<PersonTable> personId = new Lookup<>();
+    private Lookup<RoleTable> roleId = new Lookup<>();
 
     public Long getId() {
         return id;
@@ -16,19 +18,19 @@ public class PersonRole {
         this.id = id;
     }
 
-    public Lookup getPersonId() {
+    public Lookup<PersonTable> getPersonId() {
         return personId;
     }
 
-    public void setPersonId(Lookup personId) {
+    public void setPersonId(Lookup<PersonTable> personId) {
         this.personId = personId;
     }
 
-    public Lookup getRoleId() {
+    public Lookup<RoleTable> getRoleId() {
         return roleId;
     }
 
-    public void setRoleId(Lookup roleId) {
+    public void setRoleId(Lookup<RoleTable> roleId) {
         this.roleId = roleId;
     }
 }

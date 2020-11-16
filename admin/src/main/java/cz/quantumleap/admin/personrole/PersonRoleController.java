@@ -57,7 +57,7 @@ public class PersonRoleController extends AdminController {
             detail = new PersonRole();
             LookupDao<PersonTable> lookupDao = lookupDaoManager.getDaoByLookupIdentifier(PersonController.ENTITY_IDENTIFIER);
             String personLabel = lookupDao.fetchLabelById(personId);
-            detail.setPersonId(new Lookup<>(personId, personLabel, ENTITY_IDENTIFIER));
+            detail.setPersonId(new Lookup<>(personId, personLabel, PersonController.ENTITY_IDENTIFIER));
         } else {
             detail = personRoleService.get(id);
         }

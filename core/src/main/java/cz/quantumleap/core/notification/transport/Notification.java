@@ -2,6 +2,8 @@ package cz.quantumleap.core.notification.transport;
 
 import cz.quantumleap.core.data.transport.Lookup;
 import cz.quantumleap.core.notification.NotificationDefinition;
+import cz.quantumleap.core.tables.PersonTable;
+import cz.quantumleap.core.tables.RoleTable;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -12,11 +14,11 @@ public class Notification {
     private Long id;
     private String code;
     private List<String> messageArguments;
-    private Lookup personId = new Lookup();
-    private Lookup roleId = new Lookup();
+    private Lookup<PersonTable> personId = new Lookup<>();
+    private Lookup<RoleTable> roleId = new Lookup<>();
     private LocalDateTime createdAt;
     private LocalDateTime resolvedAt;
-    private Lookup resolvedBy = new Lookup();
+    private Lookup<PersonTable> resolvedBy = new Lookup<>();
     private NotificationDefinition definition;
 
     public Long getId() {
@@ -49,19 +51,19 @@ public class Notification {
                 .collect(Collectors.joining(","));
     }
 
-    public Lookup getPersonId() {
+    public Lookup<PersonTable> getPersonId() {
         return personId;
     }
 
-    public void setPersonId(Lookup personId) {
+    public void setPersonId(Lookup<PersonTable> personId) {
         this.personId = personId;
     }
 
-    public Lookup getRoleId() {
+    public Lookup<RoleTable> getRoleId() {
         return roleId;
     }
 
-    public void setRoleId(Lookup roleId) {
+    public void setRoleId(Lookup<RoleTable> roleId) {
         this.roleId = roleId;
     }
 
@@ -81,11 +83,11 @@ public class Notification {
         this.resolvedAt = resolvedAt;
     }
 
-    public Lookup getResolvedBy() {
+    public Lookup<PersonTable> getResolvedBy() {
         return resolvedBy;
     }
 
-    public void setResolvedBy(Lookup resolvedBy) {
+    public void setResolvedBy(Lookup<PersonTable> resolvedBy) {
         this.resolvedBy = resolvedBy;
     }
 
