@@ -94,6 +94,11 @@ public class Core extends SchemaImpl {
     public final IncrementTable INCREMENT = IncrementTable.INCREMENT;
 
     /**
+     * The table <code>core.notification</code>.
+     */
+    public final NotificationTable NOTIFICATION = NotificationTable.NOTIFICATION;
+
+    /**
      * The table <code>core.person</code>.
      */
     public final PersonTable PERSON = PersonTable.PERSON;
@@ -130,6 +135,7 @@ public class Core extends SchemaImpl {
     public final List<Sequence<?>> getSequences() {
         return Arrays.<Sequence<?>>asList(
             Sequences.INCREMENT_ID_SEQ,
+            Sequences.NOTIFICATION_ID_SEQ,
             Sequences.PERSON_ID_SEQ,
             Sequences.PERSON_ROLE_ID_SEQ,
             Sequences.ROLE_ID_SEQ,
@@ -143,6 +149,7 @@ public class Core extends SchemaImpl {
             EnumValueTable.ENUM_VALUE,
             GenerateIntervalsTable.GENERATE_INTERVALS,
             IncrementTable.INCREMENT,
+            NotificationTable.NOTIFICATION,
             PersonTable.PERSON,
             PersonRoleTable.PERSON_ROLE,
             RoleTable.ROLE,

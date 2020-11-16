@@ -86,6 +86,11 @@ public class Tables {
     public static final IncrementTable INCREMENT = IncrementTable.INCREMENT;
 
     /**
+     * The table <code>core.notification</code>.
+     */
+    public static final NotificationTable NOTIFICATION = NotificationTable.NOTIFICATION;
+
+    /**
      * The table <code>core.person</code>.
      */
     public static final PersonTable PERSON = PersonTable.PERSON;

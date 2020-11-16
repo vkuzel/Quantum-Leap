@@ -2,11 +2,11 @@ package cz.quantumleap.admin.notification;
 
 import cz.quantumleap.admin.AdminController;
 import cz.quantumleap.admin.menu.AdminMenuManager;
-import cz.quantumleap.admin.notification.transport.Notification;
 import cz.quantumleap.admin.person.PersonService;
 import cz.quantumleap.core.common.Utils;
 import cz.quantumleap.core.data.transport.Slice;
 import cz.quantumleap.core.data.transport.SliceRequest;
+import cz.quantumleap.core.notification.transport.Notification;
 import cz.quantumleap.core.person.transport.Person;
 import cz.quantumleap.core.security.WebSecurityExpressionEvaluator;
 import cz.quantumleap.core.web.DefaultListController;

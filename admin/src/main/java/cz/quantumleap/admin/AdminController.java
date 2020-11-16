@@ -4,15 +4,14 @@ import cz.quantumleap.admin.menu.AdminMenuItem;
 import cz.quantumleap.admin.menu.AdminMenuItem.State;
 import cz.quantumleap.admin.menu.AdminMenuManager;
 import cz.quantumleap.admin.notification.NotificationService;
-import cz.quantumleap.admin.notification.transport.Notification;
 import cz.quantumleap.admin.person.PersonService;
+import cz.quantumleap.core.notification.transport.Notification;
 import cz.quantumleap.core.person.transport.Person;
 import cz.quantumleap.core.security.WebSecurityExpressionEvaluator;
 import org.springframework.security.core.Authentication;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.PathMatcher;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.servlet.mvc.condition.PatternsRequestCondition;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

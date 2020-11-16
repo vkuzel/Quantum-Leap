@@ -1,7 +1,7 @@
-package cz.quantumleap.admin.notification.transport;
+package cz.quantumleap.core.notification.transport;
 
-import cz.quantumleap.admin.notification.NotificationDefinition;
 import cz.quantumleap.core.data.transport.Lookup;
+import cz.quantumleap.core.notification.NotificationDefinition;
 
 import java.time.LocalDateTime;
 import java.util.List;

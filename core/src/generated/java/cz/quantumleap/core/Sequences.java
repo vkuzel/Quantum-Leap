@@ -21,6 +21,11 @@ public class Sequences {
     public static final Sequence<Long> INCREMENT_ID_SEQ = Internal.createSequence("increment_id_seq", Core.CORE, SQLDataType.BIGINT.nullable(false), null, null, null, null, false, null);
 
     /**
+     * The sequence <code>core.notification_id_seq</code>
+     */
+    public static final Sequence<Long> NOTIFICATION_ID_SEQ = Internal.createSequence("notification_id_seq", Core.CORE, SQLDataType.BIGINT.nullable(false), null, null, null, null, false, null);
+
+    /**
      * The sequence <code>core.person_id_seq</code>
      */
     public static final Sequence<Long> PERSON_ID_SEQ = Internal.createSequence("person_id_seq", Core.CORE, SQLDataType.BIGINT.nullable(false), null, null, null, null, false, null);

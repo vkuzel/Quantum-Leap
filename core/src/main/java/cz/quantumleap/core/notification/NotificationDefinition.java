@@ -1,4 +1,4 @@
-package cz.quantumleap.admin.notification;
+package cz.quantumleap.core.notification;
 
 public interface NotificationDefinition {
 

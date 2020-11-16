@@ -47,6 +47,20 @@ CREATE TABLE core.enum_value (
   PRIMARY KEY (id, enum_id)
 );
 
+CREATE TABLE core.notification (
+                                  id                BIGSERIAL PRIMARY KEY,
+                                  code              VARCHAR    NOT NULL,
+                                  message_arguments VARCHAR [] NOT NULL,
+                                  person_id         BIGINT REFERENCES core.person,
+                                  role_id           BIGINT REFERENCES core.role,
+                                  created_at        TIMESTAMP  NOT NULL,
+                                  resolved_at       TIMESTAMP,
+                                  resolved_by       BIGINT REFERENCES core.person
+);
+
+CREATE INDEX index_unresolved_notifications
+  ON core.notification ((resolved_at IS NULL));
+
 CREATE OR REPLACE FUNCTION core.generate_intervals(intervals_start DATE, intervals_end DATE, step VARCHAR)
   RETURNS TABLE(interval_start TIMESTAMP, interval_end TIMESTAMP) AS $$
 SELECT DATE_TRUNC(step, interval_start), DATE_TRUNC(step, interval_start) + ('1 ' || step) :: INTERVAL - '00:00:00.000001' :: INTERVAL

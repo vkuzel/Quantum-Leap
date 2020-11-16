@@ -1,13 +1,15 @@
 package cz.quantumleap.admin.notification;
 
-import cz.quantumleap.admin.notification.transport.Notification;
-import cz.quantumleap.admin.tables.NotificationTable;
 import cz.quantumleap.core.data.entity.EntityIdentifier;
 import cz.quantumleap.core.data.transport.Lookup;
 import cz.quantumleap.core.data.transport.Slice;
 import cz.quantumleap.core.data.transport.SliceRequest;
 import cz.quantumleap.core.data.transport.Table;
 import cz.quantumleap.core.data.transport.Table.Column;
+import cz.quantumleap.core.notification.NotificationDao;
+import cz.quantumleap.core.notification.NotificationDefinition;
+import cz.quantumleap.core.notification.transport.Notification;
+import cz.quantumleap.core.tables.NotificationTable;
 import cz.quantumleap.core.tables.PersonTable;
 import org.apache.commons.lang3.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
