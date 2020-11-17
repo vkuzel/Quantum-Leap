@@ -26,21 +26,8 @@ public class TransactionExecutor {
         return function.apply(dslContext);
     }
 
-//    @Transactional
-//    public void execute(Runnable runnable) {
-//        try {
-//            runnable.run();
-//        } catch (Exception e ) {
-//            throw e;
-//        }
-//    }
-//
-//    @Transactional
-//    public <T> T execute(Callable<T> callable) {
-//        try {
-//            return callable.call();
-//        } catch (Exception e) {
-//            throw new IllegalStateException(e);
-//        }
-//    }
+    @Transactional
+    public void execute(Runnable runnable) {
+        runnable.run();
+    }
 }
