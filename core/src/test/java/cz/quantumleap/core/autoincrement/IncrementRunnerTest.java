@@ -6,7 +6,7 @@ import cz.quantumleap.core.data.TransactionExecutor;
 import cz.quantumleap.core.module.ModuleDependencies;
 import cz.quantumleap.core.resource.ResourceWithModule;
 import cz.quantumleap.core.test.CoreSpringBootTest;
-import cz.quantumleap.core.test.common.TestUtils;
+import cz.quantumleap.core.test.common.CoreTestSupport;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -20,8 +20,6 @@ import org.springframework.jdbc.BadSqlGrammarException;
 import java.util.List;
 import java.util.Map;
 
-import static cz.quantumleap.core.test.common.TestUtils.countRowsInTable;
-import static cz.quantumleap.core.test.common.TestUtils.fetchFirst;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -33,6 +31,8 @@ public class IncrementRunnerTest {
 
     private final PathMatchingResourcePatternResolver resourceResolver = new PathMatchingResourcePatternResolver();
 
+    @Autowired
+    private CoreTestSupport testSupport;
     @Autowired
     private Environment environment;
     @Autowired
@@ -52,9 +52,7 @@ public class IncrementRunnerTest {
                 createIncrementScript("classpath:/test_db/inc/v03/02_invalidScript.sql", 3)
         );
 
-        transactionExecutor.execute(dslContext -> {
-            TestUtils.deleteFromTable(dslContext, "core.increment");
-        });
+        testSupport.deleteFromTable("core.increment");
         Map<String, Integer> lastIncrements = ImmutableMap.of("core", 0);
         IncrementRunner incrementRunner = new IncrementRunner(environment, incrementService, transactionExecutor, incrementDao);
 
@@ -66,12 +64,10 @@ public class IncrementRunnerTest {
         }
 
         // then
-        transactionExecutor.execute(dslContext -> {
-            Assertions.assertEquals(2, countRowsInTable(dslContext, "core.increment"));
-            Assertions.assertEquals(0, countRowsInTable(dslContext, "core.test_entity"));
-            Assertions.assertEquals(0, countRowsInTable(dslContext, "core.related_test_entity"));
-            Assertions.assertEquals(2, (int) fetchFirst(dslContext, "SELECT core.increment(1)"));
-        });
+        Assertions.assertEquals(2, testSupport.countRowsInTable("core.increment"));
+        Assertions.assertEquals(0, testSupport.countRowsInTable("core.test_entity"));
+        Assertions.assertEquals(0, testSupport.countRowsInTable("core.related_test_entity"));
+        Assertions.assertEquals(2, testSupport.fetchFirst("SELECT core.increment(1)", Integer.class));
     }
 
     private IncrementService.IncrementScript createIncrementScript(String locationPattern, int incrementVersion) {

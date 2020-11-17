@@ -1,13 +1,10 @@
 package cz.quantumleap.core.notification;
 
-import cz.quantumleap.core.data.TransactionExecutor;
 import cz.quantumleap.core.notification.transport.Notification;
-import cz.quantumleap.core.person.PersonDao;
 import cz.quantumleap.core.person.transport.Person;
-import cz.quantumleap.core.role.RoleDao;
 import cz.quantumleap.core.role.transport.Role;
 import cz.quantumleap.core.test.CoreSpringBootTest;
-import cz.quantumleap.core.test.common.TestUtils;
+import cz.quantumleap.core.test.common.CoreTestSupport;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,21 +20,14 @@ class NotificationManagerTest {
     private static final String NOTIFICATION_CODE2 = "NOTIFICATION_CODE2";
 
     @Autowired
-    private PersonDao personDao;
-    @Autowired
-    private RoleDao roleDao;
-    @Autowired
-    private TransactionExecutor transactionExecutor;
+    private CoreTestSupport testSupport;
     @Autowired
     private NotificationDao notificationDao;
 
     @BeforeEach
     private void clearDatabase() {
-        transactionExecutor.execute(dslContext -> {
-            TestUtils.deleteFromTable(dslContext, "core.notification");
-            TestUtils.deleteFromTable(dslContext, "core.person");
-            TestUtils.deleteFromTable(dslContext, "core.role");
-        });
+        testSupport.deleteFromTable("core.notification");
+        testSupport.clearDatabase();
     }
 
     @Test
@@ -45,7 +35,7 @@ class NotificationManagerTest {
         // given
         List<NotificationDefinition> definitions = createNotificationDefinition(NOTIFICATION_CODE1);
         NotificationManager notificationManager = new NotificationManager(notificationDao, definitions);
-        Person person = createPerson();
+        Person person = testSupport.createPerson();
 
         // when
         long id = notificationManager.createNotificationForPerson(person.getId(), NOTIFICATION_CODE1).getId();
@@ -62,7 +52,7 @@ class NotificationManagerTest {
         // given
         List<NotificationDefinition> definitions = createNotificationDefinition(NOTIFICATION_CODE1);
         NotificationManager notificationManager = new NotificationManager(notificationDao, definitions);
-        Person person = createPerson();
+        Person person = testSupport.createPerson();
 
         // when, then
         Assertions.assertThrows(IllegalArgumentException.class, () ->
@@ -74,7 +64,7 @@ class NotificationManagerTest {
         // given
         List<NotificationDefinition> definitions = createNotificationDefinition(NOTIFICATION_CODE1);
         NotificationManager notificationManager = new NotificationManager(notificationDao, definitions);
-        Role role = createRole();
+        Role role = testSupport.createRole();
 
         // when
         long id = notificationManager.createNotificationForRole(role.getId(), NOTIFICATION_CODE1).getId();
@@ -100,22 +90,6 @@ class NotificationManagerTest {
         Assertions.assertEquals(NOTIFICATION_CODE1, notification.getCode());
         Assertions.assertTrue(notification.getPersonId().isEmpty());
         Assertions.assertTrue(notification.getRoleId().isEmpty());
-    }
-
-    private Person createPerson() {
-        return transactionExecutor.execute(() -> {
-            Person person = new Person();
-            person.setEmail("test@email.cx");
-            return personDao.save(person);
-        });
-    }
-
-    private Role createRole() {
-        return transactionExecutor.execute(() -> {
-            Role role = new Role();
-            role.setName("Test role");
-            return roleDao.save(role);
-        });
     }
 
     private List<NotificationDefinition> createNotificationDefinition(String notificationCode) {
