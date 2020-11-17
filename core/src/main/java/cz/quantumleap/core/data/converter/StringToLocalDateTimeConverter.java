@@ -1,10 +1,10 @@
 package cz.quantumleap.core.data.converter;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 
 import java.time.DateTimeException;
 import java.time.LocalDateTime;
@@ -16,7 +16,7 @@ public class StringToLocalDateTimeConverter implements Converter<String, LocalDa
 
     @Override
     public LocalDateTime convert(String source) {
-        if (StringUtils.isEmpty(source)) {
+        if (StringUtils.isBlank(source)) {
             return null;
         }
 

@@ -1,7 +1,7 @@
 package cz.quantumleap.core.web.template;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.io.Resource;
-import org.springframework.util.StringUtils;
 import org.thymeleaf.templateresource.ITemplateResource;
 
 import java.io.BufferedReader;
@@ -37,7 +37,7 @@ public class ThemeTemplateResource implements ITemplateResource {
     @Override
     public Reader reader() throws IOException {
         InputStreamReader reader;
-        if (StringUtils.isEmpty(characterEncoding)) {
+        if (StringUtils.isBlank(characterEncoding)) {
             reader = new InputStreamReader(resource.getInputStream());
         } else {
             reader = new InputStreamReader(resource.getInputStream(), characterEncoding);
