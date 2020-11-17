@@ -75,6 +75,7 @@ public class IncrementRunner {
 
         transactionExecutor.execute(dslContext -> {
             scripts.stream()
+                    .filter(script -> script.getFilename() != null)
                     .sorted(Comparator.comparing(Resource::getFilename))
                     .forEach(script -> {
                         log.info("Running {}", script.getFilename());
