@@ -62,7 +62,7 @@
                 </a>
                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="notificationsDropdown">
                     <a th:each="notification : ${unresolvedNotifications}" class="dropdown-item" th:href="@{|/notification/${notification.id}|}">
-                        <span class="small text-muted" th:with="pattern=${notification.createdAt.toLocalDate().isEqual(#temporals.createToday())} ? 'HH:mm' : 'yyyy-MM-dd HH:mm'" th:text="${#temporals.format(notification.createdAt, pattern)}">11:21 AM</span>
+                        <span class="small" th:with="pattern=${notification.createdAt.toLocalDate().isEqual(#temporals.createToday())} ? 'HH:mm' : 'yyyy-MM-dd HH:mm'" th:text="${#temporals.format(notification.createdAt, pattern)}">11:21 AM</span>
                         <span th:utext="${#messages.msgWithParams(notification.definition.messageCode, notification.messageArguments)}">Notification message!</span>
                     </a>
                     <div th:unless="${unresolvedNotifications.empty}" class="dropdown-divider"></div>
