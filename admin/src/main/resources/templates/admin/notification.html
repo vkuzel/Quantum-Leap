@@ -20,10 +20,14 @@
                     <div class="col-form-label col-md-10" th:utext="${#messages.msgWithParams(notification.definition.messageCode, notification.messageArguments)}">Message</div>
                 </div>
                 <div class="form-group row">
-                    <label th:for="name" class="col-form-label col-md-2" th:text="#{admin.notification.created-at}">Created at</label>
-                    <div class="col-form-label col-md-4" th:text="*{createdAt}">123</div>
-                    <label th:for="name" class="col-form-label col-md-2" th:text="#{admin.notification.resolved-at}">Resolved at</label>
-                    <div class="col-form-label col-md-4" th:text="*{resolvedAt}">123</div>
+                    <label th:for="createdAt" class="col-form-label col-md-2" th:text="#{admin.notification.created-at}">Created at</label>
+                    <div class="col-md-4">
+                        <input id="createdAt" name="createdAt" th:value="${#temporals.format(notification.createdAt, 'yyyy-MM-dd''T''HH:mm')}" type="datetime-local" required="required" readonly="readonly" class="form-control">
+                    </div>
+                    <label th:for="resolvedAt" class="col-form-label col-md-2" th:text="#{admin.notification.resolved-at}">Resolved at</label>
+                    <div class="col-md-4">
+                        <input id="resolvedAt" name="resolvedAt" th:value="${#temporals.format(notification.resolvedAt, 'yyyy-MM-dd''T''HH:mm')}" type="datetime-local" readonly="readonly" class="form-control">
+                    </div>
                 </div>
 
                 <div class="text-right">
