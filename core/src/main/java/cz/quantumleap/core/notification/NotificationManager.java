@@ -46,7 +46,13 @@ public class NotificationManager {
 
     @Transactional
     @SuppressWarnings("unused")
-    public Notification createNotificationForPerson(String notificationCode, List<String> messageArguments, long personId) {
+    public Notification createNotificationForPerson(long personId, String notificationCode, String... messageArguments) {
+        List<String> arguments = Arrays.asList(messageArguments);
+        return createNotificationForPerson(personId, notificationCode, arguments);
+    }
+
+    @Transactional
+    public Notification createNotificationForPerson(long personId, String notificationCode, List<String> messageArguments) {
         getNotificationDefinitionByCode(notificationCode);
         Notification notification = new Notification();
         notification.setCode(notificationCode);
@@ -57,7 +63,13 @@ public class NotificationManager {
 
     @Transactional
     @SuppressWarnings("unused")
-    public Notification createNotificationForRole(String notificationCode, List<String> messageArguments, long roleId) {
+    public Notification createNotificationForRole(long roleId, String notificationCode, String... messageArguments) {
+        List<String> arguments = Arrays.asList(messageArguments);
+        return createNotificationForRole(roleId, notificationCode, arguments);
+    }
+
+    @Transactional
+    public Notification createNotificationForRole(long roleId, String notificationCode, List<String> messageArguments) {
         getNotificationDefinitionByCode(notificationCode);
         Notification notification = new Notification();
         notification.setCode(notificationCode);
@@ -68,6 +80,12 @@ public class NotificationManager {
 
     @Transactional
     @SuppressWarnings("unused")
+    public Notification createNotificationForAll(String notificationCode, String... messageArguments) {
+        List<String> arguments = Arrays.asList(messageArguments);
+        return createNotificationForAll(notificationCode, arguments);
+    }
+
+    @Transactional
     public Notification createNotificationForAll(String notificationCode, List<String> messageArguments) {
         getNotificationDefinitionByCode(notificationCode);
         Notification notification = new Notification();

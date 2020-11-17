@@ -16,8 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Collections;
 import java.util.List;
 
-import static java.util.Collections.emptyList;
-
 @CoreSpringBootTest
 class NotificationManagerTest {
 
@@ -50,7 +48,7 @@ class NotificationManagerTest {
         Person person = createPerson();
 
         // when
-        long id = notificationManager.createNotificationForPerson(NOTIFICATION_CODE1, emptyList(), person.getId()).getId();
+        long id = notificationManager.createNotificationForPerson(person.getId(), NOTIFICATION_CODE1).getId();
 
         // then
         Notification notification = notificationDao.fetchById(id, Notification.class);
@@ -68,7 +66,7 @@ class NotificationManagerTest {
 
         // when, then
         Assertions.assertThrows(IllegalArgumentException.class, () ->
-                notificationManager.createNotificationForPerson(NOTIFICATION_CODE2, emptyList(), person.getId()));
+                notificationManager.createNotificationForPerson(person.getId(), NOTIFICATION_CODE2));
     }
 
     @Test
@@ -79,7 +77,7 @@ class NotificationManagerTest {
         Role role = createRole();
 
         // when
-        long id = notificationManager.createNotificationForRole(NOTIFICATION_CODE1, emptyList(), role.getId()).getId();
+        long id = notificationManager.createNotificationForRole(role.getId(), NOTIFICATION_CODE1).getId();
 
         // then
         Notification notification = notificationDao.fetchById(id, Notification.class);
@@ -95,7 +93,7 @@ class NotificationManagerTest {
         NotificationManager notificationManager = new NotificationManager(notificationDao, definitions);
 
         // when
-        long id = notificationManager.createNotificationForAll(NOTIFICATION_CODE1, emptyList()).getId();
+        long id = notificationManager.createNotificationForAll(NOTIFICATION_CODE1).getId();
 
         // then
         Notification notification = notificationDao.fetchById(id, Notification.class);
