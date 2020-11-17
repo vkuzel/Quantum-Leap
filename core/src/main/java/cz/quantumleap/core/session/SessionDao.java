@@ -66,8 +66,8 @@ public class SessionDao implements SessionRepository<MapSession> {
         session.setMaxInactiveInterval(Duration.ZERO);
     }
 
-    @Scheduled(initialDelay = 3600, fixedRate = 3600)
-    public void deleteExpiredSessions() {
+    @Scheduled(initialDelay = 60_000, fixedRate = 10_000)
+    private void deleteExpiredSessions() {
         List<Session> sessions = new ArrayList<>(sessionMap.values());
         for (Session session : sessions) {
             if (session.isExpired()) {
