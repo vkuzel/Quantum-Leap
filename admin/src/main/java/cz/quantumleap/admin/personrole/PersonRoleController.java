@@ -4,15 +4,12 @@ import cz.quantumleap.admin.AdminController;
 import cz.quantumleap.admin.menu.AdminMenuItemActive;
 import cz.quantumleap.admin.menu.AdminMenuManager;
 import cz.quantumleap.admin.notification.NotificationService;
-import cz.quantumleap.admin.person.PersonController;
 import cz.quantumleap.admin.person.PersonService;
-import cz.quantumleap.core.data.LookupDao;
 import cz.quantumleap.core.data.LookupDaoManager;
 import cz.quantumleap.core.data.entity.EntityIdentifier;
 import cz.quantumleap.core.data.transport.Lookup;
 import cz.quantumleap.core.personrole.transport.PersonRole;
 import cz.quantumleap.core.security.WebSecurityExpressionEvaluator;
-import cz.quantumleap.core.tables.PersonRoleTable;
 import cz.quantumleap.core.tables.PersonTable;
 import cz.quantumleap.core.web.DefaultDetailController;
 import cz.quantumleap.core.web.DetailController;
@@ -27,8 +24,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 
-import static cz.quantumleap.core.tables.PersonRoleTable.PERSON_ROLE;
-
 @Controller
 @PreAuthorize("hasRole('ADMIN')")
 public class PersonRoleController extends AdminController {
@@ -36,16 +31,16 @@ public class PersonRoleController extends AdminController {
     public static final String DETAIL_URL = "/person/{personId}/person-role";
     private static final String DETAIL_VIEW = "admin/person-role";
 
-    public static final EntityIdentifier<PersonRoleTable> ENTITY_IDENTIFIER = EntityIdentifier.forTable(PERSON_ROLE);
-
     private final LookupDaoManager lookupDaoManager;
     private final PersonRoleService personRoleService;
+    private final PersonService personService;
     private final DetailController<PersonRole> detailController;
 
     public PersonRoleController(AdminMenuManager adminMenuManager, PersonService personService, NotificationService notificationService, WebSecurityExpressionEvaluator webSecurityExpressionEvaluator, LookupDaoManager lookupDaoManager, PersonRoleService personRoleService) {
         super(adminMenuManager, personService, notificationService, webSecurityExpressionEvaluator);
         this.lookupDaoManager = lookupDaoManager;
         this.personRoleService = personRoleService;
+        this.personService = personService;
         this.detailController = new DefaultDetailController<>(PersonRole.class, personRoleService, DETAIL_URL, DETAIL_VIEW);
     }
 
@@ -55,9 +50,9 @@ public class PersonRoleController extends AdminController {
         PersonRole detail;
         if (id == null) {
             detail = new PersonRole();
-            LookupDao<PersonTable> lookupDao = lookupDaoManager.getDaoByLookupIdentifier(PersonController.ENTITY_IDENTIFIER);
-            String personLabel = lookupDao.fetchLabelById(personId);
-            detail.setPersonId(new Lookup<>(personId, personLabel, PersonController.ENTITY_IDENTIFIER));
+            EntityIdentifier<PersonTable> identifier = personService.getDetailEntityIdentifier(PersonTable.class);
+            Lookup<PersonTable> lookup = lookupDaoManager.createLookupForEntity(identifier, personId);
+            detail.setPersonId(lookup);
         } else {
             detail = personRoleService.get(id);
         }

@@ -15,7 +15,7 @@ import cz.quantumleap.core.person.transport.Person;
 import cz.quantumleap.core.security.WebSecurityExpressionEvaluator;
 import cz.quantumleap.core.session.SessionService;
 import cz.quantumleap.core.session.transport.SessionDetail;
-import cz.quantumleap.core.tables.PersonTable;
+import cz.quantumleap.core.tables.PersonRoleTable;
 import cz.quantumleap.core.web.*;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -32,8 +32,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.List;
 
-import static cz.quantumleap.core.tables.PersonTable.PERSON;
-
 @Controller
 @PreAuthorize("hasRole('ADMIN')")
 public class PersonController extends AdminController {
@@ -45,7 +43,6 @@ public class PersonController extends AdminController {
     private static final String LIST_URL = "/people";
     private static final String LIST_VIEW = "admin/people";
     private static final String AJAX_LIST_VIEW = "admin/components/table";
-    public static final EntityIdentifier<PersonTable> ENTITY_IDENTIFIER = EntityIdentifier.forTable(PERSON);
 
     private static final String LOOKUP_LABEL_URL = "/person-lookup-label";
     private static final String LOOKUP_LABELS_URL = "/people-lookup-labels";
@@ -101,10 +98,12 @@ public class PersonController extends AdminController {
 
         personRoleSliceRequest.getFilter().put("person_id", person.getId());
         Slice<?> slice = personRoleService.findSlice(personRoleSliceRequest);
-        model.addAttribute("personRoleTableSlice", slice);
-        model.addAttribute("personRoleEntityIdentifier", PersonRoleController.ENTITY_IDENTIFIER.toString());
-        model.addAttribute("personRoleDetailUrl", PersonRoleController.DETAIL_URL.replace("{personId}", String.valueOf(person.getId())));
+        EntityIdentifier<PersonRoleTable> identifier = personRoleService.getDetailEntityIdentifier(PersonRoleTable.class);
         List<SessionDetail> sessions = sessionService.fetchListByEmail(person.getEmail());
+
+        model.addAttribute("personRoleTableSlice", slice);
+        model.addAttribute("personRoleEntityIdentifier", identifier.toString());
+        model.addAttribute("personRoleDetailUrl", PersonRoleController.DETAIL_URL.replace("{personId}", String.valueOf(person.getId())));
         model.addAttribute("sessions", sessions);
     }
 

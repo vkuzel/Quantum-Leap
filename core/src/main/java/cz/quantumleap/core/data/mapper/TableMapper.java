@@ -74,7 +74,7 @@ public class TableMapper<TABLE extends org.jooq.Table<? extends Record>> impleme
         HashBasedTable<Object, Column, String> valueColumnLabels = HashBasedTable.create();
         for (LookupColumn lookupColumn : lookupReferenceIds.keys()) {
             EntityIdentifier<?> entityIdentifier = lookupColumn.getEntityIdentifier();
-            LookupDao<?> lookupDao = lookupDaoManager.getDaoByLookupIdentifier(entityIdentifier);
+            LookupDao<?> lookupDao = lookupDaoManager.getDaoByEntityIdentifier(entityIdentifier);
             Map<Object, String> labels = lookupDao.fetchLabelsById(lookupReferenceIds.get(lookupColumn));
             labels.forEach((referenceId, label) -> valueColumnLabels.put(referenceId, lookupColumn, label));
         }
@@ -186,7 +186,7 @@ public class TableMapper<TABLE extends org.jooq.Table<? extends Record>> impleme
                 EntityIdentifier<?> defaultEntityIdentifier = EntityIdentifier.forTable(foreignKey.getKey().getTable());
                 EntityIdentifier<?> entityIdentifier = entity.getLookupFieldsMap().getOrDefault(tableField, defaultEntityIdentifier);
 
-                if (lookupDaoManager.getDaoByLookupIdentifier(entityIdentifier) != null) {
+                if (lookupDaoManager.getDaoByEntityIdentifier(entityIdentifier) != null) {
                     map.put(tableField, entityIdentifier);
                 }
             }

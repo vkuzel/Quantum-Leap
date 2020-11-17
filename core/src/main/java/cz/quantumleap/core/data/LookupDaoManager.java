@@ -1,6 +1,8 @@
 package cz.quantumleap.core.data;
 
 import cz.quantumleap.core.data.entity.EntityIdentifier;
+import cz.quantumleap.core.data.transport.Lookup;
+import org.apache.commons.lang3.Validate;
 import org.jooq.Record;
 import org.jooq.Table;
 import org.slf4j.Logger;
@@ -26,14 +28,21 @@ public class LookupDaoManager {
         this.applicationContext = applicationContext;
     }
 
+    public <T extends Table<? extends Record>> Lookup<T> createLookupForEntity(EntityIdentifier<T> entityIdentifier, Object entityId) {
+        LookupDao<T> lookupDao = getDaoByEntityIdentifier(entityIdentifier);
+        Validate.notNull(lookupDao, "LookupDao not found for " + entityIdentifier);
+        String label = lookupDao.fetchLabelById(entityId);
+        return new Lookup<>(entityId, label, entityIdentifier);
+    }
+
     @SuppressWarnings("unchecked")
-    public <T extends Table<? extends Record>> LookupDao<T> getDaoByLookupIdentifier(EntityIdentifier<T> entityIdentifier) {
+    public <T extends Table<? extends Record>> LookupDao<T> getDaoByEntityIdentifier(EntityIdentifier<T> entityIdentifier) {
         return (LookupDao<T>) lookupDaoMap.get(entityIdentifier);
     }
 
     @EventListener(ContextRefreshedEvent.class)
     public void initializeLookupDaoMap() {
-        Map<String, LookupDao> beans = applicationContext.getBeansOfType(LookupDao.class);
+        var beans = applicationContext.getBeansOfType(LookupDao.class);
         for (LookupDao<?> lookupDao : beans.values()) {
             EntityIdentifier<?> entityIdentifier = lookupDao.getLookupEntityIdentifier();
             if (entityIdentifier != null) {
