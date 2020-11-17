@@ -94,11 +94,12 @@ public final class DefaultDetailDao<TABLE extends Table<? extends Record>> imple
         Map<? extends Field<?>, ?> changedValues = getChangedValues(record);
 
         Table<? extends Record> table = entity.getTable();
-        return dslContext.insertInto(table)
+        Record inserted = dslContext.insertInto(table)
                 .set(changedValues)
                 .returning(table.fields())
-                .fetchOne()
-                .map(mapperFactory.createTransportMapper(resultType));
+                .fetchOne();
+        Validate.notNull(inserted);
+        return inserted.map(mapperFactory.createTransportMapper(resultType));
     }
 
     private <T> T update(Record record, Condition condition, Class<T> resultType) {
@@ -107,12 +108,13 @@ public final class DefaultDetailDao<TABLE extends Table<? extends Record>> imple
         Map<Field<?>, Object> changedValues = getChangedValues(record);
 
         Table<? extends Record> table = entity.getTable();
-        return dslContext.update(table)
+        Record updated = dslContext.update(table)
                 .set(changedValues)
                 .where(condition)
                 .returning(table.fields())
-                .fetchOne()
-                .map(mapperFactory.createTransportMapper(resultType));
+                .fetchOne();
+        Validate.notNull(updated);
+        return updated.map(mapperFactory.createTransportMapper(resultType));
     }
 
     private Map<Field<?>, Object> getChangedValues(Record record) {
@@ -140,7 +142,7 @@ public final class DefaultDetailDao<TABLE extends Table<? extends Record>> imple
     }
 
     @Override
-    public <T> List<T> saveDetailsAssociatedBy(TableField foreignKey, Object foreignId, Collection<T> details, Class<T> detailType) {
+    public <T, F> List<T> saveDetailsAssociatedBy(TableField<?, F> foreignKey, F foreignId, Collection<T> details, Class<T> detailType) {
         MapperFactory<TABLE>.TransportUnMapper<T> unMapper = mapperFactory.createTransportUnMapper(detailType);
         Table<? extends Record> table = entity.getTable();
         Field<Object> primaryKeyField = entity.getPrimaryKeyConditionBuilder().getPrimaryKeyField();

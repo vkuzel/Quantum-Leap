@@ -25,5 +25,5 @@ public interface DetailDao<TABLE extends Table<? extends Record>> {
 
     int deleteByCondition(Condition condition);
 
-    <T> List<T> saveDetailsAssociatedBy(TableField foreignKey, Object foreignId, Collection<T> details, Class<T> detailType);
+    <T, F> List<T> saveDetailsAssociatedBy(TableField<?, F> foreignKey, F foreignId, Collection<T> details, Class<T> detailType);
 }

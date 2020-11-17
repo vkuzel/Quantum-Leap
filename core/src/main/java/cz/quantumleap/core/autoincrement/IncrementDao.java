@@ -82,7 +82,7 @@ public class IncrementDao implements DetailDao<IncrementTable> {
     }
 
     @Override
-    public <T> List<T> saveDetailsAssociatedBy(TableField foreignKey, Object foreignId, Collection<T> details, Class<T> detailType) {
+    public <T, F> List<T> saveDetailsAssociatedBy(TableField<?, F> foreignKey, F foreignId, Collection<T> details, Class<T> detailType) {
         return detailDao.saveDetailsAssociatedBy(foreignKey, foreignId, details, detailType);
     }
 }
