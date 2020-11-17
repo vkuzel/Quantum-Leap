@@ -2,11 +2,11 @@ package cz.quantumleap.core.data.converter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import cz.quantumleap.core.data.transport.Lookup;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 
@@ -23,7 +23,7 @@ public class StringToLookupConverter implements Converter<String, Lookup<?>> {
 
     @Override
     public Lookup<?> convert(String source) {
-        if (StringUtils.hasLength(source)) {
+        if (StringUtils.isBlank(source)) {
             return new Lookup<>();
         }
 
