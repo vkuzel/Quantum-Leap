@@ -8,39 +8,35 @@ import cz.quantumleap.core.data.transport.Table;
 import cz.quantumleap.core.data.transport.Table.Column;
 import cz.quantumleap.core.notification.NotificationDao;
 import cz.quantumleap.core.notification.NotificationDefinition;
+import cz.quantumleap.core.notification.NotificationManager;
 import cz.quantumleap.core.notification.transport.Notification;
 import cz.quantumleap.core.tables.NotificationTable;
 import cz.quantumleap.core.tables.PersonTable;
 import org.apache.commons.lang3.Validate;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.*;
-import java.util.function.Function;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
 public class NotificationService {
 
+    private static final int MAX_UNRESOLVED_NOTIFICATIONS_TO_SHOW = 10;
+
     private final MessageSource messageSource;
     private final NotificationDao notificationDao;
-    private final Map<String, NotificationDefinition> notificationDefinitionMap;
+    private final NotificationManager notificationManager;
 
-    public NotificationService(MessageSource messageSource, NotificationDao notificationDao, @Autowired(required = false) Collection<NotificationDefinition> notificationDefinitions) {
+    public NotificationService(MessageSource messageSource, NotificationDao notificationDao, NotificationManager notificationManager) {
         this.messageSource = messageSource;
         this.notificationDao = notificationDao;
-        if (notificationDefinitions == null) {
-            this.notificationDefinitionMap = Collections.emptyMap();
-        } else {
-            this.notificationDefinitionMap = notificationDefinitions.stream()
-                    .collect(Collectors.toMap(NotificationDefinition::getNotificationCode, Function.identity(), (ad, ad2) -> {
-                        throw new IllegalStateException("Two notification definitions with same code " + ad.getNotificationCode());
-                    }));
-        }
+        this.notificationManager = notificationManager;
     }
 
     public EntityIdentifier<NotificationTable> getListEntityIdentifier() {
@@ -49,7 +45,7 @@ public class NotificationService {
 
     @Transactional
     public List<Notification> fetchUnresolvedByPersonId(long personId) {
-        List<Notification> notifications = notificationDao.fetchUnresolvedByPersonId(personId);
+        List<Notification> notifications = notificationDao.fetchUnresolvedByPersonId(personId, MAX_UNRESOLVED_NOTIFICATIONS_TO_SHOW);
         notifications.forEach(notification -> notification.setDefinition(getDefinitionForNotification(notification)));
         return notifications;
     }
@@ -94,14 +90,13 @@ public class NotificationService {
         Locale locale = LocaleContextHolder.getLocale();
         String code = (String) row.get(codeColumn);
         Object[] messageArguments = (String[]) row.get(messageArgumentsColumn);
-        NotificationDefinition definition = notificationDefinitionMap.get(code);
+        NotificationDefinition definition = notificationManager.getNotificationDefinitionByCode(code);
         Validate.notNull(definition, "Notification definition not found for notification code " + code);
         return messageSource.getMessage(definition.getMessageCode(), messageArguments, locale);
     }
 
     private NotificationDefinition getDefinitionForNotification(Notification notification) {
-        NotificationDefinition definition = notificationDefinitionMap.get(notification.getCode());
-        Validate.notNull(definition, "Notification definition not found for notification code " + notification.getCode());
-        return definition;
+        String notificationCode = notification.getCode();
+        return notificationManager.getNotificationDefinitionByCode(notificationCode);
     }
 }

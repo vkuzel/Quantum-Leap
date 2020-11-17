@@ -28,57 +28,12 @@ import static cz.quantumleap.core.tables.PersonRoleTable.PERSON_ROLE;
 @Repository
 public class NotificationDao extends DaoStub<NotificationTable> {
 
-    private static final int MAX_UNRESOLVED_NOTIFICATIONS_TO_SHOW = 10;
-
     protected NotificationDao(DSLContext dslContext, LookupDaoManager lookupDaoManager, EnumManager enumManager, RecordAuditor recordAuditor) {
         super(createEntity(), dslContext, lookupDaoManager, enumManager, recordAuditor);
     }
 
     private static Entity<NotificationTable> createEntity() {
         return Entity.createBuilder(NOTIFICATION).build();
-    }
-
-    public Notification createNotificationForPerson(String notificationCode, List<String> messageArguments, long personId) {
-        Condition condition = createUnresolvedNotificationCondition(notificationCode, messageArguments)
-                .and(NOTIFICATION.PERSON_ID.eq(personId));
-        Notification notification = fetchByCondition(condition, Notification.class);
-        if (notification != null) {
-            return notification;
-        } else {
-            notification = new Notification();
-            notification.setCode(notificationCode);
-            notification.setMessageArguments(messageArguments);
-            notification.setPersonId(Lookup.withoutLabel(personId, PersonTable.PERSON));
-            return super.save(notification);
-        }
-    }
-
-    public Notification createNotificationForRole(String notificationCode, List<String> messageArguments, long roleId) {
-        Condition condition = createUnresolvedNotificationCondition(notificationCode, messageArguments)
-                .and(NOTIFICATION.ROLE_ID.eq(roleId));
-        Notification notification = fetchByCondition(condition, Notification.class);
-        if (notification != null) {
-            return notification;
-        } else {
-            notification = new Notification();
-            notification.setCode(notificationCode);
-            notification.setMessageArguments(messageArguments);
-            notification.setRoleId(Lookup.withoutLabel(roleId, RoleTable.ROLE));
-            return super.save(notification);
-        }
-    }
-
-    public Notification createNotificationForAll(String notificationCode, List<String> messageArguments) {
-        Condition condition = createUnresolvedNotificationCondition(notificationCode, messageArguments);
-        Notification notification = fetchByCondition(condition, Notification.class);
-        if (notification != null) {
-            return notification;
-        } else {
-            notification = new Notification();
-            notification.setCode(notificationCode);
-            notification.setMessageArguments(messageArguments);
-            return super.save(notification);
-        }
     }
 
     public Notification fetch(long personId, long id) {
@@ -90,16 +45,37 @@ public class NotificationDao extends DaoStub<NotificationTable> {
         return super.fetchSlice(sliceRequest.addCondition(createPersonNotificationsCondition(personId)));
     }
 
-    private Condition createUnresolvedNotificationCondition(String notificationCode, List<String> messageArguments) {
-        return NOTIFICATION.RESOLVED_AT.isNull()
-                .and(NOTIFICATION.CODE.eq(notificationCode))
-                .and("message_arguments :: VARCHAR = ? :: VARCHAR", messageArguments.toArray());
+    Notification fetchUnresolvedByDefinition(Notification notification) {
+        String code = notification.getCode();
+        List<String> arguments = notification.getMessageArguments();
+        Lookup<PersonTable> personId = notification.getPersonId();
+        Lookup<RoleTable> roleId = notification.getRoleId();
+
+        Condition condition = NOTIFICATION.CODE.eq(code)
+                .and(NOTIFICATION.RESOLVED_AT.isNull());
+        if (!arguments.isEmpty()) {
+            condition = condition.and("message_arguments :: VARCHAR = ? :: VARCHAR", arguments.toArray());
+        } else {
+            condition = condition.and("message_arguments = ARRAY[] :: VARCHAR[]", arguments.toArray());
+        }
+        if (!personId.isEmpty()) {
+            condition = condition.and(NOTIFICATION.PERSON_ID.eq((Long) personId.getId()));
+        } else {
+            condition = condition.and(NOTIFICATION.PERSON_ID.isNull());
+        }
+        if (!roleId.isEmpty()) {
+            condition = condition.and(NOTIFICATION.ROLE_ID.eq((Long) roleId.getId()));
+        } else {
+            condition = condition.and(NOTIFICATION.ROLE_ID.isNull());
+        }
+
+        return fetchByCondition(condition, Notification.class);
     }
 
-    public List<Notification> fetchUnresolvedByPersonId(long personId) {
+    public List<Notification> fetchUnresolvedByPersonId(long personId, int limit) {
         Condition condition = NOTIFICATION.RESOLVED_AT.isNull().and(createPersonNotificationsCondition(personId));
         Sort sort = Sort.by(Sort.Direction.DESC, "id");
-        SliceRequest sliceRequest = new SliceRequest(Collections.emptyMap(), null, condition, 0, MAX_UNRESOLVED_NOTIFICATIONS_TO_SHOW, sort, null);
+        SliceRequest sliceRequest = new SliceRequest(Collections.emptyMap(), null, condition, 0, limit, sort, null);
         return super.fetchList(sliceRequest, Notification.class);
     }
 

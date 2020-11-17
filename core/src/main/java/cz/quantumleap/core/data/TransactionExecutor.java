@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 @Component
 public class TransactionExecutor {
@@ -19,6 +20,11 @@ public class TransactionExecutor {
     @Transactional
     public void execute(Consumer<DSLContext> consumer) {
         consumer.accept(dslContext);
+    }
+
+    @Transactional
+    public <T> T execute(Supplier<T> supplier) {
+        return supplier.get();
     }
 
     @Transactional
