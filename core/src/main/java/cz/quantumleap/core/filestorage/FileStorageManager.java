@@ -143,7 +143,7 @@ public class FileStorageManager {
     }
 
     @Scheduled(cron = "0 0 3 * * *")
-    private void deleteExpiredTempFiles() {
+    protected void deleteExpiredTempFiles() {
         Path tempDirectoryPath = Paths.get(fileStorageDirectory, TEMP_DIRECTORY);
 
         if (!Files.exists(tempDirectoryPath)) {
