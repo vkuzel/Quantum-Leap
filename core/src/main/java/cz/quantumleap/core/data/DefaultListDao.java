@@ -80,7 +80,7 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
 
     private SliceRequest setDefaultOrder(SliceRequest sliceRequest) {
         if (sliceRequest.getSort().isUnsorted()) {
-            List<Field<Object>> primaryKeyFields = entity.getPrimaryKeyResolver().getPrimaryKeyFields();
+            List<Field<?>> primaryKeyFields = entity.getPrimaryKeyFields();
             List<Sort.Order> orders = primaryKeyFields.stream()
                     .map(field -> Sort.Order.desc(field.getName()))
                     .collect(Collectors.toList());

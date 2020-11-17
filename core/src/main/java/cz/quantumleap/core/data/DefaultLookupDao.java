@@ -42,7 +42,7 @@ public final class DefaultLookupDao<TABLE extends Table<? extends Record>> imple
     }
 
     public Map<Object, String> fetchLabelsById(Set<Object> ids) {
-        Field<Object> primaryKey = entity.getPrimaryKeyConditionBuilder().getPrimaryKeyField();
+        Field<?> primaryKey = entity.getPrimaryKeyField();
         Condition condition = entity.getPrimaryKeyConditionBuilder().buildFromIds(ids);
 
         return dslContext.select(primaryKey, entity.getLookupLabelField())
@@ -58,7 +58,7 @@ public final class DefaultLookupDao<TABLE extends Table<? extends Record>> imple
             return Collections.emptyMap();
         }
 
-        Field<Object> primaryKey = entity.getPrimaryKeyConditionBuilder().getPrimaryKeyField();
+        Field<?> primaryKey = entity.getPrimaryKeyField();
         Condition condition = entity.getFilterBuilder().buildForQuery(query);
 
         return dslContext.select(primaryKey, entity.getLookupLabelField())

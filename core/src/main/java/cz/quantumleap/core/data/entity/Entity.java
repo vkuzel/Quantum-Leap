@@ -1,34 +1,40 @@
 package cz.quantumleap.core.data.entity;
 
 import cz.quantumleap.core.data.list.*;
-import cz.quantumleap.core.data.primarykey.PrimaryKeyConditionBuilder;
-import cz.quantumleap.core.data.primarykey.PrimaryKeyResolver;
-import cz.quantumleap.core.data.primarykey.TablePrimaryKeyResolver;
 import org.apache.commons.lang3.Validate;
-import org.jooq.Condition;
-import org.jooq.Field;
-import org.jooq.Record;
-import org.jooq.Table;
+import org.jooq.*;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+
+import static java.util.Collections.singletonList;
 
 public class Entity<TABLE extends Table<? extends Record>> {
 
     private final EntityIdentifier<TABLE> entityIdentifier;
-    private final PrimaryKeyResolver primaryKeyResolver;
-    private final PrimaryKeyConditionBuilder primaryKeyConditionBuilder;
+    private final List<Field<?>> primaryKeyFields;
+    private final PrimaryKeyConditionBuilder<TABLE> primaryKeyConditionBuilder;
     private final Field<String> lookupLabelField;
     private final Map<Field<?>, EntityIdentifier<?>> lookupFieldsMap;
     private final FilterBuilder filterBuilder;
     private final SortingBuilder sortingBuilder;
     private final LimitBuilder limitBuilder;
 
-    public Entity(EntityIdentifier<TABLE> entityIdentifier, PrimaryKeyResolver primaryKeyResolver, PrimaryKeyConditionBuilder primaryKeyConditionBuilder, Field<String> lookupLabelField, Map<Field<?>, EntityIdentifier<?>> lookupFieldsMap, FilterBuilder filterBuilder, SortingBuilder sortingBuilder, LimitBuilder limitBuilder) {
+    public Entity(
+            EntityIdentifier<TABLE> entityIdentifier,
+            List<Field<?>> primaryKeyFields,
+            Field<String> lookupLabelField,
+            Map<Field<?>, EntityIdentifier<?>> lookupFieldsMap,
+            FilterBuilder filterBuilder,
+            SortingBuilder sortingBuilder,
+            LimitBuilder limitBuilder
+    ) {
         this.entityIdentifier = entityIdentifier;
-        this.primaryKeyResolver = primaryKeyResolver;
-        this.primaryKeyConditionBuilder = primaryKeyConditionBuilder;
+        this.primaryKeyFields = primaryKeyFields;
+        this.primaryKeyConditionBuilder = new PrimaryKeyConditionBuilder<>(this);
         this.lookupLabelField = lookupLabelField;
         this.lookupFieldsMap = lookupFieldsMap;
         this.filterBuilder = filterBuilder;
@@ -44,11 +50,19 @@ public class Entity<TABLE extends Table<? extends Record>> {
         return entityIdentifier.getTable();
     }
 
-    public PrimaryKeyResolver getPrimaryKeyResolver() {
-        return primaryKeyResolver;
+    public List<Field<?>> getPrimaryKeyFields() {
+        return primaryKeyFields;
     }
 
-    public PrimaryKeyConditionBuilder getPrimaryKeyConditionBuilder() {
+    public Field<?> getPrimaryKeyField() {
+        if (primaryKeyFields.size() == 1) {
+            return primaryKeyFields.get(0);
+        } else {
+            throw new IllegalStateException("Incorrect number of primary key fields for " + toString());
+        }
+    }
+
+    public PrimaryKeyConditionBuilder<TABLE> getPrimaryKeyConditionBuilder() {
         return primaryKeyConditionBuilder;
     }
 
@@ -92,7 +106,7 @@ public class Entity<TABLE extends Table<? extends Record>> {
     public static class Builder<TABLE extends Table<? extends Record>> {
 
         private final EntityIdentifier<TABLE> entityIdentifier;
-        private PrimaryKeyResolver primaryKeyResolver;
+        private Field<?> primaryKeyField;
         private Condition defaultFilterCondition = null;
         private Map<Field<?>, EntityIdentifier<?>> lookupFieldsMap = new HashMap<>();
         private Field<String> lookupLabelField = null;
@@ -104,8 +118,9 @@ public class Entity<TABLE extends Table<? extends Record>> {
             this.entityIdentifier = entityIdentifier;
         }
 
-        public Builder<TABLE> setPrimaryKeyResolver(PrimaryKeyResolver primaryKeyResolver) {
-            this.primaryKeyResolver = primaryKeyResolver;
+        public Builder<TABLE> setPrimaryKeyField(Field<?> primaryKeyField) {
+            Validate.notNull(primaryKeyField);
+            this.primaryKeyField = primaryKeyField;
             return this;
         }
 
@@ -136,11 +151,11 @@ public class Entity<TABLE extends Table<? extends Record>> {
 
         public Entity<TABLE> build() {
             TABLE table = entityIdentifier.getTable();
-            PrimaryKeyResolver primaryKeyResolver;
-            if (this.primaryKeyResolver != null) {
-                primaryKeyResolver = this.primaryKeyResolver;
+            List<Field<?>> primaryKeyFields;
+            if (this.primaryKeyField != null) {
+                primaryKeyFields = singletonList(this.primaryKeyField);
             } else {
-                primaryKeyResolver = new TablePrimaryKeyResolver(table);
+                primaryKeyFields = getPrimaryKeyFields(table);
             }
             SortingBuilder sortingBuilder;
             if (this.sortingBuilder != null) {
@@ -150,14 +165,22 @@ public class Entity<TABLE extends Table<? extends Record>> {
             }
             return new Entity<>(
                     entityIdentifier,
-                    primaryKeyResolver,
-                    new PrimaryKeyConditionBuilder(primaryKeyResolver),
+                    primaryKeyFields,
                     lookupLabelField,
                     lookupFieldsMap,
                     new DefaultFilterBuilder(table, defaultFilterCondition, wordConditionBuilder),
                     sortingBuilder,
                     LimitBuilder.DEFAULT
             );
+        }
+
+        private List<Field<?>> getPrimaryKeyFields(Table<? extends Record> table) {
+            UniqueKey<? extends Record> primaryKey = table.getPrimaryKey();
+            if (primaryKey != null) {
+                return Collections.unmodifiableList(primaryKey.getFields());
+            } else {
+                return Collections.emptyList();
+            }
         }
     }
 }

@@ -145,7 +145,7 @@ public final class DefaultDetailDao<TABLE extends Table<? extends Record>> imple
     public <T, F> List<T> saveDetailsAssociatedBy(TableField<?, F> foreignKey, F foreignId, Collection<T> details, Class<T> detailType) {
         MapperFactory<TABLE>.TransportUnMapper<T> unMapper = mapperFactory.createTransportUnMapper(detailType);
         Table<? extends Record> table = entity.getTable();
-        Field<Object> primaryKeyField = entity.getPrimaryKeyConditionBuilder().getPrimaryKeyField();
+        Field<?> primaryKeyField = entity.getPrimaryKeyField();
 
         List<Record> records = new ArrayList<>(details.size());
         Set<Object> ids = new HashSet<>(details.size());

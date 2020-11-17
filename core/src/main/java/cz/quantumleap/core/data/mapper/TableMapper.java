@@ -135,7 +135,7 @@ public class TableMapper<TABLE extends org.jooq.Table<? extends Record>> impleme
         }
 
         private void buildFieldColumnMap() {
-            List<Field<Object>> primaryKeyFields = entity.getPrimaryKeyResolver().getPrimaryKeyFields();
+            List<Field<?>> primaryKeyFields = entity.getPrimaryKeyFields();
             Map<Field<?>, EntityIdentifier<?>> lookupIdentifierMap = getLookupIdentifierMap();
             Field<?>[] fields = entity.getTable().fields();
 
