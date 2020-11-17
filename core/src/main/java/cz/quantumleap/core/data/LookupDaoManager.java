@@ -40,9 +40,10 @@ public class LookupDaoManager {
         return (LookupDao<T>) lookupDaoMap.get(entityIdentifier);
     }
 
+    @SuppressWarnings("rawtypes")
     @EventListener(ContextRefreshedEvent.class)
     public void initializeLookupDaoMap() {
-        var beans = applicationContext.getBeansOfType(LookupDao.class);
+        Map<String, LookupDao> beans = applicationContext.getBeansOfType(LookupDao.class);
         for (LookupDao<?> lookupDao : beans.values()) {
             EntityIdentifier<?> entityIdentifier = lookupDao.getLookupEntityIdentifier();
             if (entityIdentifier != null) {

@@ -21,11 +21,11 @@ public class RecordAuditor implements RecordListenerProvider {
 
     public void onInsert(Record record) {
         if (record instanceof TableRecord) {
-            TableRecord tableRecord = (TableRecord) record;
+            TableRecord<?> tableRecord = (TableRecord<?>) record;
 
-            setField(CREATED_AT_FIELD_NAME, LocalDateTime.now(), tableRecord);
-            setField(CREATED_BY_FIELD_NAME, getCurrentUser(), tableRecord);
-            setField(REVISION_FIELD_NAME, 1, tableRecord);
+            setFieldValue(CREATED_AT_FIELD_NAME, LocalDateTime.now(), tableRecord);
+            setFieldValue(CREATED_BY_FIELD_NAME, getCurrentUser(), tableRecord);
+            setFieldValue(REVISION_FIELD_NAME, 1, tableRecord);
 
             resetField(UPDATED_AT_FIELD_NAME, tableRecord);
             resetField(UPDATED_BY_FIELD_NAME, tableRecord);
@@ -34,13 +34,13 @@ public class RecordAuditor implements RecordListenerProvider {
 
     public void onUpdate(Record record) {
         if (record instanceof TableRecord) {
-            TableRecord tableRecord = (TableRecord) record;
+            TableRecord<?> tableRecord = (TableRecord<?>) record;
 
-            setField(UPDATED_AT_FIELD_NAME, LocalDateTime.now(), tableRecord);
-            setField(UPDATED_BY_FIELD_NAME, getCurrentUser(), tableRecord);
+            setFieldValue(UPDATED_AT_FIELD_NAME, LocalDateTime.now(), tableRecord);
+            setFieldValue(UPDATED_BY_FIELD_NAME, getCurrentUser(), tableRecord);
             Long revision = getFieldValue(REVISION_FIELD_NAME, tableRecord, Long.class);
             if (revision != null) {
-                setField(REVISION_FIELD_NAME, revision + 1, tableRecord);
+                setFieldValue(REVISION_FIELD_NAME, revision + 1, tableRecord);
             }
 
             resetField(CREATED_AT_FIELD_NAME, tableRecord);
@@ -48,15 +48,16 @@ public class RecordAuditor implements RecordListenerProvider {
         }
     }
 
-    private void setField(String fieldName, Object value, TableRecord record) {
-        Table table = record.getTable();
+    @SuppressWarnings("unchecked")
+    private void setFieldValue(String fieldName, Object value, TableRecord<?> record) {
+        Table<?> table = record.getTable();
         Field<Object> field = (Field<Object>) table.field(fieldName);
         if (field != null) {
             record.set(field, value);
         }
     }
 
-    private <T> T getFieldValue(String fieldName, TableRecord record, Class<T> type) {
+    private <T> T getFieldValue(String fieldName, TableRecord<?> record, Class<T> type) {
         Field<?> field = record.field(fieldName);
         if (field != null) {
             return record.get(field, type);
@@ -64,7 +65,7 @@ public class RecordAuditor implements RecordListenerProvider {
         return null;
     }
 
-    private void resetField(String fieldName, TableRecord record) {
+    private void resetField(String fieldName, TableRecord<?> record) {
         Field<?> field = record.field(fieldName);
         if (field != null) {
             record.reset(field);

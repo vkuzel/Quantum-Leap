@@ -35,7 +35,7 @@ public final class DefaultDetailDao<TABLE extends Table<? extends Record>> imple
 
     @Override
     public <T> T fetchByCondition(Condition condition, Class<T> type) {
-        Table<? extends Record> table =  entity.getTable();
+        Table<? extends Record> table = entity.getTable();
         return dslContext.selectFrom(table)
                 .where(condition)
                 .fetchOne(mapperFactory.createTransportMapper(type));
@@ -53,7 +53,7 @@ public final class DefaultDetailDao<TABLE extends Table<? extends Record>> imple
             return Collections.emptyList();
         }
 
-        Class<T> detailType = (Class<T>) details.get(0).getClass();
+        Class<T> detailType = getDetailClass(details.get(0));
         List<Record> records = new ArrayList<>(details.size());
 
         for (T detail : details) {
@@ -64,6 +64,11 @@ public final class DefaultDetailDao<TABLE extends Table<? extends Record>> imple
         }
 
         return saveRecords(records, detailType);
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T> Class<T> getDetailClass(T detail) {
+        return (Class<T>) detail.getClass();
     }
 
     private <T> List<T> saveRecords(List<Record> records, Class<T> detailType) {
@@ -88,7 +93,7 @@ public final class DefaultDetailDao<TABLE extends Table<? extends Record>> imple
 
         Map<? extends Field<?>, ?> changedValues = getChangedValues(record);
 
-        Table<? extends Record> table =  entity.getTable();
+        Table<? extends Record> table = entity.getTable();
         return dslContext.insertInto(table)
                 .set(changedValues)
                 .returning(table.fields())
@@ -101,7 +106,7 @@ public final class DefaultDetailDao<TABLE extends Table<? extends Record>> imple
 
         Map<Field<?>, Object> changedValues = getChangedValues(record);
 
-        Table<? extends Record> table =  entity.getTable();
+        Table<? extends Record> table = entity.getTable();
         return dslContext.update(table)
                 .set(changedValues)
                 .where(condition)
@@ -128,7 +133,7 @@ public final class DefaultDetailDao<TABLE extends Table<? extends Record>> imple
 
     @Override
     public int deleteByCondition(Condition condition) {
-        Table<? extends Record> table =  entity.getTable();
+        Table<? extends Record> table = entity.getTable();
         return dslContext.delete(table)
                 .where(condition)
                 .execute();
@@ -137,7 +142,7 @@ public final class DefaultDetailDao<TABLE extends Table<? extends Record>> imple
     @Override
     public <T> List<T> saveDetailsAssociatedBy(TableField foreignKey, Object foreignId, Collection<T> details, Class<T> detailType) {
         MapperFactory<TABLE>.TransportUnMapper<T> unMapper = mapperFactory.createTransportUnMapper(detailType);
-        Table<? extends Record> table =  entity.getTable();
+        Table<? extends Record> table = entity.getTable();
         Field<Object> primaryKeyField = entity.getPrimaryKeyConditionBuilder().getPrimaryKeyField();
 
         List<Record> records = new ArrayList<>(details.size());

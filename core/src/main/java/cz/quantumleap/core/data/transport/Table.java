@@ -124,14 +124,14 @@ public class Table<ROW> implements Iterable<ROW> {
 
     public static class LookupColumn extends Column {
 
-        private final EntityIdentifier entityIdentifier;
+        private final EntityIdentifier<?> entityIdentifier;
 
-        public LookupColumn(String name, Sort.Order order, EntityIdentifier entityIdentifier) {
+        public LookupColumn(String name, Sort.Order order, EntityIdentifier<?> entityIdentifier) {
             super(Lookup.class, name, false, order);
             this.entityIdentifier = entityIdentifier;
         }
 
-        public EntityIdentifier getEntityIdentifier() {
+        public EntityIdentifier<?> getEntityIdentifier() {
             return entityIdentifier;
         }
     }

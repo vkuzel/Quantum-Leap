@@ -75,7 +75,7 @@ public class MapperFactory<TABLE extends Table<? extends Record>> {
             if (getter != null) {
                 Object value = getValue(transport, getter.getKey());
                 if (value instanceof Lookup) {
-                    value = ((Lookup) value).getId();
+                    value = ((Lookup<?>) value).getId();
                 } else if (value instanceof EnumValue) {
                     value = ((EnumValue) value).getId();
                 } else if (value instanceof Map) {
