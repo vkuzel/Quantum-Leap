@@ -1,7 +1,10 @@
 package cz.quantumleap.core.business;
 
+import cz.quantumleap.core.common.Utils;
 import cz.quantumleap.core.data.DetailDao;
 import cz.quantumleap.core.data.entity.EntityIdentifier;
+import org.jooq.Record;
+import org.jooq.Table;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.Errors;
 
@@ -16,8 +19,8 @@ public final class DefaultDetailService<T> implements DetailService<T> {
     }
 
     @Override
-    public EntityIdentifier<?> getDetailEntityIdentifier() {
-        return detailDao.getDetailEntityIdentifier();
+    public <TABLE extends Table<? extends Record>> EntityIdentifier<TABLE> getDetailEntityIdentifier(Class<TABLE> type) {
+        return Utils.checkTableType(detailDao.getDetailEntityIdentifier(), type);
     }
 
     @Override

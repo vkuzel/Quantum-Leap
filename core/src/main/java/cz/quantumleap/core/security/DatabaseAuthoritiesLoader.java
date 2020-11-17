@@ -3,6 +3,7 @@ package cz.quantumleap.core.security;
 import cz.quantumleap.core.person.PersonDao;
 import cz.quantumleap.core.person.transport.Person;
 import cz.quantumleap.core.role.RoleDao;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.security.core.AuthenticationException;
@@ -12,7 +13,6 @@ import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMap
 import org.springframework.security.oauth2.core.user.OAuth2UserAuthority;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 
 import java.util.Collection;
 import java.util.List;
@@ -73,7 +73,7 @@ public class DatabaseAuthoritiesLoader implements GrantedAuthoritiesMapper {
         }
 
         String name = getAttribute(authorityAttributes, OAUTH_DETAILS_NAME);
-        if (StringUtils.isEmpty(person.getName()) && !StringUtils.isEmpty(name)) {
+        if (StringUtils.isBlank(person.getName()) && !StringUtils.isBlank(name)) {
             person.setName(name);
             personDao.save(person);
         }

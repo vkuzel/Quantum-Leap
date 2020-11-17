@@ -1,11 +1,13 @@
 package cz.quantumleap.core.business;
 
 import cz.quantumleap.core.data.entity.EntityIdentifier;
+import org.jooq.Record;
+import org.jooq.Table;
 import org.springframework.validation.Errors;
 
 public interface DetailService<T> {
 
-    EntityIdentifier<?> getDetailEntityIdentifier();
+    <TABLE extends Table<? extends Record>> EntityIdentifier<TABLE> getDetailEntityIdentifier(Class<TABLE> type);
 
     T get(Object id);
 

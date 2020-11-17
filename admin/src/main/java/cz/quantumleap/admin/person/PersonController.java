@@ -100,7 +100,7 @@ public class PersonController extends AdminController {
         }
 
         personRoleSliceRequest.getFilter().put("person_id", person.getId());
-        Slice slice = personRoleService.findSlice(personRoleSliceRequest);
+        Slice<?> slice = personRoleService.findSlice(personRoleSliceRequest);
         model.addAttribute("personRoleTableSlice", slice);
         model.addAttribute("personRoleEntityIdentifier", PersonRoleController.ENTITY_IDENTIFIER.toString());
         model.addAttribute("personRoleDetailUrl", PersonRoleController.DETAIL_URL.replace("{personId}", String.valueOf(person.getId())));

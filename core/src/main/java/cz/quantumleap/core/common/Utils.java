@@ -1,11 +1,10 @@
 package cz.quantumleap.core.common;
 
 import com.google.common.io.CharStreams;
+import cz.quantumleap.core.data.entity.EntityIdentifier;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
-import org.jooq.Condition;
-import org.jooq.Field;
-import org.jooq.TableField;
+import org.jooq.*;
 import org.jooq.impl.DSL;
 import org.springframework.core.io.Resource;
 
@@ -179,5 +178,18 @@ public class Utils {
             date = date.plusDays(1);
         }
         return daysBetween;
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <TABLE extends Table<? extends Record>> EntityIdentifier<TABLE> checkTableType(
+            EntityIdentifier<?> entityIdentifier, Class<TABLE> tableType
+    ) {
+        Table<? extends Record> table = entityIdentifier.getTable();
+        if (tableType == null || tableType.isInstance(table)) {
+            return (EntityIdentifier<TABLE>) entityIdentifier;
+        }
+
+        String msg = "Entity identifier " + entityIdentifier + " is not compatible with " + tableType;
+        throw new IllegalStateException(msg);
     }
 }

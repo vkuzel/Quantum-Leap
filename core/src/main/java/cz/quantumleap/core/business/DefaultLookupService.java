@@ -1,10 +1,13 @@
 package cz.quantumleap.core.business;
 
+import cz.quantumleap.core.common.Utils;
 import cz.quantumleap.core.data.LookupDao;
 import cz.quantumleap.core.data.entity.EntityIdentifier;
 import cz.quantumleap.core.data.transport.Slice;
 import cz.quantumleap.core.data.transport.SliceRequest;
-import cz.quantumleap.core.data.transport.Table;
+import cz.quantumleap.core.data.transport.Table.Column;
+import org.jooq.Record;
+import org.jooq.Table;
 
 import java.util.Map;
 
@@ -19,13 +22,13 @@ public final class DefaultLookupService implements LookupService {
     }
 
     @Override
-    public EntityIdentifier<?> getLookupEntityIdentifier() {
-        return lookupDao.getLookupEntityIdentifier();
+    public <TABLE extends Table<? extends Record>> EntityIdentifier<?> getLookupEntityIdentifier(Class<TABLE> type) {
+        return Utils.checkTableType(lookupDao.getLookupEntityIdentifier(), type);
     }
 
     @Override
-    public EntityIdentifier<?> getListEntityIdentifier() {
-        return listService.getListEntityIdentifier();
+    public <TABLE extends Table<? extends Record>> EntityIdentifier<?> getListEntityIdentifier(Class<TABLE> type) {
+        return listService.getListEntityIdentifier(type);
     }
 
     @Override
@@ -39,7 +42,7 @@ public final class DefaultLookupService implements LookupService {
     }
 
     @Override
-    public Slice<Map<Table.Column, Object>> findSlice(SliceRequest sliceRequest) {
+    public Slice<Map<Column, Object>> findSlice(SliceRequest sliceRequest) {
         return listService.findSlice(sliceRequest);
     }
 }

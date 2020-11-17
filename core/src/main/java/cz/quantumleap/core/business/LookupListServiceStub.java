@@ -5,7 +5,9 @@ import cz.quantumleap.core.data.LookupDao;
 import cz.quantumleap.core.data.entity.EntityIdentifier;
 import cz.quantumleap.core.data.transport.Slice;
 import cz.quantumleap.core.data.transport.SliceRequest;
-import cz.quantumleap.core.data.transport.Table;
+import cz.quantumleap.core.data.transport.Table.Column;
+import org.jooq.Record;
+import org.jooq.Table;
 
 import java.util.Map;
 
@@ -20,13 +22,13 @@ public class LookupListServiceStub implements ListService, LookupService {
     }
 
     @Override
-    public EntityIdentifier<?> getLookupEntityIdentifier() {
-        return lookupService.getLookupEntityIdentifier();
+    public <TABLE extends Table<? extends Record>> EntityIdentifier<?> getLookupEntityIdentifier(Class<TABLE> type) {
+        return lookupService.getLookupEntityIdentifier(type);
     }
 
     @Override
-    public EntityIdentifier<?> getListEntityIdentifier() {
-        return listService.getListEntityIdentifier();
+    public <TABLE extends Table<? extends Record>> EntityIdentifier<?> getListEntityIdentifier(Class<TABLE> type) {
+        return listService.getListEntityIdentifier(type);
     }
 
     @Override
@@ -40,7 +42,7 @@ public class LookupListServiceStub implements ListService, LookupService {
     }
 
     @Override
-    public Slice<Map<Table.Column, Object>> findSlice(SliceRequest sliceRequest) {
+    public Slice<Map<Column, Object>> findSlice(SliceRequest sliceRequest) {
         return listService.findSlice(sliceRequest);
     }
 }

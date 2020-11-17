@@ -6,6 +6,7 @@ import cz.quantumleap.core.data.entity.Entity;
 import cz.quantumleap.core.data.transport.Slice;
 import cz.quantumleap.core.data.transport.SliceRequest;
 import cz.quantumleap.core.data.transport.Table;
+import cz.quantumleap.core.data.transport.Table.Column;
 import cz.quantumleap.core.data.transport.TablePreferences;
 import org.jooq.Record;
 import org.jooq.RecordHandler;
@@ -37,21 +38,17 @@ public class SliceMapper<TABLE extends org.jooq.Table<? extends Record>> impleme
         }
     }
 
-    public Slice<Map<Table.Column, Object>> intoSlice() {
-        Table<Map<Table.Column, Object>> table = tableMapper.intoTable(selectTablePreferences());
+    public Slice<Map<Column, Object>> intoSlice() {
+        Table<Map<Column, Object>> table = tableMapper.intoTable(selectTablePreferences());
         return new Slice<>(table, sliceRequest, canExtend);
     }
 
     private TablePreferences selectTablePreferences() {
-        TablePreferences tablePreferences = TablePreferences.EMPTY;
         for (TablePreferences preferences : tablePreferencesList) {
-            if (preferences == TablePreferences.EMPTY) {
-                tablePreferences = preferences;
-            } else if (preferences.isDefault()) {
-                tablePreferences = preferences;
-                break;
+            if (preferences.isDefault()) {
+                return preferences;
             }
         }
-        return tablePreferences;
+        return TablePreferences.EMPTY;
     }
 }

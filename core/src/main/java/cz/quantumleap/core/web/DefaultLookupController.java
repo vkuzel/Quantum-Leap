@@ -42,7 +42,7 @@ public final class DefaultLookupController implements LookupController {
 
     @Override
     public EntityIdentifier<?> getLookupEntityIdentifier() {
-        return lookupService.getLookupEntityIdentifier();
+        return lookupService.getLookupEntityIdentifier(null);
     }
 
     @Override
@@ -87,9 +87,11 @@ public final class DefaultLookupController implements LookupController {
     public String lookupList(SliceRequest sliceRequest, Model model, HttpServletRequest request, HttpServletResponse response) {
         checkPermission(request, response);
 
-        Slice slice = lookupService.findSlice(sliceRequest);
+        EntityIdentifier<?> identifier = lookupService.getListEntityIdentifier(null);
+        Slice<?> slice = lookupService.findSlice(sliceRequest);
+
         model.addAttribute(TABLE_SLICE_MODEL_ATTRIBUTE_NAME, slice);
-        model.addAttribute(LIST_ENTITY_IDENTIFIER_MODEL_ATTRIBUTE_NAME, lookupService.getListEntityIdentifier().toString());
+        model.addAttribute(LIST_ENTITY_IDENTIFIER_MODEL_ATTRIBUTE_NAME, identifier.toString());
         model.addAttribute(DETAIL_URL_MODEL_ATTRIBUTE_NAME, detailUrl);
 
         return LOOKUP_LIST_VIEW;

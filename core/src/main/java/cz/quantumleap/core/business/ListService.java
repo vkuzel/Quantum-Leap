@@ -3,13 +3,15 @@ package cz.quantumleap.core.business;
 import cz.quantumleap.core.data.entity.EntityIdentifier;
 import cz.quantumleap.core.data.transport.Slice;
 import cz.quantumleap.core.data.transport.SliceRequest;
-import cz.quantumleap.core.data.transport.Table;
+import cz.quantumleap.core.data.transport.Table.Column;
+import org.jooq.Record;
+import org.jooq.Table;
 
 import java.util.Map;
 
 public interface ListService {
 
-    EntityIdentifier<?> getListEntityIdentifier();
+    <TABLE extends Table<? extends Record>> EntityIdentifier<?> getListEntityIdentifier(Class<TABLE> type);
 
-    Slice<Map<Table.Column, Object>> findSlice(SliceRequest sliceRequest);
+    Slice<Map<Column, Object>> findSlice(SliceRequest sliceRequest);
 }
