@@ -66,3 +66,7 @@ CREATE OR REPLACE FUNCTION core.generate_intervals(intervals_start DATE, interva
 SELECT DATE_TRUNC(step, interval_start), DATE_TRUNC(step, interval_start) + ('1 ' || step) :: INTERVAL - '00:00:00.000001' :: INTERVAL
 FROM generate_series(intervals_start :: TIMESTAMP, intervals_end, ('1 ' || step) :: INTERVAL) intervals (interval_start);
 $$ IMMUTABLE LANGUAGE SQL;
+
+CREATE OR REPLACE FUNCTION ROUND(v DOUBLE PRECISION, s INTEGER) RETURNS NUMERIC AS $$
+SELECT ROUND(v :: NUMERIC, s)
+$$ IMMUTABLE LANGUAGE SQL;
