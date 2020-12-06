@@ -185,7 +185,9 @@ public class MapperFactory<TABLE extends Table<? extends Record>> {
                         String fieldName = field.getName();
                         EntityIdentifier<?> entityIdentifier = convertFieldToLookupIdentifier(field);
                         LookupDao<?> lookupDao = lookupDaoManager.getDaoByEntityIdentifier(entityIdentifier);
-                        Validate.notNull(lookupDao, "LookupDao for field " + transport.getClass().getSimpleName() + "." + fieldName + " was not found!");
+                        String msg = String.format("LookupDao for field %s.%s identified by %s was not found!",
+                                transport.getClass().getSimpleName(), fieldName, entityIdentifier);
+                        Validate.notNull(lookupDao, msg);
 
                         String label = lookupDao.fetchLabelById(referenceId);
                         value = new Lookup<>(referenceId, label, entityIdentifier);
