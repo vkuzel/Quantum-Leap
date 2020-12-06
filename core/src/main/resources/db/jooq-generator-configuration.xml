@@ -23,6 +23,11 @@
                     <tns:userType>com.fasterxml.jackson.databind.JsonNode</tns:userType>
                     <tns:binding>cz.quantumleap.core.data.binding.JsonBinding</tns:binding>
                 </tns:forcedType>
+                <tns:forcedType>
+                    <tns:includeTypes>INTERVAL</tns:includeTypes>
+                    <tns:userType>java.time.Duration</tns:userType>
+                    <tns:converter>cz.quantumleap.core.data.binding.DurationConverter</tns:converter>
+                </tns:forcedType>
             </tns:forcedTypes>
         </tns:database>
 
