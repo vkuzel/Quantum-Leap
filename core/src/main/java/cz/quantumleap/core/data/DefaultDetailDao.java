@@ -143,7 +143,7 @@ public final class DefaultDetailDao<TABLE extends Table<? extends Record>> imple
 
     @Override
     public <T, F> List<T> saveDetailsAssociatedBy(TableField<?, F> foreignKey, F foreignId, Collection<T> details, Class<T> detailType) {
-        MapperFactory<TABLE>.TransportUnMapper<T> unMapper = mapperFactory.createTransportUnMapper(detailType);
+        MapperFactory.TransportUnMapper<T> unMapper = mapperFactory.createTransportUnMapper(detailType);
         Table<? extends Record> table = entity.getTable();
         Field<?> primaryKeyField = entity.getPrimaryKeyField();
 

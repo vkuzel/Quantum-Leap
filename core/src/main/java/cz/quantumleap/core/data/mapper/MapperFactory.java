@@ -51,7 +51,7 @@ public class MapperFactory<TABLE extends Table<? extends Record>> {
         return new TransportMapper<>(transportType);
     }
 
-    public class TransportUnMapper<T> {
+    public static class TransportUnMapper<T> {
 
         private final Map<String, Pair<Method, Class<?>>> transportGetters;
 

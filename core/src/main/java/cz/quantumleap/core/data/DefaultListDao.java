@@ -49,7 +49,7 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
                 .where(conditions)
                 .orderBy(entity.getSortingBuilder().build(request.getSort()))
                 .limit(limit.getOffset(), limit.getNumberOfRows())
-                .fetchInto(mapperFactory.createSliceMapper(request, fetchTablePreferences())) // TODO Request?
+                .fetchInto(mapperFactory.createSliceMapper(request, fetchTablePreferences()))
                 .intoSlice();
     }
 
