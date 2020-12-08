@@ -60,7 +60,7 @@ public class MapperFactory<TABLE extends Table<? extends Record>> {
         }
 
         public Record unMap(T transport, Record record) {
-            if (hasComplexValueGetters()) {
+            if (hasComplexValueGetters(record.fields())) {
                 for (Field<?> field : record.fields()) {
                     setValueToRecordField(transport, field, record);
                 }
@@ -78,7 +78,7 @@ public class MapperFactory<TABLE extends Table<? extends Record>> {
                     value = ((Lookup<?>) value).getId();
                 } else if (value instanceof EnumValue) {
                     value = ((EnumValue) value).getId();
-                } else if (value instanceof Map) {
+                } else if (field.getType() == JsonNode.class) {
                     value = OBJECT_MAPPER.convertValue(value, JsonNode.class);
                 } else {
                     value = getValue(transport, getter.getKey());
@@ -104,10 +104,16 @@ public class MapperFactory<TABLE extends Table<? extends Record>> {
             }
         }
 
-        private boolean hasComplexValueGetters() {
+        private boolean hasComplexValueGetters(Field<?>[] fields) {
             for (Pair<Method, Class<?>> getter : transportGetters.values()) {
                 Class<?> type = getter.getValue();
-                if (type == Lookup.class || type == EnumValue.class || type == Set.class || type == Map.class) {
+                if (type == Lookup.class || type == EnumValue.class || type == Set.class) {
+                    return true;
+                }
+            }
+            for (Field<?> field : fields) {
+                Class<?> type = field.getDataType().getType();
+                if (type == JsonNode.class) {
                     return true;
                 }
             }
@@ -162,7 +168,7 @@ public class MapperFactory<TABLE extends Table<? extends Record>> {
 
         @Override
         public T map(Record record) {
-            if (hasComplexValueSetters()) { // TODO Do not evaluate this on each map call!
+            if (hasLocallyConvertibleTypes(record.fields())) { // TODO Do not evaluate this on each map call!
                 T transport = createTransportObject();
                 for (Field<?> field : record.fields()) {
                     setValueToTransportMember(transport, record, field);
@@ -204,10 +210,10 @@ public class MapperFactory<TABLE extends Table<? extends Record>> {
                         String enumId = MapperUtils.resolveEnumId(field);
                         value = enumManager.createSet(enumId, Arrays.asList(referenceIds));
                     }
-                } else if (paramType == Map.class) {
+                } else if (field.getType() == JsonNode.class) {
                     JsonNode jsonNode = record.getValue(field, JsonNode.class);
                     if (!jsonNode.isNull()) {
-                        value = OBJECT_MAPPER.convertValue(jsonNode, Map.class);
+                        value = OBJECT_MAPPER.convertValue(jsonNode, paramType);
                     }
                 } else {
                     value = record.getValue(field, paramType);
@@ -257,10 +263,16 @@ public class MapperFactory<TABLE extends Table<? extends Record>> {
             }
         }
 
-        private boolean hasComplexValueSetters() {
+        private boolean hasLocallyConvertibleTypes(Field<?>[] fields) {
             for (Pair<Method, Class<?>> setter : transportSetters.values()) {
                 Class<?> type = setter.getValue();
-                if (type == Lookup.class || type == EnumValue.class || type == Set.class || type == Map.class) {
+                if (type == Lookup.class || type == EnumValue.class || type == Set.class) {
+                    return true;
+                }
+            }
+            for (Field<?> field : fields) {
+                Class<?> type = field.getDataType().getType();
+                if (type == JsonNode.class) {
                     return true;
                 }
             }
@@ -270,7 +282,18 @@ public class MapperFactory<TABLE extends Table<? extends Record>> {
         private Pair<Method, Class<?>> getSetter(Field<?> field) {
             String fieldName = field.getName();
             String setterName = "set" + LOWER_UNDERSCORE.to(UPPER_CAMEL, fieldName.toLowerCase());
-            return transportSetters.get(setterName);
+            Pair<Method, Class<?>> getter = transportSetters.get(setterName);
+            if (getter != null) {
+                return getter;
+            }
+
+            if (fieldName.startsWith("is_")) {
+                String normalizedFieldName = fieldName.substring(3);
+                String normalizedSetterName = "set" + LOWER_UNDERSCORE.to(UPPER_CAMEL, normalizedFieldName.toLowerCase());
+                return transportSetters.get(normalizedSetterName);
+            }
+
+            return null;
         }
 
         private Map<String, Pair<Method, Class<?>>> getInstanceSetters(Class<?> type) {
