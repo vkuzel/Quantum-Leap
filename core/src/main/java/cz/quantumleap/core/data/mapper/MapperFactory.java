@@ -1,7 +1,5 @@
 package cz.quantumleap.core.data.mapper;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import cz.quantumleap.core.data.EnumManager;
 import cz.quantumleap.core.data.LookupDao;
 import cz.quantumleap.core.data.LookupDaoManager;
@@ -12,6 +10,7 @@ import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jooq.Table;
 import org.jooq.*;
+import org.jooq.types.YearToSecond;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -27,14 +26,14 @@ import static com.google.common.base.CaseFormat.UPPER_CAMEL;
 
 public class MapperFactory<TABLE extends Table<? extends Record>> {
 
-    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
-
     private final Entity<TABLE> entity;
+    private final ConverterProvider converterProvider;
     private final LookupDaoManager lookupDaoManager;
     private final EnumManager enumManager;
 
-    public MapperFactory(Entity<TABLE> entity, LookupDaoManager lookupDaoManager, EnumManager enumManager) {
+    public MapperFactory(Entity<TABLE> entity, DSLContext dslContext, LookupDaoManager lookupDaoManager, EnumManager enumManager) {
         this.entity = entity;
+        this.converterProvider = dslContext.configuration().converterProvider();
         this.lookupDaoManager = lookupDaoManager;
         this.enumManager = enumManager;
     }
@@ -51,7 +50,7 @@ public class MapperFactory<TABLE extends Table<? extends Record>> {
         return new TransportMapper<>(transportType);
     }
 
-    public static class TransportUnMapper<T> {
+    public class TransportUnMapper<T> {
 
         private final Map<String, Pair<Method, Class<?>>> transportGetters;
 
@@ -60,7 +59,7 @@ public class MapperFactory<TABLE extends Table<? extends Record>> {
         }
 
         public Record unMap(T transport, Record record) {
-            if (hasComplexValueGetters(record.fields())) {
+            if (hasCustomConvertibleTypes(record.fields())) {
                 for (Field<?> field : record.fields()) {
                     setValueToRecordField(transport, field, record);
                 }
@@ -73,22 +72,28 @@ public class MapperFactory<TABLE extends Table<? extends Record>> {
         private void setValueToRecordField(T transport, Field<?> field, Record record) {
             Pair<Method, Class<?>> getter = getGetter(field);
             if (getter != null) {
+                DataType<?> databaseType = field.getDataType();
                 Object value = getValue(transport, getter.getKey());
                 if (value instanceof Lookup) {
                     value = ((Lookup<?>) value).getId();
                 } else if (value instanceof EnumValue) {
                     value = ((EnumValue) value).getId();
-                } else if (field.getType() == JsonNode.class) {
-                    value = OBJECT_MAPPER.convertValue(value, JsonNode.class);
-                } else {
-                    value = getValue(transport, getter.getKey());
                 }
 
-                DataType<?> dataType = field.getDataType();
-                if (value != null || dataType.nullable()) {
-                    record.setValue(castField(field), value);
+                if (value != null) {
+                    Class<?> userType = value.getClass();
+                    Converter<Object, Object> converter = resolveConverter(databaseType, userType);
+                    record.setValue(castField(field), value, converter);
+                } else if (databaseType.nullable()) {
+                    record.setValue(castField(field), null);
                 }
             }
+        }
+
+        @SuppressWarnings("unchecked")
+        private Converter<Object, Object> resolveConverter(DataType<?> dataType, Class<?> userType) {
+            Class<?> databaseType = dataType.getType();
+            return (Converter<Object, Object>) converterProvider.provide(databaseType, userType);
         }
 
         @SuppressWarnings("unchecked")
@@ -104,16 +109,19 @@ public class MapperFactory<TABLE extends Table<? extends Record>> {
             }
         }
 
-        private boolean hasComplexValueGetters(Field<?>[] fields) {
+        private boolean hasCustomConvertibleTypes(Field<?>[] fields) {
             for (Pair<Method, Class<?>> getter : transportGetters.values()) {
                 Class<?> type = getter.getValue();
                 if (type == Lookup.class || type == EnumValue.class || type == Set.class) {
                     return true;
                 }
             }
+            // jOOQ currently does not use converters for unmapping, provided
+            // by a custom ConverterProvider. In that case, the converter has
+            // to be invoked manually.
             for (Field<?> field : fields) {
                 Class<?> type = field.getDataType().getType();
-                if (type == JsonNode.class) {
+                if (type == JSON.class || type == YearToSecond.class) {
                     return true;
                 }
             }
@@ -168,7 +176,7 @@ public class MapperFactory<TABLE extends Table<? extends Record>> {
 
         @Override
         public T map(Record record) {
-            if (hasLocallyConvertibleTypes(record.fields())) { // TODO Do not evaluate this on each map call!
+            if (hasCustomConvertibleTypes()) {
                 T transport = createTransportObject();
                 for (Field<?> field : record.fields()) {
                     setValueToTransportMember(transport, record, field);
@@ -209,11 +217,6 @@ public class MapperFactory<TABLE extends Table<? extends Record>> {
                     if (referenceIds != null) {
                         String enumId = MapperUtils.resolveEnumId(field);
                         value = enumManager.createSet(enumId, Arrays.asList(referenceIds));
-                    }
-                } else if (field.getType() == JsonNode.class) {
-                    JsonNode jsonNode = record.getValue(field, JsonNode.class);
-                    if (!jsonNode.isNull()) {
-                        value = OBJECT_MAPPER.convertValue(jsonNode, paramType);
                     }
                 } else {
                     value = record.getValue(field, paramType);
@@ -263,16 +266,10 @@ public class MapperFactory<TABLE extends Table<? extends Record>> {
             }
         }
 
-        private boolean hasLocallyConvertibleTypes(Field<?>[] fields) {
+        private boolean hasCustomConvertibleTypes() {
             for (Pair<Method, Class<?>> setter : transportSetters.values()) {
                 Class<?> type = setter.getValue();
                 if (type == Lookup.class || type == EnumValue.class || type == Set.class) {
-                    return true;
-                }
-            }
-            for (Field<?> field : fields) {
-                Class<?> type = field.getDataType().getType();
-                if (type == JsonNode.class) {
                     return true;
                 }
             }

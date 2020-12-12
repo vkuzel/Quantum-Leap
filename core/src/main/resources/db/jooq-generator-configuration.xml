@@ -2,7 +2,7 @@
 <tns:configuration xmlns:tns="http://www.jooq.org/xsd/jooq-codegen-3.14.0.xsd">
     <tns:jdbc>
         <tns:driver>org.postgresql.Driver</tns:driver>
-        <!-- Url, username and password will be filled from application.properties in jooq.gradle script. -->
+        <!-- Url, username and password will be provided from application.properties by the Quantum Leap Gradle plugin. -->
         <tns:url/>
         <tns:user/>
         <tns:password/>
@@ -13,26 +13,9 @@
 
         <tns:database>
             <tns:name>org.jooq.meta.postgres.PostgresDatabase</tns:name>
-
-            <tns:includes>.*</tns:includes>
-            <tns:excludes/>
-
-            <tns:forcedTypes>
-                <tns:forcedType>
-                    <tns:includeTypes>JSON</tns:includeTypes>
-                    <tns:userType>com.fasterxml.jackson.databind.JsonNode</tns:userType>
-                    <tns:binding>cz.quantumleap.core.data.binding.JsonBinding</tns:binding>
-                </tns:forcedType>
-                <tns:forcedType>
-                    <tns:includeTypes>INTERVAL</tns:includeTypes>
-                    <tns:userType>java.time.Duration</tns:userType>
-                    <tns:converter>cz.quantumleap.core.data.binding.DurationConverter</tns:converter>
-                </tns:forcedType>
-            </tns:forcedTypes>
         </tns:database>
 
         <tns:generate>
-            <!--<records>false</records>-->
             <tns:javaTimeTypes>true</tns:javaTimeTypes>
         </tns:generate>
 
