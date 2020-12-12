@@ -57,6 +57,11 @@ public class TablePreferencesTable extends TableImpl<TablePreferencesRecord> {
      */
     public final TableField<TablePreferencesRecord, String[]> ENABLED_COLUMNS = createField(DSL.name("enabled_columns"), SQLDataType.VARCHAR.getArrayDataType(), this, "");
 
+    /**
+     * The column <code>core.table_preferences.filters</code>.
+     */
+    public final TableField<TablePreferencesRecord, JSON> FILTERS = createField(DSL.name("filters"), SQLDataType.JSON.nullable(false).defaultValue(DSL.field("'{}'::json", SQLDataType.JSON)), this, "");
+
     private TablePreferencesTable(Name alias, Table<TablePreferencesRecord> aliased) {
         this(alias, aliased, null);
     }
@@ -137,11 +142,11 @@ public class TablePreferencesTable extends TableImpl<TablePreferencesRecord> {
     }
 
     // -------------------------------------------------------------------------
-    // Row4 type methods
+    // Row5 type methods
     // -------------------------------------------------------------------------
 
     @Override
-    public Row4<Long, String, Boolean, String[]> fieldsRow() {
-        return (Row4) super.fieldsRow();
+    public Row5<Long, String, Boolean, String[], JSON> fieldsRow() {
+        return (Row5) super.fieldsRow();
     }
 }
