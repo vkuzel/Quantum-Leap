@@ -12,6 +12,11 @@ import org.springframework.context.annotation.Configuration;
 
 import javax.sql.DataSource;
 
+/**
+ * This configuration exists, because current jOOQ auto-configuration does not
+ * support converter provider. As soon as https://github.com/spring-projects/spring-boot/pull/24485
+ * will be merged, this class can be removed.
+ */
 @Configuration
 public class JooqConfiguration extends DefaultConfiguration {
 
