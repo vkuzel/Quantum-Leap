@@ -1,16 +1,18 @@
 package cz.quantumleap.core.data.transport;
 
+import java.util.Set;
+
 // Set gets data from same database structures as Enum.
-public class Set {
+public class SetValues {
 
     // Typically enumId is based on a database column name in upper underscore format.
     private String enumId;
-    private java.util.Set<Value> values;
+    private Set<Value> values;
 
-    public Set() {
+    public SetValues() {
     }
 
-    public Set(String enumId, java.util.Set<Value> values) {
+    public SetValues(String enumId, Set<Value> values) {
         this.enumId = enumId;
         this.values = values;
     }
@@ -23,11 +25,11 @@ public class Set {
         this.enumId = enumId;
     }
 
-    public java.util.Set<Value> getValues() {
+    public Set<Value> getValues() {
         return values;
     }
 
-    public void setValues(java.util.Set<Value> values) {
+    public void setValues(Set<Value> values) {
         this.values = values;
     }
 
