@@ -1,8 +1,16 @@
 package cz.quantumleap.core.data.entity;
 
-import cz.quantumleap.core.data.list.*;
+import cz.quantumleap.core.data.list.DefaultFilterBuilder;
+import cz.quantumleap.core.data.list.DefaultSortingBuilder;
+import cz.quantumleap.core.data.list.FilterBuilder;
+import cz.quantumleap.core.data.list.LimitBuilder;
+import cz.quantumleap.core.data.list.SortingBuilder;
 import org.apache.commons.lang3.Validate;
-import org.jooq.*;
+import org.jooq.Condition;
+import org.jooq.Field;
+import org.jooq.Record;
+import org.jooq.Table;
+import org.jooq.UniqueKey;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -108,6 +116,10 @@ public class Entity<TABLE extends Table<? extends Record>> {
         private final EntityIdentifier<TABLE> entityIdentifier;
         private Field<?> primaryKeyField;
         private Condition defaultFilterCondition = null;
+        /**
+         * Describes a dependency between foreign-key fields of this entity and
+         * other entities, which may be qualified.
+         */
         private Map<Field<?>, EntityIdentifier<?>> lookupFieldsMap = new HashMap<>();
         private Field<String> lookupLabelField = null;
         private Function<String, Condition> wordConditionBuilder = s -> null;
