@@ -4,7 +4,11 @@ import com.google.common.io.CharStreams;
 import cz.quantumleap.core.data.entity.EntityIdentifier;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
-import org.jooq.*;
+import org.jooq.Condition;
+import org.jooq.Field;
+import org.jooq.Record;
+import org.jooq.Table;
+import org.jooq.TableField;
 import org.jooq.impl.DSL;
 import org.springframework.core.io.Resource;
 
@@ -13,12 +17,17 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.time.LocalDate;
 import java.time.Period;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Utils {
+final public class Utils {
 
     public enum ConditionOperator {AND, OR}
 
