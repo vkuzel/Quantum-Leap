@@ -6,9 +6,10 @@ import org.springframework.validation.Errors;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.function.Function;
 import java.util.function.Supplier;
+
+import static cz.quantumleap.core.common.ReflectionUtils.invokeClassMethod;
 
 public final class DefaultDetailController<T> implements DetailController<T> {
 
@@ -71,11 +72,7 @@ public final class DefaultDetailController<T> implements DetailController<T> {
     }
 
     private Object getDetailId(T transport) {
-        try {
-            Method method = transport.getClass().getMethod("getId");
-            return method.invoke(transport);
-        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            throw new IllegalStateException(e);
-        }
+        Class<?> type = transport.getClass();
+        return invokeClassMethod(type, transport, "getId");
     }
 }

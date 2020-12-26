@@ -1,5 +1,6 @@
 package cz.quantumleap.core.security.config;
 
+import cz.quantumleap.core.common.ReflectionUtils;
 import org.apache.commons.lang3.Validate;
 import org.springframework.core.ResolvableType;
 import org.springframework.security.config.annotation.web.HttpSecurityBuilder;
@@ -12,7 +13,6 @@ import org.springframework.security.oauth2.client.registration.ClientRegistratio
 import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestRedirectFilter;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,18 +57,16 @@ public class SkipLoginPageEntryPointConfigurer<H extends HttpSecurityBuilder<H>>
     @SuppressWarnings("unchecked")
     private String getAuthorizationRequestBaseUri(H builder) {
         AuthorizationEndpointConfig authorizationEndpointConfig = builder.getConfigurer(OAuth2LoginConfigurer.class).authorizationEndpoint();
-
-        try {
-            Field authorizationRequestBaseUriField = AuthorizationEndpointConfig.class.getDeclaredField("authorizationRequestBaseUri");
-            authorizationRequestBaseUriField.setAccessible(true);
-            String authorizationRequestBaseUri = (String) authorizationRequestBaseUriField.get(authorizationEndpointConfig);
-            if (authorizationRequestBaseUri != null) {
-                return authorizationRequestBaseUri;
-            }
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            throw new IllegalStateException(e);
+        String fieldsName = "authorizationRequestBaseUri";
+        String authorizationUri = (String) ReflectionUtils.getClassFieldValue(
+                AuthorizationEndpointConfig.class,
+                authorizationEndpointConfig,
+                fieldsName
+        );
+        if (authorizationUri != null) {
+            return authorizationUri;
+        } else {
+            return OAuth2AuthorizationRequestRedirectFilter.DEFAULT_AUTHORIZATION_REQUEST_BASE_URI;
         }
-
-        return OAuth2AuthorizationRequestRedirectFilter.DEFAULT_AUTHORIZATION_REQUEST_BASE_URI;
     }
 }
