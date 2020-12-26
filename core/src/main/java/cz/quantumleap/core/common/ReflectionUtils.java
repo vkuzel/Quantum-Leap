@@ -5,6 +5,10 @@ import java.lang.reflect.Method;
 
 final public class ReflectionUtils {
 
+    /**
+     * Returns a value of a field which may be private or declared on a
+     * superclass.
+     */
     @SuppressWarnings("unused")
     public static Object getClassFieldValue(Class<?> type, Object instance, String fieldName) {
         try {
@@ -20,13 +24,21 @@ final public class ReflectionUtils {
                     field.setAccessible(false);
                 }
             }
-        } catch (IllegalAccessException | NoSuchFieldException e) {
+        } catch (NoSuchFieldException e) {
+            if (type.getSuperclass() != null) {
+                return getClassFieldValue(type.getSuperclass(), instance, fieldName);
+            }
+            throw new IllegalStateException(e);
+        } catch (IllegalAccessException e) {
             String format = "Cannot get class field value from %s.%s";
             String msg = String.format(format, type.getName(), fieldName);
             throw new IllegalStateException(msg, e);
         }
     }
 
+    /**
+     * Invokes a method, which may be private or declared on a superclass.
+     */
     @SuppressWarnings("unused")
     public static Object invokeClassMethod(Class<?> type, Object instance, String methodName) {
         try {
@@ -42,7 +54,12 @@ final public class ReflectionUtils {
                     method.setAccessible(false);
                 }
             }
-        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+        } catch (NoSuchMethodException e) {
+            if (type.getSuperclass() != null) {
+                return invokeClassMethod(type.getSuperclass(), instance, methodName);
+            }
+            throw new IllegalStateException(e);
+        } catch (IllegalAccessException | InvocationTargetException e) {
             String format = "Cannot invoke class method %s.%s";
             String msg = String.format(format, type.getName(), methodName);
             throw new IllegalStateException(msg, e);
