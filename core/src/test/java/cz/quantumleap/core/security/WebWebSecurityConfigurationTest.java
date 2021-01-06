@@ -36,7 +36,7 @@ public class WebWebSecurityConfigurationTest {
     private ClientRegistrationRepository clientRegistrationRepository;
 
     @Test
-    public void accessAsUnauthenticated() throws Exception {
+    public void unauthenticatedUserDoesNotHaveAccessToProtectedPages() throws Exception {
         mvc.perform(get("/endpoint-for-unauthenticated"))
                 .andExpect(status().isOk());
 
@@ -66,7 +66,7 @@ public class WebWebSecurityConfigurationTest {
 
     @Test
     @WithMockUser
-    public void accessAsAuthenticated() throws Exception {
+    public void authenticatedUserHasLimitedAccess() throws Exception {
         mvc.perform(get("/endpoint-for-unauthenticated"))
                 .andExpect(status().isOk());
 
@@ -102,7 +102,7 @@ public class WebWebSecurityConfigurationTest {
 
     @Test
     @WithMockUser(roles = "ADMIN")
-    public void accessAsAdmin() throws Exception {
+    public void adminHasAccessEverywhere() throws Exception {
         mvc.perform(get("/endpoint-for-unauthenticated"))
                 .andExpect(status().isOk());
 

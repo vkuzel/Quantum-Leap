@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.jdbc.BadSqlGrammarException;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -45,15 +46,9 @@ public class IncrementRunnerTest {
     private TransactionExecutor transactionExecutor;
     @Autowired
     private IncrementDao incrementDao;
-    private IncrementRunner incrementRunner;
-
-    @Before
-    public void setUp() {
-        incrementRunner = new IncrementRunner(environment, incrementService, transactionExecutor, incrementDao);
-    }
 
     @Test
-    public void runIncrementTest() throws SQLException {
+    public void newIncrementsAreExecuted() {
         // given
         List<IncrementService.IncrementScript> incrementScripts = ImmutableList.of(
                 createIncrementScript("classpath:/test_db/inc/v01/01_testEntity.sql", 1),
@@ -66,6 +61,7 @@ public class IncrementRunnerTest {
             TestUtils.deleteFromTable(dslContext, "core.increment");
         });
         Map<String, Integer> lastIncrements = ImmutableMap.of("core", 0);
+        IncrementRunner incrementRunner = new IncrementRunner(environment, incrementService, transactionExecutor, incrementDao);
 
         // when
         try {
@@ -86,11 +82,9 @@ public class IncrementRunnerTest {
     private IncrementService.IncrementScript createIncrementScript(String locationPattern, int incrementVersion) {
         ModuleDependencies module = mock(ModuleDependencies.class);
         when(module.getModuleName()).thenReturn("core");
+        Resource resource = resourceResolver.getResource(locationPattern);
         return new IncrementService.IncrementScript(
-                new ResourceWithModule(
-                        module,
-                        resourceResolver.getResource(locationPattern)
-                ),
+                new ResourceWithModule(module, resource),
                 incrementVersion
         );
     }

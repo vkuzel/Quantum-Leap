@@ -1,9 +1,9 @@
 package cz.quantumleap.core.security;
 
+import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.Mockito;
 import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.Expression;
 import org.springframework.expression.ExpressionParser;
@@ -14,26 +14,48 @@ import org.springframework.security.web.FilterInvocation;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Collections;
-import java.util.List;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.doReturn;
 
-@RunWith(MockitoJUnitRunner.class)
 public class WebSecurityExpressionEvaluatorTest {
 
-    @Mock
     private HttpServletRequest httpServletRequest;
-    @Mock
     private HttpServletResponse httpServletResponse;
-    @Mock
-    private ExpressionParser expressionParser;
-    @Mock
-    private Expression expression;
-    @Mock
-    private EvaluationContext evaluationContext;
-    private SecurityExpressionHandler<FilterInvocation> securityExpressionHandler = new SecurityExpressionHandler<FilterInvocation>() {
+
+    @Before
+    public void mockBeans() {
+        httpServletRequest = Mockito.mock(HttpServletRequest.class);
+        httpServletResponse = Mockito.mock(HttpServletResponse.class);
+    }
+
+    @Test
+    public void filterInvocationSecrityHandlerEvaluatesExpression() {
+        // given
+        Expression expression = Mockito.mock(Expression.class);
+        EvaluationContext evaluationContext = Mockito.mock(EvaluationContext.class);
+        doReturn(true).when(expression).getValue(evaluationContext, Boolean.class);
+        ExpressionParser expressionParser = Mockito.mock(ExpressionParser.class);
+        doReturn(expression).when(expressionParser).parseExpression("expression");
+        TestSecurityExpressionHandler testSecurityExpressionHandler = new TestSecurityExpressionHandler(expressionParser, evaluationContext);
+        WebSecurityExpressionEvaluator evaluator = new WebSecurityExpressionEvaluator(Collections.singletonList(testSecurityExpressionHandler));
+
+        // when
+        boolean result = evaluator.evaluate("expression", httpServletRequest, httpServletResponse);
+
+        // then
+        Assert.assertTrue(result);
+    }
+
+    private static class TestSecurityExpressionHandler implements SecurityExpressionHandler<FilterInvocation> {
+
+        private final ExpressionParser expressionParser;
+        private final EvaluationContext evaluationContext;
+
+        private TestSecurityExpressionHandler(ExpressionParser expressionParser, EvaluationContext evaluationContext) {
+            this.expressionParser = expressionParser;
+            this.evaluationContext = evaluationContext;
+        }
+
         @Override
         public ExpressionParser getExpressionParser() {
             return expressionParser;
@@ -43,22 +65,5 @@ public class WebSecurityExpressionEvaluatorTest {
         public EvaluationContext createEvaluationContext(Authentication authentication, FilterInvocation invocation) {
             return evaluationContext;
         }
-    };
-
-    @Test
-    public void evaluate() throws Exception {
-        // given
-        doReturn(expression).when(expressionParser).parseExpression("expression");
-
-        doReturn(true).when(expression).getValue(evaluationContext, Boolean.class);
-
-        List<SecurityExpressionHandler> securityExpressionHandlers = Collections.singletonList(securityExpressionHandler);
-
-        // when
-        WebSecurityExpressionEvaluator evaluator = new WebSecurityExpressionEvaluator(securityExpressionHandlers);
-        boolean result = evaluator.evaluate("expression", httpServletRequest, httpServletResponse);
-
-        // then
-        assertThat(result, equalTo(true));
     }
 }

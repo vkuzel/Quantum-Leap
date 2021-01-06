@@ -18,7 +18,7 @@ public class SecurityUtilsTest {
     private final PathMatchingResourcePatternResolver resourceResolver = new PathMatchingResourcePatternResolver();
 
     @Test
-    public void checkEncodedPassword() {
+    public void passwordIsEncoded() {
         String password = "asd";
 
         String encodedPassword = SecurityUtils.encodePassword(password);
@@ -27,7 +27,7 @@ public class SecurityUtilsTest {
     }
 
     @Test
-    public void decryptMessage() {
+    public void messageIsDecrypted() {
         String password = "asd";
         String message = "asd";
 
@@ -38,7 +38,7 @@ public class SecurityUtilsTest {
     }
 
     @Test
-    public void decryptTextByKey() {
+    public void textIsDecryptedByKey() {
         PrivateKey privateKey = SecurityUtils.createPrivateKey(loadResource("classpath:/security/private.der"));
         PublicKey publicKey = SecurityUtils.createPublicKey(loadResource("classpath:/security/public.der"));
         String message = "asd";
@@ -50,7 +50,7 @@ public class SecurityUtilsTest {
     }
 
     @Test
-    public void verifySignatureByKey() {
+    public void signatureIsVerifiedByKey() {
         PrivateKey privateKey = SecurityUtils.createPrivateKey(loadResource("classpath:/security/private.der"));
         PublicKey publicKey = SecurityUtils.createPublicKey(loadResource("classpath:/security/public.der"));
         String message = "asd";

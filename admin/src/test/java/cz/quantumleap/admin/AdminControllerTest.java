@@ -7,6 +7,7 @@ import cz.quantumleap.admin.menu.AdminMenuManager;
 import cz.quantumleap.admin.notification.NotificationService;
 import cz.quantumleap.admin.person.PersonService;
 import cz.quantumleap.core.security.WebSecurityExpressionEvaluator;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -20,8 +21,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Collections;
 import java.util.List;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
@@ -38,7 +37,7 @@ public class AdminControllerTest {
     private WebSecurityExpressionEvaluator webSecurityExpressionEvaluator;
 
     @Test
-    public void getMenuItems() throws Exception {
+    public void onlyAccessibleMenuItemsAreReturned() {
         // given
         HttpServletRequest httpServletRequest = mock(HttpServletRequest.class);
         doReturn("/").when(httpServletRequest).getContextPath();
@@ -60,17 +59,17 @@ public class AdminControllerTest {
                 accessibleMenuItemWithChildren
         );
         Mockito.doReturn(adminMenuItems).when(adminMenuManager).getMenuItems();
-
-        // when
         AdminController controller = new AdminController(adminMenuManager, personService, notificationService, webSecurityExpressionEvaluator) {
         };
+
+        // when
         List<AdminMenuItem> menuItems = controller.getMenuItems(httpServletRequest, httpServletResponse);
 
         // then
-        assertThat(menuItems.size(), equalTo(1));
+        Assert.assertEquals(1, menuItems.size());
         AdminMenuItem menuItem = menuItems.get(0);
-        assertThat(menuItem.getChildren().size(), equalTo(1));
-        assertThat(menuItem.getChildren().get(0).getPath(), equalTo(accessibleMenuItem.getPath()));
+        Assert.assertEquals(1, menuItem.getChildren().size());
+        Assert.assertEquals(accessibleMenuItem.getPath(), menuItem.getChildren().get(0).getPath());
     }
 
     private AdminMenuItem createMenuItem(String securityExpression, List<AdminMenuItem> children) {

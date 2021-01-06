@@ -25,34 +25,33 @@ public class WebSecurityExpressionEvaluator {
         throw new UnsupportedOperationException();
     };
 
-    private final List<SecurityExpressionHandler> securityExpressionHandlers;
+    private final List<SecurityExpressionHandler<?>> securityExpressionHandlers;
 
-    public WebSecurityExpressionEvaluator(List<SecurityExpressionHandler> securityExpressionHandlers) {
+    public WebSecurityExpressionEvaluator(List<SecurityExpressionHandler<?>> securityExpressionHandlers) {
         this.securityExpressionHandlers = securityExpressionHandlers;
     }
 
     public boolean evaluate(String securityExpression, HttpServletRequest request, HttpServletResponse response) {
-        SecurityExpressionHandler handler = getFilterSecurityHandler();
-
+        SecurityExpressionHandler<FilterInvocation> handler = getFilterSecurityHandler();
         Expression expression = handler.getExpressionParser().parseExpression(securityExpression);
-
         EvaluationContext evaluationContext = createEvaluationContext(handler, request, response);
-
         return ExpressionUtils.evaluateAsBoolean(expression, evaluationContext);
     }
 
-    @SuppressWarnings("unchecked")
-    private EvaluationContext createEvaluationContext(SecurityExpressionHandler handler, HttpServletRequest request, HttpServletResponse response) {
+    private EvaluationContext createEvaluationContext(SecurityExpressionHandler<FilterInvocation> handler, HttpServletRequest request, HttpServletResponse response) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         FilterInvocation filterInvocation = new FilterInvocation(request, response, EMPTY_CHAIN);
 
         return handler.createEvaluationContext(authentication, filterInvocation);
     }
 
-    private SecurityExpressionHandler getFilterSecurityHandler() {
-        return securityExpressionHandlers.stream()
-                .filter(handler -> FilterInvocation.class.equals(GenericTypeResolver.resolveTypeArgument(handler.getClass(), SecurityExpressionHandler.class)))
-                .findAny()
-                .orElseThrow(() -> new IllegalStateException("No filter invocation security expression handler has been found! Handlers: " + securityExpressionHandlers.size()));
+    @SuppressWarnings("unchecked")
+    private SecurityExpressionHandler<FilterInvocation> getFilterSecurityHandler() {
+        for (SecurityExpressionHandler<?> handler : securityExpressionHandlers) {
+            if (FilterInvocation.class.equals(GenericTypeResolver.resolveTypeArgument(handler.getClass(), SecurityExpressionHandler.class))) {
+                return (SecurityExpressionHandler<FilterInvocation>) handler;
+            }
+        }
+        throw new IllegalStateException("No filter invocation security expression handler has been found! Handlers: " + securityExpressionHandlers.size());
     }
 }
