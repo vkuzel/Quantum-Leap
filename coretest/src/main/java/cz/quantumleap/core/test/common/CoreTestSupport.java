@@ -6,10 +6,13 @@ import cz.quantumleap.core.role.RoleDao;
 import cz.quantumleap.core.role.transport.Role;
 import org.apache.commons.lang3.Validate;
 import org.intellij.lang.annotations.Language;
-import org.jooq.DSLContext;
-import org.jooq.Record;
+import org.jooq.*;
+import org.jooq.impl.DSL;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 public class CoreTestSupport {
@@ -42,6 +45,46 @@ public class CoreTestSupport {
         Role role = new Role();
         role.setName("Test role");
         return roleDao.save(role);
+    }
+
+    @Transactional
+    public void dropSchema(Schema schema) {
+        dslContext
+                .dropSchemaIfExists(schema)
+                .cascade()
+                .execute();
+    }
+
+    @Transactional
+    public void createSchema(Schema schema) {
+        dslContext
+                .createSchema(schema)
+                .execute();
+    }
+
+    @Transactional
+    public void createTable(Table<?> table) {
+        List<Constraint> constraints = new ArrayList<>();
+        UniqueKey<?> primaryKey = table.getPrimaryKey();
+        if (primaryKey != null) {
+            constraints.add(DSL.primaryKey(primaryKey.getFieldsArray()));
+        }
+        for (ForeignKey<?, ?> reference : table.getReferences()) {
+            constraints.add(DSL.foreignKey(reference.getFieldsArray()).references(reference.getKey().getTable()));
+        }
+        dslContext
+                .createTable(table)
+                .columns(table.fields())
+                .constraints(constraints)
+                .execute();
+    }
+
+    @Transactional
+    public void insertIntoTable(Table<?> table, Object... values) {
+        dslContext
+                .insertInto(table)
+                .values(values)
+                .execute();
     }
 
     @Transactional
