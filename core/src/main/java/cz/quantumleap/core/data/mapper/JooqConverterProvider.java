@@ -2,6 +2,7 @@ package cz.quantumleap.core.data.mapper;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import cz.quantumleap.core.data.entity.EntityIdentifier;
 import org.jetbrains.annotations.Nullable;
 import org.jooq.Converter;
 import org.jooq.ConverterProvider;
@@ -34,6 +35,12 @@ public class JooqConverterProvider implements ConverterProvider {
                     tType, uType,
                     t -> (U) ((YearToSecond) t).toDuration(),
                     u -> (T) YearToSecond.valueOf((Duration) u)
+            );
+        } else if (tType == String.class && uType == EntityIdentifier.class) {
+            return Converter.ofNullable(
+                    tType, uType,
+                    t -> (U) EntityIdentifier.parse((String) t),
+                    u -> (T) u.toString()
             );
         } else {
             return delegate.provide(tType, uType);
