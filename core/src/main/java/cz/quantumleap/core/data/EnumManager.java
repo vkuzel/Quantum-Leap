@@ -5,15 +5,18 @@ import com.google.common.collect.Table;
 import com.google.common.collect.Tables;
 import cz.quantumleap.core.data.transport.EnumValue;
 import cz.quantumleap.core.data.transport.IdLabel;
-import cz.quantumleap.core.data.transport.Set;
-import cz.quantumleap.core.data.transport.Set.Value;
+import cz.quantumleap.core.data.transport.SetValues;
+import cz.quantumleap.core.data.transport.SetValues.Value;
+import cz.quantumleap.core.data.transport.SetValues.ValueSet;
 import org.jooq.DSLContext;
 import org.jooq.Record3;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static cz.quantumleap.core.tables.EnumValueTable.ENUM_VALUE;
@@ -52,19 +55,19 @@ public class EnumManager {
         return new EnumValue(enumId, valueId, label != null ? label : valueId);
     }
 
-    public Set createSet(String enumId, Collection<String> valueIds) {
-        java.util.Set<Value> values;
+    public SetValues createSet(String enumId, Collection<String> valueIds) {
+        ValueSet values;
         if (valueIds.isEmpty()) {
-            values = Collections.emptySet();
+            values = new ValueSet();
         } else {
             Map<String, String> enumLabels = enumValueLabels.row(enumId);
-            values = new HashSet<>(valueIds.size());
+            values = new ValueSet(valueIds.size());
             for (String valueId : valueIds) {
                 String label = enumLabels.getOrDefault(valueId, valueId);
                 values.add(new Value(valueId, label));
             }
         }
-        return new Set(enumId, values);
+        return new SetValues(enumId, values);
     }
 
     @EventListener(ContextRefreshedEvent.class)
