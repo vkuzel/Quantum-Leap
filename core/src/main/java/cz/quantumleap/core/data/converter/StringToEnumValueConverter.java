@@ -10,7 +10,7 @@ public class StringToEnumValueConverter implements Converter<String, EnumValue> 
     @Override
     public EnumValue convert(String source) {
         EnumValue enumValue = new EnumValue();
-        if (!StringUtils.isBlank(source)) {
+        if (StringUtils.isNoneBlank(source)) {
             enumValue.setId(source);
         }
         return enumValue;

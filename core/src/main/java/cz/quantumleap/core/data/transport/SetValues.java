@@ -1,6 +1,7 @@
 package cz.quantumleap.core.data.transport;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 // Set gets data from same database structures as Enum.
@@ -16,6 +17,15 @@ public class SetValues {
     public SetValues(String enumId, ValueSet values) {
         this.enumId = enumId;
         this.values = values;
+    }
+
+    public boolean containsValueId(String id) {
+        for (Value value : values) {
+            if (Objects.equals(value.getId(), id)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public String getEnumId() {

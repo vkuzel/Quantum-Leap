@@ -44,7 +44,7 @@ public class EnumValue {
         this.id = id;
     }
 
-    public void setId(java.lang.Enum id) {
+    public void setId(Enum id) {
         this.id = id.name();
     }
 

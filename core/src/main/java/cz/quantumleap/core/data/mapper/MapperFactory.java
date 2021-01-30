@@ -78,6 +78,10 @@ public class MapperFactory<TABLE extends Table<? extends Record>> {
                     value = ((Lookup<?>) value).getId();
                 } else if (value instanceof EnumValue) {
                     value = ((EnumValue) value).getId();
+                } else if (value instanceof SetValues) {
+                    value = ((SetValues) value).getValues().stream()
+                            .map(SetValues.Value::getId)
+                            .toArray();
                 }
 
                 if (value != null) {
