@@ -76,10 +76,6 @@ public class MapperFactory<TABLE extends Table<? extends Record>> {
                 Object value = getValue(transport, getter.getKey());
                 if (value instanceof Lookup) {
                     value = ((Lookup<?>) value).getId();
-                } else if (value instanceof SetValues) {
-                    value = ((SetValues) value).getValues().stream()
-                            .map(SetValues.Value::getId)
-                            .toArray();
                 }
 
                 if (value != null) {
@@ -114,7 +110,7 @@ public class MapperFactory<TABLE extends Table<? extends Record>> {
         private boolean hasCustomConvertibleTypes(Field<?>[] fields) {
             for (Pair<Method, Class<?>> getter : transportGetters.values()) {
                 Class<?> type = getter.getValue();
-                if (type == Lookup.class || type == SetValues.class) {
+                if (type == Lookup.class) {
                     return true;
                 }
             }
@@ -208,12 +204,6 @@ public class MapperFactory<TABLE extends Table<? extends Record>> {
                         String label = lookupDao.fetchLabelById(referenceId);
                         value = new Lookup<>(referenceId, label, entityIdentifier);
                     }
-                } else if (paramType == SetValues.class) {
-                    String[] referenceIds = record.getValue(field, String[].class);
-                    if (referenceIds != null) {
-                        String enumId = MapperUtils.resolveEnumId(field);
-                        value = enumManager.createSet(enumId, Arrays.asList(referenceIds));
-                    }
                 } else {
                     value = record.getValue(field, paramType);
                 }
@@ -265,7 +255,7 @@ public class MapperFactory<TABLE extends Table<? extends Record>> {
         private boolean hasCustomConvertibleTypes() {
             for (Pair<Method, Class<?>> setter : transportSetters.values()) {
                 Class<?> type = setter.getValue();
-                if (type == Lookup.class || type == SetValues.class) {
+                if (type == Lookup.class) {
                     return true;
                 }
             }

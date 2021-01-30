@@ -89,22 +89,6 @@ public class Table<ROW> implements Iterable<ROW> {
             return (LookupColumn) this;
         }
 
-        public boolean isEnumColumn() {
-            return this instanceof EnumColumn;
-        }
-
-        public EnumColumn asEnumColumn() {
-            return (EnumColumn) this;
-        }
-
-        public boolean isSetColumn() {
-            return this instanceof SetColumn;
-        }
-
-        public SetColumn asSetColumn() {
-            return (SetColumn) this;
-        }
-
         public Class<?> getType() {
             return type;
         }
@@ -133,35 +117,6 @@ public class Table<ROW> implements Iterable<ROW> {
 
         public EntityIdentifier<?> getEntityIdentifier() {
             return entityIdentifier;
-        }
-    }
-
-    public static class EnumColumn extends Column {
-
-        private final String enumId;
-
-        public EnumColumn(String name, Sort.Order order, String enumId) {
-            // TODO String is temporary solution, and should be removed.
-            super(String.class, name, false, order);
-            this.enumId = enumId;
-        }
-
-        public String getEnumId() {
-            return enumId;
-        }
-    }
-
-    public static class SetColumn extends Column {
-
-        private final String enumId;
-
-        public SetColumn(String name, Sort.Order order, String enumId) {
-            super(SetValues.class, name, false, order);
-            this.enumId = enumId;
-        }
-
-        public String getEnumId() {
-            return enumId;
         }
     }
 

@@ -9,15 +9,16 @@ import cz.quantumleap.core.data.entity.EntityIdentifier;
 import cz.quantumleap.core.data.transport.Lookup;
 import cz.quantumleap.core.data.transport.Table;
 import cz.quantumleap.core.data.transport.Table.Column;
-import cz.quantumleap.core.data.transport.Table.EnumColumn;
 import cz.quantumleap.core.data.transport.Table.LookupColumn;
-import cz.quantumleap.core.data.transport.Table.SetColumn;
 import cz.quantumleap.core.data.transport.TablePreferences;
 import org.jetbrains.annotations.NotNull;
 import org.jooq.*;
 import org.springframework.data.domain.Sort;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class TableMapper<TABLE extends org.jooq.Table<? extends Record>> implements RecordHandler<Record> {
 
@@ -29,7 +30,6 @@ public class TableMapper<TABLE extends org.jooq.Table<? extends Record>> impleme
     private final List<Column> columns;
     private final List<Map<Column, Object>> rows;
     private final SetMultimap<LookupColumn, Object> lookupReferenceIds = HashMultimap.create();
-    private final SetMultimap<EnumColumn, Object> enumReferenceIds = HashMultimap.create();
 
     TableMapper(Entity<TABLE> entity, LookupDaoManager lookupDaoManager, EnumManager enumManager, Sort sort, int expectedSize) {
         this.entity = entity;
@@ -52,8 +52,6 @@ public class TableMapper<TABLE extends org.jooq.Table<? extends Record>> impleme
 
             if (column.isLookupColumn()) {
                 lookupReferenceIds.put(column.asLookupColumn(), value);
-            } else if (column.isSetColumn()) {
-                enumReferenceIds.put(column.asEnumColumn(), value);
             }
         }
         rows.add(row);
@@ -93,9 +91,6 @@ public class TableMapper<TABLE extends org.jooq.Table<? extends Record>> impleme
                             lookupLabels.get(value, column),
                             lookupColumn.getEntityIdentifier()
                     ));
-                } else if (column.isSetColumn()) {
-                    SetColumn setColumn = column.asSetColumn();
-                    rowWithComplexValues.put(column, enumManager.createSet(setColumn.getEnumId(), Arrays.asList((String[]) value)));
                 } else {
                     rowWithComplexValues.put(column, value);
                 }
@@ -124,7 +119,7 @@ public class TableMapper<TABLE extends org.jooq.Table<? extends Record>> impleme
 
         private boolean hasComplexColumns() {
             for (Column column : fieldColumnMap.values()) {
-                if (column.isLookupColumn() || column.isEnumColumn() || column.isSetColumn()) {
+                if (column.isLookupColumn()) {
                     return true;
                 }
             }
@@ -146,12 +141,6 @@ public class TableMapper<TABLE extends org.jooq.Table<? extends Record>> impleme
                             name,
                             order,
                             lookupIdentifierMap.get(field)
-                    );
-                } else if (isSetField(field)) {
-                    column = new SetColumn(
-                            name,
-                            order,
-                            MapperUtils.resolveEnumId(field)
                     );
                 } else {
                     column = new Column(
@@ -182,11 +171,6 @@ public class TableMapper<TABLE extends org.jooq.Table<? extends Record>> impleme
                 }
             }
             return map;
-        }
-
-        private boolean isSetField(Field<?> field) {
-            String enumId = MapperUtils.resolveEnumId(field);
-            return enumManager.isEnum(enumId) && field.getDataType().isArray();
         }
     }
 }
