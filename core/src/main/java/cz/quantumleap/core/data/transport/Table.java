@@ -141,7 +141,8 @@ public class Table<ROW> implements Iterable<ROW> {
         private final String enumId;
 
         public EnumColumn(String name, Sort.Order order, String enumId) {
-            super(EnumValue.class, name, false, order);
+            // TODO String is temporary solution, and should be removed.
+            super(String.class, name, false, order);
             this.enumId = enumId;
         }
 

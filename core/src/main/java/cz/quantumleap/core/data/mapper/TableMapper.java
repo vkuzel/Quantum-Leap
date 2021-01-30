@@ -52,7 +52,7 @@ public class TableMapper<TABLE extends org.jooq.Table<? extends Record>> impleme
 
             if (column.isLookupColumn()) {
                 lookupReferenceIds.put(column.asLookupColumn(), value);
-            } else if (column.isEnumColumn() || column.isSetColumn()) {
+            } else if (column.isSetColumn()) {
                 enumReferenceIds.put(column.asEnumColumn(), value);
             }
         }
@@ -93,9 +93,6 @@ public class TableMapper<TABLE extends org.jooq.Table<? extends Record>> impleme
                             lookupLabels.get(value, column),
                             lookupColumn.getEntityIdentifier()
                     ));
-                } else if (column.isEnumColumn()) {
-                    EnumColumn enumColumn = column.asEnumColumn();
-                    rowWithComplexValues.put(column, enumManager.createEnumValue(enumColumn.getEnumId(), String.valueOf(value)));
                 } else if (column.isSetColumn()) {
                     SetColumn setColumn = column.asSetColumn();
                     rowWithComplexValues.put(column, enumManager.createSet(setColumn.getEnumId(), Arrays.asList((String[]) value)));
@@ -150,12 +147,6 @@ public class TableMapper<TABLE extends org.jooq.Table<? extends Record>> impleme
                             order,
                             lookupIdentifierMap.get(field)
                     );
-                } else if (isEnumField(field)) {
-                    column = new EnumColumn(
-                            name,
-                            order,
-                            MapperUtils.resolveEnumId(field)
-                    );
                 } else if (isSetField(field)) {
                     column = new SetColumn(
                             name,
@@ -191,11 +182,6 @@ public class TableMapper<TABLE extends org.jooq.Table<? extends Record>> impleme
                 }
             }
             return map;
-        }
-
-        private boolean isEnumField(Field<?> field) {
-            String enumId = MapperUtils.resolveEnumId(field);
-            return enumManager.isEnum(enumId) && field.getDataType().isString();
         }
 
         private boolean isSetField(Field<?> field) {

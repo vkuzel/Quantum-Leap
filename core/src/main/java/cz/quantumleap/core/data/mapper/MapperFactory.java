@@ -76,8 +76,6 @@ public class MapperFactory<TABLE extends Table<? extends Record>> {
                 Object value = getValue(transport, getter.getKey());
                 if (value instanceof Lookup) {
                     value = ((Lookup<?>) value).getId();
-                } else if (value instanceof EnumValue) {
-                    value = ((EnumValue) value).getId();
                 } else if (value instanceof SetValues) {
                     value = ((SetValues) value).getValues().stream()
                             .map(SetValues.Value::getId)
@@ -116,7 +114,7 @@ public class MapperFactory<TABLE extends Table<? extends Record>> {
         private boolean hasCustomConvertibleTypes(Field<?>[] fields) {
             for (Pair<Method, Class<?>> getter : transportGetters.values()) {
                 Class<?> type = getter.getValue();
-                if (type == Lookup.class || type == EnumValue.class || type == SetValues.class) {
+                if (type == Lookup.class || type == SetValues.class) {
                     return true;
                 }
             }
@@ -210,12 +208,6 @@ public class MapperFactory<TABLE extends Table<? extends Record>> {
                         String label = lookupDao.fetchLabelById(referenceId);
                         value = new Lookup<>(referenceId, label, entityIdentifier);
                     }
-                } else if (paramType == EnumValue.class) {
-                    String referenceId = record.getValue(field, String.class);
-                    if (referenceId != null) {
-                        String enumId = MapperUtils.resolveEnumId(field);
-                        value = enumManager.createEnumValue(enumId, referenceId);
-                    }
                 } else if (paramType == SetValues.class) {
                     String[] referenceIds = record.getValue(field, String[].class);
                     if (referenceIds != null) {
@@ -273,7 +265,7 @@ public class MapperFactory<TABLE extends Table<? extends Record>> {
         private boolean hasCustomConvertibleTypes() {
             for (Pair<Method, Class<?>> setter : transportSetters.values()) {
                 Class<?> type = setter.getValue();
-                if (type == Lookup.class || type == EnumValue.class || type == SetValues.class) {
+                if (type == Lookup.class || type == SetValues.class) {
                     return true;
                 }
             }

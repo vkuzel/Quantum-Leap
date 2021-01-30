@@ -3,7 +3,6 @@ package cz.quantumleap.core.data;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 import com.google.common.collect.Tables;
-import cz.quantumleap.core.data.transport.EnumValue;
 import cz.quantumleap.core.data.transport.IdLabel;
 import cz.quantumleap.core.data.transport.SetValues;
 import cz.quantumleap.core.data.transport.SetValues.Value;
@@ -41,18 +40,6 @@ public class EnumManager {
                 .stream()
                 .map(e -> new IdLabel(e.getKey(), e.getValue()))
                 .collect(Collectors.toList());
-    }
-
-    public EnumValue getDefaultEnumValue(String enumId) {
-        for (IdLabel valueLabel : getValueLabels(enumId)) {
-            return new EnumValue(enumId, String.valueOf(valueLabel.getId()), valueLabel.getLabel());
-        }
-        return new EnumValue();
-    }
-
-    public EnumValue createEnumValue(String enumId, String valueId) {
-        String label = enumValueLabels.get(enumId, valueId);
-        return new EnumValue(enumId, valueId, label != null ? label : valueId);
     }
 
     public SetValues createSet(String enumId, Collection<String> valueIds) {
