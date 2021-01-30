@@ -155,7 +155,7 @@ public class Table<ROW> implements Iterable<ROW> {
         private final String enumId;
 
         public SetColumn(String name, Sort.Order order, String enumId) {
-            super(Set.class, name, false, order);
+            super(SetValues.class, name, false, order);
             this.enumId = enumId;
         }
 
