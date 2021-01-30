@@ -4,11 +4,15 @@ import cz.quantumleap.core.data.transport.Lookup;
 import cz.quantumleap.core.tables.PersonTable;
 import cz.quantumleap.core.tables.RoleTable;
 
+import javax.validation.constraints.NotNull;
+
 public class PersonRole {
 
     private Long id;
-    private Lookup<PersonTable> personId = new Lookup<>();
-    private Lookup<RoleTable> roleId = new Lookup<>();
+    @NotNull
+    private Long personId;
+    @NotNull
+    private Long roleId;
 
     public Long getId() {
         return id;
@@ -18,19 +22,19 @@ public class PersonRole {
         this.id = id;
     }
 
-    public Lookup<PersonTable> getPersonId() {
+    public Long getPersonId() {
         return personId;
     }
 
-    public void setPersonId(Lookup<PersonTable> personId) {
+    public void setPersonId(Long personId) {
         this.personId = personId;
     }
 
-    public Lookup<RoleTable> getRoleId() {
+    public Long getRoleId() {
         return roleId;
     }
 
-    public void setRoleId(Lookup<RoleTable> roleId) {
+    public void setRoleId(Long roleId) {
         this.roleId = roleId;
     }
 }

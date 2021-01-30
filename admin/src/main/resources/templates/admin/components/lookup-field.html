@@ -6,20 +6,20 @@
 <!--/*
     Template params:
         entityIdentifier ... Used to identify the lookup and to get controller from LookupControllerManager.
-        fieldName ... Name of input field.
         fieldId ... Id of input field.
-        field ... Field of type Lookup.
+        fieldName ... Name of input field.
+        value ... Value of the lookup.
         modalTitle ... Title of lookup modal window.
         queryPrefix ... Prefix prepend to every filter query (optional)
 */-->
-<div th:fragment="lookup(entityIdentifier, fieldName, fieldId, field, modalTitle)" th:assert="${field}" class="lookup dropdown">
-    <input type="hidden" th:assert="${fieldName}" th:name="${fieldName}" th:value="${@jacksonObjectMapper.writeValueAsString(field)}">
+<div th:fragment="lookup(entityIdentifier, fieldId, value, modalTitle)" class="lookup dropdown">
+    <input type="hidden" th:name="${fieldName ?: fieldId}" th:value="${value}">
     <div class="input-group" th:with="lookupController=${@lookupControllerManager.getControllerForEntityIdentifier(entityIdentifier)}">
-        <input type="text" th:assert="${fieldId}" th:id="${fieldId}" th:value="${field.label}" class="form-control"
-               th:classappend="${#fields.hasErrors('__${fieldName}__')}? 'is-invalid'"
+        <input type="text" th:assert="${fieldId}" th:id="${fieldId}" th:value="${@lookupManager.getLabel(entityIdentifier, value)}" class="form-control"
+               th:classappend="${#fields.hasErrors('__${fieldName ?: fieldId}__')}? 'is-invalid'"
                th:data-lookup-labels-url="@{${lookupController.getLookupLabelsUrl()}}"
                th:data-query-prefix="${queryPrefix}" autocomplete="off">
-        <div th:hidden="${#strings.isEmpty(field.id)}" class="input-group-prepend input-group-append reset-wrapper">
+        <div th:hidden="${#strings.isEmpty(value)}" class="input-group-prepend input-group-append reset-wrapper">
             <button class="btn btn-outline-danger" type="button">
                 <i class="fas fa-times"></i>
             </button>
@@ -31,7 +31,7 @@
                 <i class="fas fa-search"></i>
             </button>
         </div>
-        <div class="invalid-feedback" th:each="err : ${#fields.errors('__${fieldName}__')}" th:text="${err}">Error</div>
+        <div class="invalid-feedback" th:each="err : ${#fields.errors('__${fieldName ?: fieldId}__')}" th:text="${err}">Error</div>
     </div>
 
     <div class="dropdown-menu">

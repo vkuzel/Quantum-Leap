@@ -153,8 +153,7 @@ function LookupControl(lookupField) {
     lookupControlRegister[lookupControl.$labelInput.attr('id')] = lookupControl;
 
     lookupControl.setValues = function (id, label) {
-        var json = JSON.stringify({id: id, label: label});
-        lookupControl.$dataInput.val(json);
+        lookupControl.$dataInput.val(id);
         lookupControl.$labelInput.val(label);
         lookupControl.$resetButtonWrapper.attr('hidden', !id);
         lookupControl.$dataInput.trigger('change');
@@ -165,8 +164,7 @@ function LookupControl(lookupField) {
     };
 
     lookupControl.getId = function() {
-        var value = lookupControl.$dataInput.val();
-        return JSON.parse(value).id;
+        return lookupControl.$dataInput.val();
     };
 
     var dropDownControl = {
