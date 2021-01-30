@@ -4,14 +4,28 @@
 package cz.quantumleap.core;
 
 
-import cz.quantumleap.core.tables.*;
+import cz.quantumleap.core.tables.EnumTable;
+import cz.quantumleap.core.tables.EnumValueTable;
+import cz.quantumleap.core.tables.GenerateIntervalsTable;
+import cz.quantumleap.core.tables.IncrementTable;
+import cz.quantumleap.core.tables.NotificationTable;
+import cz.quantumleap.core.tables.PersonRoleTable;
+import cz.quantumleap.core.tables.PersonTable;
+import cz.quantumleap.core.tables.RoleTable;
+import cz.quantumleap.core.tables.TablePreferencesTable;
 import cz.quantumleap.core.tables.records.GenerateIntervalsRecord;
-import org.jooq.*;
-import org.jooq.impl.SchemaImpl;
 
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
+
+import org.jooq.Catalog;
+import org.jooq.Configuration;
+import org.jooq.Field;
+import org.jooq.Result;
+import org.jooq.Sequence;
+import org.jooq.Table;
+import org.jooq.impl.SchemaImpl;
 
 
 /**

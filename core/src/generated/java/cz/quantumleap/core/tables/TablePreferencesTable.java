@@ -7,13 +7,24 @@ package cz.quantumleap.core.tables;
 import cz.quantumleap.core.Core;
 import cz.quantumleap.core.Keys;
 import cz.quantumleap.core.tables.records.TablePreferencesRecord;
-import org.jooq.*;
-import org.jooq.impl.DSL;
-import org.jooq.impl.SQLDataType;
-import org.jooq.impl.TableImpl;
 
 import java.util.Arrays;
 import java.util.List;
+
+import org.jooq.Field;
+import org.jooq.ForeignKey;
+import org.jooq.Identity;
+import org.jooq.Name;
+import org.jooq.Record;
+import org.jooq.Row4;
+import org.jooq.Schema;
+import org.jooq.Table;
+import org.jooq.TableField;
+import org.jooq.TableOptions;
+import org.jooq.UniqueKey;
+import org.jooq.impl.DSL;
+import org.jooq.impl.SQLDataType;
+import org.jooq.impl.TableImpl;
 
 
 /**
@@ -56,11 +67,6 @@ public class TablePreferencesTable extends TableImpl<TablePreferencesRecord> {
      * The column <code>core.table_preferences.enabled_columns</code>.
      */
     public final TableField<TablePreferencesRecord, String[]> ENABLED_COLUMNS = createField(DSL.name("enabled_columns"), SQLDataType.VARCHAR.getArrayDataType(), this, "");
-
-    /**
-     * The column <code>core.table_preferences.filters</code>.
-     */
-    public final TableField<TablePreferencesRecord, JSON> FILTERS = createField(DSL.name("filters"), SQLDataType.JSON.nullable(false).defaultValue(DSL.field("'{}'::json", SQLDataType.JSON)), this, "");
 
     private TablePreferencesTable(Name alias, Table<TablePreferencesRecord> aliased) {
         this(alias, aliased, null);
@@ -142,11 +148,11 @@ public class TablePreferencesTable extends TableImpl<TablePreferencesRecord> {
     }
 
     // -------------------------------------------------------------------------
-    // Row5 type methods
+    // Row4 type methods
     // -------------------------------------------------------------------------
 
     @Override
-    public Row5<Long, String, Boolean, String[], JSON> fieldsRow() {
-        return (Row5) super.fieldsRow();
+    public Row4<Long, String, Boolean, String[]> fieldsRow() {
+        return (Row4) super.fieldsRow();
     }
 }

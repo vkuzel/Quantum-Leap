@@ -5,6 +5,7 @@ package cz.quantumleap.core.tables.records;
 
 
 import cz.quantumleap.core.tables.EnumTable;
+
 import org.jooq.Field;
 import org.jooq.Record1;
 import org.jooq.Record2;

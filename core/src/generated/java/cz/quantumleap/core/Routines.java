@@ -6,11 +6,12 @@ package cz.quantumleap.core;
 
 import cz.quantumleap.core.tables.GenerateIntervalsTable;
 import cz.quantumleap.core.tables.records.GenerateIntervalsRecord;
+
+import java.time.LocalDate;
+
 import org.jooq.Configuration;
 import org.jooq.Field;
 import org.jooq.Result;
-
-import java.time.LocalDate;
 
 
 /**
