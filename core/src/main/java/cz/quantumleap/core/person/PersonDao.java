@@ -18,8 +18,8 @@ import static cz.quantumleap.core.tables.PersonTable.PERSON;
 @Repository
 public class PersonDao extends DaoStub<PersonTable> {
 
-    protected PersonDao(DSLContext dslContext, LookupDaoManager lookupDaoManager, EnumManager enumManager, RecordAuditor recordAuditor) {
-        super(createEntity(), dslContext, lookupDaoManager, enumManager, recordAuditor);
+    protected PersonDao(DSLContext dslContext, RecordAuditor recordAuditor) {
+        super(createEntity(), dslContext, recordAuditor);
     }
 
     private static Entity<PersonTable> createEntity() {

@@ -24,10 +24,10 @@ public class LookupListDaoStub<TABLE extends Table<? extends Record>> implements
     protected final ListDao<TABLE> listDao;
     protected final LookupDao<TABLE> lookupDao;
 
-    public LookupListDaoStub(Entity<TABLE> entity, DSLContext dslContext, LookupDaoManager lookupDaoManager, EnumManager enumManager) {
+    public LookupListDaoStub(Entity<TABLE> entity, DSLContext dslContext) {
         this.entity = entity;
         this.dslContext = dslContext;
-        this.mapperFactory = new MapperFactory<>(entity, lookupDaoManager, enumManager);
+        this.mapperFactory = new MapperFactory<>(entity);
         this.listDao = new DefaultListDao<>(entity, dslContext, mapperFactory);
         this.lookupDao = new DefaultLookupDao<>(entity, dslContext, listDao);
     }

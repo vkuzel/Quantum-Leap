@@ -26,10 +26,9 @@ public class IncrementDao implements DetailDao<IncrementTable> {
     private final DSLContext dslContext;
     private final DetailDao<IncrementTable> detailDao;
 
-    public IncrementDao(DSLContext dslContext, LookupDaoManager lookupDaoManager, EnumManager enumManager, RecordAuditor recordAuditor) {
+    public IncrementDao(DSLContext dslContext, RecordAuditor recordAuditor) {
         this.dslContext = dslContext;
         this.entity = createEntity();
-        MapperFactory<IncrementTable> mapperFactory = new MapperFactory<>(entity, lookupDaoManager, enumManager);
         this.detailDao = new DefaultDetailDao<>(entity, dslContext, recordAuditor);
     }
 

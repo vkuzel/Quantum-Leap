@@ -81,7 +81,7 @@ public class CliApplication implements CommandLineRunner {
 
         @Bean
         public IncrementDao incrementDao() {
-            return new IncrementDao(dslContext, null, null, new RecordAuditor());
+            return new IncrementDao(dslContext, new RecordAuditor());
         }
     }
 

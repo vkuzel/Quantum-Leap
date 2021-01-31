@@ -28,8 +28,8 @@ import static cz.quantumleap.core.tables.PersonRoleTable.PERSON_ROLE;
 @Repository
 public class NotificationDao extends DaoStub<NotificationTable> {
 
-    protected NotificationDao(DSLContext dslContext, LookupDaoManager lookupDaoManager, EnumManager enumManager, RecordAuditor recordAuditor) {
-        super(createEntity(), dslContext, lookupDaoManager, enumManager, recordAuditor);
+    protected NotificationDao(DSLContext dslContext, RecordAuditor recordAuditor) {
+        super(createEntity(), dslContext, recordAuditor);
     }
 
     private static Entity<NotificationTable> createEntity() {

@@ -13,12 +13,12 @@ import java.util.stream.Collectors;
 
 public class Table<ROW> implements Iterable<ROW> {
 
-    private final EntityIdentifier entityIdentifier;
+    private final EntityIdentifier<?> entityIdentifier;
     private final List<Column> columns;
     private final List<ROW> rows;
     private final TablePreferences tablePreferences;
 
-    public Table(EntityIdentifier entityIdentifier, List<Column> columns, List<ROW> rows, TablePreferences tablePreferences) {
+    public Table(EntityIdentifier<?> entityIdentifier, List<Column> columns, List<ROW> rows, TablePreferences tablePreferences) {
         this.entityIdentifier = entityIdentifier;
         this.columns = columns;
         this.rows = rows;
@@ -29,7 +29,7 @@ public class Table<ROW> implements Iterable<ROW> {
         return new Builder<>(entityIdentifier, columns, rows, tablePreferences);
     }
 
-    public EntityIdentifier getEntityIdentifier() {
+    public EntityIdentifier<?> getEntityIdentifier() {
         return entityIdentifier;
     }
 
@@ -122,12 +122,12 @@ public class Table<ROW> implements Iterable<ROW> {
 
     public static class Builder<ROW> {
 
-        private EntityIdentifier entityIdentifier;
+        private EntityIdentifier<?> entityIdentifier;
         private List<Column> columns;
         private List<ROW> rows;
         private TablePreferences tablePreferences;
 
-        public Builder(EntityIdentifier entityIdentifier, List<Column> columns, List<ROW> rows, TablePreferences tablePreferences) {
+        public Builder(EntityIdentifier<?> entityIdentifier, List<Column> columns, List<ROW> rows, TablePreferences tablePreferences) {
             this.entityIdentifier = entityIdentifier;
             this.columns = new ArrayList<>(columns);
             this.rows = new ArrayList<>(rows);

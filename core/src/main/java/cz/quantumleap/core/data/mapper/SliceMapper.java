@@ -1,7 +1,5 @@
 package cz.quantumleap.core.data.mapper;
 
-import cz.quantumleap.core.data.EnumManager;
-import cz.quantumleap.core.data.LookupDaoManager;
 import cz.quantumleap.core.data.entity.Entity;
 import cz.quantumleap.core.data.transport.Slice;
 import cz.quantumleap.core.data.transport.SliceRequest;
@@ -23,10 +21,10 @@ public class SliceMapper<TABLE extends org.jooq.Table<? extends Record>> impleme
     private int recordCount = 0;
     private boolean canExtend = false;
 
-    SliceMapper(Entity<TABLE> entity, LookupDaoManager lookupDaoManager, EnumManager enumManager, SliceRequest sliceRequest, List<TablePreferences> tablePreferencesList) {
+    SliceMapper(Entity<TABLE> entity, SliceRequest sliceRequest, List<TablePreferences> tablePreferencesList) {
         this.sliceRequest = sliceRequest;
         this.tablePreferencesList = tablePreferencesList;
-        this.tableMapper = new TableMapper<>(entity, lookupDaoManager, enumManager, sliceRequest.getSort(), sliceRequest.getSize());
+        this.tableMapper = new TableMapper<>(entity, sliceRequest.getSort(), sliceRequest.getSize());
     }
 
     @Override

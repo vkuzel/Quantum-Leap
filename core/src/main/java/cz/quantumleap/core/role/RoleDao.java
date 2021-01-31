@@ -19,8 +19,8 @@ import static cz.quantumleap.core.tables.RoleTable.ROLE;
 @Repository
 public class RoleDao extends DaoStub<RoleTable> {
 
-    protected RoleDao(DSLContext dslContext, LookupDaoManager lookupDaoManager, EnumManager enumManager, RecordAuditor recordAuditor) {
-        super(createEntity(), dslContext, lookupDaoManager, enumManager, recordAuditor);
+    protected RoleDao(DSLContext dslContext, RecordAuditor recordAuditor) {
+        super(createEntity(), dslContext, recordAuditor);
     }
 
     private static Entity<RoleTable> createEntity() {

@@ -67,7 +67,7 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
                 .where(conditions)
                 .orderBy(entity.getSortingBuilder().build(request.getSort()))
                 .limit(limit.getOffset(), limit.getNumberOfRows())
-                .fetch(mapperFactory.createTransportMapper(type)); // TODO Is this mapper optimized for high volume lists?
+                .fetchInto(type);
     }
 
     @Override
@@ -75,7 +75,7 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
         // TODO Default condition...
         return dslContext.selectFrom(getTable())
                 .where(condition)
-                .fetch(mapperFactory.createTransportMapper(type)); // TODO Is this mapper optimized for high volume lists?
+                .fetchInto(type);
     }
 
     private SliceRequest setDefaultOrder(SliceRequest sliceRequest) {
