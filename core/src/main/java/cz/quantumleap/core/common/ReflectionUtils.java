@@ -1,9 +1,25 @@
 package cz.quantumleap.core.common;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.List;
 
 final public class ReflectionUtils {
+
+    /**
+     * Returns declared fields on a class or its superclasses. Does not return
+     * static fields.
+     */
+    public static List<Field> getClassFields(Class<?> type) {
+        try {
+            Field[] fields = type.getDeclaredFields();
+            return Arrays.asList(fields);
+        } catch (SecurityException e) {
+            throw new IllegalStateException(e);
+        }
+    }
 
     /**
      * Returns a value of a field which may be private or declared on a
@@ -12,7 +28,7 @@ final public class ReflectionUtils {
     @SuppressWarnings("unused")
     public static Object getClassFieldValue(Class<?> type, Object instance, String fieldName) {
         try {
-            var field = type.getDeclaredField(fieldName);
+            Field field = type.getDeclaredField(fieldName);
             boolean accessible = field.canAccess(instance);
             try {
                 if (!accessible) {
