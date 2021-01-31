@@ -26,8 +26,8 @@ public class DaoStub<TABLE extends Table<? extends Record>> implements DetailDao
     protected DaoStub(Entity<TABLE> entity, DSLContext dslContext, LookupDaoManager lookupDaoManager, EnumManager enumManager, RecordAuditor recordAuditor) {
         this.entity = entity;
         this.dslContext = dslContext;
-        this.mapperFactory = new MapperFactory<>(entity, dslContext, lookupDaoManager, enumManager);
-        this.detailDao = new DefaultDetailDao<>(entity, dslContext, mapperFactory, recordAuditor);
+        this.mapperFactory = new MapperFactory<>(entity, lookupDaoManager, enumManager);
+        this.detailDao = new DefaultDetailDao<>(entity, dslContext, recordAuditor);
         this.listDao = new DefaultListDao<>(entity, dslContext, mapperFactory);
         this.lookupDao = new DefaultLookupDao<>(entity, dslContext, listDao);
     }

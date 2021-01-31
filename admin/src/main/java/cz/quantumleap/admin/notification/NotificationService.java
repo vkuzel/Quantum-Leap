@@ -81,7 +81,7 @@ public class NotificationService {
     public void resolve(long personId, long id) {
         Notification notification = get(personId, id);
         Validate.isTrue(notification.getResolvedAt() == null);
-        notification.setResolvedBy(Lookup.withoutLabel(personId, PersonTable.PERSON));
+        notification.setResolvedBy(personId);
         notification.setResolvedAt(LocalDateTime.now());
         notificationDao.save(notification);
     }

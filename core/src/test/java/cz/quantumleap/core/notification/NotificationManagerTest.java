@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Collections;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 @CoreSpringBootTest
 class NotificationManagerTest {
 
@@ -42,9 +44,9 @@ class NotificationManagerTest {
 
         // then
         Notification notification = notificationDao.fetchById(id, Notification.class);
-        Assertions.assertEquals(NOTIFICATION_CODE1, notification.getCode());
-        Assertions.assertEquals(person.getId(), notification.getPersonId().getId());
-        Assertions.assertTrue(notification.getRoleId().isEmpty());
+        assertEquals(NOTIFICATION_CODE1, notification.getCode());
+        assertEquals(person.getId(), notification.getPersonId());
+        assertNull(notification.getRoleId());
     }
 
     @Test
@@ -71,9 +73,9 @@ class NotificationManagerTest {
 
         // then
         Notification notification = notificationDao.fetchById(id, Notification.class);
-        Assertions.assertEquals(NOTIFICATION_CODE1, notification.getCode());
-        Assertions.assertEquals(role.getId(), notification.getRoleId().getId());
-        Assertions.assertTrue(notification.getPersonId().isEmpty());
+        assertEquals(NOTIFICATION_CODE1, notification.getCode());
+        assertEquals(role.getId(), notification.getRoleId());
+        assertNull(notification.getPersonId());
     }
 
     @Test
@@ -87,9 +89,9 @@ class NotificationManagerTest {
 
         // then
         Notification notification = notificationDao.fetchById(id, Notification.class);
-        Assertions.assertEquals(NOTIFICATION_CODE1, notification.getCode());
-        Assertions.assertTrue(notification.getPersonId().isEmpty());
-        Assertions.assertTrue(notification.getRoleId().isEmpty());
+        assertEquals(NOTIFICATION_CODE1, notification.getCode());
+        assertNull(notification.getPersonId());
+        assertNull(notification.getRoleId());
     }
 
     private List<NotificationDefinition> createNotificationDefinition(String notificationCode) {

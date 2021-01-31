@@ -48,8 +48,8 @@ public class NotificationDao extends DaoStub<NotificationTable> {
     Notification fetchUnresolvedByDefinition(Notification notification) {
         String code = notification.getCode();
         List<String> arguments = notification.getMessageArguments();
-        Lookup<PersonTable> personId = notification.getPersonId();
-        Lookup<RoleTable> roleId = notification.getRoleId();
+        Long personId = notification.getPersonId();
+        Long roleId = notification.getRoleId();
 
         Condition condition = NOTIFICATION.CODE.eq(code)
                 .and(NOTIFICATION.RESOLVED_AT.isNull());
@@ -58,13 +58,13 @@ public class NotificationDao extends DaoStub<NotificationTable> {
         } else {
             condition = condition.and("message_arguments = ARRAY[] :: VARCHAR[]", arguments.toArray());
         }
-        if (!personId.isEmpty()) {
-            condition = condition.and(NOTIFICATION.PERSON_ID.eq((Long) personId.getId()));
+        if (personId != null) {
+            condition = condition.and(NOTIFICATION.PERSON_ID.eq(personId));
         } else {
             condition = condition.and(NOTIFICATION.PERSON_ID.isNull());
         }
-        if (!roleId.isEmpty()) {
-            condition = condition.and(NOTIFICATION.ROLE_ID.eq((Long) roleId.getId()));
+        if (roleId != null) {
+            condition = condition.and(NOTIFICATION.ROLE_ID.eq(roleId));
         } else {
             condition = condition.and(NOTIFICATION.ROLE_ID.isNull());
         }

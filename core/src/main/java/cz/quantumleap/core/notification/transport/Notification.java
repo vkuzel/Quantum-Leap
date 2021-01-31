@@ -14,11 +14,11 @@ public class Notification {
     private Long id;
     private String code;
     private List<String> messageArguments;
-    private Lookup<PersonTable> personId = new Lookup<>();
-    private Lookup<RoleTable> roleId = new Lookup<>();
+    private Long personId;
+    private Long roleId;
     private LocalDateTime createdAt;
     private LocalDateTime resolvedAt;
-    private Lookup<PersonTable> resolvedBy = new Lookup<>();
+    private Long resolvedBy;
     private NotificationDefinition definition;
 
     public Long getId() {
@@ -51,19 +51,19 @@ public class Notification {
                 .collect(Collectors.joining(","));
     }
 
-    public Lookup<PersonTable> getPersonId() {
+    public Long getPersonId() {
         return personId;
     }
 
-    public void setPersonId(Lookup<PersonTable> personId) {
+    public void setPersonId(Long personId) {
         this.personId = personId;
     }
 
-    public Lookup<RoleTable> getRoleId() {
+    public Long getRoleId() {
         return roleId;
     }
 
-    public void setRoleId(Lookup<RoleTable> roleId) {
+    public void setRoleId(Long roleId) {
         this.roleId = roleId;
     }
 
@@ -83,11 +83,11 @@ public class Notification {
         this.resolvedAt = resolvedAt;
     }
 
-    public Lookup<PersonTable> getResolvedBy() {
+    public Long getResolvedBy() {
         return resolvedBy;
     }
 
-    public void setResolvedBy(Lookup<PersonTable> resolvedBy) {
+    public void setResolvedBy(Long resolvedBy) {
         this.resolvedBy = resolvedBy;
     }
 

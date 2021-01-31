@@ -27,7 +27,7 @@ public class LookupListDaoStub<TABLE extends Table<? extends Record>> implements
     public LookupListDaoStub(Entity<TABLE> entity, DSLContext dslContext, LookupDaoManager lookupDaoManager, EnumManager enumManager) {
         this.entity = entity;
         this.dslContext = dslContext;
-        this.mapperFactory = new MapperFactory<>(entity, dslContext, lookupDaoManager, enumManager);
+        this.mapperFactory = new MapperFactory<>(entity, lookupDaoManager, enumManager);
         this.listDao = new DefaultListDao<>(entity, dslContext, mapperFactory);
         this.lookupDao = new DefaultLookupDao<>(entity, dslContext, listDao);
     }

@@ -27,13 +27,11 @@ import static com.google.common.base.CaseFormat.UPPER_CAMEL;
 public class MapperFactory<TABLE extends Table<? extends Record>> {
 
     private final Entity<TABLE> entity;
-    private final ConverterProvider converterProvider;
     private final LookupDaoManager lookupDaoManager;
     private final EnumManager enumManager;
 
-    public MapperFactory(Entity<TABLE> entity, DSLContext dslContext, LookupDaoManager lookupDaoManager, EnumManager enumManager) {
+    public MapperFactory(Entity<TABLE> entity, LookupDaoManager lookupDaoManager, EnumManager enumManager) {
         this.entity = entity;
-        this.converterProvider = dslContext.configuration().converterProvider();
         this.lookupDaoManager = lookupDaoManager;
         this.enumManager = enumManager;
     }
@@ -42,124 +40,8 @@ public class MapperFactory<TABLE extends Table<? extends Record>> {
         return new SliceMapper<>(entity, lookupDaoManager, enumManager, sliceRequest, tablePreferencesList);
     }
 
-    public <T> TransportUnMapper<T> createTransportUnMapper(Class<T> transportType) {
-        return new TransportUnMapper<>(transportType);
-    }
-
     public <T> TransportMapper<T> createTransportMapper(Class<T> transportType) {
         return new TransportMapper<>(transportType);
-    }
-
-    public class TransportUnMapper<T> {
-
-        private final Map<String, Pair<Method, Class<?>>> transportGetters;
-
-        private TransportUnMapper(Class<T> transportType) {
-            this.transportGetters = getInstanceGetters(transportType);
-        }
-
-        public Record unMap(T transport, Record record) {
-            if (hasCustomConvertibleTypes(record.fields())) {
-                for (Field<?> field : record.fields()) {
-                    setValueToRecordField(transport, field, record);
-                }
-            } else {
-                record.from(transport);
-            }
-            return record;
-        }
-
-        private void setValueToRecordField(T transport, Field<?> field, Record record) {
-            Pair<Method, Class<?>> getter = getGetter(field);
-            if (getter != null) {
-                DataType<?> databaseType = field.getDataType();
-                Object value = getValue(transport, getter.getKey());
-                if (value instanceof Lookup) {
-                    value = ((Lookup<?>) value).getId();
-                }
-
-                if (value != null) {
-                    Class<?> userType = value.getClass();
-                    Converter<Object, Object> converter = resolveConverter(databaseType, userType);
-                    record.setValue(castField(field), value, converter);
-                } else if (databaseType.nullable()) {
-                    record.setValue(castField(field), null);
-                }
-            }
-        }
-
-        @SuppressWarnings("unchecked")
-        private Converter<Object, Object> resolveConverter(DataType<?> dataType, Class<?> userType) {
-            Class<?> databaseType = dataType.getType();
-            return (Converter<Object, Object>) converterProvider.provide(databaseType, userType);
-        }
-
-        @SuppressWarnings("unchecked")
-        private Field<Object> castField(Field<?> field) {
-            return (Field<Object>) field;
-        }
-
-        private Object getValue(T transport, Method getter) {
-            try {
-                return getter.invoke(transport);
-            } catch (IllegalAccessException | InvocationTargetException e) {
-                throw new IllegalStateException(e);
-            }
-        }
-
-        private boolean hasCustomConvertibleTypes(Field<?>[] fields) {
-            for (Pair<Method, Class<?>> getter : transportGetters.values()) {
-                Class<?> type = getter.getValue();
-                if (type == Lookup.class) {
-                    return true;
-                }
-            }
-            // jOOQ currently does not use converters for unmapping, provided
-            // by a custom ConverterProvider. In that case, the converter has
-            // to be invoked manually.
-            for (Field<?> field : fields) {
-                Class<?> type = field.getDataType().getType();
-                if (type == JSON.class || type == YearToSecond.class) {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        private Pair<Method, Class<?>> getGetter(Field<?> field) {
-            String fieldName = field.getName();
-            String withoutPrefix = LOWER_UNDERSCORE.to(UPPER_CAMEL, fieldName.toLowerCase());
-
-            String setGetterName = "get" + withoutPrefix;
-            Pair<Method, Class<?>> getter = transportGetters.get(setGetterName);
-            if (getter != null) {
-                return getter;
-            }
-
-            String isGetterName = "is" + withoutPrefix;
-            return transportGetters.get(isGetterName);
-        }
-
-        private Map<String, Pair<Method, Class<?>>> getInstanceGetters(Class<?> type) {
-            Method[] methods = type.getMethods();
-            Map<String, Pair<Method, Class<?>>> getters = new HashMap<>(methods.length / 2);
-            for (Method method : methods) {
-                // Non static methods only
-                if ((method.getModifiers() & Modifier.STATIC) != 0) {
-                    continue;
-                }
-                // A getter with no parameters only
-                if (!(method.getName().startsWith("get") || method.getName().startsWith("is")) || method.getParameterCount() != 0) {
-                    continue;
-                }
-
-                getters.put(
-                        method.getName(),
-                        Pair.of(method, method.getReturnType())
-                );
-            }
-            return getters;
-        }
     }
 
     public class TransportMapper<T> implements RecordMapper<Record, T> {

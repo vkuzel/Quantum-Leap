@@ -12,13 +12,11 @@ public final class DefaultDetailDao<TABLE extends Table<? extends Record>> imple
 
     private final Entity<TABLE> entity;
     private final DSLContext dslContext;
-    private final MapperFactory<TABLE> mapperFactory;
     private final RecordAuditor recordAuditor;
 
-    public DefaultDetailDao(Entity<TABLE> entity, DSLContext dslContext, MapperFactory<TABLE> mapperFactory, RecordAuditor recordAuditor) {
+    public DefaultDetailDao(Entity<TABLE> entity, DSLContext dslContext, RecordAuditor recordAuditor) {
         this.entity = entity;
         this.dslContext = dslContext;
-        this.mapperFactory = mapperFactory;
         this.recordAuditor = recordAuditor;
     }
 
@@ -38,7 +36,7 @@ public final class DefaultDetailDao<TABLE extends Table<? extends Record>> imple
         Table<? extends Record> table = entity.getTable();
         return dslContext.selectFrom(table)
                 .where(condition)
-                .fetchOne(mapperFactory.createTransportMapper(type));
+                .fetchOneInto(type);
     }
 
     @Override
@@ -55,11 +53,10 @@ public final class DefaultDetailDao<TABLE extends Table<? extends Record>> imple
 
         Class<T> detailType = getDetailClass(details.get(0));
         List<Record> records = new ArrayList<>(details.size());
+        RecordFactory<T> recordFactory = new RecordFactory<>(dslContext, detailType, entity.getTable());
 
         for (T detail : details) {
-            Record record = mapperFactory
-                    .createTransportUnMapper(detailType)
-                    .unMap(detail, dslContext.newRecord((Table<?>) entity.getTable()));
+            Record record = recordFactory.createRecord(detail);
             records.add(record);
         }
 
@@ -94,12 +91,12 @@ public final class DefaultDetailDao<TABLE extends Table<? extends Record>> imple
         Map<? extends Field<?>, ?> changedValues = getChangedValues(record);
 
         Table<? extends Record> table = entity.getTable();
-        Record inserted = dslContext.insertInto(table)
+        return dslContext.insertInto(table)
                 .set(changedValues)
                 .returning(table.fields())
-                .fetchOne();
-        Validate.notNull(inserted);
-        return inserted.map(mapperFactory.createTransportMapper(resultType));
+                .fetchOptional()
+                .map(r -> r.into(resultType))
+                .orElseThrow();
     }
 
     private <T> T update(Record record, Condition condition, Class<T> resultType) {
@@ -108,13 +105,13 @@ public final class DefaultDetailDao<TABLE extends Table<? extends Record>> imple
         Map<Field<?>, Object> changedValues = getChangedValues(record);
 
         Table<? extends Record> table = entity.getTable();
-        Record updated = dslContext.update(table)
+        return dslContext.update(table)
                 .set(changedValues)
                 .where(condition)
                 .returning(table.fields())
-                .fetchOne();
-        Validate.notNull(updated);
-        return updated.map(mapperFactory.createTransportMapper(resultType));
+                .fetchOptional()
+                .map(r -> r.into(resultType))
+                .orElseThrow();
     }
 
     private Map<Field<?>, Object> getChangedValues(Record record) {
@@ -143,15 +140,15 @@ public final class DefaultDetailDao<TABLE extends Table<? extends Record>> imple
 
     @Override
     public <T, F> List<T> saveDetailsAssociatedBy(TableField<?, F> foreignKey, F foreignId, Collection<T> details, Class<T> detailType) {
-        MapperFactory<TABLE>.TransportUnMapper<T> unMapper = mapperFactory.createTransportUnMapper(detailType);
         Table<? extends Record> table = entity.getTable();
         Field<?> primaryKeyField = entity.getPrimaryKeyField();
+        RecordFactory<T> recordFactory = new RecordFactory<>(dslContext, detailType, table);
 
         List<Record> records = new ArrayList<>(details.size());
         Set<Object> ids = new HashSet<>(details.size());
 
         for (T detail : details) {
-            Record record = unMapper.unMap(detail, dslContext.newRecord(table));
+            Record record = recordFactory.createRecord(detail);
             record.set(foreignKey, foreignId);
             records.add(record);
             ids.add(record.get(primaryKeyField));
