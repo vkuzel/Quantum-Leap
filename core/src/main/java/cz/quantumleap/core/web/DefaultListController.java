@@ -3,8 +3,8 @@ package cz.quantumleap.core.web;
 import cz.quantumleap.core.business.ListService;
 import cz.quantumleap.core.common.Utils;
 import cz.quantumleap.core.data.entity.EntityIdentifier;
-import cz.quantumleap.core.data.transport.Slice;
 import cz.quantumleap.core.data.transport.SliceRequest;
+import cz.quantumleap.core.data.transport.TableSlice;
 import org.springframework.ui.Model;
 
 import javax.servlet.http.HttpServletRequest;
@@ -30,7 +30,8 @@ public final class DefaultListController implements ListController {
     @Override
     public String list(SliceRequest sliceRequest, Model model, HttpServletRequest request) {
         EntityIdentifier<?> identifier = listService.getListEntityIdentifier(null);
-        Slice<?> slice = listService.findSlice(sliceRequest);
+        TableSlice slice = listService.findSlice(sliceRequest);
+
         model.addAttribute(TABLE_SLICE_MODEL_ATTRIBUTE_NAME, slice);
         model.addAttribute(ENTITY_IDENTIFIER_MODEL_ATTRIBUTE_NAME, identifier.toString());
         model.addAttribute(DETAIL_URL_MODEL_ATTRIBUTE_NAME, detailUrl);

@@ -3,7 +3,7 @@ package cz.quantumleap.core.data.mapper;
 import org.jooq.Field;
 import org.jooq.Table;
 
-public class MapperUtils {
+public class MapperUtils { // TODO Dro this method...
 
     public static String resolveDatabaseTableNameWithSchema(Table<?> table) {
         String name = table.getName();

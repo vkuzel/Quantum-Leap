@@ -3,9 +3,8 @@ package cz.quantumleap.core.business;
 import cz.quantumleap.core.data.ListDao;
 import cz.quantumleap.core.data.LookupDao;
 import cz.quantumleap.core.data.entity.EntityIdentifier;
-import cz.quantumleap.core.data.transport.Slice;
 import cz.quantumleap.core.data.transport.SliceRequest;
-import cz.quantumleap.core.data.transport.Table.Column;
+import cz.quantumleap.core.data.transport.TableSlice;
 import org.jooq.Record;
 import org.jooq.Table;
 
@@ -42,7 +41,7 @@ public class LookupListServiceStub implements ListService, LookupService {
     }
 
     @Override
-    public Slice<Map<Column, Object>> findSlice(SliceRequest sliceRequest) {
+    public TableSlice findSlice(SliceRequest sliceRequest) {
         return listService.findSlice(sliceRequest);
     }
 }

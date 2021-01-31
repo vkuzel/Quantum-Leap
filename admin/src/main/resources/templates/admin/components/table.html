@@ -29,11 +29,12 @@
     </thead>
     <tbody>
     <tr th:each="row : ${tableSlice}">
+        <!-- TODO Fix lookup field detection -->
         <td th:each="column : ${tableSlice.getColumns()}" th:with="primaryKey=${column.primaryKey && !#strings.isEmpty(detailUrl)}" th:classappend="${primaryKey} ? 'primary-key'" th:switch="${column.type}">
-            <a th:if="${primaryKey}" th:href="@{|${detailUrl}/${row.get(column)}|}" th:text="${{row.get(column)}}">id</a>
-            <a th:case="${T(cz.quantumleap.core.data.transport.Lookup)}" th:if="${!#strings.isEmpty(row.get(column).id)}" th:with="detailUrl=${@lookupControllerManager.getControllerForEntityIdentifier(row.get(column).entityIdentifier).getDetailUrl()}"
-                  th:href="|${detailUrl}/${row.get(column).id}|" th:text="${{row.get(column).label}}">Lookup</a>
-            <span th:case="*" th:if="${!primaryKey && cellTemplate__${column.name}__ == null}" th:text="${{row.get(column)}}" th:remove="tag">Standard column</span>
+            <a th:if="${primaryKey}" th:href="@{|${detailUrl}/${tableSlice.getValue(column, row)}|}" th:text="${{tableSlice.getValue(column, row)}}">id</a>
+            <a th:case="${T(cz.quantumleap.core.data.transport.Lookup)}" th:if="${!#strings.isEmpty(tableSlice.getValue(column, row).id)}" th:with="detailUrl=${@lookupControllerManager.getControllerForEntityIdentifier(tableSlice.getValue(column, row).entityIdentifier).getDetailUrl()}"
+                  th:href="|${detailUrl}/${tableSlice.getValue(column, row).id}|" th:text="${{tableSlice.getValue(column, row).label}}">Lookup</a>
+            <span th:case="*" th:if="${!primaryKey && cellTemplate__${column.name}__ == null}" th:text="${{tableSlice.getValue(column, row)}}" th:remove="tag">Standard column</span>
             <span th:replace="${__|cellTemplate${column.name}|__} ?: ~{}">Custom column</span>
         </td>
     </tr>

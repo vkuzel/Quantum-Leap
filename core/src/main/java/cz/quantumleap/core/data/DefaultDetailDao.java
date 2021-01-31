@@ -2,7 +2,6 @@ package cz.quantumleap.core.data;
 
 import cz.quantumleap.core.data.entity.Entity;
 import cz.quantumleap.core.data.entity.EntityIdentifier;
-import cz.quantumleap.core.data.mapper.MapperFactory;
 import org.apache.commons.lang3.Validate;
 import org.jooq.*;
 

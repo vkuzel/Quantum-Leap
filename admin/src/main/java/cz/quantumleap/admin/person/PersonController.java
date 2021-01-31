@@ -9,8 +9,8 @@ import cz.quantumleap.admin.personrole.PersonRoleController;
 import cz.quantumleap.admin.personrole.PersonRoleService;
 import cz.quantumleap.core.common.Utils;
 import cz.quantumleap.core.data.entity.EntityIdentifier;
-import cz.quantumleap.core.data.transport.Slice;
 import cz.quantumleap.core.data.transport.SliceRequest;
+import cz.quantumleap.core.data.transport.TableSlice;
 import cz.quantumleap.core.person.transport.Person;
 import cz.quantumleap.core.security.WebSecurityExpressionEvaluator;
 import cz.quantumleap.core.session.SessionService;
@@ -97,7 +97,7 @@ public class PersonController extends AdminController {
         }
 
         personRoleSliceRequest.getFilter().put("person_id", person.getId());
-        Slice<?> slice = personRoleService.findSlice(personRoleSliceRequest);
+        TableSlice slice = personRoleService.findSlice(personRoleSliceRequest);
         EntityIdentifier<PersonRoleTable> identifier = personRoleService.getDetailEntityIdentifier(PersonRoleTable.class);
         List<SessionDetail> sessions = sessionService.fetchListByEmail(person.getEmail());
 

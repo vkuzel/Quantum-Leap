@@ -2,10 +2,8 @@ package cz.quantumleap.core.data;
 
 import cz.quantumleap.core.data.entity.Entity;
 import cz.quantumleap.core.data.entity.EntityIdentifier;
-import cz.quantumleap.core.data.mapper.MapperFactory;
-import cz.quantumleap.core.data.transport.Slice;
 import cz.quantumleap.core.data.transport.SliceRequest;
-import cz.quantumleap.core.data.transport.Table.Column;
+import cz.quantumleap.core.data.transport.TableSlice;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Record;
@@ -20,15 +18,13 @@ public class LookupListDaoStub<TABLE extends Table<? extends Record>> implements
     protected final Entity<TABLE> entity;
     protected final DSLContext dslContext;
 
-    protected final MapperFactory<TABLE> mapperFactory;
     protected final ListDao<TABLE> listDao;
     protected final LookupDao<TABLE> lookupDao;
 
     public LookupListDaoStub(Entity<TABLE> entity, DSLContext dslContext) {
         this.entity = entity;
         this.dslContext = dslContext;
-        this.mapperFactory = new MapperFactory<>(entity);
-        this.listDao = new DefaultListDao<>(entity, dslContext, mapperFactory);
+        this.listDao = new DefaultListDao<>(entity, dslContext);
         this.lookupDao = new DefaultLookupDao<>(entity, dslContext, listDao);
     }
 
@@ -59,7 +55,7 @@ public class LookupListDaoStub<TABLE extends Table<? extends Record>> implements
 
 
     @Override
-    public Slice<Map<Column, Object>> fetchSlice(SliceRequest sliceRequest) {
+    public TableSlice fetchSlice(SliceRequest sliceRequest) {
         return listDao.fetchSlice(sliceRequest);
     }
 

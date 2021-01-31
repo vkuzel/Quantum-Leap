@@ -26,13 +26,14 @@
     <tbody th:remove="all-but-first">
     <tr th:each="row : ${tableSlice}"
         th:with="primaryKeyColumn=${tableSlice.getColumns().?[primaryKey].get(0)}"
-        th:data-id="${row.get(primaryKeyColumn)}">
+        th:data-id="${tableSlice.getValue(primaryKeyColumn, row)}">
         <td th:each="column : ${tableSlice.getColumns()}">
+            <!-- TODO Fix lookup field detection -->
             <span th:if="${column.type != T(cz.quantumleap.core.data.transport.Lookup)}"
-                  th:text="${{row.get(column)}}"
+                  th:text="${{tableSlice.getValue(column, row)}}"
                   th:remove="tag">Standard value</span>
             <span th:if="${column.type == T(cz.quantumleap.core.data.transport.Lookup)}"
-                  th:text="${{row.get(column).label}}"
+                  th:text="${{tableSlice.getValue(column, row).label}}"
                   th:remove="tag">Lookup value</span>
         </td>
     </tr>

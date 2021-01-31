@@ -8,7 +8,6 @@ import java.util.Map;
 
 public class SliceRequest {
 
-    // TODO Make this just a pojo... extend to Slice, limits to mapper(?)
     public static final int CHUNK_SIZE = 15;
     public static final int MAX_ITEMS = 2000;
 

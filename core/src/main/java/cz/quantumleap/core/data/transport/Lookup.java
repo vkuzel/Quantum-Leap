@@ -4,6 +4,7 @@ import cz.quantumleap.core.data.entity.EntityIdentifier;
 import org.jooq.Record;
 import org.jooq.Table;
 
+// TODO Integrate into TableSlice
 public class Lookup<TABLE extends Table<? extends Record>> {
 
     private Object id;

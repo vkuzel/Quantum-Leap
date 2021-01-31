@@ -11,22 +11,27 @@ import java.util.List;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
-public class Table<ROW> implements Iterable<ROW> {
+public class TableSlice implements Iterable<List<Object>> {
 
     private final EntityIdentifier<?> entityIdentifier;
-    private final List<Column> columns;
-    private final List<ROW> rows;
     private final TablePreferences tablePreferences;
+    private final SliceRequest sliceRequest;
+    private final boolean canExtend;
 
-    public Table(EntityIdentifier<?> entityIdentifier, List<Column> columns, List<ROW> rows, TablePreferences tablePreferences) {
+    private final List<Column> columns;
+    private final List<List<Object>> rows;
+
+    public TableSlice(EntityIdentifier<?> entityIdentifier, TablePreferences tablePreferences, SliceRequest sliceRequest, boolean canExtend, List<Column> columns, List<List<Object>> rows) {
         this.entityIdentifier = entityIdentifier;
+        this.tablePreferences = tablePreferences;
+        this.sliceRequest = sliceRequest;
+        this.canExtend = canExtend;
         this.columns = columns;
         this.rows = rows;
-        this.tablePreferences = tablePreferences;
     }
 
-    public Builder<ROW> createBuilder() {
-        return new Builder<>(entityIdentifier, columns, rows, tablePreferences);
+    public Builder createBuilder() {
+        return new Builder(entityIdentifier, tablePreferences, sliceRequest, canExtend, columns, rows);
     }
 
     public EntityIdentifier<?> getEntityIdentifier() {
@@ -53,18 +58,31 @@ public class Table<ROW> implements Iterable<ROW> {
         throw new IllegalArgumentException("Column " + name + " not found!");
     }
 
-    public List<ROW> getRows() {
+    public List<List<Object>> getRows() {
         return rows;
+    }
+
+    public Object getValue(Column column, List<Object> row) {
+        int columnIndex = columns.indexOf(column);
+        return row.get(columnIndex);
     }
 
     @NotNull
     @Override
-    public Iterator<ROW> iterator() {
+    public Iterator<List<Object>> iterator() {
         return rows.iterator();
     }
 
     public boolean isEmpty() {
         return rows.isEmpty();
+    }
+
+    public boolean canExtend() {
+        return canExtend;
+    }
+
+    public SliceRequest extend() {
+        return canExtend ? sliceRequest.extend() : null;
     }
 
     public static class Column {
@@ -120,21 +138,33 @@ public class Table<ROW> implements Iterable<ROW> {
         }
     }
 
-    public static class Builder<ROW> {
+    public static class Builder {
 
-        private EntityIdentifier<?> entityIdentifier;
-        private List<Column> columns;
-        private List<ROW> rows;
-        private TablePreferences tablePreferences;
+        private final EntityIdentifier<?> entityIdentifier;
+        private final TablePreferences tablePreferences;
+        private final SliceRequest sliceRequest;
+        private final boolean canExtend;
 
-        public Builder(EntityIdentifier<?> entityIdentifier, List<Column> columns, List<ROW> rows, TablePreferences tablePreferences) {
+        private final List<Column> columns;
+        private final List<List<Object>> rows;
+
+        private Builder(
+                EntityIdentifier<?> entityIdentifier,
+                TablePreferences tablePreferences,
+                SliceRequest sliceRequest,
+                boolean canExtend,
+                List<Column> columns,
+                List<List<Object>> rows
+        ) {
             this.entityIdentifier = entityIdentifier;
+            this.tablePreferences = tablePreferences;
+            this.sliceRequest = sliceRequest;
+            this.canExtend = canExtend;
             this.columns = new ArrayList<>(columns);
             this.rows = new ArrayList<>(rows);
-            this.tablePreferences = tablePreferences;
         }
 
-        public Builder<ROW> addColumn(Column column, List<Object> values, BiFunction<ROW, Object, ROW> mergeRow) {
+        public Builder addColumn(Column column, List<Object> values, BiFunction<List<Object>, Object, List<Object>> mergeRow) {
             columns.add(column);
             for (int i = 0; i < this.rows.size(); i++) {
                 this.rows.set(i, mergeRow.apply(this.rows.get(i), values.get(i)));
@@ -142,13 +172,8 @@ public class Table<ROW> implements Iterable<ROW> {
             return this;
         }
 
-        public Table<ROW> build() {
-            return new Table<>(
-                    entityIdentifier,
-                    columns,
-                    rows,
-                    tablePreferences
-            );
+        public TableSlice build() {
+            return new TableSlice(entityIdentifier, tablePreferences, sliceRequest, canExtend, columns, rows);
         }
     }
 }

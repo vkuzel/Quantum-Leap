@@ -1,17 +1,14 @@
 package cz.quantumleap.admin.notification;
 
 import cz.quantumleap.core.data.entity.EntityIdentifier;
-import cz.quantumleap.core.data.transport.Lookup;
-import cz.quantumleap.core.data.transport.Slice;
 import cz.quantumleap.core.data.transport.SliceRequest;
-import cz.quantumleap.core.data.transport.Table;
-import cz.quantumleap.core.data.transport.Table.Column;
+import cz.quantumleap.core.data.transport.TableSlice;
+import cz.quantumleap.core.data.transport.TableSlice.Column;
 import cz.quantumleap.core.notification.NotificationDao;
 import cz.quantumleap.core.notification.NotificationDefinition;
 import cz.quantumleap.core.notification.NotificationManager;
 import cz.quantumleap.core.notification.transport.Notification;
 import cz.quantumleap.core.tables.NotificationTable;
-import cz.quantumleap.core.tables.PersonTable;
 import org.apache.commons.lang3.Validate;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -19,10 +16,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 public class NotificationService {
@@ -51,23 +47,32 @@ public class NotificationService {
     }
 
     @Transactional
-    public Slice<Map<Column, Object>> findSlice(long personId, SliceRequest sliceRequest) {
-        Slice<Map<Column, Object>> slice = notificationDao.fetchSlice(personId, sliceRequest);
-        Table<Map<Column, Object>> table = slice.getTable();
+    public TableSlice findSlice(long personId, SliceRequest sliceRequest) {
+        Locale locale = LocaleContextHolder.getLocale();
+        TableSlice slice = notificationDao.fetchSlice(personId, sliceRequest);
 
-        Column codeColumn = table.getColumnByName("code");
-        Column messageArgumentsColumn = table.getColumnByName("message_arguments");
+        List<Column> columns = slice.getColumns();
+        Column codeColumn = slice.getColumnByName("code");
+        Column messageArgumentsColumn = slice.getColumnByName("message_arguments");
         Column messageColumn = new Column(String.class, "message", false, null);
 
-        List<Object> messages = slice.getRows().stream()
-                .map(m -> translateMessage(m, codeColumn, messageArgumentsColumn))
-                .collect(Collectors.toList());
+        int codeColumnIndex = columns.indexOf(codeColumn);
+        int messageArgumentsColumnIndex = columns.indexOf(messageArgumentsColumn);
+        List<Object> messages = new ArrayList<>();
+        for (List<Object> row : slice) {
+            String code = (String) row.get(codeColumnIndex);
+            Object[] messageArguments = (String[]) row.get(messageArgumentsColumnIndex);
 
-        Table<Map<Column, Object>> newTable = table.createBuilder().addColumn(messageColumn, messages, (row, o) -> {
-            row.put(messageColumn, o);
+            NotificationDefinition definition = notificationManager.getNotificationDefinitionByCode(code);
+            Validate.notNull(definition, "Notification definition not found for notification code " + code);
+            String message = messageSource.getMessage(definition.getMessageCode(), messageArguments, locale);
+            messages.add(message);
+        }
+
+        return slice.createBuilder().addColumn(messageColumn, messages, (row, o) -> {
+            row.add(o);
             return row;
         }).build();
-        return new Slice<>(newTable, sliceRequest, slice.canExtend());
     }
 
     @Transactional
@@ -84,15 +89,6 @@ public class NotificationService {
         notification.setResolvedBy(personId);
         notification.setResolvedAt(LocalDateTime.now());
         notificationDao.save(notification);
-    }
-
-    private String translateMessage(Map<Column, Object> row, Column codeColumn, Column messageArgumentsColumn) {
-        Locale locale = LocaleContextHolder.getLocale();
-        String code = (String) row.get(codeColumn);
-        Object[] messageArguments = (String[]) row.get(messageArgumentsColumn);
-        NotificationDefinition definition = notificationManager.getNotificationDefinitionByCode(code);
-        Validate.notNull(definition, "Notification definition not found for notification code " + code);
-        return messageSource.getMessage(definition.getMessageCode(), messageArguments, locale);
     }
 
     private NotificationDefinition getDefinitionForNotification(Notification notification) {

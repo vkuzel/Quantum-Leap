@@ -4,9 +4,7 @@ import cz.quantumleap.core.common.ReflectionUtils;
 import org.jooq.*;
 import org.jooq.types.YearToSecond;
 
-import java.util.Map;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static com.google.common.base.CaseFormat.LOWER_CAMEL;

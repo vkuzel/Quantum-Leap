@@ -2,9 +2,8 @@ package cz.quantumleap.core.data;
 
 import cz.quantumleap.core.data.entity.Entity;
 import cz.quantumleap.core.data.entity.EntityIdentifier;
-import cz.quantumleap.core.data.transport.Slice;
 import cz.quantumleap.core.data.transport.SliceRequest;
-import cz.quantumleap.core.data.transport.Table.Column;
+import cz.quantumleap.core.data.transport.TableSlice;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.*;
 
@@ -70,7 +69,7 @@ public final class DefaultLookupDao<TABLE extends Table<? extends Record>> imple
     }
 
     @Override
-    public Slice<Map<Column, Object>> fetchSlice(SliceRequest sliceRequest) {
+    public TableSlice fetchSlice(SliceRequest sliceRequest) {
         return listDao.fetchSlice(sliceRequest);
     }
 

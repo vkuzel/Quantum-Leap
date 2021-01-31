@@ -2,8 +2,8 @@ package cz.quantumleap.core.web;
 
 import cz.quantumleap.core.business.LookupService;
 import cz.quantumleap.core.data.entity.EntityIdentifier;
-import cz.quantumleap.core.data.transport.Slice;
 import cz.quantumleap.core.data.transport.SliceRequest;
+import cz.quantumleap.core.data.transport.TableSlice;
 import cz.quantumleap.core.security.WebSecurityExpressionEvaluator;
 import org.springframework.http.HttpStatus;
 import org.springframework.ui.Model;
@@ -88,7 +88,7 @@ public final class DefaultLookupController implements LookupController {
         checkPermission(request, response);
 
         EntityIdentifier<?> identifier = lookupService.getListEntityIdentifier(null);
-        Slice<?> slice = lookupService.findSlice(sliceRequest);
+        TableSlice slice = lookupService.findSlice(sliceRequest);
 
         model.addAttribute(TABLE_SLICE_MODEL_ATTRIBUTE_NAME, slice);
         model.addAttribute(LIST_ENTITY_IDENTIFIER_MODEL_ATTRIBUTE_NAME, identifier.toString());

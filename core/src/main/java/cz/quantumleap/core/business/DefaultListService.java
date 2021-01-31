@@ -3,13 +3,10 @@ package cz.quantumleap.core.business;
 import cz.quantumleap.core.common.Utils;
 import cz.quantumleap.core.data.ListDao;
 import cz.quantumleap.core.data.entity.EntityIdentifier;
-import cz.quantumleap.core.data.transport.Slice;
 import cz.quantumleap.core.data.transport.SliceRequest;
-import cz.quantumleap.core.data.transport.Table.Column;
+import cz.quantumleap.core.data.transport.TableSlice;
 import org.jooq.Record;
 import org.jooq.Table;
-
-import java.util.Map;
 
 public final class DefaultListService implements ListService {
 
@@ -25,7 +22,7 @@ public final class DefaultListService implements ListService {
     }
 
     @Override
-    public Slice<Map<Column, Object>> findSlice(SliceRequest sliceRequest) {
+    public TableSlice findSlice(SliceRequest sliceRequest) {
         return listDao.fetchSlice(sliceRequest);
     }
 }

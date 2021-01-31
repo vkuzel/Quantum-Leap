@@ -2,10 +2,8 @@ package cz.quantumleap.core.data;
 
 import cz.quantumleap.core.data.entity.Entity;
 import cz.quantumleap.core.data.entity.EntityIdentifier;
-import cz.quantumleap.core.data.mapper.MapperFactory;
-import cz.quantumleap.core.data.transport.Slice;
 import cz.quantumleap.core.data.transport.SliceRequest;
-import cz.quantumleap.core.data.transport.Table.Column;
+import cz.quantumleap.core.data.transport.TableSlice;
 import org.jooq.*;
 
 import java.util.Collection;
@@ -18,7 +16,6 @@ public class DaoStub<TABLE extends Table<? extends Record>> implements DetailDao
     protected final Entity<TABLE> entity;
     protected final DSLContext dslContext;
 
-    protected final MapperFactory<TABLE> mapperFactory;
     protected final DetailDao<TABLE> detailDao;
     protected final ListDao<TABLE> listDao;
     protected final LookupDao<TABLE> lookupDao;
@@ -26,9 +23,8 @@ public class DaoStub<TABLE extends Table<? extends Record>> implements DetailDao
     protected DaoStub(Entity<TABLE> entity, DSLContext dslContext, RecordAuditor recordAuditor) {
         this.entity = entity;
         this.dslContext = dslContext;
-        this.mapperFactory = new MapperFactory<>(entity);
         this.detailDao = new DefaultDetailDao<>(entity, dslContext, recordAuditor);
-        this.listDao = new DefaultListDao<>(entity, dslContext, mapperFactory);
+        this.listDao = new DefaultListDao<>(entity, dslContext);
         this.lookupDao = new DefaultLookupDao<>(entity, dslContext, listDao);
     }
 
@@ -83,7 +79,7 @@ public class DaoStub<TABLE extends Table<? extends Record>> implements DetailDao
     }
 
     @Override
-    public Slice<Map<Column, Object>> fetchSlice(SliceRequest sliceRequest) {
+    public TableSlice fetchSlice(SliceRequest sliceRequest) {
         return listDao.fetchSlice(sliceRequest);
     }
 
