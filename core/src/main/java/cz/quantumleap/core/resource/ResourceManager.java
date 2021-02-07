@@ -7,7 +7,6 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -64,28 +63,28 @@ public class ResourceManager {
 
     private ResourceWithModule createResourceWithModule(Resource resource) {
         ResourceWithModule resourceWithModule = null;
-
-        final URL resourceUrl;
-        try {
-            resourceUrl = resource.getURL();
-        } catch (IOException e) {
-            throw new IllegalStateException(e);
-        }
         for (ModuleDependencies module : moduleDependencyManager.getIndependentModulesFirst()) {
-            if (module.isInModule(resourceUrl)) {
+            if (module.containsResource(resource)) {
                 if (resourceWithModule != null) {
                     throw new IllegalStateException("Two modules (" + resourceWithModule.getModuleName() + " and " + module.getModuleName() +
-                            ") has been found for resource " + resourceUrl.toString() + "!" +
+                            ") has been found for resource " + resourceToString(resource) + "!" +
                             " The name of each module has to be unique!");
                 }
                 resourceWithModule = new ResourceWithModule(module, resource);
             }
         }
         if (resourceWithModule == null) {
-            throw new IllegalStateException("No module has been found for resource " + resourceUrl.toString() +
+            throw new IllegalStateException("No module has been found for resource " + resourceToString(resource) +
                     " Please make sure that gradle discoverProjectDependencies task has been executed.");
         }
         return resourceWithModule;
     }
 
+    private String resourceToString(Resource resource) {
+        try {
+            return resource.getURL().toString();
+        } catch (IOException e) {
+            throw new IllegalStateException(e);
+        }
+    }
 }
