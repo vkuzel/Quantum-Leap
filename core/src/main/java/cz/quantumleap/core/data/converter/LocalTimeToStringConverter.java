@@ -9,9 +9,6 @@ import java.time.LocalTime;
 public class LocalTimeToStringConverter implements Converter<LocalTime, String> {
     @Override
     public String convert(LocalTime source) {
-        if (source != null) {
-            return source.toString();
-        }
-        return null;
+        return source.toString();
     }
 }
