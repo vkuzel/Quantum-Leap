@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDate;
 
 @Component
+@SuppressWarnings("unused")
 public class LocalDateToStringConverter implements Converter<LocalDate, String> {
     @Override
     public String convert(LocalDate source) {
