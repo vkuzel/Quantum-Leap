@@ -3,12 +3,12 @@ package cz.quantumleap.core.data.converter;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Component
-public class LocalDateToString implements Converter<LocalDate, String> {
+public class LocalDateTimeToStringConverter implements Converter<LocalDateTime, String> {
     @Override
-    public String convert(LocalDate source) {
+    public String convert(LocalDateTime source) {
         if (source != null) {
             return source.toString();
         }
