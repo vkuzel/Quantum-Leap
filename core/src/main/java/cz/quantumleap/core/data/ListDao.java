@@ -13,6 +13,7 @@ public interface ListDao<TABLE extends Table<? extends Record>> {
 
     EntityIdentifier<TABLE> getListEntityIdentifier();
 
+    // TODO Rename to fetchTableSlice()
     TableSlice fetchSlice(SliceRequest sliceRequest);
 
     <T> List<T> fetchList(SliceRequest sliceRequest, Class<T> type);

@@ -67,6 +67,10 @@ public class TableSlice implements Iterable<List<Object>> {
         return row.get(columnIndex);
     }
 
+    public boolean isLookup(Object value) {
+        return value instanceof Lookup;
+    }
+
     @NotNull
     @Override
     public Iterator<List<Object>> iterator() {
@@ -99,18 +103,6 @@ public class TableSlice implements Iterable<List<Object>> {
             this.order = order;
         }
 
-        public boolean isLookupColumn() {
-            return this instanceof LookupColumn;
-        }
-
-        public LookupColumn asLookupColumn() {
-            return (LookupColumn) this;
-        }
-
-        public Class<?> getType() {
-            return type;
-        }
-
         public String getName() {
             return name;
         }
@@ -135,6 +127,40 @@ public class TableSlice implements Iterable<List<Object>> {
 
         public EntityIdentifier<?> getEntityIdentifier() {
             return entityIdentifier;
+        }
+    }
+
+    public static class Lookup {
+
+        private final Object id;
+        private final String label;
+        private final EntityIdentifier<?> entityIdentifier;
+
+        public Lookup(Object id, String label, EntityIdentifier<?> entityIdentifier) {
+            this.id = id;
+            this.label = label;
+            this.entityIdentifier = entityIdentifier;
+        }
+
+        public Object getId() {
+            return id;
+        }
+
+        public String getLabel() {
+            return label;
+        }
+
+        public EntityIdentifier<?> getEntityIdentifier() {
+            return entityIdentifier;
+        }
+
+        @Override
+        public String toString() {
+            return "Lookup{" +
+                    "id=" + id +
+                    ", label='" + label + '\'' +
+                    ", entityIdentifier=" + entityIdentifier +
+                    '}';
         }
     }
 

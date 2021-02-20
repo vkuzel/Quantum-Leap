@@ -3,7 +3,7 @@
 <head>
 </head>
 <body>
-<!--/*
+<!--/* TODO Rename to lookup-modal-table-slice...
     Template params:
         entityIdentifier ... Used in column name message `admin.table.<entityIdentifier>.<columnName>'
         tableSlice ... TableSlice object.
@@ -28,13 +28,8 @@
         th:with="primaryKeyColumn=${tableSlice.getColumns().?[primaryKey].get(0)}"
         th:data-id="${tableSlice.getValue(primaryKeyColumn, row)}">
         <td th:each="column : ${tableSlice.getColumns()}">
-            <!-- TODO Fix lookup field detection -->
-            <span th:if="${column.type != T(cz.quantumleap.core.data.transport.Lookup)}"
-                  th:text="${{tableSlice.getValue(column, row)}}"
-                  th:remove="tag">Standard value</span>
-            <span th:if="${column.type == T(cz.quantumleap.core.data.transport.Lookup)}"
-                  th:text="${{tableSlice.getValue(column, row).label}}"
-                  th:remove="tag">Lookup value</span>
+            <span th:text="${{tableSlice.getValue(column, row)}}"
+                  th:remove="tag">Value</span>
         </td>
     </tr>
     <tr>

@@ -11,7 +11,7 @@ import org.jooq.types.YearToSecond;
 
 import java.time.Duration;
 
-public class JooqConverterProvider implements ConverterProvider {
+public class JooqConverterProvider implements ConverterProvider { // TODO Move elsewhere...
 
     private final ConverterProvider delegate;
     private final ObjectMapper objectMapper;

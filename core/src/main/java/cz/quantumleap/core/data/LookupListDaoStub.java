@@ -21,11 +21,11 @@ public class LookupListDaoStub<TABLE extends Table<? extends Record>> implements
     protected final ListDao<TABLE> listDao;
     protected final LookupDao<TABLE> lookupDao;
 
-    public LookupListDaoStub(Entity<TABLE> entity, DSLContext dslContext) {
+    public LookupListDaoStub(Entity<TABLE> entity, DSLContext dslContext, EntityManager entityManager) {
         this.entity = entity;
         this.dslContext = dslContext;
-        this.listDao = new DefaultListDao<>(entity, dslContext);
-        this.lookupDao = new DefaultLookupDao<>(entity, dslContext, listDao);
+        this.listDao = new DefaultListDao<>(entity, dslContext, entityManager);
+        this.lookupDao = new DefaultLookupDao<>(entity, dslContext, listDao, entityManager);
     }
 
     @Override

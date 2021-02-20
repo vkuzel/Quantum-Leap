@@ -19,10 +19,11 @@ public final class DefaultLookupDao<TABLE extends Table<? extends Record>> imple
     private final DSLContext dslContext;
     private final ListDao<TABLE> listDao;
 
-    public DefaultLookupDao(Entity<TABLE> entity, DSLContext dslContext, ListDao<TABLE> listDao) {
+    public DefaultLookupDao(Entity<TABLE> entity, DSLContext dslContext, ListDao<TABLE> listDao, EntityManager entityManager) {
         this.entity = entity;
         this.dslContext = dslContext;
         this.listDao = listDao;
+        entityManager.registerEntity(entity);
     }
 
     @Override

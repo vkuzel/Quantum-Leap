@@ -3,6 +3,7 @@ package cz.quantumleap.core.data;
 import cz.quantumleap.core.common.Utils;
 import cz.quantumleap.core.data.entity.Entity;
 import cz.quantumleap.core.data.entity.EntityIdentifier;
+import cz.quantumleap.core.data.query.*;
 import cz.quantumleap.core.data.transport.SliceRequest;
 import cz.quantumleap.core.data.transport.TablePreferences;
 import cz.quantumleap.core.data.transport.TableSlice;
@@ -10,6 +11,7 @@ import org.jooq.*;
 import org.springframework.data.domain.Sort;
 
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static cz.quantumleap.core.data.list.LimitBuilder.Limit;
@@ -19,10 +21,12 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
 
     private final Entity<TABLE> entity;
     private final DSLContext dslContext;
+    private final EntityManager entityManager;
 
-    public DefaultListDao(Entity<TABLE> entity, DSLContext dslContext) {
+    public DefaultListDao(Entity<TABLE> entity, DSLContext dslContext, EntityManager entityManager) {
         this.entity = entity;
         this.dslContext = dslContext;
+        this.entityManager = entityManager;
     }
 
     @Override
@@ -32,24 +36,28 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
 
     public TableSlice fetchSlice(SliceRequest sliceRequest) {
         SliceRequest request = setDefaultOrder(sliceRequest);
-        Limit limit = entity.getLimitBuilder().build(sliceRequest);
-        Condition conditions = Utils.joinConditions(
-                Utils.ConditionOperator.AND,
-                entity.getFilterBuilder().buildForFilter(sliceRequest.getFilter()),
-                entity.getFilterBuilder().buildForQuery(sliceRequest.getQuery()),
-                sliceRequest.getCondition()
-        );
 
-        Result<?> result = dslContext.selectFrom(getTable())
+        Table<?> table = entity.getTable();
+        List<Field<?>> fields = new TableSliceFieldsFactory(entity, entityManager).forSliceRequest(request);
+        Function<SelectJoinStep<Record>, SelectJoinStep<Record>> join = new TableSliceJoinFactory(entity, entityManager).forSliceRequest(request);
+        Condition conditions = new TableSliceConditionsFactory(entity, entityManager).forSliceRequest(fields, request); // filter builder - needs fields & entity manager
+        Limit limit = new TableSliceLimitFactory(entity, entityManager).forSliceRequest(request);
+        List<SortField<?>> orderBy = new TableSliceOrderByFactory(entity, entityManager).forSliceRequest(fields, request); // needs fields
+
+        SelectJoinStep<Record> selectJoinStep = dslContext
+                .select(fields)
+                .from(table);
+        Result<?> result = join.apply(selectJoinStep)
                 .where(conditions)
-                .orderBy(entity.getSortingBuilder().build(request.getSort()))
+                .orderBy(orderBy)
                 .limit(limit.getOffset(), limit.getNumberOfRows())
                 .fetch();
 
-        TableSliceFactory tableSliceFactory = new TableSliceFactory(entity, fetchTablePreferences(), sliceRequest);
+        TableSliceFactory tableSliceFactory = new TableSliceFactory(entity, fetchTablePreferences(), request);
         return tableSliceFactory.createTableSlice(result);
     }
 
+    // TODO Similar structure to fetchSlice()
     public <T> List<T> fetchList(SliceRequest sliceRequest, Class<T> type) {
         SliceRequest request = setDefaultOrder(sliceRequest);
         Limit limit = entity.getLimitBuilder().build(sliceRequest);

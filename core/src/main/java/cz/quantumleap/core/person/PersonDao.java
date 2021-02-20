@@ -2,14 +2,15 @@ package cz.quantumleap.core.person;
 
 import cz.quantumleap.core.common.Utils;
 import cz.quantumleap.core.data.DaoStub;
-import cz.quantumleap.core.data.EnumManager;
-import cz.quantumleap.core.data.LookupDaoManager;
+import cz.quantumleap.core.data.EntityManager;
 import cz.quantumleap.core.data.RecordAuditor;
 import cz.quantumleap.core.data.entity.Entity;
 import cz.quantumleap.core.person.transport.Person;
 import cz.quantumleap.core.tables.PersonTable;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
+import org.jooq.Field;
+import org.jooq.Table;
 import org.jooq.impl.DSL;
 import org.springframework.stereotype.Repository;
 
@@ -18,14 +19,19 @@ import static cz.quantumleap.core.tables.PersonTable.PERSON;
 @Repository
 public class PersonDao extends DaoStub<PersonTable> {
 
-    protected PersonDao(DSLContext dslContext, RecordAuditor recordAuditor) {
-        super(createEntity(), dslContext, recordAuditor);
+    protected PersonDao(DSLContext dslContext, RecordAuditor recordAuditor, EntityManager entityManager) {
+        super(createEntity(), dslContext, recordAuditor, entityManager);
     }
 
     private static Entity<PersonTable> createEntity() {
-        return Entity.createBuilder(PERSON).setLookupLabelField(DSL.coalesce(PERSON.NAME, PERSON.EMAIL))
+        return Entity.createBuilder(PERSON)
+                .setLookupLabelFieldBuilder(PersonDao::createLookupLabelField)
                 .setWordConditionBuilder(PersonDao::createWordCondition)
                 .build();
+    }
+
+    private static Field<String> createLookupLabelField(Table<?> table) {
+        return DSL.coalesce(table.field(PERSON.NAME), table.field(PERSON.EMAIL));
     }
 
     private static Condition createWordCondition(String text) {

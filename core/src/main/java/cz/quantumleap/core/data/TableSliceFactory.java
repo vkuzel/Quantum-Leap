@@ -1,18 +1,25 @@
 package cz.quantumleap.core.data;
 
 import cz.quantumleap.core.data.entity.Entity;
-import cz.quantumleap.core.data.entity.EntityIdentifier;
+import cz.quantumleap.core.data.entity.FieldMetaType;
+import cz.quantumleap.core.data.entity.LookupMetaType;
 import cz.quantumleap.core.data.transport.SliceRequest;
 import cz.quantumleap.core.data.transport.TablePreferences;
 import cz.quantumleap.core.data.transport.TableSlice;
 import cz.quantumleap.core.data.transport.TableSlice.Column;
+import cz.quantumleap.core.data.transport.TableSlice.Lookup;
 import cz.quantumleap.core.data.transport.TableSlice.LookupColumn;
-import org.jooq.*;
+import org.jooq.Field;
+import org.jooq.Record;
+import org.jooq.Result;
 import org.springframework.data.domain.Sort;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
-public class TableSliceFactory {
+public class TableSliceFactory { // TODO Rename to TableSliceMapper and move to query package
 
     private final Entity<?> entity;
     private final List<TablePreferences> tablePreferencesList;
@@ -49,20 +56,20 @@ public class TableSliceFactory {
 
     private Map<Field<?>, Column> createFieldColumnMap(Result<?> result, Sort sort) {
         List<Field<?>> primaryKeyFields = entity.getPrimaryKeyFields();
-        Map<Field<?>, EntityIdentifier<?>> lookupIdentifierMap = getLookupIdentifierMap();
         Field<?>[] fields = result.fields();
 
         Map<Field<?>, Column> fieldColumnMap = new LinkedHashMap<>(fields.length);
         for (Field<?> field : fields) {
+            FieldMetaType fieldMetaType = entity.getFieldMetaType(field);
             String fieldName = field.getName();
             Sort.Order order = sort != null ? sort.getOrderFor(fieldName) : null;
 
             Column column;
-            if (lookupIdentifierMap.containsKey(field)) {
+            if (fieldMetaType instanceof LookupMetaType) {
                 column = new LookupColumn(
                         fieldName,
                         order,
-                        lookupIdentifierMap.get(field)
+                        fieldMetaType.asLookup().getEntityIdentifier()
                 );
             } else {
                 column = new Column(
@@ -80,9 +87,23 @@ public class TableSliceFactory {
     private List<Object> createRow(List<Field<?>> fields, Record record) {
         List<Object> row = new ArrayList<>(record.size());
         for (Field<?> field : fields) {
-            Object value = record.get(field);
-            // TODO Create lookup value
-            row.add(value);
+            FieldMetaType fieldMetaType = entity.getFieldMetaType(field);
+            if (fieldMetaType instanceof LookupMetaType) {
+                Object value = record.get(field);
+                Field<?> labelField = record.field(field.getName() + ".label");
+                if (labelField != null) {
+                    Object label = record.get(labelField);
+                    value = new Lookup(
+                            value,
+                            label != null ? label.toString() : (value != null ? value.toString() : null),
+                            fieldMetaType.asLookup().getEntityIdentifier()
+                    );
+                }
+                row.add(value);
+            } else {
+                Object value = record.get(field);
+                row.add(value);
+            }
         }
         return row;
     }
@@ -94,22 +115,5 @@ public class TableSliceFactory {
             }
         }
         return TablePreferences.EMPTY;
-    }
-
-    private Map<Field<?>, EntityIdentifier<?>> getLookupIdentifierMap() {
-        Map<Field<?>, EntityIdentifier<?>> map = new HashMap<>();
-
-        for (ForeignKey<? extends Record, ?> foreignKey : entity.getTable().getReferences()) {
-            if (foreignKey.getFieldsArray().length != 1) {
-                continue;
-            }
-
-            TableField<? extends Record, ?> tableField = foreignKey.getFieldsArray()[0];
-            EntityIdentifier<?> defaultEntityIdentifier = EntityIdentifier.forTable(foreignKey.getKey().getTable());
-            EntityIdentifier<?> entityIdentifier = entity.getLookupFieldsMap().getOrDefault(tableField, defaultEntityIdentifier);
-
-            map.put(tableField, entityIdentifier);
-        }
-        return map;
     }
 }
