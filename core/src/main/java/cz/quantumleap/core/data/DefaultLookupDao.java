@@ -2,11 +2,13 @@ package cz.quantumleap.core.data;
 
 import cz.quantumleap.core.data.entity.Entity;
 import cz.quantumleap.core.data.entity.EntityIdentifier;
+import cz.quantumleap.core.data.query.FilterFactory;
 import cz.quantumleap.core.data.transport.SliceRequest;
 import cz.quantumleap.core.data.transport.TableSlice;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.*;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
@@ -59,7 +61,7 @@ public final class DefaultLookupDao<TABLE extends Table<? extends Record>> imple
         }
 
         Field<?> primaryKey = entity.getPrimaryKeyField();
-        Condition condition = entity.getFilterBuilder().buildForQuery(query);
+        Condition condition = createFilterFactory().forQuery(query);
 
         return dslContext.select(primaryKey, entity.getLookupLabelField())
                 .from(getTable())
@@ -81,5 +83,13 @@ public final class DefaultLookupDao<TABLE extends Table<? extends Record>> imple
 
     private Table<? extends Record> getTable() {
         return entity.getTable();
+    }
+
+    private FilterFactory createFilterFactory() {
+        return new FilterFactory(
+                Arrays.asList(entity.getTable().fields()),
+                entity.getDefaultFilterCondition(),
+                entity.getWordConditionBuilder()
+        );
     }
 }

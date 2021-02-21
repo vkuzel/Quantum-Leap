@@ -14,10 +14,10 @@ import static org.jooq.SortOrder.DESC;
 
 public class SortingFactory {
 
-    private final Map<String, Field<?>> sortableFieldMap;
+    private final Map<String, Field<?>> fieldMap;
 
     public SortingFactory(List<Field<?>> fields) {
-        this.sortableFieldMap = createSortableFieldMap(fields);
+        this.fieldMap = createFieldMap(fields);
     }
 
     public List<SortField<?>> forSliceRequest(SliceRequest request) {
@@ -29,9 +29,9 @@ public class SortingFactory {
         List<SortField<?>> sortFields = new ArrayList<>();
         for (Order order : sort) {
             String name = normalizeFieldName(order.getProperty());
-            Field<?> field = sortableFieldMap.get(name);
+            Field<?> field = fieldMap.get(name);
             if (field == null) {
-                String names = String.join(", ", sortableFieldMap.keySet());
+                String names = String.join(", ", fieldMap.keySet());
                 throw new IllegalStateException("Field " + name + " was not found in " + names);
             }
 
@@ -42,7 +42,7 @@ public class SortingFactory {
         return sortFields;
     }
 
-    private Map<String, Field<?>> createSortableFieldMap(List<Field<?>> fields) {
+    private Map<String, Field<?>> createFieldMap(List<Field<?>> fields) {
         Map<String, Field<?>> fieldMap = new HashMap<>(fields.size());
         for (Field<?> field : fields) {
             String name = normalizeFieldName(field.getName());

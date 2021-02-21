@@ -4,11 +4,7 @@ import com.google.common.io.CharStreams;
 import cz.quantumleap.core.data.entity.EntityIdentifier;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
-import org.jooq.Condition;
-import org.jooq.Field;
-import org.jooq.Record;
-import org.jooq.Table;
-import org.jooq.TableField;
+import org.jooq.*;
 import org.jooq.impl.DSL;
 import org.springframework.core.io.Resource;
 
@@ -17,12 +13,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.time.LocalDate;
 import java.time.Period;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -63,6 +54,7 @@ final public class Utils {
         return condition;
     }
 
+    // TODO Move to query utils...
     public static Condition joinConditions(ConditionOperator operator, Condition... conditions) {
         Condition condition = null;
         for (Condition cond : conditions) {

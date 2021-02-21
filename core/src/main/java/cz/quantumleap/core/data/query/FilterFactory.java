@@ -1,50 +1,70 @@
-package cz.quantumleap.core.data.list;
+package cz.quantumleap.core.data.query;
 
 import cz.quantumleap.core.common.Utils;
-import cz.quantumleap.core.common.Utils.ConditionOperator;
+import cz.quantumleap.core.data.transport.SliceRequest;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.jooq.Condition;
 import org.jooq.Field;
-import org.jooq.Record;
-import org.jooq.Table;
 import org.jooq.impl.DSL;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
-public class DefaultFilterBuilder implements FilterBuilder {
+import static cz.quantumleap.core.common.Utils.ConditionOperator.AND;
+import static cz.quantumleap.core.common.Utils.ConditionOperator.OR;
+
+public class FilterFactory {
 
     private enum ComparisonOperator {EQ, LT, GT, LE, GE}
 
-    private final Table<? extends Record> table;
+    private final Map<String, Field<?>> fieldMap;
     private final Condition defaultCondition;
     private final Function<String, Condition> wordConditionBuilder;
 
-    public DefaultFilterBuilder(Table<? extends Record> table, Function<String, Condition> wordConditionBuilder) {
-        this(table, null, wordConditionBuilder);
-    }
-
-    public DefaultFilterBuilder(Table<? extends Record> table, Condition defaultCondition, Function<String, Condition> wordConditionBuilder) {
-        this.table = table;
+    public FilterFactory(
+            List<Field<?>> fields,
+            Condition defaultCondition,
+            Function<String, Condition> wordConditionBuilder
+    ) {
+        this.fieldMap = createFieldMap(fields);
         this.defaultCondition = defaultCondition;
         this.wordConditionBuilder = wordConditionBuilder;
     }
 
-    @Override
-    @SuppressWarnings("unchecked")
-    public Condition buildForFilter(Map<String, Object> filter) {
+    public Condition forQuery(String query) {
+        Condition queryCondition = createConditionFromQuery(query);
+
+        return Utils.joinConditions(
+                AND,
+                defaultCondition,
+                queryCondition
+        );
+    }
+
+    public Condition forSliceRequest(SliceRequest request) {
+        Condition filterCondition = createConditionFromFilter(request.getFilter());
+        Condition queryCondition = createConditionFromQuery(request.getQuery());
+
+        return Utils.joinConditions(
+                AND,
+                defaultCondition,
+                request.getCondition(),
+                filterCondition,
+                queryCondition
+        );
+    }
+
+    private Condition createConditionFromFilter(Map<String, Object> filter) {
         Condition resultCondition = null;
 
         for (Map.Entry<String, Object> fieldNameValue : filter.entrySet()) {
-            String fieldName = fieldNameValue.getKey();
-            Field<Object> field = (Field<Object>) table.field(fieldName);
-
-            Validate.notNull(field, "Field %s was not found in table %s", fieldName, table.getName());
+            String fieldName = normalizeFieldName(fieldNameValue.getKey());
+            Field<Object> field = getFieldSafely(fieldName);
 
             Condition condition = field.eq(fieldNameValue.getValue());
             if (resultCondition == null) {
@@ -54,20 +74,20 @@ public class DefaultFilterBuilder implements FilterBuilder {
             }
         }
 
-        return Utils.joinConditions(ConditionOperator.AND, defaultCondition, resultCondition);
+        return resultCondition;
     }
 
     /**
      * The method supports a simple query language.
-     *
+     * <p>
      * Syntax: `[ [(] word | column_name_condition [condition_operator] [...] [)] ]`
-     *
+     * <p>
      * `word` is any non-whitespaces containing word or a anything enclosed in double-quotes. Double-quotes can be
      * escaped.
-     *
+     * <p>
      * `condition_operator` is case-insensitive OR, AND or nothing. If nothing is specified then it will be translated
      * as AND. AND has tighter binding. Conditions can be wrapped in parentheses.
-     *
+     * <p>
      * `column_name_condition` is `[ column_name comparison_operator value ]` where `column_name` has to be valid column
      * name in SQL query, `comparison_operator` is one of =, >, <, <=, >= for numeric values or = for strings or
      * booleans. `value` can be wrapped in double-quotes. Invalid `column_name_condition` is considered as a set of
@@ -76,23 +96,21 @@ public class DefaultFilterBuilder implements FilterBuilder {
      * @param query See syntax.
      * @return Condition or null.
      */
-    @Override
-    public Condition buildForQuery(String query) {
-        Condition condition = null;
-
+    private Condition createConditionFromQuery(String query) {
         if (StringUtils.isNotBlank(query)) {
             List<String> tokens = tokenize(query);
-            condition = createCondition(tokens);
+            return createCondition(tokens);
+        } else {
+            return null;
         }
-
-        return Utils.joinConditions(ConditionOperator.AND, defaultCondition, condition);
     }
 
-    Condition createCondition(List<String> tokens) {
+
+    private Condition createCondition(List<String> tokens) {
         return new CreateCondition(tokens).create();
     }
 
-    List<String> tokenize(String query) {
+    private List<String> tokenize(String query) {
         boolean wordContext = false;
         boolean doubleQuotesContext = false;
 
@@ -139,12 +157,12 @@ public class DefaultFilterBuilder implements FilterBuilder {
         return tokens;
     }
 
-    private static ConditionOperator resolveConditionOperator(String token) {
+    private static Utils.ConditionOperator resolveConditionOperator(String token) {
         token = token != null ? token.toLowerCase() : null;
         if ("and".equals(token)) {
-            return ConditionOperator.AND;
+            return AND;
         } else if ("or".equals(token)) {
-            return ConditionOperator.OR;
+            return OR;
         } else {
             return null;
         }
@@ -196,7 +214,7 @@ public class DefaultFilterBuilder implements FilterBuilder {
                 String current = tokens.get(currentTokenIndex);
                 String next = currentTokenIndex < size - 1 ? tokens.get(currentTokenIndex + 1) : null;
                 String next2 = currentTokenIndex < size - 2 ? tokens.get(currentTokenIndex + 2) : null;
-                ConditionOperator conditionOperator = resolveConditionOperator(previous);
+                Utils.ConditionOperator conditionOperator = resolveConditionOperator(previous);
 
                 if (resolveConditionOperator(current) != null) {
                     continue;
@@ -208,17 +226,17 @@ public class DefaultFilterBuilder implements FilterBuilder {
                     continue;
                 }
 
-                Field<?> field = table.field(current);
+                Field<?> field = fieldMap.get(normalizeFieldName(current));
                 if (field != null) {
                     ComparisonOperator comparisonOperator = resolveComparisonOperator(next);
                     if (comparisonOperator != null && next2 != null) {
                         condition = Utils.joinConditions(conditionOperator, condition, createCondition(field, comparisonOperator, next2));
                         currentTokenIndex += 2;
                     } else if (next != null) {
-                        condition = Utils.joinConditions(ConditionOperator.AND, condition, createCondition(field, null, next));
+                        condition = Utils.joinConditions(AND, condition, createCondition(field, null, next));
                         currentTokenIndex++;
                     } else {
-                        condition = Utils.joinConditions(ConditionOperator.AND, condition, wordConditionBuilder.apply(current));
+                        condition = Utils.joinConditions(AND, condition, wordConditionBuilder.apply(current));
                     }
                 } else {
                     condition = Utils.joinConditions(resolveConditionOperator(previous), condition, wordConditionBuilder.apply(current));
@@ -271,5 +289,31 @@ public class DefaultFilterBuilder implements FilterBuilder {
 
             return DSL.condition(false);
         }
+    }
+
+    // TODO Duplicate...
+    private Map<String, Field<?>> createFieldMap(List<Field<?>> fields) {
+        Map<String, Field<?>> fieldMap = new HashMap<>(fields.size());
+        for (Field<?> field : fields) {
+            String name = normalizeFieldName(field.getName());
+            fieldMap.put(name, field);
+        }
+        return fieldMap;
+    }
+
+    // TODO Duplicate...
+    private String normalizeFieldName(String name) {
+        return name.toLowerCase();
+    }
+
+    @SuppressWarnings("unchecked")
+    private Field<Object> getFieldSafely(String fieldName) {
+        String normalized = normalizeFieldName(fieldName);
+        Field<?> field = fieldMap.get(normalized);
+        if (field == null) {
+            String names = String.join(", ", fieldMap.keySet());
+            throw new IllegalArgumentException("Field" + normalized + " not found in " + names);
+        }
+        return (Field<Object>) field;
     }
 }

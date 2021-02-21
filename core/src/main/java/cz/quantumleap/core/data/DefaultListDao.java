@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static cz.quantumleap.core.common.Utils.ConditionOperator.AND;
 import static cz.quantumleap.core.data.query.LimitFactory.Limit;
 import static cz.quantumleap.core.tables.TablePreferencesTable.TABLE_PREFERENCES;
 
@@ -39,11 +40,12 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
         SliceRequest request = setDefaultOrder(sliceRequest);
 
         Table<?> table = entity.getTable();
-        List<Field<?>> fields = new TableSliceFieldsFactory(entity, entityManager).forSliceRequest(request);
-        Function<SelectJoinStep<Record>, SelectJoinStep<Record>> join = new TableSliceJoinFactory(entity, entityManager).forSliceRequest(request);
-        Condition conditions = new TableSliceFilterFactory(entity, entityManager).forSliceRequest(fields, request); // filter builder - needs fields & entity manager
-        List<SortField<?>> orderBy = new SortingFactory(fields).forSliceRequest(request);
-        Limit limit = new LimitFactory().forSliceRequest(request);
+        List<Field<?>> fields = createSliceFieldsFactory().forSliceRequest(request);
+
+        Function<SelectJoinStep<Record>, SelectJoinStep<Record>> join = createSliceJoinFactory().forSliceRequest(request);
+        Condition conditions = createFilterFactory(fields).forSliceRequest(request);
+        List<SortField<?>> orderBy = createSortingFactory(fields).forSliceRequest(request);
+        Limit limit = createLimitFactory().forSliceRequest(request);
 
         SelectJoinStep<Record> selectJoinStep = dslContext
                 .select(fields)
@@ -58,21 +60,15 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
         return tableSliceFactory.createTableSlice(result);
     }
 
-    // TODO Similar structure to fetchSlice()
     public <T> List<T> fetchList(SliceRequest sliceRequest, Class<T> type) {
         SliceRequest request = setDefaultOrder(sliceRequest);
 
         Table<?> table = entity.getTable();
         List<Field<?>> fields = Arrays.asList(table.fields());
 
-        Condition conditions = Utils.joinConditions(
-                Utils.ConditionOperator.AND,
-                entity.getFilterBuilder().buildForFilter(sliceRequest.getFilter()),
-                entity.getFilterBuilder().buildForQuery(sliceRequest.getQuery()),
-                sliceRequest.getCondition()
-        );
-        List<SortField<?>> orderBy = new SortingFactory(fields).forSliceRequest(request);
-        Limit limit = new LimitFactory().forSliceRequest(request);
+        Condition conditions = createFilterFactory(fields).forSliceRequest(request);
+        List<SortField<?>> orderBy = createSortingFactory(fields).forSliceRequest(request);
+        Limit limit = createLimitFactory().forSliceRequest(request);
 
         return dslContext.selectFrom(getTable())
                 .where(conditions)
@@ -83,9 +79,13 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
 
     @Override
     public <T> List<T> fetchListByCondition(Condition condition, Class<T> type) {
-        // TODO Default condition...
+        Condition conditions = Utils.joinConditions(
+                AND,
+                entity.getDefaultFilterCondition(),
+                condition
+        );
         return dslContext.selectFrom(getTable())
-                .where(condition)
+                .where(conditions)
                 .fetchInto(type);
     }
 
@@ -117,5 +117,25 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
 
     private Table<? extends Record> getTable() {
         return entity.getTable();
+    }
+
+    private TableSliceFieldsFactory createSliceFieldsFactory() {
+        return new TableSliceFieldsFactory(entity, entityManager);
+    }
+
+    private TableSliceJoinFactory createSliceJoinFactory() {
+        return new TableSliceJoinFactory(entity, entityManager);
+    }
+
+    private FilterFactory createFilterFactory(List<Field<?>> fields) {
+        return new FilterFactory(fields, entity.getDefaultFilterCondition(), entity.getWordConditionBuilder());
+    }
+
+    private SortingFactory createSortingFactory(List<Field<?>> fields) {
+        return new SortingFactory(fields);
+    }
+
+    private LimitFactory createLimitFactory() {
+        return new LimitFactory();
     }
 }
