@@ -1,14 +1,14 @@
-package cz.quantumleap.core.data.list;
+package cz.quantumleap.core.data.query;
 
 import cz.quantumleap.core.data.transport.SliceRequest;
 
-public interface LimitBuilder {
+public class LimitFactory {
 
-    LimitBuilder DEFAULT = new DefaultLimitBuilder();
+    public Limit forSliceRequest(SliceRequest request) {
+        return new Limit(request.getOffset(), Math.min(request.getSize() + 1, SliceRequest.MAX_ITEMS));
+    }
 
-    Limit build(SliceRequest request);
-
-    class Limit {
+    public static class Limit {
         private final int offset;
         private final int numberOfRows;
 
@@ -25,5 +25,4 @@ public interface LimitBuilder {
             return numberOfRows;
         }
     }
-
 }

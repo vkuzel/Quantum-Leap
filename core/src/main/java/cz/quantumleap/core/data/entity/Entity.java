@@ -2,7 +2,6 @@ package cz.quantumleap.core.data.entity;
 
 import cz.quantumleap.core.data.list.DefaultFilterBuilder;
 import cz.quantumleap.core.data.list.FilterBuilder;
-import cz.quantumleap.core.data.list.LimitBuilder;
 import org.apache.commons.lang3.Validate;
 import org.jooq.*;
 
@@ -29,15 +28,13 @@ public class Entity<TABLE extends Table<? extends Record>> {
      */
     private final Map<Field<?>, FieldMetaType> fieldMetaTypeMap;
     private final FilterBuilder filterBuilder;
-    private final LimitBuilder limitBuilder;
 
     public Entity(
             EntityIdentifier<TABLE> entityIdentifier,
             List<Field<?>> primaryKeyFields,
             Function<Table<?>, Field<String>> lookupLabelFieldBuilder,
             Map<Field<?>, FieldMetaType> fieldMetaTypeMap,
-            FilterBuilder filterBuilder,
-            LimitBuilder limitBuilder
+            FilterBuilder filterBuilder
     ) {
         this.entityIdentifier = entityIdentifier;
         this.primaryKeyFields = primaryKeyFields;
@@ -46,7 +43,6 @@ public class Entity<TABLE extends Table<? extends Record>> {
         this.fieldMetaTypeMap = fieldMetaTypeMap;
 
         this.filterBuilder = filterBuilder;
-        this.limitBuilder = limitBuilder;
     }
 
     public EntityIdentifier<TABLE> getIdentifier() {
@@ -91,10 +87,6 @@ public class Entity<TABLE extends Table<? extends Record>> {
 
     public FilterBuilder getFilterBuilder() {
         return filterBuilder;
-    }
-
-    public LimitBuilder getLimitBuilder() {
-        return limitBuilder;
     }
 
     public static <TABLE extends Table<? extends Record>> Builder<TABLE> createBuilder(TABLE table) {
@@ -199,8 +191,7 @@ public class Entity<TABLE extends Table<? extends Record>> {
                     primaryKeyFields,
                     lookupLabelFieldBuilder,
                     fieldMetaTypeMap,
-                    new DefaultFilterBuilder(table, defaultFilterCondition, wordConditionBuilder),
-                    LimitBuilder.DEFAULT
+                    new DefaultFilterBuilder(table, defaultFilterCondition, wordConditionBuilder)
             );
         }
 

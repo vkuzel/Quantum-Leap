@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static cz.quantumleap.core.data.list.LimitBuilder.Limit;
+import static cz.quantumleap.core.data.query.LimitFactory.Limit;
 import static cz.quantumleap.core.tables.TablePreferencesTable.TABLE_PREFERENCES;
 
 public final class DefaultListDao<TABLE extends Table<? extends Record>> implements ListDao<TABLE> {
@@ -43,7 +43,7 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
         Function<SelectJoinStep<Record>, SelectJoinStep<Record>> join = new TableSliceJoinFactory(entity, entityManager).forSliceRequest(request);
         Condition conditions = new TableSliceFilterFactory(entity, entityManager).forSliceRequest(fields, request); // filter builder - needs fields & entity manager
         List<SortField<?>> orderBy = new SortingFactory(fields).forSliceRequest(request);
-        Limit limit = new TableSliceLimitFactory(entity, entityManager).forSliceRequest(request);
+        Limit limit = new LimitFactory().forSliceRequest(request);
 
         SelectJoinStep<Record> selectJoinStep = dslContext
                 .select(fields)
@@ -72,7 +72,7 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
                 sliceRequest.getCondition()
         );
         List<SortField<?>> orderBy = new SortingFactory(fields).forSliceRequest(request);
-        Limit limit = entity.getLimitBuilder().build(sliceRequest);
+        Limit limit = new LimitFactory().forSliceRequest(request);
 
         return dslContext.selectFrom(getTable())
                 .where(conditions)
