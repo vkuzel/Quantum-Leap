@@ -10,6 +10,7 @@ import cz.quantumleap.core.data.transport.TableSlice;
 import org.jooq.*;
 import org.springframework.data.domain.Sort;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -40,9 +41,9 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
         Table<?> table = entity.getTable();
         List<Field<?>> fields = new TableSliceFieldsFactory(entity, entityManager).forSliceRequest(request);
         Function<SelectJoinStep<Record>, SelectJoinStep<Record>> join = new TableSliceJoinFactory(entity, entityManager).forSliceRequest(request);
-        Condition conditions = new TableSliceConditionsFactory(entity, entityManager).forSliceRequest(fields, request); // filter builder - needs fields & entity manager
+        Condition conditions = new TableSliceFilterFactory(entity, entityManager).forSliceRequest(fields, request); // filter builder - needs fields & entity manager
+        List<SortField<?>> orderBy = new SortingFactory(fields).forSliceRequest(request);
         Limit limit = new TableSliceLimitFactory(entity, entityManager).forSliceRequest(request);
-        List<SortField<?>> orderBy = new TableSliceOrderByFactory(entity, entityManager).forSliceRequest(fields, request); // needs fields
 
         SelectJoinStep<Record> selectJoinStep = dslContext
                 .select(fields)
@@ -60,17 +61,22 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
     // TODO Similar structure to fetchSlice()
     public <T> List<T> fetchList(SliceRequest sliceRequest, Class<T> type) {
         SliceRequest request = setDefaultOrder(sliceRequest);
-        Limit limit = entity.getLimitBuilder().build(sliceRequest);
+
+        Table<?> table = entity.getTable();
+        List<Field<?>> fields = Arrays.asList(table.fields());
+
         Condition conditions = Utils.joinConditions(
                 Utils.ConditionOperator.AND,
                 entity.getFilterBuilder().buildForFilter(sliceRequest.getFilter()),
                 entity.getFilterBuilder().buildForQuery(sliceRequest.getQuery()),
                 sliceRequest.getCondition()
         );
+        List<SortField<?>> orderBy = new SortingFactory(fields).forSliceRequest(request);
+        Limit limit = entity.getLimitBuilder().build(sliceRequest);
 
         return dslContext.selectFrom(getTable())
                 .where(conditions)
-                .orderBy(entity.getSortingBuilder().build(request.getSort()))
+                .orderBy(orderBy)
                 .limit(limit.getOffset(), limit.getNumberOfRows())
                 .fetchInto(type);
     }

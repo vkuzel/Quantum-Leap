@@ -90,12 +90,12 @@ public class TableSliceFactory { // TODO Rename to TableSliceMapper and move to 
             FieldMetaType fieldMetaType = entity.getFieldMetaType(field);
             if (fieldMetaType instanceof LookupMetaType) {
                 Object value = record.get(field);
-                Field<?> labelField = record.field(field.getName() + ".label");
-                if (labelField != null) {
-                    Object label = record.get(labelField);
+                Field<?> idField = record.field(field.getName() + ".id"); // TODO To utils
+                if (idField != null) {
+                    Object id = record.get(idField);
                     value = new Lookup(
-                            value,
-                            label != null ? label.toString() : (value != null ? value.toString() : null),
+                            id,
+                            value != null ? value.toString() : (id != null ? id.toString() : null),
                             fieldMetaType.asLookup().getEntityIdentifier()
                     );
                 }

@@ -9,12 +9,12 @@ import org.jooq.Field;
 
 import java.util.List;
 
-public class TableSliceConditionsFactory {
+public class TableSliceFilterFactory {
 
     private final Entity<?> entity;
     private final EntityManager entityManager;
 
-    public TableSliceConditionsFactory(Entity<?> entity, EntityManager entityManager) {
+    public TableSliceFilterFactory(Entity<?> entity, EntityManager entityManager) {
         this.entity = entity;
         this.entityManager = entityManager;
     }

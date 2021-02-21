@@ -37,7 +37,7 @@ public final class DefaultLookupDao<TABLE extends Table<? extends Record>> imple
         return dslContext.select(entity.getLookupLabelField())
                 .from(getTable())
                 .where(condition)
-                .orderBy(entity.getSortingBuilder().buildForLookup())
+                .orderBy(createSortField())
                 .fetchOneInto(String.class);
     }
 
@@ -48,7 +48,7 @@ public final class DefaultLookupDao<TABLE extends Table<? extends Record>> imple
         return dslContext.select(primaryKey, entity.getLookupLabelField())
                 .from(getTable())
                 .where(condition)
-                .orderBy(entity.getSortingBuilder().buildForLookup())
+                .orderBy(createSortField())
                 .fetchMap(Record2::value1, Record2::value2);
     }
 
@@ -64,7 +64,7 @@ public final class DefaultLookupDao<TABLE extends Table<? extends Record>> imple
         return dslContext.select(primaryKey, entity.getLookupLabelField())
                 .from(getTable())
                 .where(condition)
-                .orderBy(entity.getSortingBuilder().buildForLookup())
+                .orderBy(createSortField())
                 .limit(MAX_FILTERED_ROWS)
                 .fetchMap(Record2::value1, Record2::value2);
     }
@@ -72,6 +72,11 @@ public final class DefaultLookupDao<TABLE extends Table<? extends Record>> imple
     @Override
     public TableSlice fetchSlice(SliceRequest sliceRequest) {
         return listDao.fetchSlice(sliceRequest);
+    }
+
+    private SortField<?> createSortField() {
+        Field<?> field = entity.getLookupLabelField();
+        return field.asc();
     }
 
     private Table<? extends Record> getTable() {

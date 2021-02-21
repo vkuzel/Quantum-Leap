@@ -1,6 +1,8 @@
 package cz.quantumleap.core.data.entity;
 
-import cz.quantumleap.core.data.list.*;
+import cz.quantumleap.core.data.list.DefaultFilterBuilder;
+import cz.quantumleap.core.data.list.FilterBuilder;
+import cz.quantumleap.core.data.list.LimitBuilder;
 import org.apache.commons.lang3.Validate;
 import org.jooq.*;
 
@@ -27,7 +29,6 @@ public class Entity<TABLE extends Table<? extends Record>> {
      */
     private final Map<Field<?>, FieldMetaType> fieldMetaTypeMap;
     private final FilterBuilder filterBuilder;
-    private final SortingBuilder sortingBuilder;
     private final LimitBuilder limitBuilder;
 
     public Entity(
@@ -36,7 +37,6 @@ public class Entity<TABLE extends Table<? extends Record>> {
             Function<Table<?>, Field<String>> lookupLabelFieldBuilder,
             Map<Field<?>, FieldMetaType> fieldMetaTypeMap,
             FilterBuilder filterBuilder,
-            SortingBuilder sortingBuilder,
             LimitBuilder limitBuilder
     ) {
         this.entityIdentifier = entityIdentifier;
@@ -46,7 +46,6 @@ public class Entity<TABLE extends Table<? extends Record>> {
         this.fieldMetaTypeMap = fieldMetaTypeMap;
 
         this.filterBuilder = filterBuilder;
-        this.sortingBuilder = sortingBuilder;
         this.limitBuilder = limitBuilder;
     }
 
@@ -94,10 +93,6 @@ public class Entity<TABLE extends Table<? extends Record>> {
         return filterBuilder;
     }
 
-    public SortingBuilder getSortingBuilder() {
-        return sortingBuilder;
-    }
-
     public LimitBuilder getLimitBuilder() {
         return limitBuilder;
     }
@@ -127,7 +122,6 @@ public class Entity<TABLE extends Table<? extends Record>> {
         private Condition defaultFilterCondition = null;
         private Map<Field<?>, FieldMetaType> fieldMetaTypeMap = new HashMap<>();
         private Function<String, Condition> wordConditionBuilder = s -> null;
-        private SortingBuilder sortingBuilder = null;
 
         public Builder(EntityIdentifier<TABLE> entityIdentifier) {
             Validate.notNull(entityIdentifier);
@@ -192,11 +186,6 @@ public class Entity<TABLE extends Table<? extends Record>> {
             return this;
         }
 
-        public Builder<TABLE> setSortingBuilder(SortingBuilder sortingBuilder) {
-            this.sortingBuilder = sortingBuilder;
-            return this;
-        }
-
         public Entity<TABLE> build() {
             TABLE table = entityIdentifier.getTable();
             List<Field<?>> primaryKeyFields;
@@ -205,20 +194,12 @@ public class Entity<TABLE extends Table<? extends Record>> {
             } else {
                 primaryKeyFields = getPrimaryKeyFields(table);
             }
-            SortingBuilder sortingBuilder;
-            if (this.sortingBuilder != null) {
-                sortingBuilder = this.sortingBuilder;
-            } else {
-                Field<String> lookupLabelField = lookupLabelFieldBuilder.apply(table);
-                sortingBuilder = new DefaultSortingBuilder(table, lookupLabelField);
-            }
             return new Entity<>(
                     entityIdentifier,
                     primaryKeyFields,
                     lookupLabelFieldBuilder,
                     fieldMetaTypeMap,
                     new DefaultFilterBuilder(table, defaultFilterCondition, wordConditionBuilder),
-                    sortingBuilder,
                     LimitBuilder.DEFAULT
             );
         }

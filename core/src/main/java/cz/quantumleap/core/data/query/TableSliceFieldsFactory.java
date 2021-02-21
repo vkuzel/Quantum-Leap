@@ -31,7 +31,7 @@ public class TableSliceFieldsFactory {
             if (fieldMetaType instanceof EnumMetaType) {
                 Table<?> enumTable = resolveTableAlias(ENUM_VALUE, field);
 
-                Field<?> enumField = enumTable.field(ENUM_VALUE.LABEL).as(field);
+                Field<?> enumField = getFieldSafely(enumTable, ENUM_VALUE.LABEL).as(field);
 
                 fields.add(enumField);
             } else if (fieldMetaType instanceof SetMetaType) {
@@ -42,7 +42,7 @@ public class TableSliceFieldsFactory {
                                 .select(DSL.groupConcat(ENUM_VALUE.LABEL).separator(", "))
                                 .from(ENUM_VALUE)
                                 .where(ENUM_VALUE.ENUM_ID.eq(enumId)
-                                        .and(ENUM_VALUE.ID.eq(DSL.any((Field<String[]>) field)))),
+                                        .and(ENUM_VALUE.ID.eq(DSL.any(toArrayField(field))))),
                         DSL.val("")
                 ).as(field);
 
@@ -52,10 +52,11 @@ public class TableSliceFieldsFactory {
                 Entity<?> lookupEntity = entityManager.getEntity(lookupEntityIdentifier);
                 Table<?> lookupTable = resolveTableAlias(lookupEntity.getTable(), field);
 
-                String labelFieldName = field.getName() + ".label";
-                Field<?> labelField = lookupEntity.buildLookupLabelFieldForTable(lookupTable).as(labelFieldName);
+                String idFieldName = field.getName() + ".id"; // TODO Move to utils...
+                Field<?> idField = field.as(idFieldName);
+                Field<?> labelField = lookupEntity.buildLookupLabelFieldForTable(lookupTable).as(field);
 
-                fields.add(field);
+                fields.add(idField);
                 fields.add(labelField);
             } else {
                 fields.add(field);
@@ -69,5 +70,18 @@ public class TableSliceFieldsFactory {
     private Table<?> resolveTableAlias(Table<?> table, Field<?> field) {
         String alias = "t_" + field.getName();
         return table.as(alias);
+    }
+
+    @SuppressWarnings("unchecked")
+    private  Field<String[]> toArrayField(Field<?> field) {
+        return (Field<String[]>) field;
+    }
+
+    private Field<?> getFieldSafely(Table<?> table, Field<?> field) {
+        Field<?> retrieved = table.field(field);
+        if (retrieved == null) {
+            throw new IllegalArgumentException("Field " + field + " not found in table " + table);
+        }
+        return retrieved;
     }
 }
