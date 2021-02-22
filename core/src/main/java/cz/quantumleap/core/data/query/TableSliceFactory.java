@@ -1,4 +1,4 @@
-package cz.quantumleap.core.data;
+package cz.quantumleap.core.data.query;
 
 import cz.quantumleap.core.data.entity.Entity;
 import cz.quantumleap.core.data.entity.FieldMetaType;
@@ -19,19 +19,17 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public class TableSliceFactory { // TODO Rename to TableSliceMapper and move to query package
+public class TableSliceFactory {
 
     private final Entity<?> entity;
     private final List<TablePreferences> tablePreferencesList;
-    private final SliceRequest sliceRequest;
 
-    public TableSliceFactory(Entity<?> entity, List<TablePreferences> tablePreferencesList, SliceRequest sliceRequest) {
+    public TableSliceFactory(Entity<?> entity, List<TablePreferences> tablePreferencesList) {
         this.entity = entity;
         this.tablePreferencesList = tablePreferencesList;
-        this.sliceRequest = sliceRequest;
     }
 
-    public TableSlice createTableSlice(Result<?> result) {
+    public TableSlice forRequestedResult(SliceRequest sliceRequest, Result<?> result) {
         Map<Field<?>, Column> fieldColumnMap = createFieldColumnMap(result, sliceRequest.getSort());
         List<Column> columns = new ArrayList<>(fieldColumnMap.values());
         List<Field<?>> fields = new ArrayList<>(fieldColumnMap.keySet());

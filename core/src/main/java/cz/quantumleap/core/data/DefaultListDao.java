@@ -56,8 +56,7 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
                 .limit(limit.getOffset(), limit.getNumberOfRows())
                 .fetch();
 
-        TableSliceFactory tableSliceFactory = new TableSliceFactory(entity, fetchTablePreferences(), request);
-        return tableSliceFactory.createTableSlice(result);
+        return createTableSliceFactory().forRequestedResult(request, result);
     }
 
     public <T> List<T> fetchList(SliceRequest sliceRequest, Class<T> type) {
@@ -108,13 +107,6 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
         return sliceRequest;
     }
 
-    private List<TablePreferences> fetchTablePreferences() {
-        return dslContext.select(TABLE_PREFERENCES.ID, TABLE_PREFERENCES.IS_DEFAULT, TABLE_PREFERENCES.ENABLED_COLUMNS)
-                .from(TABLE_PREFERENCES)
-                .where(TABLE_PREFERENCES.ENTITY_IDENTIFIER.equal(entity.getIdentifier().toString()))
-                .fetchInto(TablePreferences.class);
-    }
-
     private Table<? extends Record> getTable() {
         return entity.getTable();
     }
@@ -137,5 +129,17 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
 
     private LimitFactory createLimitFactory() {
         return new LimitFactory();
+    }
+
+    private TableSliceFactory createTableSliceFactory() {
+        List<TablePreferences> tablePreferences = fetchTablePreferences();
+        return new TableSliceFactory(entity, tablePreferences);
+    }
+
+    private List<TablePreferences> fetchTablePreferences() {
+        return dslContext.select(TABLE_PREFERENCES.ID, TABLE_PREFERENCES.IS_DEFAULT, TABLE_PREFERENCES.ENABLED_COLUMNS)
+                .from(TABLE_PREFERENCES)
+                .where(TABLE_PREFERENCES.ENTITY_IDENTIFIER.equal(entity.getIdentifier().toString()))
+                .fetchInto(TablePreferences.class);
     }
 }
