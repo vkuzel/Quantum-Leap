@@ -7,8 +7,13 @@ import org.jooq.SortOrder;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Order;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
+import static cz.quantumleap.core.data.query.QueryUtils.createFieldMap;
+import static cz.quantumleap.core.data.query.QueryUtils.normalizeFieldName;
 import static org.jooq.SortOrder.ASC;
 import static org.jooq.SortOrder.DESC;
 
@@ -40,18 +45,5 @@ public class SortingFactory {
         }
 
         return sortFields;
-    }
-
-    private Map<String, Field<?>> createFieldMap(List<Field<?>> fields) {
-        Map<String, Field<?>> fieldMap = new HashMap<>(fields.size());
-        for (Field<?> field : fields) {
-            String name = normalizeFieldName(field.getName());
-            fieldMap.put(name, field);
-        }
-        return fieldMap;
-    }
-
-    private String normalizeFieldName(String name) {
-        return name.toLowerCase();
     }
 }

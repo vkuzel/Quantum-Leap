@@ -10,13 +10,14 @@ import org.jooq.Field;
 import org.jooq.impl.DSL;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
 import static cz.quantumleap.core.common.Utils.ConditionOperator.AND;
 import static cz.quantumleap.core.common.Utils.ConditionOperator.OR;
+import static cz.quantumleap.core.data.query.QueryUtils.createFieldMap;
+import static cz.quantumleap.core.data.query.QueryUtils.normalizeFieldName;
 
 public class FilterFactory {
 
@@ -289,21 +290,6 @@ public class FilterFactory {
 
             return DSL.condition(false);
         }
-    }
-
-    // TODO Duplicate...
-    private Map<String, Field<?>> createFieldMap(List<Field<?>> fields) {
-        Map<String, Field<?>> fieldMap = new HashMap<>(fields.size());
-        for (Field<?> field : fields) {
-            String name = normalizeFieldName(field.getName());
-            fieldMap.put(name, field);
-        }
-        return fieldMap;
-    }
-
-    // TODO Duplicate...
-    private String normalizeFieldName(String name) {
-        return name.toLowerCase();
     }
 
     @SuppressWarnings("unchecked")

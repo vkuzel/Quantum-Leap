@@ -10,6 +10,7 @@ import org.jooq.Table;
 
 import java.util.function.Function;
 
+import static cz.quantumleap.core.data.query.QueryUtils.resolveTableAlias;
 import static cz.quantumleap.core.tables.EnumValueTable.ENUM_VALUE;
 
 public class TableSliceJoinFactory {
@@ -51,12 +52,5 @@ public class TableSliceJoinFactory {
             }
         }
         return selectJoinStep;
-
-    }
-
-    // TODO Static utils...
-    private Table<?> resolveTableAlias(Table<?> table, Field<?> field) {
-        String alias = "t_" + field.getName();
-        return table.as(alias);
     }
 }

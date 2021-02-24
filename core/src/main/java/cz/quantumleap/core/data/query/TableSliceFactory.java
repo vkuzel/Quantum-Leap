@@ -19,6 +19,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import static cz.quantumleap.core.data.query.QueryUtils.resolveLookupIdFieldName;
+
 public class TableSliceFactory {
 
     private final Entity<?> entity;
@@ -88,7 +90,8 @@ public class TableSliceFactory {
             FieldMetaType fieldMetaType = entity.getFieldMetaType(field);
             if (fieldMetaType instanceof LookupMetaType) {
                 Object value = record.get(field);
-                Field<?> idField = record.field(field.getName() + ".id"); // TODO To utils
+                String idFieldName = resolveLookupIdFieldName(field);
+                Field<?> idField = record.field(idFieldName);
                 if (idField != null) {
                     Object id = record.get(idField);
                     value = new Lookup(

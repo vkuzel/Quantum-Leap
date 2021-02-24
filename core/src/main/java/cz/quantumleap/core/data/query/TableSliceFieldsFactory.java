@@ -10,6 +10,8 @@ import org.jooq.impl.DSL;
 import java.util.ArrayList;
 import java.util.List;
 
+import static cz.quantumleap.core.data.query.QueryUtils.resolveLookupIdFieldName;
+import static cz.quantumleap.core.data.query.QueryUtils.resolveTableAlias;
 import static cz.quantumleap.core.tables.EnumValueTable.ENUM_VALUE;
 
 public class TableSliceFieldsFactory {
@@ -52,7 +54,7 @@ public class TableSliceFieldsFactory {
                 Entity<?> lookupEntity = entityManager.getEntity(lookupEntityIdentifier);
                 Table<?> lookupTable = resolveTableAlias(lookupEntity.getTable(), field);
 
-                String idFieldName = field.getName() + ".id"; // TODO Move to utils...
+                String idFieldName = resolveLookupIdFieldName(field);
                 Field<?> idField = field.as(idFieldName);
                 Field<?> labelField = lookupEntity.buildLookupLabelFieldForTable(lookupTable).as(field);
 
@@ -64,12 +66,6 @@ public class TableSliceFieldsFactory {
         }
 
         return fields;
-    }
-
-    // TODO Static utils...
-    private Table<?> resolveTableAlias(Table<?> table, Field<?> field) {
-        String alias = "t_" + field.getName();
-        return table.as(alias);
     }
 
     @SuppressWarnings("unchecked")
