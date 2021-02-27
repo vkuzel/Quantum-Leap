@@ -70,10 +70,9 @@ public class RecordFactory<T> {
     }
 
     private boolean hasCustomConvertibleTypes() {
-        // TODO Check the validity of following statement...
-        // jOOQ currently does not use converters for unmapping, provided
-        // by a custom ConverterProvider. In that case, the converter has
-        // to be invoked manually.
+        // jOOQ currently does not use converters in the DefaultRecordUnmapper
+        // for unmapping, provided by a custom ConverterProvider. In that case,
+        // the converter has to be invoked manually.
         for (Field<?> field : table.fields()) {
             Class<?> type = field.getDataType().getType();
             if (type == JSON.class || type == YearToSecond.class) {

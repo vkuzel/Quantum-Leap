@@ -11,8 +11,7 @@ public class SetMetaType implements FieldMetaType {
     }
 
     public SetMetaType(Field<?> field) {
-        // TODO Format!
-        this.enumId = field.getName();
+        this.enumId = field.getName().toUpperCase();
     }
 
     public String getEnumId() {
