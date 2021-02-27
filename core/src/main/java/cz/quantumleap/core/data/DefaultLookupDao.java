@@ -1,7 +1,6 @@
 package cz.quantumleap.core.data;
 
 import cz.quantumleap.core.data.entity.Entity;
-import cz.quantumleap.core.data.entity.EntityIdentifier;
 import cz.quantumleap.core.data.query.FilterFactory;
 import cz.quantumleap.core.data.transport.SliceRequest;
 import cz.quantumleap.core.data.transport.TableSlice;
@@ -21,16 +20,15 @@ public final class DefaultLookupDao<TABLE extends Table<? extends Record>> imple
     private final DSLContext dslContext;
     private final ListDao<TABLE> listDao;
 
-    public DefaultLookupDao(Entity<TABLE> entity, DSLContext dslContext, ListDao<TABLE> listDao, EntityManager entityManager) {
+    public DefaultLookupDao(Entity<TABLE> entity, DSLContext dslContext, ListDao<TABLE> listDao) {
         this.entity = entity;
         this.dslContext = dslContext;
         this.listDao = listDao;
-        entityManager.registerEntity(entity);
     }
 
     @Override
-    public EntityIdentifier<TABLE> getLookupEntityIdentifier() {
-        return entity.getIdentifier();
+    public Entity<?> getLookupEntity() {
+        return entity;
     }
 
     public String fetchLabelById(Object id) {

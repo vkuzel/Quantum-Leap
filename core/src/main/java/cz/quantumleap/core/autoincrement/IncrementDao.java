@@ -4,7 +4,6 @@ import cz.quantumleap.core.data.DefaultDetailDao;
 import cz.quantumleap.core.data.DetailDao;
 import cz.quantumleap.core.data.RecordAuditor;
 import cz.quantumleap.core.data.entity.Entity;
-import cz.quantumleap.core.data.entity.EntityIdentifier;
 import cz.quantumleap.core.tables.IncrementTable;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
@@ -38,8 +37,8 @@ public class IncrementDao implements DetailDao<IncrementTable> {
     }
 
     @Override
-    public EntityIdentifier<IncrementTable> getDetailEntityIdentifier() {
-        return entity.getIdentifier();
+    public Entity<IncrementTable> getDetailEntity() {
+        return entity;
     }
 
     public Map<String, Integer> loadLastIncrementVersionForModules() {

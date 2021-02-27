@@ -1,7 +1,6 @@
 package cz.quantumleap.core.data;
 
 import cz.quantumleap.core.data.entity.Entity;
-import cz.quantumleap.core.data.entity.EntityIdentifier;
 import cz.quantumleap.core.data.transport.SliceRequest;
 import cz.quantumleap.core.data.transport.TableSlice;
 import org.jooq.*;
@@ -20,27 +19,27 @@ public class DaoStub<TABLE extends Table<? extends Record>> implements DetailDao
     protected final ListDao<TABLE> listDao;
     protected final LookupDao<TABLE> lookupDao;
 
-    protected DaoStub(Entity<TABLE> entity, DSLContext dslContext, RecordAuditor recordAuditor, EntityManager entityManager) {
+    protected DaoStub(Entity<TABLE> entity, DSLContext dslContext, RecordAuditor recordAuditor, EntityRegistry entityRegistry) {
         this.entity = entity;
         this.dslContext = dslContext;
         this.detailDao = new DefaultDetailDao<>(entity, dslContext, recordAuditor);
-        this.listDao = new DefaultListDao<>(entity, dslContext, entityManager);
-        this.lookupDao = new DefaultLookupDao<>(entity, dslContext, listDao, entityManager);
+        this.listDao = new DefaultListDao<>(entity, dslContext, entityRegistry);
+        this.lookupDao = new DefaultLookupDao<>(entity, dslContext, listDao);
     }
 
     @Override
-    public EntityIdentifier<TABLE> getDetailEntityIdentifier() {
-        return detailDao.getDetailEntityIdentifier();
+    public Entity<TABLE> getDetailEntity() {
+        return detailDao.getDetailEntity();
     }
 
     @Override
-    public EntityIdentifier<TABLE> getListEntityIdentifier() {
-        return listDao.getListEntityIdentifier();
+    public Entity<TABLE> getListEntity() {
+        return listDao.getListEntity();
     }
 
     @Override
-    public EntityIdentifier<?> getLookupEntityIdentifier() {
-        return lookupDao.getLookupEntityIdentifier();
+    public Entity<?> getLookupEntity() {
+        return lookupDao.getLookupEntity();
     }
 
     @Override

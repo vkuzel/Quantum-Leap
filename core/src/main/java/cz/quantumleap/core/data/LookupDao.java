@@ -1,5 +1,6 @@
 package cz.quantumleap.core.data;
 
+import cz.quantumleap.core.data.entity.Entity;
 import cz.quantumleap.core.data.entity.EntityIdentifier;
 import cz.quantumleap.core.data.transport.SliceRequest;
 import cz.quantumleap.core.data.transport.TableSlice;
@@ -12,11 +13,14 @@ import java.util.Set;
 public interface LookupDao<TABLE extends Table<? extends Record>> {
 
     /**
-     * LookupDao can return an entity identifier different than an entity
-     * identifier of a TABLE. This will allow to register a lookup DAO based on
-     * an view for a table.
+     * LookupDao can return an entity different from an entity of a TABLE. This
+     * will allow to register a lookup DAO based on an view for a table.
      */
-    EntityIdentifier<?> getLookupEntityIdentifier();
+    Entity<?> getLookupEntity();
+
+    default EntityIdentifier<?> getLookupEntityIdentifier() {
+        return getLookupEntity().getIdentifier();
+    }
 
     String fetchLabelById(Object id);
 

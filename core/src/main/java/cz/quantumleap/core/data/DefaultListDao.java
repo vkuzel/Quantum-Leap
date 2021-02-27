@@ -2,7 +2,6 @@ package cz.quantumleap.core.data;
 
 import cz.quantumleap.core.common.Utils;
 import cz.quantumleap.core.data.entity.Entity;
-import cz.quantumleap.core.data.entity.EntityIdentifier;
 import cz.quantumleap.core.data.query.*;
 import cz.quantumleap.core.data.transport.SliceRequest;
 import cz.quantumleap.core.data.transport.TablePreferences;
@@ -23,17 +22,17 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
 
     private final Entity<TABLE> entity;
     private final DSLContext dslContext;
-    private final EntityManager entityManager;
+    private final EntityRegistry entityRegistry;
 
-    public DefaultListDao(Entity<TABLE> entity, DSLContext dslContext, EntityManager entityManager) {
+    public DefaultListDao(Entity<TABLE> entity, DSLContext dslContext, EntityRegistry entityRegistry) {
         this.entity = entity;
         this.dslContext = dslContext;
-        this.entityManager = entityManager;
+        this.entityRegistry = entityRegistry;
     }
 
     @Override
-    public EntityIdentifier<TABLE> getListEntityIdentifier() {
-        return entity.getIdentifier();
+    public Entity<TABLE> getListEntity() {
+        return entity;
     }
 
     public TableSlice fetchSlice(SliceRequest sliceRequest) {
@@ -112,11 +111,11 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
     }
 
     private TableSliceFieldsFactory createSliceFieldsFactory() {
-        return new TableSliceFieldsFactory(entity, entityManager);
+        return new TableSliceFieldsFactory(entity, entityRegistry);
     }
 
     private TableSliceJoinFactory createSliceJoinFactory() {
-        return new TableSliceJoinFactory(entity, entityManager);
+        return new TableSliceJoinFactory(entity, entityRegistry);
     }
 
     private FilterFactory createFilterFactory(List<Field<?>> fields) {

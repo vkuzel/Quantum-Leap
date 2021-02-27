@@ -1,5 +1,6 @@
 package cz.quantumleap.core.data;
 
+import cz.quantumleap.core.data.entity.Entity;
 import cz.quantumleap.core.data.entity.EntityIdentifier;
 import org.jooq.Condition;
 import org.jooq.Record;
@@ -11,7 +12,11 @@ import java.util.List;
 
 public interface DetailDao<TABLE extends Table<? extends Record>> {
 
-    EntityIdentifier<TABLE> getDetailEntityIdentifier();
+    Entity<TABLE> getDetailEntity();
+
+    default EntityIdentifier<TABLE> getDetailEntityIdentifier() {
+        return getDetailEntity().getIdentifier();
+    }
 
     <T> T fetchById(Object id, Class<T> type);
 

@@ -1,6 +1,6 @@
 package cz.quantumleap.core.data.query;
 
-import cz.quantumleap.core.data.EntityManager;
+import cz.quantumleap.core.data.EntityRegistry;
 import cz.quantumleap.core.data.entity.*;
 import cz.quantumleap.core.data.transport.SliceRequest;
 import org.jooq.Field;
@@ -17,11 +17,11 @@ import static cz.quantumleap.core.tables.EnumValueTable.ENUM_VALUE;
 public final class TableSliceFieldsFactory {
 
     private final Entity<?> entity;
-    private final EntityManager entityManager;
+    private final EntityRegistry entityRegistry;
 
-    public TableSliceFieldsFactory(Entity<?> entity, EntityManager entityManager) {
+    public TableSliceFieldsFactory(Entity<?> entity, EntityRegistry entityRegistry) {
         this.entity = entity;
-        this.entityManager = entityManager;
+        this.entityRegistry = entityRegistry;
     }
 
     @SuppressWarnings("unused")
@@ -52,7 +52,7 @@ public final class TableSliceFieldsFactory {
                 fields.add(setField);
             } else if (fieldMetaType instanceof LookupMetaType) {
                 EntityIdentifier<?> lookupEntityIdentifier = fieldMetaType.asLookup().getEntityIdentifier();
-                Entity<?> lookupEntity = entityManager.getEntity(lookupEntityIdentifier);
+                Entity<?> lookupEntity = entityRegistry.getEntity(lookupEntityIdentifier);
                 Table<?> lookupTable = resolveTableAlias(lookupEntity.getTable(), field);
 
                 String idFieldName = resolveLookupIdFieldName(field);
