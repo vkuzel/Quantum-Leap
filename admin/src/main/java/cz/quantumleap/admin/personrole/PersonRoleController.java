@@ -5,12 +5,8 @@ import cz.quantumleap.admin.menu.AdminMenuItemActive;
 import cz.quantumleap.admin.menu.AdminMenuManager;
 import cz.quantumleap.admin.notification.NotificationService;
 import cz.quantumleap.admin.person.PersonService;
-import cz.quantumleap.core.data.LookupDaoManager;
-import cz.quantumleap.core.data.entity.EntityIdentifier;
-import cz.quantumleap.core.data.transport.Lookup;
 import cz.quantumleap.core.personrole.transport.PersonRole;
 import cz.quantumleap.core.security.WebSecurityExpressionEvaluator;
-import cz.quantumleap.core.tables.PersonTable;
 import cz.quantumleap.core.web.DefaultDetailController;
 import cz.quantumleap.core.web.DetailController;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -31,16 +27,12 @@ public class PersonRoleController extends AdminController {
     public static final String DETAIL_URL = "/person/{personId}/person-role";
     private static final String DETAIL_VIEW = "admin/person-role";
 
-    private final LookupDaoManager lookupDaoManager;
     private final PersonRoleService personRoleService;
-    private final PersonService personService;
     private final DetailController<PersonRole> detailController;
 
-    public PersonRoleController(AdminMenuManager adminMenuManager, PersonService personService, NotificationService notificationService, WebSecurityExpressionEvaluator webSecurityExpressionEvaluator, LookupDaoManager lookupDaoManager, PersonRoleService personRoleService) {
+    public PersonRoleController(AdminMenuManager adminMenuManager, PersonService personService, NotificationService notificationService, WebSecurityExpressionEvaluator webSecurityExpressionEvaluator, PersonRoleService personRoleService) {
         super(adminMenuManager, personService, notificationService, webSecurityExpressionEvaluator);
-        this.lookupDaoManager = lookupDaoManager;
         this.personRoleService = personRoleService;
-        this.personService = personService;
         this.detailController = new DefaultDetailController<>(PersonRole.class, personRoleService, DETAIL_URL, DETAIL_VIEW);
     }
 

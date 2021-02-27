@@ -5,7 +5,7 @@
 <body>
 <!--/*
     Template params:
-        entityIdentifier ... Used to identify the lookup and to get controller from LookupControllerManager.
+        entityIdentifier ... Used to identify the lookup and to get controller from LookupRegistry.
         fieldId ... Id of input field.
         fieldName ... Name of input field.
         value ... Value of the lookup.
@@ -14,8 +14,8 @@
 */-->
 <div th:fragment="lookup(entityIdentifier, fieldId, value, modalTitle)" class="lookup dropdown">
     <input type="hidden" th:name="${fieldName ?: fieldId}" th:value="${value}">
-    <div class="input-group" th:with="lookupController=${@lookupControllerManager.getControllerForEntityIdentifier(entityIdentifier)}">
-        <input type="text" th:assert="${fieldId}" th:id="${fieldId}" th:value="${@lookupManager.getLabel(entityIdentifier, value)}" class="form-control"
+    <div class="input-group" th:with="lookupController=${@lookupRegistry.getControllerForEntityIdentifier(entityIdentifier)}">
+        <input type="text" th:assert="${fieldId}" th:id="${fieldId}" th:value="${@lookupRegistry.getLabel(entityIdentifier, value)}" class="form-control"
                th:classappend="${#fields.hasErrors('__${fieldName ?: fieldId}__')}? 'is-invalid'"
                th:data-lookup-labels-url="@{${lookupController.getLookupLabelsUrl()}}"
                th:data-query-prefix="${queryPrefix}" autocomplete="off">
