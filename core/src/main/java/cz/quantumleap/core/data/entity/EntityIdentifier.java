@@ -55,7 +55,8 @@ public class EntityIdentifier<TABLE extends Table<? extends Record>> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(table.getSchema().getName(), table.getUnqualifiedName(), qualifier);
+        String schemaName = table.getSchema() != null ? table.getSchema().getName() : null;
+        return Objects.hash(schemaName, table.getUnqualifiedName(), qualifier);
     }
 
     /**
