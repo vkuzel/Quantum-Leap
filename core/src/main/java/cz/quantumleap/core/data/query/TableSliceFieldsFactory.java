@@ -14,7 +14,7 @@ import static cz.quantumleap.core.data.query.QueryUtils.resolveLookupIdFieldName
 import static cz.quantumleap.core.data.query.QueryUtils.resolveTableAlias;
 import static cz.quantumleap.core.tables.EnumValueTable.ENUM_VALUE;
 
-public class TableSliceFieldsFactory {
+public final class TableSliceFieldsFactory {
 
     private final Entity<?> entity;
     private final EntityManager entityManager;
@@ -24,6 +24,7 @@ public class TableSliceFieldsFactory {
         this.entityManager = entityManager;
     }
 
+    @SuppressWarnings("unused")
     public List<Field<?>> forSliceRequest(SliceRequest request) {
         Field<?>[] originalFields = entity.getTable().fields();
         List<Field<?>> fields = new ArrayList<>(originalFields.length);

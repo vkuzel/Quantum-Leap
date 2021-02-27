@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class QueryUtils {
+public final class QueryUtils {
 
     public static Table<?> resolveTableAlias(Table<?> table, Field<?> field) {
         String alias = "t_" + field.getName();

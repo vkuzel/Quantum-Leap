@@ -2,13 +2,13 @@ package cz.quantumleap.core.data.query;
 
 import cz.quantumleap.core.data.transport.SliceRequest;
 
-public class LimitFactory {
+public final class LimitFactory {
 
     public Limit forSliceRequest(SliceRequest request) {
         return new Limit(request.getOffset(), Math.min(request.getSize() + 1, SliceRequest.MAX_ITEMS));
     }
 
-    public static class Limit {
+    public static final class Limit {
         private final int offset;
         private final int numberOfRows;
 

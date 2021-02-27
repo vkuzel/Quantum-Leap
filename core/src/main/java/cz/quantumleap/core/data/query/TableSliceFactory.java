@@ -21,7 +21,7 @@ import java.util.Map;
 
 import static cz.quantumleap.core.data.query.QueryUtils.resolveLookupIdFieldName;
 
-public class TableSliceFactory {
+public final class TableSliceFactory {
 
     private final Entity<?> entity;
     private final List<TablePreferences> tablePreferencesList;

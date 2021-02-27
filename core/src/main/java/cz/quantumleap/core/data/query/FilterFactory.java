@@ -19,7 +19,7 @@ import static cz.quantumleap.core.common.Utils.ConditionOperator.OR;
 import static cz.quantumleap.core.data.query.QueryUtils.createFieldMap;
 import static cz.quantumleap.core.data.query.QueryUtils.normalizeFieldName;
 
-public class FilterFactory {
+public final class FilterFactory {
 
     private enum ComparisonOperator {EQ, LT, GT, LE, GE}
 
@@ -190,11 +190,10 @@ public class FilterFactory {
         }
     }
 
-    private class CreateCondition {
+    private final class CreateCondition {
 
         private final List<String> tokens;
         private int startAtToken;
-        private int currentTokenIndex;
 
         public CreateCondition(List<String> tokens) {
             this.tokens = tokens;
@@ -210,6 +209,7 @@ public class FilterFactory {
 
             Condition condition = null;
 
+            int currentTokenIndex;
             for (currentTokenIndex = startAtToken; currentTokenIndex < size; currentTokenIndex++) {
                 String previous = currentTokenIndex > startAtToken ? tokens.get(currentTokenIndex - 1) : null;
                 String current = tokens.get(currentTokenIndex);

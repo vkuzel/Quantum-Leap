@@ -13,7 +13,7 @@ import java.util.function.Function;
 import static cz.quantumleap.core.data.query.QueryUtils.resolveTableAlias;
 import static cz.quantumleap.core.tables.EnumValueTable.ENUM_VALUE;
 
-public class TableSliceJoinFactory {
+public final class TableSliceJoinFactory {
 
     private final Entity<?> entity;
     private final EntityManager entityManager;
@@ -23,34 +23,52 @@ public class TableSliceJoinFactory {
         this.entityManager = entityManager;
     }
 
-    public Function<SelectJoinStep<Record>, SelectJoinStep<Record>> forSliceRequest(SliceRequest request) {
+    @SuppressWarnings("unused")
+    public Function<SelectJoinStep<Record>, SelectJoinStep<Record>> forSliceRequest(SliceRequest sliceRequest) {
         return this::apply;
     }
 
-    private SelectJoinStep<Record> apply(SelectJoinStep selectJoinStep) {
+    private SelectJoinStep<Record> apply(SelectJoinStep<Record> selectJoinStep) {
         Field<?>[] fields = entity.getTable().fields();
         for (Field<?> field : fields) {
             FieldMetaType fieldMetaType = entity.getFieldMetaType(field);
             if (fieldMetaType instanceof EnumMetaType) {
                 Table<?> enumTable = resolveTableAlias(ENUM_VALUE, field);
                 String enumId = fieldMetaType.asEnum().getEnumId();
-                Field<String> enumField = (Field<String>) field;
+                Field<String> enumField = getTypedField(field, String.class);
 
                 selectJoinStep = selectJoinStep
                         .leftJoin(enumTable)
-                        .on(enumTable.field(ENUM_VALUE.ENUM_ID).eq(enumId)
-                                .and(enumTable.field(ENUM_VALUE.ID).eq(enumField)));
+                        .on(getFieldSafely(enumTable, ENUM_VALUE.ENUM_ID).eq(enumId)
+                                .and(getFieldSafely(enumTable, ENUM_VALUE.ID).eq(enumField)));
             } else if (fieldMetaType instanceof LookupMetaType) {
                 EntityIdentifier<?> lookupEntityIdentifier = fieldMetaType.asLookup().getEntityIdentifier();
                 Entity<?> lookupEntity = entityManager.getEntity(lookupEntityIdentifier);
                 Table<?> lookupTable = resolveTableAlias(lookupEntity.getTable(), field);
-                Field<?> lookupPrimaryKey = lookupEntity.getPrimaryKeyField();
+                Field<Object> lookupPrimaryKey = getTypedField(lookupEntity.getPrimaryKeyField(), Object.class);
 
                 selectJoinStep = selectJoinStep
                         .leftJoin(lookupTable)
-                        .on(((Field<Object>) lookupTable.field(lookupPrimaryKey)).eq(field));
+                        .on(lookupPrimaryKey.eq(field));
             }
         }
         return selectJoinStep;
+    }
+
+    private <T> Field<T> getFieldSafely(Table<?> table, Field<T> field) {
+        Field<T> safeField = table.field(field);
+        if (safeField == null) {
+            throw new IllegalArgumentException("Field " + field + " not found in table " + table);
+        }
+        return safeField;
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T> Field<T> getTypedField(Field<?> field, Class<T> type) {
+        if (field.getType() != type) {
+            String msg = "Field " + field + " of type " + field.getType() + " cannot be case to type " + type;
+            throw new IllegalArgumentException(msg);
+        }
+        return (Field<T>) field;
     }
 }

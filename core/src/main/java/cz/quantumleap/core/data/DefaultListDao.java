@@ -42,7 +42,7 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
         Table<?> table = entity.getTable();
         List<Field<?>> fields = createSliceFieldsFactory().forSliceRequest(request);
 
-        Function<SelectJoinStep<Record>, SelectJoinStep<Record>> join = createSliceJoinFactory().forSliceRequest(request);
+        Function<SelectJoinStep<Record>, SelectJoinStep<Record>> join = createSliceJoinFactory().forSliceRequest(sliceRequest);
         Condition conditions = createFilterFactory(fields).forSliceRequest(request);
         List<SortField<?>> orderBy = createSortingFactory(fields).forSliceRequest(request);
         Limit limit = createLimitFactory().forSliceRequest(request);

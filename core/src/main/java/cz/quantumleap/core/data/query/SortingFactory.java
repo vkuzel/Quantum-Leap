@@ -17,7 +17,7 @@ import static cz.quantumleap.core.data.query.QueryUtils.normalizeFieldName;
 import static org.jooq.SortOrder.ASC;
 import static org.jooq.SortOrder.DESC;
 
-public class SortingFactory {
+public final class SortingFactory {
 
     private final Map<String, Field<?>> fieldMap;
 
