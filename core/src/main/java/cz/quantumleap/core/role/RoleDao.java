@@ -1,6 +1,5 @@
 package cz.quantumleap.core.role;
 
-import cz.quantumleap.core.common.Utils;
 import cz.quantumleap.core.data.DaoStub;
 import cz.quantumleap.core.data.EntityRegistry;
 import cz.quantumleap.core.data.RecordAuditor;
@@ -13,6 +12,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+import static cz.quantumleap.core.data.query.QueryUtils.startsWithIgnoreCase;
 import static cz.quantumleap.core.tables.RoleTable.ROLE;
 
 @Repository
@@ -24,7 +24,7 @@ public class RoleDao extends DaoStub<RoleTable> {
 
     private static Entity<RoleTable> createEntity() {
         return Entity.createBuilder(ROLE).setLookupLabelField(ROLE.NAME)
-                .setWordConditionBuilder(s -> Utils.startsWithIgnoreCase(ROLE.NAME, s)).build();
+                .setWordConditionBuilder(s -> startsWithIgnoreCase(ROLE.NAME, s)).build();
     }
 
     public List<String> fetchRolesByPersonId(long personId) {

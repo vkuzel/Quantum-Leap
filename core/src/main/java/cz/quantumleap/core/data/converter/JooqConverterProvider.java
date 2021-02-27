@@ -1,4 +1,4 @@
-package cz.quantumleap.core.data.mapper;
+package cz.quantumleap.core.data.converter;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

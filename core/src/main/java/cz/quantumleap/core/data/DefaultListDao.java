@@ -1,6 +1,5 @@
 package cz.quantumleap.core.data;
 
-import cz.quantumleap.core.common.Utils;
 import cz.quantumleap.core.data.entity.Entity;
 import cz.quantumleap.core.data.query.*;
 import cz.quantumleap.core.data.transport.SliceRequest;
@@ -14,8 +13,9 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static cz.quantumleap.core.common.Utils.ConditionOperator.AND;
 import static cz.quantumleap.core.data.query.LimitFactory.Limit;
+import static cz.quantumleap.core.data.query.QueryUtils.ConditionOperator.AND;
+import static cz.quantumleap.core.data.query.QueryUtils.joinConditions;
 import static cz.quantumleap.core.tables.TablePreferencesTable.TABLE_PREFERENCES;
 
 public final class DefaultListDao<TABLE extends Table<? extends Record>> implements ListDao<TABLE> {
@@ -77,7 +77,7 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
 
     @Override
     public <T> List<T> fetchListByCondition(Condition condition, Class<T> type) {
-        Condition conditions = Utils.joinConditions(
+        Condition conditions = joinConditions(
                 AND,
                 entity.getDefaultFilterCondition(),
                 condition

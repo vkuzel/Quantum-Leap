@@ -1,6 +1,5 @@
 package cz.quantumleap.core.data.entity;
 
-import cz.quantumleap.core.data.mapper.MapperUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.jooq.Name;
@@ -11,6 +10,8 @@ import org.jooq.impl.DSL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
+import static cz.quantumleap.core.data.query.QueryUtils.resolveDatabaseTableNameWithSchema;
 
 public class EntityIdentifier<TABLE extends Table<? extends Record>> {
 
@@ -63,7 +64,7 @@ public class EntityIdentifier<TABLE extends Table<? extends Record>> {
      */
     @Override
     public String toString() {
-        String value = MapperUtils.resolveDatabaseTableNameWithSchema(table);
+        String value = resolveDatabaseTableNameWithSchema(table);
         if (StringUtils.isNotBlank(qualifier)) {
             value += '#' + qualifier;
         }

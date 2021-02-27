@@ -1,7 +1,7 @@
 package cz.quantumleap.core.data;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import cz.quantumleap.core.data.mapper.JooqConverterProvider;
+import cz.quantumleap.core.data.converter.JooqConverterProvider;
 import org.jooq.ConnectionProvider;
 import org.jooq.ExecuteListenerProvider;
 import org.jooq.RecordListenerProvider;

@@ -1,6 +1,5 @@
 package cz.quantumleap.core.data.query;
 
-import cz.quantumleap.core.common.Utils;
 import cz.quantumleap.core.data.transport.SliceRequest;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -14,10 +13,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
-import static cz.quantumleap.core.common.Utils.ConditionOperator.AND;
-import static cz.quantumleap.core.common.Utils.ConditionOperator.OR;
-import static cz.quantumleap.core.data.query.QueryUtils.createFieldMap;
-import static cz.quantumleap.core.data.query.QueryUtils.normalizeFieldName;
+import static cz.quantumleap.core.data.query.QueryUtils.*;
+import static cz.quantumleap.core.data.query.QueryUtils.ConditionOperator.AND;
+import static cz.quantumleap.core.data.query.QueryUtils.ConditionOperator.OR;
 
 public final class FilterFactory {
 
@@ -40,7 +38,7 @@ public final class FilterFactory {
     public Condition forQuery(String query) {
         Condition queryCondition = createConditionFromQuery(query);
 
-        return Utils.joinConditions(
+        return joinConditions(
                 AND,
                 defaultCondition,
                 queryCondition
@@ -51,7 +49,7 @@ public final class FilterFactory {
         Condition filterCondition = createConditionFromFilter(request.getFilter());
         Condition queryCondition = createConditionFromQuery(request.getQuery());
 
-        return Utils.joinConditions(
+        return joinConditions(
                 AND,
                 defaultCondition,
                 request.getCondition(),
@@ -158,7 +156,7 @@ public final class FilterFactory {
         return tokens;
     }
 
-    private static Utils.ConditionOperator resolveConditionOperator(String token) {
+    private static ConditionOperator resolveConditionOperator(String token) {
         token = token != null ? token.toLowerCase() : null;
         if ("and".equals(token)) {
             return AND;
@@ -215,7 +213,7 @@ public final class FilterFactory {
                 String current = tokens.get(currentTokenIndex);
                 String next = currentTokenIndex < size - 1 ? tokens.get(currentTokenIndex + 1) : null;
                 String next2 = currentTokenIndex < size - 2 ? tokens.get(currentTokenIndex + 2) : null;
-                Utils.ConditionOperator conditionOperator = resolveConditionOperator(previous);
+                ConditionOperator conditionOperator = resolveConditionOperator(previous);
 
                 if (resolveConditionOperator(current) != null) {
                     continue;
@@ -223,7 +221,7 @@ public final class FilterFactory {
                     return condition;
                 } else if ("(".equals(current)) {
                     startAtToken = ++currentTokenIndex;
-                    condition = Utils.joinConditions(conditionOperator, condition, createCondition());
+                    condition = joinConditions(conditionOperator, condition, createCondition());
                     continue;
                 }
 
@@ -231,16 +229,16 @@ public final class FilterFactory {
                 if (field != null) {
                     ComparisonOperator comparisonOperator = resolveComparisonOperator(next);
                     if (comparisonOperator != null && next2 != null) {
-                        condition = Utils.joinConditions(conditionOperator, condition, createCondition(field, comparisonOperator, next2));
+                        condition = joinConditions(conditionOperator, condition, createCondition(field, comparisonOperator, next2));
                         currentTokenIndex += 2;
                     } else if (next != null) {
-                        condition = Utils.joinConditions(AND, condition, createCondition(field, null, next));
+                        condition = joinConditions(AND, condition, createCondition(field, null, next));
                         currentTokenIndex++;
                     } else {
-                        condition = Utils.joinConditions(AND, condition, wordConditionBuilder.apply(current));
+                        condition = joinConditions(AND, condition, wordConditionBuilder.apply(current));
                     }
                 } else {
-                    condition = Utils.joinConditions(resolveConditionOperator(previous), condition, wordConditionBuilder.apply(current));
+                    condition = joinConditions(resolveConditionOperator(previous), condition, wordConditionBuilder.apply(current));
                 }
             }
 
