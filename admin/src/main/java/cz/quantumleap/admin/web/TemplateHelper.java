@@ -1,7 +1,7 @@
 package cz.quantumleap.admin.web;
 
 import cz.quantumleap.core.data.transport.TableSlice;
-import cz.quantumleap.core.web.controllerargument.SliceRequestControllerArgumentResolver;
+import cz.quantumleap.core.view.controllerargument.SliceRequestControllerArgumentResolver;
 
 public class TemplateHelper {
 

@@ -1,4 +1,4 @@
-package cz.quantumleap.core.web.template;
+package cz.quantumleap.core.view.template;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.io.Resource;

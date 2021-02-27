@@ -1,4 +1,4 @@
-package cz.quantumleap.core.web.template;
+package cz.quantumleap.core.view.template;
 
 import cz.quantumleap.core.resource.ResourceManager;
 import org.apache.commons.lang3.Validate;

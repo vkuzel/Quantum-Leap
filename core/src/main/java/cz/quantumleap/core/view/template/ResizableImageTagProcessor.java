@@ -1,4 +1,4 @@
-package cz.quantumleap.core.web.template;
+package cz.quantumleap.core.view.template;
 
 import com.google.common.collect.ImmutableSet;
 import cz.quantumleap.core.filestorage.FileStorageManager;

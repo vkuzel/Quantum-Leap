@@ -9,7 +9,7 @@ import cz.quantumleap.core.data.transport.TableSlice;
 import cz.quantumleap.core.notification.transport.Notification;
 import cz.quantumleap.core.person.transport.Person;
 import cz.quantumleap.core.security.WebSecurityExpressionEvaluator;
-import cz.quantumleap.core.web.DefaultListController;
+import cz.quantumleap.core.view.DefaultListController;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

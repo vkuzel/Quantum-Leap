@@ -1,7 +1,7 @@
-package cz.quantumleap.core.web.template;
+package cz.quantumleap.core.view.template;
 
-import cz.quantumleap.core.web.template.ResizableImageTagProcessor.ResizeCrop;
-import cz.quantumleap.core.web.template.ResizableImageTagProcessor.ResizeLimit;
+import cz.quantumleap.core.view.template.ResizableImageTagProcessor.ResizeCrop;
+import cz.quantumleap.core.view.template.ResizableImageTagProcessor.ResizeLimit;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;

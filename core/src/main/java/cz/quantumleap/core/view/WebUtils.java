@@ -1,4 +1,4 @@
-package cz.quantumleap.core.web;
+package cz.quantumleap.core.view;
 
 import org.springframework.web.util.ServletRequestPathUtils;
 import org.springframework.web.util.UrlPathHelper;

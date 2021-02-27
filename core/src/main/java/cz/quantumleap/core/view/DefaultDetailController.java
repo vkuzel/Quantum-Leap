@@ -1,4 +1,4 @@
-package cz.quantumleap.core.web;
+package cz.quantumleap.core.view;
 
 import cz.quantumleap.core.business.DetailService;
 import org.springframework.ui.Model;

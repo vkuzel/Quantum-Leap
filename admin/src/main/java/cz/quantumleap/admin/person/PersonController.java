@@ -16,7 +16,7 @@ import cz.quantumleap.core.security.WebSecurityExpressionEvaluator;
 import cz.quantumleap.core.session.SessionService;
 import cz.quantumleap.core.session.transport.SessionDetail;
 import cz.quantumleap.core.tables.PersonRoleTable;
-import cz.quantumleap.core.web.*;
+import cz.quantumleap.core.view.*;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;

@@ -9,7 +9,7 @@ import cz.quantumleap.admin.person.PersonService;
 import cz.quantumleap.core.data.transport.SliceRequest;
 import cz.quantumleap.core.role.transport.Role;
 import cz.quantumleap.core.security.WebSecurityExpressionEvaluator;
-import cz.quantumleap.core.web.*;
+import cz.quantumleap.core.view.*;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

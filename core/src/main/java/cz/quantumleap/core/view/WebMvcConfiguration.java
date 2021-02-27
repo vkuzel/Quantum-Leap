@@ -1,7 +1,7 @@
-package cz.quantumleap.core.web;
+package cz.quantumleap.core.view;
 
 import cz.quantumleap.core.filestorage.FileStorageManager;
-import cz.quantumleap.core.web.controllerargument.SliceRequestControllerArgumentResolver;
+import cz.quantumleap.core.view.controllerargument.SliceRequestControllerArgumentResolver;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.context.MessageSource;

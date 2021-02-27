@@ -1,7 +1,7 @@
 package cz.quantumleap.core.security.config;
 
 import cz.quantumleap.core.security.IgnoreCsrfProtection;
-import cz.quantumleap.core.web.WebUtils;
+import cz.quantumleap.core.view.WebUtils;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.method.HandlerMethod;

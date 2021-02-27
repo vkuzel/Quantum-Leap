@@ -1,9 +1,9 @@
-package cz.quantumleap.core.web;
+package cz.quantumleap.core.view;
 
 import cz.quantumleap.core.filestorage.FileStorageManager;
 import cz.quantumleap.core.resource.ResourceManager;
-import cz.quantumleap.core.web.template.QuantumLeapDialect;
-import cz.quantumleap.core.web.template.ThemeTemplateResolver;
+import cz.quantumleap.core.view.template.QuantumLeapDialect;
+import cz.quantumleap.core.view.template.ThemeTemplateResolver;
 import nz.net.ultraq.thymeleaf.LayoutDialect;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafProperties;

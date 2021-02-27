@@ -1,4 +1,4 @@
-package cz.quantumleap.core.web.controllerargument;
+package cz.quantumleap.core.view.controllerargument;
 
 import cz.quantumleap.core.data.transport.SliceRequest;
 import org.springframework.beans.factory.annotation.Qualifier;

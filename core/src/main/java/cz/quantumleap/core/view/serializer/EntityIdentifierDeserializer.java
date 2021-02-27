@@ -1,4 +1,4 @@
-package cz.quantumleap.core.web.serializer;
+package cz.quantumleap.core.view.serializer;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;

@@ -1,6 +1,6 @@
 package cz.quantumleap.admin.menu;
 
-import cz.quantumleap.core.web.WebUtils;
+import cz.quantumleap.core.view.WebUtils;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 

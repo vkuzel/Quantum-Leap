@@ -1,6 +1,6 @@
 package cz.quantumleap.core.session;
 
-import cz.quantumleap.core.web.WebUtils;
+import cz.quantumleap.core.view.WebUtils;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;

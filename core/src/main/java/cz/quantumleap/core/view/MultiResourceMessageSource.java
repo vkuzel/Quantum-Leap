@@ -1,4 +1,4 @@
-package cz.quantumleap.core.web;
+package cz.quantumleap.core.view;
 
 import com.google.common.base.Charsets;
 import cz.quantumleap.core.resource.ResourceManager;

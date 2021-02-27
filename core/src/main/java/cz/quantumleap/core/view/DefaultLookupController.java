@@ -1,4 +1,4 @@
-package cz.quantumleap.core.web;
+package cz.quantumleap.core.view;
 
 import cz.quantumleap.core.business.LookupService;
 import cz.quantumleap.core.data.entity.EntityIdentifier;
