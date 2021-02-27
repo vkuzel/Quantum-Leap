@@ -1,14 +1,14 @@
 package cz.quantumleap.core.database.query;
 
+import cz.quantumleap.core.database.domain.SliceRequest;
+import cz.quantumleap.core.database.domain.TablePreferences;
+import cz.quantumleap.core.database.domain.TableSlice;
+import cz.quantumleap.core.database.domain.TableSlice.Column;
+import cz.quantumleap.core.database.domain.TableSlice.Lookup;
+import cz.quantumleap.core.database.domain.TableSlice.LookupColumn;
 import cz.quantumleap.core.database.entity.Entity;
 import cz.quantumleap.core.database.entity.FieldMetaType;
 import cz.quantumleap.core.database.entity.LookupMetaType;
-import cz.quantumleap.core.database.transport.SliceRequest;
-import cz.quantumleap.core.database.transport.TablePreferences;
-import cz.quantumleap.core.database.transport.TableSlice;
-import cz.quantumleap.core.database.transport.TableSlice.Column;
-import cz.quantumleap.core.database.transport.TableSlice.Lookup;
-import cz.quantumleap.core.database.transport.TableSlice.LookupColumn;
 import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.Result;

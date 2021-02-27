@@ -1,4 +1,4 @@
-package cz.quantumleap.core.notification.transport;
+package cz.quantumleap.core.notification.domain;
 
 import cz.quantumleap.core.notification.NotificationDefinition;
 

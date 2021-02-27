@@ -2,7 +2,7 @@ package cz.quantumleap.admin.person;
 
 import cz.quantumleap.core.business.ServiceStub;
 import cz.quantumleap.core.person.PersonDao;
-import cz.quantumleap.core.person.transport.Person;
+import cz.quantumleap.core.person.domain.Person;
 import cz.quantumleap.core.security.AuthenticationEmailResolver;
 import org.apache.commons.lang3.Validate;
 import org.springframework.cache.annotation.Cacheable;

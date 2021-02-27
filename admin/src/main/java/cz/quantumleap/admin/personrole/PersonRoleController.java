@@ -5,7 +5,7 @@ import cz.quantumleap.admin.menu.AdminMenuItemActive;
 import cz.quantumleap.admin.menu.AdminMenuManager;
 import cz.quantumleap.admin.notification.NotificationService;
 import cz.quantumleap.admin.person.PersonService;
-import cz.quantumleap.core.personrole.transport.PersonRole;
+import cz.quantumleap.core.personrole.domain.PersonRole;
 import cz.quantumleap.core.security.WebSecurityExpressionEvaluator;
 import cz.quantumleap.core.view.DefaultDetailController;
 import cz.quantumleap.core.view.DetailController;

@@ -1,4 +1,4 @@
-package cz.quantumleap.core.role.transport;
+package cz.quantumleap.core.role.domain;
 
 public class Role {
 

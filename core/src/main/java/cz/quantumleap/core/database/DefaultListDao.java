@@ -1,10 +1,10 @@
 package cz.quantumleap.core.database;
 
+import cz.quantumleap.core.database.domain.SliceRequest;
+import cz.quantumleap.core.database.domain.TablePreferences;
+import cz.quantumleap.core.database.domain.TableSlice;
 import cz.quantumleap.core.database.entity.Entity;
 import cz.quantumleap.core.database.query.*;
-import cz.quantumleap.core.database.transport.SliceRequest;
-import cz.quantumleap.core.database.transport.TablePreferences;
-import cz.quantumleap.core.database.transport.TableSlice;
 import org.jooq.*;
 import org.springframework.data.domain.Sort;
 

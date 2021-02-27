@@ -1,4 +1,4 @@
-package cz.quantumleap.core.autoincrement.transport;
+package cz.quantumleap.core.autoincrement.domain;
 
 public class Increment {
 

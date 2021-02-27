@@ -1,4 +1,4 @@
-package cz.quantumleap.core.database.transport;
+package cz.quantumleap.core.database.domain;
 
 import cz.quantumleap.core.database.entity.EntityIdentifier;
 import org.jooq.Record;

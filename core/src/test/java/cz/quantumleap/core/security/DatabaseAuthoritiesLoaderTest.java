@@ -2,7 +2,7 @@ package cz.quantumleap.core.security;
 
 import com.google.common.collect.ImmutableMap;
 import cz.quantumleap.core.person.PersonDao;
-import cz.quantumleap.core.person.transport.Person;
+import cz.quantumleap.core.person.domain.Person;
 import cz.quantumleap.core.role.RoleDao;
 import cz.quantumleap.core.security.DatabaseAuthoritiesLoader.DatabaseAuthoritiesLoadingException;
 import org.junit.jupiter.api.Assertions;

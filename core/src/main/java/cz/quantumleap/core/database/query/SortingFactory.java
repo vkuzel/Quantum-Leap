@@ -1,6 +1,6 @@
 package cz.quantumleap.core.database.query;
 
-import cz.quantumleap.core.database.transport.SliceRequest;
+import cz.quantumleap.core.database.domain.SliceRequest;
 import org.jooq.Field;
 import org.jooq.SortField;
 import org.jooq.SortOrder;

@@ -1,4 +1,4 @@
-package cz.quantumleap.core.database.transport;
+package cz.quantumleap.core.database.domain;
 
 import java.util.Collections;
 import java.util.List;

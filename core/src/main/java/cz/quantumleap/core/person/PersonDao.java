@@ -4,7 +4,7 @@ import cz.quantumleap.core.database.DaoStub;
 import cz.quantumleap.core.database.EntityRegistry;
 import cz.quantumleap.core.database.RecordAuditor;
 import cz.quantumleap.core.database.entity.Entity;
-import cz.quantumleap.core.person.transport.Person;
+import cz.quantumleap.core.person.domain.Person;
 import cz.quantumleap.core.tables.PersonTable;
 import org.jooq.Condition;
 import org.jooq.DSLContext;

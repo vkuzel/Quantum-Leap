@@ -1,6 +1,6 @@
 package cz.quantumleap.core.database.converter;
 
-import cz.quantumleap.core.database.transport.TableSlice;
+import cz.quantumleap.core.database.domain.TableSlice;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 

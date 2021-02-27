@@ -1,6 +1,6 @@
 package cz.quantumleap.core.session;
 
-import cz.quantumleap.core.session.transport.SessionDetail;
+import cz.quantumleap.core.session.domain.SessionDetail;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

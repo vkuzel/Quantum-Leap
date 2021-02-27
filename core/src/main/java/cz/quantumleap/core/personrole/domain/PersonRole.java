@@ -1,4 +1,4 @@
-package cz.quantumleap.core.personrole.transport;
+package cz.quantumleap.core.personrole.domain;
 
 import javax.validation.constraints.NotNull;
 

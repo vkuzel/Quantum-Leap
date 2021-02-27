@@ -1,9 +1,9 @@
 package cz.quantumleap.core.database;
 
+import cz.quantumleap.core.database.domain.SliceRequest;
+import cz.quantumleap.core.database.domain.TableSlice;
 import cz.quantumleap.core.database.entity.Entity;
 import cz.quantumleap.core.database.query.FilterFactory;
-import cz.quantumleap.core.database.transport.SliceRequest;
-import cz.quantumleap.core.database.transport.TableSlice;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.*;
 

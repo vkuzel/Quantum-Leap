@@ -1,4 +1,4 @@
-package cz.quantumleap.core.database.transport;
+package cz.quantumleap.core.database.domain;
 
 import org.apache.commons.lang3.Validate;
 import org.jooq.Condition;

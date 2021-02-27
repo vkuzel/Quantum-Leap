@@ -2,9 +2,9 @@ package cz.quantumleap.core.view;
 
 import cz.quantumleap.core.business.ListService;
 import cz.quantumleap.core.common.Utils;
+import cz.quantumleap.core.database.domain.SliceRequest;
+import cz.quantumleap.core.database.domain.TableSlice;
 import cz.quantumleap.core.database.entity.EntityIdentifier;
-import cz.quantumleap.core.database.transport.SliceRequest;
-import cz.quantumleap.core.database.transport.TableSlice;
 import org.springframework.ui.Model;
 
 import javax.servlet.http.HttpServletRequest;

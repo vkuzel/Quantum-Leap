@@ -1,8 +1,8 @@
 package cz.quantumleap.core.notification;
 
-import cz.quantumleap.core.notification.transport.Notification;
-import cz.quantumleap.core.person.transport.Person;
-import cz.quantumleap.core.role.transport.Role;
+import cz.quantumleap.core.notification.domain.Notification;
+import cz.quantumleap.core.person.domain.Person;
+import cz.quantumleap.core.role.domain.Role;
 import cz.quantumleap.core.test.CoreSpringBootTest;
 import cz.quantumleap.core.test.common.CoreTestSupport;
 import org.junit.jupiter.api.Assertions;
@@ -13,7 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 @CoreSpringBootTest
 class NotificationManagerTest {

@@ -1,6 +1,6 @@
 package cz.quantumleap.core.database.query;
 
-import cz.quantumleap.core.database.transport.SliceRequest;
+import cz.quantumleap.core.database.domain.SliceRequest;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;

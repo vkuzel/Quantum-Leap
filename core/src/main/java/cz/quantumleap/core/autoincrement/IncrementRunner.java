@@ -1,6 +1,6 @@
 package cz.quantumleap.core.autoincrement;
 
-import cz.quantumleap.core.autoincrement.transport.Increment;
+import cz.quantumleap.core.autoincrement.domain.Increment;
 import cz.quantumleap.core.common.Utils;
 import cz.quantumleap.core.database.TransactionExecutor;
 import org.apache.commons.lang3.tuple.Pair;

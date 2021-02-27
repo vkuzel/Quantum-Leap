@@ -1,7 +1,7 @@
 package cz.quantumleap.core.database.converter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import cz.quantumleap.core.database.transport.Lookup;
+import cz.quantumleap.core.database.domain.Lookup;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,13 +1,13 @@
 package cz.quantumleap.admin.notification;
 
+import cz.quantumleap.core.database.domain.SliceRequest;
+import cz.quantumleap.core.database.domain.TableSlice;
+import cz.quantumleap.core.database.domain.TableSlice.Column;
 import cz.quantumleap.core.database.entity.EntityIdentifier;
-import cz.quantumleap.core.database.transport.SliceRequest;
-import cz.quantumleap.core.database.transport.TableSlice;
-import cz.quantumleap.core.database.transport.TableSlice.Column;
 import cz.quantumleap.core.notification.NotificationDao;
 import cz.quantumleap.core.notification.NotificationDefinition;
 import cz.quantumleap.core.notification.NotificationManager;
-import cz.quantumleap.core.notification.transport.Notification;
+import cz.quantumleap.core.notification.domain.Notification;
 import cz.quantumleap.core.tables.NotificationTable;
 import org.apache.commons.lang3.Validate;
 import org.springframework.context.MessageSource;

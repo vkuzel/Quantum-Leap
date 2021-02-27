@@ -1,7 +1,7 @@
 package cz.quantumleap.core.view;
 
+import cz.quantumleap.core.database.domain.SliceRequest;
 import cz.quantumleap.core.database.entity.EntityIdentifier;
-import cz.quantumleap.core.database.transport.SliceRequest;
 import org.springframework.ui.Model;
 
 import javax.servlet.http.HttpServletRequest;

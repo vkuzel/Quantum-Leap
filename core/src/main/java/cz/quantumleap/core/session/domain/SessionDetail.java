@@ -1,4 +1,4 @@
-package cz.quantumleap.core.session.transport;
+package cz.quantumleap.core.session.domain;
 
 import cz.quantumleap.core.session.SessionDao;
 import eu.bitwalker.useragentutils.UserAgent;

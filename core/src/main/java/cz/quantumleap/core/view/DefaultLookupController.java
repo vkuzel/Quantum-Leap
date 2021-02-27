@@ -1,9 +1,9 @@
 package cz.quantumleap.core.view;
 
 import cz.quantumleap.core.business.LookupService;
+import cz.quantumleap.core.database.domain.SliceRequest;
+import cz.quantumleap.core.database.domain.TableSlice;
 import cz.quantumleap.core.database.entity.EntityIdentifier;
-import cz.quantumleap.core.database.transport.SliceRequest;
-import cz.quantumleap.core.database.transport.TableSlice;
 import cz.quantumleap.core.security.WebSecurityExpressionEvaluator;
 import org.springframework.http.HttpStatus;
 import org.springframework.ui.Model;

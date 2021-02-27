@@ -2,7 +2,7 @@ package cz.quantumleap.admin.role;
 
 import cz.quantumleap.core.business.ServiceStub;
 import cz.quantumleap.core.role.RoleDao;
-import cz.quantumleap.core.role.transport.Role;
+import cz.quantumleap.core.role.domain.Role;
 import org.springframework.stereotype.Service;
 
 @Service

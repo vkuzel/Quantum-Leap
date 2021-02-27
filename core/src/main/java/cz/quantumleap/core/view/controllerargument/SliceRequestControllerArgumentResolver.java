@@ -1,6 +1,6 @@
 package cz.quantumleap.core.view.controllerargument;
 
-import cz.quantumleap.core.database.transport.SliceRequest;
+import cz.quantumleap.core.database.domain.SliceRequest;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.MethodParameter;
 import org.springframework.data.domain.Sort;
@@ -12,7 +12,7 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 
 import java.util.HashMap;
 
-import static cz.quantumleap.core.database.transport.SliceRequest.MAX_ITEMS;
+import static cz.quantumleap.core.database.domain.SliceRequest.MAX_ITEMS;
 
 public class SliceRequestControllerArgumentResolver implements HandlerMethodArgumentResolver {
 

@@ -1,6 +1,6 @@
 package cz.quantumleap.core.database.query;
 
-import cz.quantumleap.core.database.transport.SliceRequest;
+import cz.quantumleap.core.database.domain.SliceRequest;
 
 public final class LimitFactory {
 

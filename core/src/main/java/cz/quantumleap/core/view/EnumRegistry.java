@@ -3,7 +3,7 @@ package cz.quantumleap.core.view;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 import com.google.common.collect.Tables;
-import cz.quantumleap.core.database.transport.IdLabel;
+import cz.quantumleap.core.database.domain.IdLabel;
 import org.jooq.DSLContext;
 import org.jooq.Record3;
 import org.springframework.context.event.ContextRefreshedEvent;

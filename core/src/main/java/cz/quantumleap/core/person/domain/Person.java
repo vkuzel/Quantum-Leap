@@ -1,4 +1,4 @@
-package cz.quantumleap.core.person.transport;
+package cz.quantumleap.core.person.domain;
 
 import javax.validation.constraints.Pattern;
 

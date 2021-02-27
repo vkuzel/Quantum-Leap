@@ -1,8 +1,8 @@
 package cz.quantumleap.core.database.query;
 
 import cz.quantumleap.core.database.EntityRegistry;
+import cz.quantumleap.core.database.domain.SliceRequest;
 import cz.quantumleap.core.database.entity.*;
-import cz.quantumleap.core.database.transport.SliceRequest;
 import org.jooq.Field;
 import org.jooq.Table;
 import org.jooq.impl.DSL;
