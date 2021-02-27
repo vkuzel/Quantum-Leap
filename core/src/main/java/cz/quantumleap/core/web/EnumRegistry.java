@@ -1,4 +1,4 @@
-package cz.quantumleap.core.data;
+package cz.quantumleap.core.web;
 
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
@@ -16,13 +16,13 @@ import java.util.stream.Collectors;
 import static cz.quantumleap.core.tables.EnumValueTable.ENUM_VALUE;
 
 @Component
-public class EnumManager {
+public class EnumRegistry {
 
     private final DSLContext dslContext;
 
     private volatile Table<String, String, String> enumValueLabels;
 
-    public EnumManager(DSLContext dslContext) {
+    public EnumRegistry(DSLContext dslContext) {
         this.dslContext = dslContext;
     }
 
