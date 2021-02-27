@@ -194,6 +194,7 @@ public final class FilterFactory {
 
         private final List<String> tokens;
         private int startAtToken;
+        private int currentTokenIndex;
 
         public CreateCondition(List<String> tokens) {
             this.tokens = tokens;
@@ -209,7 +210,6 @@ public final class FilterFactory {
 
             Condition condition = null;
 
-            int currentTokenIndex;
             for (currentTokenIndex = startAtToken; currentTokenIndex < size; currentTokenIndex++) {
                 String previous = currentTokenIndex > startAtToken ? tokens.get(currentTokenIndex - 1) : null;
                 String current = tokens.get(currentTokenIndex);
