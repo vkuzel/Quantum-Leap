@@ -46,10 +46,11 @@ public final class TableSliceJoinFactory {
                 Entity<?> lookupEntity = entityRegistry.getEntity(lookupEntityIdentifier);
                 Table<?> lookupTable = resolveTableAlias(lookupEntity.getTable(), field);
                 Field<Object> lookupPrimaryKey = getTypedField(lookupEntity.getPrimaryKeyField(), Object.class);
+                Field<Object> aliasedLookupPrimaryKey = getFieldSafely(lookupTable, lookupPrimaryKey);
 
                 selectJoinStep = selectJoinStep
                         .leftJoin(lookupTable)
-                        .on(lookupPrimaryKey.eq(field));
+                        .on(aliasedLookupPrimaryKey.eq(field));
             }
         }
         return selectJoinStep;
@@ -57,18 +58,20 @@ public final class TableSliceJoinFactory {
 
     private <T> Field<T> getFieldSafely(Table<?> table, Field<T> field) {
         Field<T> safeField = table.field(field);
-        if (safeField == null) {
+        if (safeField != null) {
+            return safeField;
+        } else {
             throw new IllegalArgumentException("Field " + field + " not found in table " + table);
         }
-        return safeField;
     }
 
     @SuppressWarnings("unchecked")
     private <T> Field<T> getTypedField(Field<?> field, Class<T> type) {
-        if (field.getType() != type) {
-            String msg = "Field " + field + " of type " + field.getType() + " cannot be case to type " + type;
+        if (type.isAssignableFrom(field.getType())) {
+            return (Field<T>) field;
+        } else {
+            String msg = "Field " + field + " of type " + field.getType() + " cannot be cast to type " + type;
             throw new IllegalArgumentException(msg);
         }
-        return (Field<T>) field;
     }
 }
