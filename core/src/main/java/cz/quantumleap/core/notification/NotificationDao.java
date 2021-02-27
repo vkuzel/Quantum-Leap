@@ -1,18 +1,13 @@
 package cz.quantumleap.core.notification;
 
-import cz.quantumleap.core.data.DaoStub;
-import cz.quantumleap.core.data.EnumManager;
-import cz.quantumleap.core.data.LookupDaoManager;
-import cz.quantumleap.core.data.RecordAuditor;
-import cz.quantumleap.core.data.entity.Entity;
-import cz.quantumleap.core.data.transport.Lookup;
-import cz.quantumleap.core.data.transport.Slice;
-import cz.quantumleap.core.data.transport.SliceRequest;
-import cz.quantumleap.core.data.transport.Table;
-import cz.quantumleap.core.notification.transport.Notification;
+import cz.quantumleap.core.database.DaoStub;
+import cz.quantumleap.core.database.EntityRegistry;
+import cz.quantumleap.core.database.RecordAuditor;
+import cz.quantumleap.core.database.domain.SliceRequest;
+import cz.quantumleap.core.database.domain.TableSlice;
+import cz.quantumleap.core.database.entity.Entity;
+import cz.quantumleap.core.notification.domain.Notification;
 import cz.quantumleap.core.tables.NotificationTable;
-import cz.quantumleap.core.tables.PersonTable;
-import cz.quantumleap.core.tables.RoleTable;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.springframework.data.domain.Sort;
@@ -20,7 +15,6 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import static cz.quantumleap.core.tables.NotificationTable.NOTIFICATION;
 import static cz.quantumleap.core.tables.PersonRoleTable.PERSON_ROLE;
@@ -28,8 +22,8 @@ import static cz.quantumleap.core.tables.PersonRoleTable.PERSON_ROLE;
 @Repository
 public class NotificationDao extends DaoStub<NotificationTable> {
 
-    protected NotificationDao(DSLContext dslContext, LookupDaoManager lookupDaoManager, EnumManager enumManager, RecordAuditor recordAuditor) {
-        super(createEntity(), dslContext, lookupDaoManager, enumManager, recordAuditor);
+    protected NotificationDao(DSLContext dslContext, RecordAuditor recordAuditor, EntityRegistry entityRegistry) {
+        super(createEntity(), dslContext, recordAuditor, entityRegistry);
     }
 
     private static Entity<NotificationTable> createEntity() {
@@ -41,15 +35,15 @@ public class NotificationDao extends DaoStub<NotificationTable> {
         return super.fetchByCondition(condition, Notification.class);
     }
 
-    public Slice<Map<Table.Column, Object>> fetchSlice(long personId, SliceRequest sliceRequest) {
-        return super.fetchSlice(sliceRequest.addCondition(createPersonNotificationsCondition(personId)));
+    public TableSlice fetchTableSlice(long personId, SliceRequest sliceRequest) {
+        return super.fetchTableSlice(sliceRequest.addCondition(createPersonNotificationsCondition(personId)));
     }
 
     Notification fetchUnresolvedByDefinition(Notification notification) {
         String code = notification.getCode();
         List<String> arguments = notification.getMessageArguments();
-        Lookup<PersonTable> personId = notification.getPersonId();
-        Lookup<RoleTable> roleId = notification.getRoleId();
+        Long personId = notification.getPersonId();
+        Long roleId = notification.getRoleId();
 
         Condition condition = NOTIFICATION.CODE.eq(code)
                 .and(NOTIFICATION.RESOLVED_AT.isNull());
@@ -58,13 +52,13 @@ public class NotificationDao extends DaoStub<NotificationTable> {
         } else {
             condition = condition.and("message_arguments = ARRAY[] :: VARCHAR[]", arguments.toArray());
         }
-        if (!personId.isEmpty()) {
-            condition = condition.and(NOTIFICATION.PERSON_ID.eq((Long) personId.getId()));
+        if (personId != null) {
+            condition = condition.and(NOTIFICATION.PERSON_ID.eq(personId));
         } else {
             condition = condition.and(NOTIFICATION.PERSON_ID.isNull());
         }
-        if (!roleId.isEmpty()) {
-            condition = condition.and(NOTIFICATION.ROLE_ID.eq((Long) roleId.getId()));
+        if (roleId != null) {
+            condition = condition.and(NOTIFICATION.ROLE_ID.eq(roleId));
         } else {
             condition = condition.and(NOTIFICATION.ROLE_ID.isNull());
         }

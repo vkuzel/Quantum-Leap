@@ -2,10 +2,23 @@ package cz.quantumleap.core.common;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import java.lang.reflect.Field;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 class ReflectionUtilsTest {
+
+    @Test
+    void getClassFieldsShouldReturnNonStaticFieldsOfClassAndItsSuperclasses() {
+        List<Field> fields = ReflectionUtils.getClassFields(ChildTestClass.class);
+
+        List<String> fieldNames = fields.stream().map(Field::getName).collect(Collectors.toList());
+        assertEquals(2, fieldNames.size());
+        assertTrue(fieldNames.contains("value"));
+        assertTrue(fieldNames.contains("childValue"));
+    }
 
     @Test
     void getClassFieldValueShouldReturnValueOfPrivateField() {
@@ -17,10 +30,10 @@ class ReflectionUtilsTest {
     }
 
     @Test
-    void getClassFieldShouldReturnValueOfChildClassPrivateField() {
-        ParentTestClass parentTestClass = new ParentTestClass("test-value");
+    void getClassFieldShouldReturnValueOfParentClassPrivateField() {
+        ChildTestClass childTestClass = new ChildTestClass("test-value", "child-value");
 
-        Object value = ReflectionUtils.getClassFieldValue(ParentTestClass.class, parentTestClass, "value");
+        Object value = ReflectionUtils.getClassFieldValue(ChildTestClass.class, childTestClass, "value");
 
         assertEquals("test-value", value);
     }
@@ -43,10 +56,10 @@ class ReflectionUtilsTest {
     }
 
     @Test
-    void invokeClassMethodShouldInvokeChildClassPrivateMethod() {
-        ParentTestClass parentTestClass = new ParentTestClass("test-value");
+    void invokeClassMethodShouldInvokeParentClassPrivateMethod() {
+        ChildTestClass childTestClass = new ChildTestClass("test-value", "child-value");
 
-        Object value = ReflectionUtils.invokeClassMethod(ParentTestClass.class, parentTestClass, "getValue");
+        Object value = ReflectionUtils.invokeClassMethod(ChildTestClass.class, childTestClass, "getValue");
 
         assertEquals("test-value", value);
     }
@@ -59,10 +72,18 @@ class ReflectionUtilsTest {
                 ReflectionUtils.invokeClassMethod(TestClass.class, testClass, "nonExisting"));
     }
 
-    private static class ParentTestClass extends TestClass {
+    private static class ChildTestClass extends TestClass {
 
-        public ParentTestClass(String value) {
+        private final String childValue;
+
+        public ChildTestClass(String value, String childValue) {
             super(value);
+            this.childValue = childValue;
+        }
+
+        @SuppressWarnings("unused")
+        public String getChildValue() {
+            return childValue;
         }
     }
 

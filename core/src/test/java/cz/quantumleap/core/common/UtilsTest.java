@@ -1,6 +1,6 @@
 package cz.quantumleap.core.common;
 
-import cz.quantumleap.core.data.entity.EntityIdentifier;
+import cz.quantumleap.core.database.entity.EntityIdentifier;
 import cz.quantumleap.core.tables.PersonTable;
 import cz.quantumleap.core.tables.RoleTable;
 import org.junit.jupiter.api.Assertions;

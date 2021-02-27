@@ -6,10 +6,10 @@ import cz.quantumleap.admin.menu.AdminMenuItemDefinition;
 import cz.quantumleap.admin.menu.AdminMenuManager;
 import cz.quantumleap.admin.notification.NotificationService;
 import cz.quantumleap.admin.person.PersonService;
-import cz.quantumleap.core.data.transport.SliceRequest;
-import cz.quantumleap.core.role.transport.Role;
+import cz.quantumleap.core.database.domain.SliceRequest;
+import cz.quantumleap.core.role.domain.Role;
 import cz.quantumleap.core.security.WebSecurityExpressionEvaluator;
-import cz.quantumleap.core.web.*;
+import cz.quantumleap.core.view.*;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -40,12 +40,12 @@ public class RoleController extends AdminController {
     private final DetailController<Role> detailController;
     private final ListController listController;
 
-    public RoleController(AdminMenuManager adminMenuManager, PersonService personService, NotificationService notificationService, WebSecurityExpressionEvaluator webSecurityExpressionEvaluator, LookupControllerManager lookupControllerManager, RoleService roleService) {
+    public RoleController(AdminMenuManager adminMenuManager, PersonService personService, NotificationService notificationService, WebSecurityExpressionEvaluator webSecurityExpressionEvaluator, LookupRegistry lookupRegistry, RoleService roleService) {
         super(adminMenuManager, personService, notificationService, webSecurityExpressionEvaluator);
         this.detailController = new DefaultDetailController<>(Role.class, roleService, DETAIL_URL, DETAIL_VIEW);
         this.listController = new DefaultListController(roleService, LIST_VIEW, AJAX_LIST_VIEW, DETAIL_URL);
         LookupController lookupController = new DefaultLookupController(webSecurityExpressionEvaluator, roleService, DETAIL_URL, LOOKUP_LABEL_URL, LOOKUP_LABELS_URL, LOOKUP_LIST_URL);
-        lookupControllerManager.registerController(lookupController);
+        lookupRegistry.registerController(lookupController);
     }
 
     @AdminMenuItemActive("admin.menu.roles")

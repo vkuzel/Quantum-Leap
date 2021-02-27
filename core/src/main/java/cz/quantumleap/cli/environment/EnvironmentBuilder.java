@@ -2,7 +2,7 @@ package cz.quantumleap.cli.environment;
 
 import cz.quantumleap.core.autoincrement.IncrementDao;
 import cz.quantumleap.core.autoincrement.IncrementService;
-import cz.quantumleap.core.autoincrement.transport.Increment;
+import cz.quantumleap.core.autoincrement.domain.Increment;
 import cz.quantumleap.core.common.Utils;
 import cz.quantumleap.core.module.ModuleDependencyManager;
 import cz.quantumleap.core.resource.ResourceManager;

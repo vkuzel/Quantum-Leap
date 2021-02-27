@@ -29,13 +29,20 @@
     </thead>
     <tbody>
     <tr th:each="row : ${tableSlice}">
-        <td th:each="column : ${tableSlice.getColumns()}" th:with="primaryKey=${column.primaryKey && !#strings.isEmpty(detailUrl)}" th:classappend="${primaryKey} ? 'primary-key'" th:switch="${column.type}">
-            <a th:if="${primaryKey}" th:href="@{|${detailUrl}/${row.get(column)}|}" th:text="${{row.get(column)}}">id</a>
-            <span th:case="${T(cz.quantumleap.core.data.transport.EnumValue)}" th:text="${{row.get(column).label}}">Enum value</span>
-            <span th:case="${T(cz.quantumleap.core.data.transport.SetValues)}"><span th:each="value : ${row.get(column).values}" th:text="${{value.label}}">Set item</span></span>
-            <a th:case="${T(cz.quantumleap.core.data.transport.Lookup)}" th:if="${!#strings.isEmpty(row.get(column).id)}" th:with="detailUrl=${@lookupControllerManager.getControllerForEntityIdentifier(row.get(column).entityIdentifier).getDetailUrl()}"
-                  th:href="|${detailUrl}/${row.get(column).id}|" th:text="${{row.get(column).label}}">Lookup</a>
-            <span th:case="*" th:if="${!primaryKey && cellTemplate__${column.name}__ == null}" th:text="${{row.get(column)}}" th:remove="tag">Standard column</span>
+        <td th:each="column : ${tableSlice.getColumns()}"
+            th:with="value=${tableSlice.getValue(column, row)},
+                     primaryKey=${column.primaryKey && !#strings.isEmpty(detailUrl)},
+                     lookup=${tableSlice.isLookup(value)}"
+            th:classappend="${primaryKey} ? 'primary-key'">
+            <a th:if="${primaryKey}" th:href="@{|${detailUrl}/${value}|}"
+               th:text="${{value}}">id</a>
+            <a th:if="${lookup}"
+               th:with="detailUrl=${@lookupRegistry.getControllerForEntityIdentifier(value.entityIdentifier).getDetailUrl()}"
+               th:href="|${detailUrl}/${value.id}|"
+               th:text="${{value.label}}">Lookup</a>
+            <span th:if="${!primaryKey && !lookup && cellTemplate__${column.name}__ == null}"
+                  th:text="${{value}}"
+                  th:remove="tag">Standard column</span>
             <span th:replace="${__|cellTemplate${column.name}|__} ?: ~{}">Custom column</span>
         </td>
     </tr>

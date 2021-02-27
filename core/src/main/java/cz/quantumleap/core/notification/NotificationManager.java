@@ -1,9 +1,6 @@
 package cz.quantumleap.core.notification;
 
-import cz.quantumleap.core.data.transport.Lookup;
-import cz.quantumleap.core.notification.transport.Notification;
-import cz.quantumleap.core.tables.PersonTable;
-import cz.quantumleap.core.tables.RoleTable;
+import cz.quantumleap.core.notification.domain.Notification;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -57,7 +54,7 @@ public class NotificationManager {
         Notification notification = new Notification();
         notification.setCode(notificationCode);
         notification.setMessageArguments(messageArguments);
-        notification.setPersonId(Lookup.withoutLabel(personId, PersonTable.PERSON));
+        notification.setPersonId(personId);
         return findOrSave(notification);
     }
 
@@ -74,7 +71,7 @@ public class NotificationManager {
         Notification notification = new Notification();
         notification.setCode(notificationCode);
         notification.setMessageArguments(messageArguments);
-        notification.setRoleId(Lookup.withoutLabel(roleId, RoleTable.ROLE));
+        notification.setRoleId(roleId);
         return findOrSave(notification);
     }
 

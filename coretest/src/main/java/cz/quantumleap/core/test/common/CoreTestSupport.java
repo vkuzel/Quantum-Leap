@@ -1,9 +1,9 @@
 package cz.quantumleap.core.test.common;
 
 import cz.quantumleap.core.person.PersonDao;
-import cz.quantumleap.core.person.transport.Person;
+import cz.quantumleap.core.person.domain.Person;
 import cz.quantumleap.core.role.RoleDao;
-import cz.quantumleap.core.role.transport.Role;
+import cz.quantumleap.core.role.domain.Role;
 import org.apache.commons.lang3.Validate;
 import org.intellij.lang.annotations.Language;
 import org.jooq.*;

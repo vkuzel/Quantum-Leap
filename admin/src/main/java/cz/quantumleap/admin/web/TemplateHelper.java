@@ -1,11 +1,11 @@
 package cz.quantumleap.admin.web;
 
-import cz.quantumleap.core.data.transport.Slice;
-import cz.quantumleap.core.web.controllerargument.SliceRequestControllerArgumentResolver;
+import cz.quantumleap.core.database.domain.TableSlice;
+import cz.quantumleap.core.view.controllerargument.SliceRequestControllerArgumentResolver;
 
 public class TemplateHelper {
 
-    public static TemplateTable createTemplateTable(String qualifier, String entityIdentifier, Slice tableSlice, String detailUrl) {
+    public static TemplateTable createTemplateTable(String qualifier, String entityIdentifier, TableSlice tableSlice, String detailUrl) {
         return new TemplateTable(qualifier, entityIdentifier, tableSlice, detailUrl);
     }
 
@@ -13,10 +13,10 @@ public class TemplateHelper {
 
         private final String qualifier;
         private final String entityIdentifier;
-        private final Slice tableSlice;
+        private final TableSlice tableSlice;
         private final String detailUrl;
 
-        public TemplateTable(String qualifier, String entityIdentifier, Slice tableSlice, String detailUrl) {
+        public TemplateTable(String qualifier, String entityIdentifier, TableSlice tableSlice, String detailUrl) {
             this.qualifier = qualifier;
             this.entityIdentifier = entityIdentifier;
             this.tableSlice = tableSlice;

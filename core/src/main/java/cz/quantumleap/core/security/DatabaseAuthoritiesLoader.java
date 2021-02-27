@@ -1,7 +1,7 @@
 package cz.quantumleap.core.security;
 
 import cz.quantumleap.core.person.PersonDao;
-import cz.quantumleap.core.person.transport.Person;
+import cz.quantumleap.core.person.domain.Person;
 import cz.quantumleap.core.role.RoleDao;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;

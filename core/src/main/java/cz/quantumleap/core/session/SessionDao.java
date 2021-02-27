@@ -1,7 +1,7 @@
 package cz.quantumleap.core.session;
 
 import cz.quantumleap.core.security.AuthenticationEmailResolver;
-import cz.quantumleap.core.session.transport.SessionDetail;
+import cz.quantumleap.core.session.domain.SessionDetail;
 import org.apache.commons.lang3.Validate;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;

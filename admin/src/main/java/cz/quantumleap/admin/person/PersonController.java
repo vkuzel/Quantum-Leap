@@ -8,15 +8,15 @@ import cz.quantumleap.admin.notification.NotificationService;
 import cz.quantumleap.admin.personrole.PersonRoleController;
 import cz.quantumleap.admin.personrole.PersonRoleService;
 import cz.quantumleap.core.common.Utils;
-import cz.quantumleap.core.data.entity.EntityIdentifier;
-import cz.quantumleap.core.data.transport.Slice;
-import cz.quantumleap.core.data.transport.SliceRequest;
-import cz.quantumleap.core.person.transport.Person;
+import cz.quantumleap.core.database.domain.SliceRequest;
+import cz.quantumleap.core.database.domain.TableSlice;
+import cz.quantumleap.core.database.entity.EntityIdentifier;
+import cz.quantumleap.core.person.domain.Person;
 import cz.quantumleap.core.security.WebSecurityExpressionEvaluator;
 import cz.quantumleap.core.session.SessionService;
-import cz.quantumleap.core.session.transport.SessionDetail;
+import cz.quantumleap.core.session.domain.SessionDetail;
 import cz.quantumleap.core.tables.PersonRoleTable;
-import cz.quantumleap.core.web.*;
+import cz.quantumleap.core.view.*;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -50,17 +50,15 @@ public class PersonController extends AdminController {
 
     private final DetailController<Person> detailController;
     private final ListController listController;
-    private final PersonService personService;
     private final PersonRoleService personRoleService;
     private final SessionService sessionService;
 
-    public PersonController(AdminMenuManager adminMenuManager, WebSecurityExpressionEvaluator webSecurityExpressionEvaluator, LookupControllerManager lookupControllerManager, PersonService personService, NotificationService notificationService, PersonRoleService personRoleService, SessionService sessionService) {
+    public PersonController(AdminMenuManager adminMenuManager, WebSecurityExpressionEvaluator webSecurityExpressionEvaluator, LookupRegistry lookupRegistry, PersonService personService, NotificationService notificationService, PersonRoleService personRoleService, SessionService sessionService) {
         super(adminMenuManager, personService, notificationService, webSecurityExpressionEvaluator);
         this.detailController = new DefaultDetailController<>(Person.class, personService, DETAIL_URL, DETAIL_VIEW);
         this.listController = new DefaultListController(personService, LIST_VIEW, AJAX_LIST_VIEW, DETAIL_URL);
         LookupController lookupController = new DefaultLookupController(webSecurityExpressionEvaluator, personService, DETAIL_URL, LOOKUP_LABEL_URL, LOOKUP_LABELS_URL, LOOKUP_LIST_URL);
-        lookupControllerManager.registerController(lookupController);
-        this.personService = personService;
+        lookupRegistry.registerController(lookupController);
         this.personRoleService = personRoleService;
         this.sessionService = sessionService;
     }
@@ -97,7 +95,7 @@ public class PersonController extends AdminController {
         }
 
         personRoleSliceRequest.getFilter().put("person_id", person.getId());
-        Slice<?> slice = personRoleService.findSlice(personRoleSliceRequest);
+        TableSlice slice = personRoleService.findSlice(personRoleSliceRequest);
         EntityIdentifier<PersonRoleTable> identifier = personRoleService.getDetailEntityIdentifier(PersonRoleTable.class);
         List<SessionDetail> sessions = sessionService.fetchListByEmail(person.getEmail());
 

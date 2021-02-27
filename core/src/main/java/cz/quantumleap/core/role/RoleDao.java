@@ -1,11 +1,9 @@
 package cz.quantumleap.core.role;
 
-import cz.quantumleap.core.common.Utils;
-import cz.quantumleap.core.data.DaoStub;
-import cz.quantumleap.core.data.EnumManager;
-import cz.quantumleap.core.data.LookupDaoManager;
-import cz.quantumleap.core.data.RecordAuditor;
-import cz.quantumleap.core.data.entity.Entity;
+import cz.quantumleap.core.database.DaoStub;
+import cz.quantumleap.core.database.EntityRegistry;
+import cz.quantumleap.core.database.RecordAuditor;
+import cz.quantumleap.core.database.entity.Entity;
 import cz.quantumleap.core.tables.RoleTable;
 import org.jooq.DSLContext;
 import org.jooq.Record;
@@ -14,18 +12,19 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+import static cz.quantumleap.core.database.query.QueryUtils.startsWithIgnoreCase;
 import static cz.quantumleap.core.tables.RoleTable.ROLE;
 
 @Repository
 public class RoleDao extends DaoStub<RoleTable> {
 
-    protected RoleDao(DSLContext dslContext, LookupDaoManager lookupDaoManager, EnumManager enumManager, RecordAuditor recordAuditor) {
-        super(createEntity(), dslContext, lookupDaoManager, enumManager, recordAuditor);
+    protected RoleDao(DSLContext dslContext, RecordAuditor recordAuditor, EntityRegistry entityRegistry) {
+        super(createEntity(), dslContext, recordAuditor, entityRegistry);
     }
 
     private static Entity<RoleTable> createEntity() {
         return Entity.createBuilder(ROLE).setLookupLabelField(ROLE.NAME)
-                .setWordConditionBuilder(s -> Utils.startsWithIgnoreCase(ROLE.NAME, s)).build();
+                .setWordConditionBuilder(s -> startsWithIgnoreCase(ROLE.NAME, s)).build();
     }
 
     public List<String> fetchRolesByPersonId(long personId) {
