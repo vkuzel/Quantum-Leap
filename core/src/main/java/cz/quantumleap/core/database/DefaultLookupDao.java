@@ -70,8 +70,8 @@ public final class DefaultLookupDao<TABLE extends Table<? extends Record>> imple
     }
 
     @Override
-    public TableSlice fetchSlice(SliceRequest sliceRequest) {
-        return listDao.fetchSlice(sliceRequest);
+    public TableSlice fetchTableSlice(SliceRequest sliceRequest) {
+        return listDao.fetchTableSlice(sliceRequest);
     }
 
     private SortField<?> createSortField() {

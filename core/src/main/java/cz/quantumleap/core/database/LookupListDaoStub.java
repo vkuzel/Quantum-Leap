@@ -54,8 +54,8 @@ public class LookupListDaoStub<TABLE extends Table<? extends Record>> implements
 
 
     @Override
-    public TableSlice fetchSlice(SliceRequest sliceRequest) {
-        return listDao.fetchSlice(sliceRequest);
+    public TableSlice fetchTableSlice(SliceRequest sliceRequest) {
+        return listDao.fetchTableSlice(sliceRequest);
     }
 
     @Override

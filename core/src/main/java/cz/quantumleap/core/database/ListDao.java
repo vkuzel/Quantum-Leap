@@ -18,8 +18,7 @@ public interface ListDao<TABLE extends Table<? extends Record>> {
         return getListEntity().getIdentifier();
     }
 
-    // TODO Rename to fetchTableSlice()
-    TableSlice fetchSlice(SliceRequest sliceRequest);
+    TableSlice fetchTableSlice(SliceRequest sliceRequest);
 
     <T> List<T> fetchList(SliceRequest sliceRequest, Class<T> type);
 
