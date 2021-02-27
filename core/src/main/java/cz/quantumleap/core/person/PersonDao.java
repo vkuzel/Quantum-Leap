@@ -1,9 +1,9 @@
 package cz.quantumleap.core.person;
 
-import cz.quantumleap.core.data.DaoStub;
-import cz.quantumleap.core.data.EntityRegistry;
-import cz.quantumleap.core.data.RecordAuditor;
-import cz.quantumleap.core.data.entity.Entity;
+import cz.quantumleap.core.database.DaoStub;
+import cz.quantumleap.core.database.EntityRegistry;
+import cz.quantumleap.core.database.RecordAuditor;
+import cz.quantumleap.core.database.entity.Entity;
 import cz.quantumleap.core.person.transport.Person;
 import cz.quantumleap.core.tables.PersonTable;
 import org.jooq.Condition;
@@ -13,7 +13,7 @@ import org.jooq.Table;
 import org.jooq.impl.DSL;
 import org.springframework.stereotype.Repository;
 
-import static cz.quantumleap.core.data.query.QueryUtils.startsWithIgnoreCase;
+import static cz.quantumleap.core.database.query.QueryUtils.startsWithIgnoreCase;
 import static cz.quantumleap.core.tables.PersonTable.PERSON;
 
 @Repository

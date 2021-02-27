@@ -1,8 +1,8 @@
 package cz.quantumleap.core.business;
 
-import cz.quantumleap.core.data.entity.EntityIdentifier;
-import cz.quantumleap.core.data.transport.SliceRequest;
-import cz.quantumleap.core.data.transport.TableSlice;
+import cz.quantumleap.core.database.entity.EntityIdentifier;
+import cz.quantumleap.core.database.transport.SliceRequest;
+import cz.quantumleap.core.database.transport.TableSlice;
 import org.jooq.Record;
 import org.jooq.Table;
 

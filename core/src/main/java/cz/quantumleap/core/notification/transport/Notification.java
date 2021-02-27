@@ -1,9 +1,6 @@
 package cz.quantumleap.core.notification.transport;
 
-import cz.quantumleap.core.data.transport.Lookup;
 import cz.quantumleap.core.notification.NotificationDefinition;
-import cz.quantumleap.core.tables.PersonTable;
-import cz.quantumleap.core.tables.RoleTable;
 
 import java.time.LocalDateTime;
 import java.util.List;

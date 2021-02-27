@@ -1,10 +1,10 @@
 package cz.quantumleap.core.business;
 
 import cz.quantumleap.core.common.Utils;
-import cz.quantumleap.core.data.ListDao;
-import cz.quantumleap.core.data.entity.EntityIdentifier;
-import cz.quantumleap.core.data.transport.SliceRequest;
-import cz.quantumleap.core.data.transport.TableSlice;
+import cz.quantumleap.core.database.ListDao;
+import cz.quantumleap.core.database.entity.EntityIdentifier;
+import cz.quantumleap.core.database.transport.SliceRequest;
+import cz.quantumleap.core.database.transport.TableSlice;
 import org.jooq.Record;
 import org.jooq.Table;
 

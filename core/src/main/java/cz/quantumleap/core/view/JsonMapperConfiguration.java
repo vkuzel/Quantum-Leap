@@ -1,6 +1,6 @@
 package cz.quantumleap.core.view;
 
-import cz.quantumleap.core.data.entity.EntityIdentifier;
+import cz.quantumleap.core.database.entity.EntityIdentifier;
 import cz.quantumleap.core.view.serializer.EntityIdentifierDeserializer;
 import cz.quantumleap.core.view.serializer.EntityIdentifierSerializer;
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;

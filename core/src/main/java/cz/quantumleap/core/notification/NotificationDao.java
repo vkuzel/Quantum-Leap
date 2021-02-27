@@ -1,11 +1,11 @@
 package cz.quantumleap.core.notification;
 
-import cz.quantumleap.core.data.DaoStub;
-import cz.quantumleap.core.data.EntityRegistry;
-import cz.quantumleap.core.data.RecordAuditor;
-import cz.quantumleap.core.data.entity.Entity;
-import cz.quantumleap.core.data.transport.SliceRequest;
-import cz.quantumleap.core.data.transport.TableSlice;
+import cz.quantumleap.core.database.DaoStub;
+import cz.quantumleap.core.database.EntityRegistry;
+import cz.quantumleap.core.database.RecordAuditor;
+import cz.quantumleap.core.database.entity.Entity;
+import cz.quantumleap.core.database.transport.SliceRequest;
+import cz.quantumleap.core.database.transport.TableSlice;
 import cz.quantumleap.core.notification.transport.Notification;
 import cz.quantumleap.core.tables.NotificationTable;
 import org.jooq.Condition;

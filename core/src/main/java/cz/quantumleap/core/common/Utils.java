@@ -1,7 +1,7 @@
 package cz.quantumleap.core.common;
 
 import com.google.common.io.CharStreams;
-import cz.quantumleap.core.data.entity.EntityIdentifier;
+import cz.quantumleap.core.database.entity.EntityIdentifier;
 import org.apache.commons.lang3.Validate;
 import org.jooq.Record;
 import org.jooq.Table;

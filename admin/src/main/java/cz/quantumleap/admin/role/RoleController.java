@@ -6,7 +6,7 @@ import cz.quantumleap.admin.menu.AdminMenuItemDefinition;
 import cz.quantumleap.admin.menu.AdminMenuManager;
 import cz.quantumleap.admin.notification.NotificationService;
 import cz.quantumleap.admin.person.PersonService;
-import cz.quantumleap.core.data.transport.SliceRequest;
+import cz.quantumleap.core.database.transport.SliceRequest;
 import cz.quantumleap.core.role.transport.Role;
 import cz.quantumleap.core.security.WebSecurityExpressionEvaluator;
 import cz.quantumleap.core.view.*;

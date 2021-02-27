@@ -1,8 +1,8 @@
 package cz.quantumleap.core.view;
 
 import cz.quantumleap.core.business.LookupService;
-import cz.quantumleap.core.data.entity.EntityIdentifier;
-import cz.quantumleap.core.data.transport.SliceRequest;
+import cz.quantumleap.core.database.entity.EntityIdentifier;
+import cz.quantumleap.core.database.transport.SliceRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;

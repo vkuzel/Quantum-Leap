@@ -3,7 +3,7 @@ package cz.quantumleap.core.view.serializer;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
-import cz.quantumleap.core.data.entity.EntityIdentifier;
+import cz.quantumleap.core.database.entity.EntityIdentifier;
 
 import java.io.IOException;
 

@@ -1,9 +1,5 @@
 package cz.quantumleap.core.personrole.transport;
 
-import cz.quantumleap.core.data.transport.Lookup;
-import cz.quantumleap.core.tables.PersonTable;
-import cz.quantumleap.core.tables.RoleTable;
-
 import javax.validation.constraints.NotNull;
 
 public class PersonRole {

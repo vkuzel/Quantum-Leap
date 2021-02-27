@@ -1,6 +1,6 @@
 package cz.quantumleap.core.business;
 
-import cz.quantumleap.core.data.entity.EntityIdentifier;
+import cz.quantumleap.core.database.entity.EntityIdentifier;
 import org.jooq.Record;
 import org.jooq.Table;
 import org.springframework.validation.Errors;

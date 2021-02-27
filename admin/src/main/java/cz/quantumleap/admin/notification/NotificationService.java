@@ -1,9 +1,9 @@
 package cz.quantumleap.admin.notification;
 
-import cz.quantumleap.core.data.entity.EntityIdentifier;
-import cz.quantumleap.core.data.transport.SliceRequest;
-import cz.quantumleap.core.data.transport.TableSlice;
-import cz.quantumleap.core.data.transport.TableSlice.Column;
+import cz.quantumleap.core.database.entity.EntityIdentifier;
+import cz.quantumleap.core.database.transport.SliceRequest;
+import cz.quantumleap.core.database.transport.TableSlice;
+import cz.quantumleap.core.database.transport.TableSlice.Column;
 import cz.quantumleap.core.notification.NotificationDao;
 import cz.quantumleap.core.notification.NotificationDefinition;
 import cz.quantumleap.core.notification.NotificationManager;

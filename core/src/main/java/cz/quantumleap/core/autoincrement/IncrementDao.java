@@ -1,9 +1,9 @@
 package cz.quantumleap.core.autoincrement;
 
-import cz.quantumleap.core.data.DefaultDetailDao;
-import cz.quantumleap.core.data.DetailDao;
-import cz.quantumleap.core.data.RecordAuditor;
-import cz.quantumleap.core.data.entity.Entity;
+import cz.quantumleap.core.database.DefaultDetailDao;
+import cz.quantumleap.core.database.DetailDao;
+import cz.quantumleap.core.database.RecordAuditor;
+import cz.quantumleap.core.database.entity.Entity;
 import cz.quantumleap.core.tables.IncrementTable;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
