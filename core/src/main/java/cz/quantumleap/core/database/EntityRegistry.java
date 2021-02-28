@@ -65,10 +65,12 @@ public class EntityRegistry {
             return;
         }
 
-        Entity<?> originalEntity = entityMap.put(entityIdentifier, entity);
-        if (originalEntity != null && originalEntity != entity) {
-            String msg = "Two different entities for entity identifier %s, first: %s, second: %s";
-            throw new IllegalStateException(String.format(msg, entityIdentifier, entity, originalEntity));
+        Entity<?> originalEntity = entityMap.get(entityIdentifier);
+        if (originalEntity == null) {
+            entityMap.put(entityIdentifier, entity);
+        } else if (originalEntity != entity) {
+            String msg = "Two different entities for entity identifier {}, first: {}, second: {}";
+            log.error(msg, entityIdentifier, entity, originalEntity);
         }
     }
 }
