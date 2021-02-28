@@ -78,8 +78,8 @@ public class DaoStub<TABLE extends Table<? extends Record>> implements DetailDao
     }
 
     @Override
-    public TableSlice fetchTableSlice(SliceRequest sliceRequest) {
-        return listDao.fetchTableSlice(sliceRequest);
+    public TableSlice fetchSlice(SliceRequest sliceRequest) {
+        return listDao.fetchSlice(sliceRequest);
     }
 
     @Override

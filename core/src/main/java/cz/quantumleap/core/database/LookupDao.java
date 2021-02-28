@@ -28,5 +28,5 @@ public interface LookupDao<TABLE extends Table<? extends Record>> {
 
     Map<Object, String> fetchLabelsByFilter(String query);
 
-    TableSlice fetchTableSlice(SliceRequest sliceRequest);
+    TableSlice fetchSlice(SliceRequest sliceRequest);
 }

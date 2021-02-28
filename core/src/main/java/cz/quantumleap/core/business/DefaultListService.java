@@ -23,6 +23,6 @@ public final class DefaultListService implements ListService {
 
     @Override
     public TableSlice findSlice(SliceRequest sliceRequest) {
-        return listDao.fetchTableSlice(sliceRequest);
+        return listDao.fetchSlice(sliceRequest);
     }
 }

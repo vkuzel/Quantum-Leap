@@ -35,7 +35,7 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
         return entity;
     }
 
-    public TableSlice fetchTableSlice(SliceRequest sliceRequest) {
+    public TableSlice fetchSlice(SliceRequest sliceRequest) {
         SliceRequest request = setDefaultOrder(sliceRequest);
 
         Table<?> table = entity.getTable();

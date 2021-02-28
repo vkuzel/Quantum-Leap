@@ -49,7 +49,7 @@ public class NotificationService {
     @Transactional
     public TableSlice findSlice(long personId, SliceRequest sliceRequest) {
         Locale locale = LocaleContextHolder.getLocale();
-        TableSlice slice = notificationDao.fetchTableSlice(personId, sliceRequest);
+        TableSlice slice = notificationDao.fetchSlice(personId, sliceRequest);
 
         List<Column> columns = slice.getColumns();
         Column codeColumn = slice.getColumnByName("code");

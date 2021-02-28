@@ -35,8 +35,8 @@ public class NotificationDao extends DaoStub<NotificationTable> {
         return super.fetchByCondition(condition, Notification.class);
     }
 
-    public TableSlice fetchTableSlice(long personId, SliceRequest sliceRequest) {
-        return super.fetchTableSlice(sliceRequest.addCondition(createPersonNotificationsCondition(personId)));
+    public TableSlice fetchSlice(long personId, SliceRequest sliceRequest) {
+        return super.fetchSlice(sliceRequest.addCondition(createPersonNotificationsCondition(personId)));
     }
 
     Notification fetchUnresolvedByDefinition(Notification notification) {
