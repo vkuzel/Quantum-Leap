@@ -7,10 +7,7 @@ import cz.quantumleap.core.database.query.FilterFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.*;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public final class DefaultLookupDao<TABLE extends Table<? extends Record>> implements LookupDao<TABLE> {
 
@@ -59,7 +56,8 @@ public final class DefaultLookupDao<TABLE extends Table<? extends Record>> imple
         }
 
         Field<?> primaryKey = entity.getPrimaryKeyField();
-        Condition condition = createFilterFactory().forQuery(query);
+        List<Field<?>> fields = Arrays.asList(entity.getTable().fields());
+        Condition condition = createFilterFactory().forQuery(fields, query);
 
         return dslContext.select(primaryKey, entity.getLookupLabelField())
                 .from(getTable())
@@ -85,7 +83,6 @@ public final class DefaultLookupDao<TABLE extends Table<? extends Record>> imple
 
     private FilterFactory createFilterFactory() {
         return new FilterFactory(
-                Arrays.asList(entity.getTable().fields()),
                 entity.getDefaultFilterCondition(),
                 entity.getWordConditionBuilder()
         );

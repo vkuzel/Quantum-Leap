@@ -21,22 +21,20 @@ public final class FilterFactory {
 
     private enum ComparisonOperator {EQ, LT, GT, LE, GE}
 
-    private final Map<String, Field<?>> fieldMap;
     private final Condition defaultCondition;
     private final Function<String, Condition> wordConditionBuilder;
 
     public FilterFactory(
-            List<Field<?>> fields,
             Condition defaultCondition,
             Function<String, Condition> wordConditionBuilder
     ) {
-        this.fieldMap = createFieldMap(fields);
         this.defaultCondition = defaultCondition;
         this.wordConditionBuilder = wordConditionBuilder;
     }
 
-    public Condition forQuery(String query) {
-        Condition queryCondition = createConditionFromQuery(query);
+    public Condition forQuery(List<Field<?>> fields, String query) {
+        Map<String, Field<?>> fieldMap = createFieldMap(fields);
+        Condition queryCondition = createConditionFromQuery(fieldMap, query);
 
         return joinConditions(
                 AND,
@@ -45,9 +43,10 @@ public final class FilterFactory {
         );
     }
 
-    public Condition forSliceRequest(SliceRequest request) {
-        Condition filterCondition = createConditionFromFilter(request.getFilter());
-        Condition queryCondition = createConditionFromQuery(request.getQuery());
+    public Condition forSliceRequest(List<Field<?>> fields, SliceRequest request) {
+        Map<String, Field<?>> fieldMap = createFieldMap(fields);
+        Condition filterCondition = createConditionFromFilter(fieldMap, request.getFilter());
+        Condition queryCondition = createConditionFromQuery(fieldMap, request.getQuery());
 
         return joinConditions(
                 AND,
@@ -58,12 +57,12 @@ public final class FilterFactory {
         );
     }
 
-    private Condition createConditionFromFilter(Map<String, Object> filter) {
+    private Condition createConditionFromFilter(Map<String, Field<?>> fieldMap, Map<String, Object> filter) {
         Condition resultCondition = null;
 
         for (Map.Entry<String, Object> fieldNameValue : filter.entrySet()) {
             String fieldName = normalizeFieldName(fieldNameValue.getKey());
-            Field<Object> field = getFieldSafely(fieldName);
+            Field<Object> field = getFieldSafely(fieldMap, fieldName);
 
             Condition condition = field.eq(fieldNameValue.getValue());
             if (resultCondition == null) {
@@ -95,18 +94,18 @@ public final class FilterFactory {
      * @param query See syntax.
      * @return Condition or null.
      */
-    private Condition createConditionFromQuery(String query) {
+    private Condition createConditionFromQuery(Map<String, Field<?>> fieldMap, String query) {
         if (StringUtils.isNotBlank(query)) {
             List<String> tokens = tokenize(query);
-            return createCondition(tokens);
+            return createCondition(fieldMap, tokens);
         } else {
             return null;
         }
     }
 
 
-    private Condition createCondition(List<String> tokens) {
-        return new CreateCondition(tokens).create();
+    private Condition createCondition(Map<String, Field<?>> fieldMap, List<String> tokens) {
+        return new CreateCondition(fieldMap, tokens).create();
     }
 
     private List<String> tokenize(String query) {
@@ -190,11 +189,13 @@ public final class FilterFactory {
 
     private final class CreateCondition {
 
+        private final Map<String, Field<?>> fieldMap;
         private final List<String> tokens;
         private int startAtToken;
         private int currentTokenIndex;
 
-        public CreateCondition(List<String> tokens) {
+        public CreateCondition(Map<String, Field<?>> fieldMap, List<String> tokens) {
+            this.fieldMap = fieldMap;
             this.tokens = tokens;
         }
 
@@ -291,7 +292,7 @@ public final class FilterFactory {
     }
 
     @SuppressWarnings("unchecked")
-    private Field<Object> getFieldSafely(String fieldName) {
+    private Field<Object> getFieldSafely(Map<String, Field<?>> fieldMap, String fieldName) {
         String normalized = normalizeFieldName(fieldName);
         Field<?> field = fieldMap.get(normalized);
         if (field == null) {

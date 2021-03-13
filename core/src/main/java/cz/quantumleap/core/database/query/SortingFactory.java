@@ -19,13 +19,11 @@ import static org.jooq.SortOrder.DESC;
 
 public final class SortingFactory {
 
-    private final Map<String, Field<?>> fieldMap;
-
-    public SortingFactory(List<Field<?>> fields) {
-        this.fieldMap = createFieldMap(fields);
+    public SortingFactory() {
     }
 
-    public List<SortField<?>> forSliceRequest(SliceRequest request) {
+    public List<SortField<?>> forSliceRequest(List<Field<?>> fields, SliceRequest request) {
+        Map<String, Field<?>> fieldMap = createFieldMap(fields);
         Sort sort = request.getSort();
         if (sort.isUnsorted()) {
             return Collections.emptyList();

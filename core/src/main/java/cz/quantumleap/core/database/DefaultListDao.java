@@ -42,8 +42,8 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
         List<Field<?>> fields = createSliceFieldsFactory().forSliceRequest(request);
 
         Function<SelectJoinStep<Record>, SelectJoinStep<Record>> join = createSliceJoinFactory().forSliceRequest(sliceRequest);
-        Condition conditions = createFilterFactory(fields).forSliceRequest(request);
-        List<SortField<?>> orderBy = createSortingFactory(fields).forSliceRequest(request);
+        Condition conditions = createFilterFactory().forSliceRequest(fields, request);
+        List<SortField<?>> orderBy = createSortingFactory().forSliceRequest(fields, request);
         Limit limit = createLimitFactory().forSliceRequest(request);
 
         SelectJoinStep<Record> selectJoinStep = dslContext
@@ -65,8 +65,8 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
         Table<?> table = entity.getTable();
         List<Field<?>> fields = Arrays.asList(table.fields());
 
-        Condition conditions = createFilterFactory(fields).forSliceRequest(request);
-        List<SortField<?>> orderBy = createSortingFactory(fields).forSliceRequest(request);
+        Condition conditions = createFilterFactory().forSliceRequest(fields, request);
+        List<SortField<?>> orderBy = createSortingFactory().forSliceRequest(fields, request);
         Limit limit = createLimitFactory().forSliceRequest(request);
 
         return dslContext.selectFrom(getTable())
@@ -119,12 +119,12 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
         return new TableSliceJoinFactory(entity, entityRegistry);
     }
 
-    private FilterFactory createFilterFactory(List<Field<?>> fields) {
-        return new FilterFactory(fields, entity.getDefaultFilterCondition(), entity.getWordConditionBuilder());
+    private FilterFactory createFilterFactory() {
+        return new FilterFactory(entity.getDefaultFilterCondition(), entity.getWordConditionBuilder());
     }
 
-    private SortingFactory createSortingFactory(List<Field<?>> fields) {
-        return new SortingFactory(fields);
+    private SortingFactory createSortingFactory() {
+        return new SortingFactory();
     }
 
     private LimitFactory createLimitFactory() {
