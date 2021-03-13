@@ -24,14 +24,16 @@ import static cz.quantumleap.core.database.query.QueryUtils.resolveLookupIdField
 public final class TableSliceFactory {
 
     private final Entity<?> entity;
-    private final List<TablePreferences> tablePreferencesList;
 
-    public TableSliceFactory(Entity<?> entity, List<TablePreferences> tablePreferencesList) {
+    public TableSliceFactory(Entity<?> entity) {
         this.entity = entity;
-        this.tablePreferencesList = tablePreferencesList;
     }
 
-    public TableSlice forRequestedResult(SliceRequest sliceRequest, Result<?> result) {
+    public TableSlice forRequestedResult(
+            TablePreferences tablePreferences,
+            SliceRequest sliceRequest,
+            Result<?> result
+    ) {
         Map<Field<?>, Column> fieldColumnMap = createFieldColumnMap(result, sliceRequest.getSort());
         List<Column> columns = new ArrayList<>(fieldColumnMap.values());
         List<Field<?>> fields = new ArrayList<>(fieldColumnMap.keySet());
@@ -46,7 +48,7 @@ public final class TableSliceFactory {
 
         return new TableSlice(
                 entity.getIdentifier(),
-                selectTablePreferences(),
+                tablePreferences,
                 sliceRequest,
                 result.size() > maxSize,
                 columns,
@@ -107,14 +109,5 @@ public final class TableSliceFactory {
             }
         }
         return row;
-    }
-
-    private TablePreferences selectTablePreferences() {
-        for (TablePreferences preferences : tablePreferencesList) {
-            if (preferences.isDefault()) {
-                return preferences;
-            }
-        }
-        return TablePreferences.EMPTY;
     }
 }
