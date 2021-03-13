@@ -69,7 +69,7 @@ public class NotificationService {
             messages.add(message);
         }
 
-        return slice.createBuilder().addColumn(messageColumn, messages, (row, o) -> {
+        return slice.builder().addColumn(messageColumn, messages, (row, o) -> {
             row.add(o);
             return row;
         }).build();

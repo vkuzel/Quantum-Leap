@@ -18,6 +18,6 @@ public class PersonRoleDao extends DaoStub<PersonRoleTable> {
     }
 
     private static Entity<PersonRoleTable> createEntity() {
-        return Entity.createBuilder(PERSON_ROLE).build();
+        return Entity.builder(PERSON_ROLE).build();
     }
 }

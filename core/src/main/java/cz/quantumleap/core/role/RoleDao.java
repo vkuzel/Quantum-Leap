@@ -23,7 +23,7 @@ public class RoleDao extends DaoStub<RoleTable> {
     }
 
     private static Entity<RoleTable> createEntity() {
-        return Entity.createBuilder(ROLE).setLookupLabelField(ROLE.NAME)
+        return Entity.builder(ROLE).setLookupLabelField(ROLE.NAME)
                 .setWordConditionBuilder(s -> startsWithIgnoreCase(ROLE.NAME, s)).build();
     }
 

@@ -36,7 +36,7 @@ public final class DefaultLookupDao<TABLE extends Table<? extends Record>> imple
         this.sortingFactory = sortingFactory;
     }
 
-    public static <TABLE extends Table<? extends Record>> Builder<TABLE> createBuilder(
+    public static <TABLE extends Table<? extends Record>> Builder<TABLE> builder(
             Entity<TABLE> entity,
             DSLContext dslContext,
             ListDao<TABLE> listDao

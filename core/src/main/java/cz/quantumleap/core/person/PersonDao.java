@@ -24,7 +24,7 @@ public class PersonDao extends DaoStub<PersonTable> {
     }
 
     private static Entity<PersonTable> createEntity() {
-        return Entity.createBuilder(PERSON)
+        return Entity.builder(PERSON)
                 .setLookupLabelFieldBuilder(PersonDao::createLookupLabelField)
                 .setWordConditionBuilder(PersonDao::createWordCondition)
                 .build();

@@ -30,7 +30,7 @@ public class TableSlice implements Iterable<List<Object>> {
         this.rows = rows;
     }
 
-    public Builder createBuilder() {
+    public Builder builder() {
         return new Builder(entityIdentifier, tablePreferences, sliceRequest, canExtend, columns, rows);
     }
 

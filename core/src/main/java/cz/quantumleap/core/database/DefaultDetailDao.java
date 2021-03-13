@@ -18,7 +18,7 @@ public final class DefaultDetailDao<TABLE extends Table<? extends Record>> imple
         this.recordAuditor = recordAuditor;
     }
 
-    public static <TABLE extends Table<? extends Record>> Builder<TABLE> createBuilder(
+    public static <TABLE extends Table<? extends Record>> Builder<TABLE> builder(
             Entity<TABLE> entity,
             DSLContext dslContext,
             RecordAuditor recordAuditor

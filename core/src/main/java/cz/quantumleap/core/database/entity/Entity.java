@@ -95,15 +95,15 @@ public class Entity<TABLE extends Table<? extends Record>> {
         return wordConditionBuilder;
     }
 
-    public static <TABLE extends Table<? extends Record>> Builder<TABLE> createBuilder(TABLE table) {
-        return createBuilder(EntityIdentifier.forTable(table));
+    public static <TABLE extends Table<? extends Record>> Builder<TABLE> builder(TABLE table) {
+        return builder(EntityIdentifier.forTable(table));
     }
 
-    public static <TABLE extends Table<? extends Record>> Builder<TABLE> createBuilder(TABLE table, String qualifier) {
-        return createBuilder(EntityIdentifier.forTableWithQualifier(table, qualifier));
+    public static <TABLE extends Table<? extends Record>> Builder<TABLE> builder(TABLE table, String qualifier) {
+        return builder(EntityIdentifier.forTableWithQualifier(table, qualifier));
     }
 
-    public static <TABLE extends Table<? extends Record>> Builder<TABLE> createBuilder(EntityIdentifier<TABLE> entityIdentifier) {
+    public static <TABLE extends Table<? extends Record>> Builder<TABLE> builder(EntityIdentifier<TABLE> entityIdentifier) {
         return new Builder<>(entityIdentifier);
     }
 

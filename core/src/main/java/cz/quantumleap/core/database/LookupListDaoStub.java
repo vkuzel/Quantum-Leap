@@ -23,8 +23,8 @@ public class LookupListDaoStub<TABLE extends Table<? extends Record>> implements
     public LookupListDaoStub(Entity<TABLE> entity, DSLContext dslContext, EntityRegistry entityRegistry) {
         this.entity = entity;
         this.dslContext = dslContext;
-        this.listDao = DefaultListDao.createBuilder(entity, dslContext, entityRegistry).build();
-        this.lookupDao = DefaultLookupDao.createBuilder(entity, dslContext, listDao).build();
+        this.listDao = DefaultListDao.builder(entity, dslContext, entityRegistry).build();
+        this.lookupDao = DefaultLookupDao.builder(entity, dslContext, listDao).build();
     }
 
     @Override

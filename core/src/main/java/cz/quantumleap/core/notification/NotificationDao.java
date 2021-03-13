@@ -27,7 +27,7 @@ public class NotificationDao extends DaoStub<NotificationTable> {
     }
 
     private static Entity<NotificationTable> createEntity() {
-        return Entity.createBuilder(NOTIFICATION).build();
+        return Entity.builder(NOTIFICATION).build();
     }
 
     public Notification fetch(long personId, long id) {

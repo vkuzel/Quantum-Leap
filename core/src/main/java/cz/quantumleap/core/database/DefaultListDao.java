@@ -49,7 +49,7 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
         this.tableSliceFactory = tableSliceFactory;
     }
 
-    public static <TABLE extends Table<? extends Record>> Builder<TABLE> createBuilder(
+    public static <TABLE extends Table<? extends Record>> Builder<TABLE> builder(
             Entity<TABLE> entity,
             DSLContext dslContext,
             EntityRegistry entityRegistry
