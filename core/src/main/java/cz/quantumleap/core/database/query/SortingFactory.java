@@ -19,7 +19,10 @@ import static org.jooq.SortOrder.DESC;
 
 public final class SortingFactory {
 
-    public SortingFactory() {
+    private final Field<?> lookupLabelField;
+
+    public SortingFactory(Field<?> lookupLabelField) {
+        this.lookupLabelField = lookupLabelField;
     }
 
     public List<SortField<?>> forSliceRequest(List<Field<?>> fields, SliceRequest request) {
@@ -43,5 +46,9 @@ public final class SortingFactory {
         }
 
         return sortFields;
+    }
+
+    public List<SortField<?>> forLookup() {
+        return Collections.singletonList(lookupLabelField.asc());
     }
 }

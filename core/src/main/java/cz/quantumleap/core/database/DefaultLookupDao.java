@@ -4,6 +4,7 @@ import cz.quantumleap.core.database.domain.SliceRequest;
 import cz.quantumleap.core.database.domain.TableSlice;
 import cz.quantumleap.core.database.entity.Entity;
 import cz.quantumleap.core.database.query.FilterFactory;
+import cz.quantumleap.core.database.query.SortingFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.*;
 
@@ -17,17 +18,20 @@ public final class DefaultLookupDao<TABLE extends Table<? extends Record>> imple
     private final DSLContext dslContext;
     private final ListDao<TABLE> listDao;
     private final FilterFactory filterFactory;
+    private final SortingFactory sortingFactory;
 
     private DefaultLookupDao(
             Entity<TABLE> entity,
             DSLContext dslContext,
             ListDao<TABLE> listDao,
-            FilterFactory filterFactory
+            FilterFactory filterFactory,
+            SortingFactory sortingFactory
     ) {
         this.entity = entity;
         this.dslContext = dslContext;
         this.listDao = listDao;
         this.filterFactory = filterFactory;
+        this.sortingFactory = sortingFactory;
     }
 
     public static <TABLE extends Table<? extends Record>> Builder<TABLE> createBuilder(
@@ -45,22 +49,24 @@ public final class DefaultLookupDao<TABLE extends Table<? extends Record>> imple
 
     public String fetchLabelById(Object id) {
         Condition condition = entity.getPrimaryKeyConditionBuilder().buildFromId(id);
+        List<SortField<?>> sortFields = sortingFactory.forLookup();
 
         return dslContext.select(entity.getLookupLabelField())
                 .from(getTable())
                 .where(condition)
-                .orderBy(createSortField())
+                .orderBy(sortFields)
                 .fetchOneInto(String.class);
     }
 
     public Map<Object, String> fetchLabelsById(Set<Object> ids) {
         Field<?> primaryKey = entity.getPrimaryKeyField();
         Condition condition = entity.getPrimaryKeyConditionBuilder().buildFromIds(ids);
+        List<SortField<?>> sortFields = sortingFactory.forLookup();
 
         return dslContext.select(primaryKey, entity.getLookupLabelField())
                 .from(getTable())
                 .where(condition)
-                .orderBy(createSortField())
+                .orderBy(sortFields)
                 .fetchMap(Record2::value1, Record2::value2);
     }
 
@@ -73,11 +79,12 @@ public final class DefaultLookupDao<TABLE extends Table<? extends Record>> imple
         Field<?> primaryKey = entity.getPrimaryKeyField();
         List<Field<?>> fields = Arrays.asList(entity.getTable().fields());
         Condition condition = filterFactory.forQuery(fields, query);
+        List<SortField<?>> sortFields = sortingFactory.forLookup();
 
         return dslContext.select(primaryKey, entity.getLookupLabelField())
                 .from(getTable())
                 .where(condition)
-                .orderBy(createSortField())
+                .orderBy(sortFields)
                 .limit(MAX_FILTERED_ROWS)
                 .fetchMap(Record2::value1, Record2::value2);
     }
@@ -85,11 +92,6 @@ public final class DefaultLookupDao<TABLE extends Table<? extends Record>> imple
     @Override
     public TableSlice fetchSlice(SliceRequest sliceRequest) {
         return listDao.fetchSlice(sliceRequest);
-    }
-
-    private SortField<?> createSortField() {
-        Field<?> field = entity.getLookupLabelField();
-        return field.asc();
     }
 
     private Table<? extends Record> getTable() {
@@ -102,6 +104,7 @@ public final class DefaultLookupDao<TABLE extends Table<? extends Record>> imple
         private final DSLContext dslContext;
         private final ListDao<TABLE> listDao;
         private FilterFactory filterFactory = null;
+        private SortingFactory sortingFactory = null;
 
         private Builder(Entity<TABLE> entity, DSLContext dslContext, ListDao<TABLE> listDao) {
             this.entity = entity;
@@ -115,16 +118,27 @@ public final class DefaultLookupDao<TABLE extends Table<? extends Record>> imple
             return this;
         }
 
+        @SuppressWarnings("unused")
+        public Builder<TABLE> setSortingFactory(SortingFactory sortingFactory) {
+            this.sortingFactory = sortingFactory;
+            return this;
+        }
+
         public DefaultLookupDao<TABLE> build() {
             FilterFactory filterFactory = this.filterFactory;
             if (filterFactory == null) {
                 filterFactory = new FilterFactory(entity.getDefaultFilterCondition(), entity.getWordConditionBuilder());
             }
+            SortingFactory sortingFactory = this.sortingFactory;
+            if (sortingFactory == null) {
+                sortingFactory = new SortingFactory(entity.getLookupLabelField());
+            }
             return new DefaultLookupDao<>(
                     entity,
                     dslContext,
                     listDao,
-                    filterFactory
+                    filterFactory,
+                    sortingFactory
             );
         }
     }

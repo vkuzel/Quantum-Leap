@@ -225,7 +225,7 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
             }
             SortingFactory sortingFactory = this.sortingFactory;
             if (sortingFactory == null) {
-                sortingFactory = new SortingFactory();
+                sortingFactory = new SortingFactory(entity.getLookupLabelField());
             }
             LimitFactory limitFactory = this.limitFactory;
             if (limitFactory == null) {
