@@ -22,9 +22,9 @@ public class DaoStub<TABLE extends Table<? extends Record>> implements DetailDao
     protected DaoStub(Entity<TABLE> entity, DSLContext dslContext, RecordAuditor recordAuditor, EntityRegistry entityRegistry) {
         this.entity = entity;
         this.dslContext = dslContext;
-        this.detailDao = new DefaultDetailDao<>(entity, dslContext, recordAuditor);
-        this.listDao = new DefaultListDao<>(entity, dslContext, entityRegistry);
-        this.lookupDao = new DefaultLookupDao<>(entity, dslContext, listDao);
+        this.detailDao = DefaultDetailDao.createBuilder(entity, dslContext, recordAuditor).build();
+        this.listDao = DefaultListDao.createBuilder(entity, dslContext, entityRegistry).build();
+        this.lookupDao = DefaultLookupDao.createBuilder(entity, dslContext, listDao).build();
     }
 
     @Override

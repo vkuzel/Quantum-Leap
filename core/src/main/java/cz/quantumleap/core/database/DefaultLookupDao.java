@@ -16,11 +16,26 @@ public final class DefaultLookupDao<TABLE extends Table<? extends Record>> imple
     private final Entity<TABLE> entity;
     private final DSLContext dslContext;
     private final ListDao<TABLE> listDao;
+    private final FilterFactory filterFactory;
 
-    public DefaultLookupDao(Entity<TABLE> entity, DSLContext dslContext, ListDao<TABLE> listDao) {
+    private DefaultLookupDao(
+            Entity<TABLE> entity,
+            DSLContext dslContext,
+            ListDao<TABLE> listDao,
+            FilterFactory filterFactory
+    ) {
         this.entity = entity;
         this.dslContext = dslContext;
         this.listDao = listDao;
+        this.filterFactory = filterFactory;
+    }
+
+    public static <TABLE extends Table<? extends Record>> Builder<TABLE> createBuilder(
+            Entity<TABLE> entity,
+            DSLContext dslContext,
+            ListDao<TABLE> listDao
+    ) {
+        return new Builder<>(entity, dslContext, listDao);
     }
 
     @Override
@@ -57,7 +72,7 @@ public final class DefaultLookupDao<TABLE extends Table<? extends Record>> imple
 
         Field<?> primaryKey = entity.getPrimaryKeyField();
         List<Field<?>> fields = Arrays.asList(entity.getTable().fields());
-        Condition condition = createFilterFactory().forQuery(fields, query);
+        Condition condition = filterFactory.forQuery(fields, query);
 
         return dslContext.select(primaryKey, entity.getLookupLabelField())
                 .from(getTable())
@@ -81,10 +96,36 @@ public final class DefaultLookupDao<TABLE extends Table<? extends Record>> imple
         return entity.getTable();
     }
 
-    private FilterFactory createFilterFactory() {
-        return new FilterFactory(
-                entity.getDefaultFilterCondition(),
-                entity.getWordConditionBuilder()
-        );
+    public static class Builder<TABLE extends Table<? extends Record>> {
+
+        private final Entity<TABLE> entity;
+        private final DSLContext dslContext;
+        private final ListDao<TABLE> listDao;
+        private FilterFactory filterFactory = null;
+
+        private Builder(Entity<TABLE> entity, DSLContext dslContext, ListDao<TABLE> listDao) {
+            this.entity = entity;
+            this.dslContext = dslContext;
+            this.listDao = listDao;
+        }
+
+        @SuppressWarnings("unused")
+        public Builder<TABLE> setFilterFactory(FilterFactory filterFactory) {
+            this.filterFactory = filterFactory;
+            return this;
+        }
+
+        public DefaultLookupDao<TABLE> build() {
+            FilterFactory filterFactory = this.filterFactory;
+            if (filterFactory == null) {
+                filterFactory = new FilterFactory(entity.getDefaultFilterCondition(), entity.getWordConditionBuilder());
+            }
+            return new DefaultLookupDao<>(
+                    entity,
+                    dslContext,
+                    listDao,
+                    filterFactory
+            );
+        }
     }
 }

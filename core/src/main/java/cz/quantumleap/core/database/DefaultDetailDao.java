@@ -12,10 +12,18 @@ public final class DefaultDetailDao<TABLE extends Table<? extends Record>> imple
     private final DSLContext dslContext;
     private final RecordAuditor recordAuditor;
 
-    public DefaultDetailDao(Entity<TABLE> entity, DSLContext dslContext, RecordAuditor recordAuditor) {
+    private DefaultDetailDao(Entity<TABLE> entity, DSLContext dslContext, RecordAuditor recordAuditor) {
         this.entity = entity;
         this.dslContext = dslContext;
         this.recordAuditor = recordAuditor;
+    }
+
+    public static <TABLE extends Table<? extends Record>> Builder<TABLE> createBuilder(
+            Entity<TABLE> entity,
+            DSLContext dslContext,
+            RecordAuditor recordAuditor
+    ) {
+        return new Builder<>(entity, dslContext, recordAuditor);
     }
 
     @Override
@@ -157,5 +165,22 @@ public final class DefaultDetailDao<TABLE extends Table<? extends Record>> imple
                 .execute();
 
         return saveRecords(records, detailType);
+    }
+
+    public static class Builder<TABLE extends Table<? extends Record>> {
+
+        private final Entity<TABLE> entity;
+        private final DSLContext dslContext;
+        private final RecordAuditor recordAuditor;
+
+        private Builder(Entity<TABLE> entity, DSLContext dslContext, RecordAuditor recordAuditor) {
+            this.entity = entity;
+            this.dslContext = dslContext;
+            this.recordAuditor = recordAuditor;
+        }
+        
+        public DefaultDetailDao<TABLE> build() {
+            return new DefaultDetailDao<>(entity, dslContext, recordAuditor);
+        }
     }
 }

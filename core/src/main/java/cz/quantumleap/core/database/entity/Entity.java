@@ -122,7 +122,7 @@ public class Entity<TABLE extends Table<? extends Record>> {
         private Condition defaultFilterCondition = null;
         private Function<String, Condition> wordConditionBuilder = q -> null;
 
-        public Builder(EntityIdentifier<TABLE> entityIdentifier) {
+        private Builder(EntityIdentifier<TABLE> entityIdentifier) {
             Validate.notNull(entityIdentifier);
             this.entityIdentifier = entityIdentifier;
         }
