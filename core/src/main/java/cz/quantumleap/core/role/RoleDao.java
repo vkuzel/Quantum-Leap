@@ -23,8 +23,10 @@ public class RoleDao extends DaoStub<RoleTable> {
     }
 
     private static Entity<RoleTable> createEntity() {
-        return Entity.builder(ROLE).setLookupLabelField(ROLE.NAME)
-                .setWordConditionBuilder(s -> startsWithIgnoreCase(ROLE.NAME, s)).build();
+        return Entity.builder(ROLE)
+                .setLookupLabelField(ROLE.NAME)
+                .setWordConditionBuilder(s -> startsWithIgnoreCase(ROLE.NAME, s))
+                .build();
     }
 
     public List<String> fetchRolesByPersonId(long personId) {

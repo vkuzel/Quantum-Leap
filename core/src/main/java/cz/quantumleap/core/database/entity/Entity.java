@@ -167,7 +167,7 @@ public class Entity<TABLE extends Table<? extends Record>> {
         }
 
         public Builder<TABLE> setLookupLabelField(Field<String> lookupLabelField) {
-            return setLookupLabelFieldBuilder(table -> lookupLabelField);
+            return setLookupLabelFieldBuilder(table -> table.field(lookupLabelField));
         }
 
         public Builder<TABLE> setLookupLabelFieldBuilder(Function<Table<?>, Field<String>> lookupLabelFieldBuilder) {
