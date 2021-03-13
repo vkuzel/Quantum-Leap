@@ -10,7 +10,7 @@ import java.util.List;
 
 import static cz.quantumleap.core.tables.PersonTable.PERSON;
 
-class FilterFactoryTest {
+class DefaultFilterFactoryTest {
 
     @Test
     public void validConditionIsCreatedForQuery() {
@@ -48,7 +48,7 @@ class FilterFactoryTest {
     }
 
     private FilterFactory createFilterFactory() {
-        return new FilterFactory(
+        return new DefaultFilterFactory(
                 null,
                 q -> PERSON.NAME.like(q + "%")
         );

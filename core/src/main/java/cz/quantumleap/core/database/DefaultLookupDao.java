@@ -3,6 +3,8 @@ package cz.quantumleap.core.database;
 import cz.quantumleap.core.database.domain.SliceRequest;
 import cz.quantumleap.core.database.domain.TableSlice;
 import cz.quantumleap.core.database.entity.Entity;
+import cz.quantumleap.core.database.query.DefaultFilterFactory;
+import cz.quantumleap.core.database.query.DefaultSortingFactory;
 import cz.quantumleap.core.database.query.FilterFactory;
 import cz.quantumleap.core.database.query.SortingFactory;
 import org.apache.commons.lang3.StringUtils;
@@ -127,11 +129,11 @@ public final class DefaultLookupDao<TABLE extends Table<? extends Record>> imple
         public DefaultLookupDao<TABLE> build() {
             FilterFactory filterFactory = this.filterFactory;
             if (filterFactory == null) {
-                filterFactory = new FilterFactory(entity.getDefaultFilterCondition(), entity.getWordConditionBuilder());
+                filterFactory = new DefaultFilterFactory(entity.getDefaultFilterCondition(), entity.getWordConditionBuilder());
             }
             SortingFactory sortingFactory = this.sortingFactory;
             if (sortingFactory == null) {
-                sortingFactory = new SortingFactory(entity.getLookupLabelField());
+                sortingFactory = new DefaultSortingFactory(entity.getLookupLabelField());
             }
             return new DefaultLookupDao<>(
                     entity,

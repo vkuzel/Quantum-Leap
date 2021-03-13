@@ -213,27 +213,27 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
         public DefaultListDao<TABLE> build() {
             TableSliceFieldsFactory tableSliceFieldsFactory = this.tableSliceFieldsFactory;
             if (tableSliceFieldsFactory == null) {
-                tableSliceFieldsFactory = new TableSliceFieldsFactory(entity, entityRegistry);
+                tableSliceFieldsFactory = new DefaultTableSliceFieldsFactory(entity, entityRegistry);
             }
             TableSliceJoinFactory tableSliceJoinFactory = this.tableSliceJoinFactory;
             if (tableSliceJoinFactory == null) {
-                tableSliceJoinFactory = new TableSliceJoinFactory(entity, entityRegistry);
+                tableSliceJoinFactory = new DefaultTableSliceJoinFactory(entity, entityRegistry);
             }
             FilterFactory filterFactory = this.filterFactory;
             if (filterFactory == null) {
-                filterFactory = new FilterFactory(entity.getDefaultFilterCondition(), entity.getWordConditionBuilder());
+                filterFactory = new DefaultFilterFactory(entity.getDefaultFilterCondition(), entity.getWordConditionBuilder());
             }
             SortingFactory sortingFactory = this.sortingFactory;
             if (sortingFactory == null) {
-                sortingFactory = new SortingFactory(entity.getLookupLabelField());
+                sortingFactory = new DefaultSortingFactory(entity.getLookupLabelField());
             }
             LimitFactory limitFactory = this.limitFactory;
             if (limitFactory == null) {
-                limitFactory = new LimitFactory();
+                limitFactory = new DefaultLimitFactory();
             }
             TableSliceFactory tableSliceFactory = this.tableSliceFactory;
             if (tableSliceFactory == null) {
-                tableSliceFactory = new TableSliceFactory(entity);
+                tableSliceFactory = new DefaultTableSliceFactory(entity);
             }
 
             return new DefaultListDao<>(
