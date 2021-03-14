@@ -39,7 +39,7 @@ class ReflectionUtilsTest {
     }
 
     @Test
-    void getClassFieldShoutTrowExceptionForNotExistingField() {
+    void getClassFieldShouldTrowExceptionForNotExistingField() {
         TestClass testClass = new TestClass("test-value");
 
         assertThrows(IllegalStateException.class, () ->
