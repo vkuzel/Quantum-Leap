@@ -10,7 +10,7 @@ import cz.quantumleap.core.notification.domain.Notification;
 import cz.quantumleap.core.tables.NotificationTable;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
-import org.springframework.data.domain.Sort;
+import org.jooq.SortField;
 import org.springframework.stereotype.Repository;
 
 import java.util.Collections;
@@ -68,9 +68,8 @@ public class NotificationDao extends DaoStub<NotificationTable> {
 
     public List<Notification> fetchUnresolvedByPersonId(long personId, int limit) {
         Condition condition = NOTIFICATION.RESOLVED_AT.isNull().and(createPersonNotificationsCondition(personId));
-        Sort sort = Sort.by(Sort.Direction.DESC, "id");
-        SliceRequest sliceRequest = new SliceRequest(Collections.emptyMap(), null, condition, 0, limit, sort, null);
-        return super.fetchList(sliceRequest, Notification.class);
+        List<SortField<?>> sort = Collections.singletonList(NOTIFICATION.ID.asc());
+        return super.fetchList(condition, sort, limit, Notification.class);
     }
 
     private Condition createPersonNotificationsCondition(long personId) {

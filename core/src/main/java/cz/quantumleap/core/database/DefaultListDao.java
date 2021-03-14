@@ -8,7 +8,6 @@ import cz.quantumleap.core.database.query.*;
 import org.jooq.*;
 import org.springframework.data.domain.Sort;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -86,25 +85,7 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
         return tableSliceFactory.forRequestedResult(tablePreferences, request, result);
     }
 
-    public <T> List<T> fetchList(SliceRequest sliceRequest, Class<T> type) {
-        SliceRequest request = setDefaultOrder(sliceRequest);
-
-        Table<?> table = entity.getTable();
-        List<Field<?>> fields = Arrays.asList(table.fields());
-
-        Condition conditions = filterFactory.forSliceRequest(fields, request);
-        List<SortField<?>> orderBy = sortingFactory.forSliceRequest(fields, request);
-        Limit limit = limitFactory.forSliceRequest(request);
-
-        return dslContext.selectFrom(getTable())
-                .where(conditions)
-                .orderBy(orderBy)
-                .limit(limit.getOffset(), limit.getNumberOfRows())
-                .fetchInto(type);
-    }
-
-    @Override
-    public <T> List<T> fetchListByCondition(Condition condition, Class<T> type) {
+    public <T> List<T> fetchList(Condition condition, List<SortField<?>> orderBy, int limit, Class<T> type) {
         Condition conditions = joinConditions(
                 AND,
                 entity.getDefaultFilterCondition(),
@@ -112,6 +93,8 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
         );
         return dslContext.selectFrom(getTable())
                 .where(conditions)
+                .orderBy(orderBy)
+                .limit(limit)
                 .fetchInto(type);
     }
 
