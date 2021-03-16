@@ -2,7 +2,6 @@ package cz.quantumleap.core.person;
 
 import cz.quantumleap.core.database.DaoStub;
 import cz.quantumleap.core.database.EntityRegistry;
-import cz.quantumleap.core.database.RecordAuditor;
 import cz.quantumleap.core.database.entity.Entity;
 import cz.quantumleap.core.person.domain.Person;
 import cz.quantumleap.core.tables.PersonTable;
@@ -19,8 +18,8 @@ import static cz.quantumleap.core.tables.PersonTable.PERSON;
 @Repository
 public class PersonDao extends DaoStub<PersonTable> {
 
-    protected PersonDao(DSLContext dslContext, RecordAuditor recordAuditor, EntityRegistry entityRegistry) {
-        super(createEntity(), dslContext, recordAuditor, entityRegistry);
+    protected PersonDao(DSLContext dslContext, EntityRegistry entityRegistry) {
+        super(createEntity(), dslContext, entityRegistry);
     }
 
     private static Entity<PersonTable> createEntity() {

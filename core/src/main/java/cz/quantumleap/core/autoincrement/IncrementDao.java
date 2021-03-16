@@ -2,7 +2,6 @@ package cz.quantumleap.core.autoincrement;
 
 import cz.quantumleap.core.database.DefaultDetailDao;
 import cz.quantumleap.core.database.DetailDao;
-import cz.quantumleap.core.database.RecordAuditor;
 import cz.quantumleap.core.database.entity.Entity;
 import cz.quantumleap.core.tables.IncrementTable;
 import org.jooq.Condition;
@@ -26,10 +25,10 @@ public class IncrementDao implements DetailDao<IncrementTable> {
     private final DSLContext dslContext;
     private final DetailDao<IncrementTable> detailDao;
 
-    public IncrementDao(DSLContext dslContext, RecordAuditor recordAuditor) {
+    public IncrementDao(DSLContext dslContext) {
         this.dslContext = dslContext;
         this.entity = createEntity();
-        this.detailDao = DefaultDetailDao.builder(entity, dslContext, recordAuditor).build();
+        this.detailDao = DefaultDetailDao.builder(entity, dslContext).build();
     }
 
     private Entity<IncrementTable> createEntity() {

@@ -4,11 +4,9 @@ import org.jooq.*;
 import org.jooq.impl.DefaultRecordListener;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 
-@Component
 public class RecordAuditor implements RecordListenerProvider {
 
     private static final String CREATED_AT_FIELD_NAME = "created_at";
@@ -18,6 +16,15 @@ public class RecordAuditor implements RecordListenerProvider {
     private static final String REVISION_FIELD_NAME = "revision";
 
     private static final String DEFAULT_USER_NAME = "<no-authentication>";
+
+    private static final RecordAuditor instance = new RecordAuditor();
+
+    private RecordAuditor() {
+    }
+
+    public static RecordAuditor getInstance() {
+        return instance;
+    }
 
     public void onInsert(Record record) {
         if (record instanceof TableRecord) {

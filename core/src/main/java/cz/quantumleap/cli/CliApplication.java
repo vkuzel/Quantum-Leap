@@ -3,7 +3,6 @@ package cz.quantumleap.cli;
 import cz.quantumleap.cli.environment.EnvironmentBuilder;
 import cz.quantumleap.core.autoincrement.IncrementDao;
 import cz.quantumleap.core.autoincrement.IncrementService;
-import cz.quantumleap.core.database.RecordAuditor;
 import cz.quantumleap.core.module.ModuleDependencyManager;
 import cz.quantumleap.core.resource.ResourceManager;
 import org.apache.commons.lang3.StringUtils;
@@ -81,7 +80,7 @@ public class CliApplication implements CommandLineRunner {
 
         @Bean
         public IncrementDao incrementDao() {
-            return new IncrementDao(dslContext, new RecordAuditor());
+            return new IncrementDao(dslContext);
         }
     }
 

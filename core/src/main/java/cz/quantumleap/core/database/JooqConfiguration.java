@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import cz.quantumleap.core.database.converter.JooqConverterProvider;
 import org.jooq.ConnectionProvider;
 import org.jooq.ExecuteListenerProvider;
-import org.jooq.RecordListenerProvider;
 import org.jooq.TransactionProvider;
 import org.jooq.impl.DefaultConfiguration;
 import org.springframework.boot.autoconfigure.jooq.JooqProperties;
@@ -25,7 +24,6 @@ public class JooqConfiguration extends DefaultConfiguration {
             ConnectionProvider connectionProvider,
             DataSource dataSource,
             TransactionProvider transactionProvider,
-            RecordListenerProvider recordListenerProvider,
             ExecuteListenerProvider executeListenerProvider,
             ObjectMapper objectMapper
     ) {
@@ -33,7 +31,7 @@ public class JooqConfiguration extends DefaultConfiguration {
         set(properties.determineSqlDialect(dataSource));
         set(connectionProvider);
         set(transactionProvider);
-        set(recordListenerProvider);
+        set(RecordAuditor.getInstance());
         set(executeListenerProvider);
         set(new JooqConverterProvider(converterProvider(), objectMapper));
     }

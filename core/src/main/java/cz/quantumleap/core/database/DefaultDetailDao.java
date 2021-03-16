@@ -10,20 +10,17 @@ public final class DefaultDetailDao<TABLE extends Table<? extends Record>> imple
 
     private final Entity<TABLE> entity;
     private final DSLContext dslContext;
-    private final RecordAuditor recordAuditor;
 
-    private DefaultDetailDao(Entity<TABLE> entity, DSLContext dslContext, RecordAuditor recordAuditor) {
+    private DefaultDetailDao(Entity<TABLE> entity, DSLContext dslContext) {
         this.entity = entity;
         this.dslContext = dslContext;
-        this.recordAuditor = recordAuditor;
     }
 
     public static <TABLE extends Table<? extends Record>> Builder<TABLE> builder(
             Entity<TABLE> entity,
-            DSLContext dslContext,
-            RecordAuditor recordAuditor
+            DSLContext dslContext
     ) {
-        return new Builder<>(entity, dslContext, recordAuditor);
+        return new Builder<>(entity, dslContext);
     }
 
     @Override
@@ -92,7 +89,7 @@ public final class DefaultDetailDao<TABLE extends Table<? extends Record>> imple
     }
 
     private <T> T insert(Record record, Class<T> resultType) {
-        recordAuditor.onInsert(record);
+        RecordAuditor.getInstance().onInsert(record);
 
         Map<? extends Field<?>, ?> changedValues = getChangedValues(record);
 
@@ -106,7 +103,7 @@ public final class DefaultDetailDao<TABLE extends Table<? extends Record>> imple
     }
 
     private <T> T update(Record record, Condition condition, Class<T> resultType) {
-        recordAuditor.onUpdate(record);
+        RecordAuditor.getInstance().onUpdate(record);
 
         Map<Field<?>, Object> changedValues = getChangedValues(record);
 
@@ -171,16 +168,14 @@ public final class DefaultDetailDao<TABLE extends Table<? extends Record>> imple
 
         private final Entity<TABLE> entity;
         private final DSLContext dslContext;
-        private final RecordAuditor recordAuditor;
 
-        private Builder(Entity<TABLE> entity, DSLContext dslContext, RecordAuditor recordAuditor) {
+        private Builder(Entity<TABLE> entity, DSLContext dslContext) {
             this.entity = entity;
             this.dslContext = dslContext;
-            this.recordAuditor = recordAuditor;
         }
         
         public DefaultDetailDao<TABLE> build() {
-            return new DefaultDetailDao<>(entity, dslContext, recordAuditor);
+            return new DefaultDetailDao<>(entity, dslContext);
         }
     }
 }

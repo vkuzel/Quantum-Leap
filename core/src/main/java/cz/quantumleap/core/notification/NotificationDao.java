@@ -2,7 +2,6 @@ package cz.quantumleap.core.notification;
 
 import cz.quantumleap.core.database.DaoStub;
 import cz.quantumleap.core.database.EntityRegistry;
-import cz.quantumleap.core.database.RecordAuditor;
 import cz.quantumleap.core.database.domain.SliceRequest;
 import cz.quantumleap.core.database.domain.TableSlice;
 import cz.quantumleap.core.database.entity.Entity;
@@ -22,8 +21,8 @@ import static cz.quantumleap.core.tables.PersonRoleTable.PERSON_ROLE;
 @Repository
 public class NotificationDao extends DaoStub<NotificationTable> {
 
-    protected NotificationDao(DSLContext dslContext, RecordAuditor recordAuditor, EntityRegistry entityRegistry) {
-        super(createEntity(), dslContext, recordAuditor, entityRegistry);
+    protected NotificationDao(DSLContext dslContext, EntityRegistry entityRegistry) {
+        super(createEntity(), dslContext, entityRegistry);
     }
 
     private static Entity<NotificationTable> createEntity() {

@@ -19,10 +19,10 @@ public class DaoStub<TABLE extends Table<? extends Record>> implements DetailDao
     protected final ListDao<TABLE> listDao;
     protected final LookupDao<TABLE> lookupDao;
 
-    protected DaoStub(Entity<TABLE> entity, DSLContext dslContext, RecordAuditor recordAuditor, EntityRegistry entityRegistry) {
+    protected DaoStub(Entity<TABLE> entity, DSLContext dslContext, EntityRegistry entityRegistry) {
         this.entity = entity;
         this.dslContext = dslContext;
-        this.detailDao = DefaultDetailDao.builder(entity, dslContext, recordAuditor).build();
+        this.detailDao = DefaultDetailDao.builder(entity, dslContext).build();
         this.listDao = DefaultListDao.builder(entity, dslContext, entityRegistry).build();
         this.lookupDao = DefaultLookupDao.builder(entity, dslContext, listDao).build();
     }
