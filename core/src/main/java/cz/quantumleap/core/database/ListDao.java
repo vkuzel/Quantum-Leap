@@ -26,6 +26,6 @@ public interface ListDao<TABLE extends Table<? extends Record>> {
     <T> List<T> fetchList(Condition condition, List<SortField<?>> orderBy, int limit, Class<T> type);
 
     default <T> List<T> fetchListByCondition(Condition condition, Class<T> type) {
-        return fetchList(condition, emptyList(), 2000, type);
+        return fetchList(condition, emptyList(), Integer.MAX_VALUE, type);
     }
 }
