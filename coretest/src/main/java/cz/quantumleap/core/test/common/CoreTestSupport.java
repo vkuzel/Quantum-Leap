@@ -63,6 +63,14 @@ public class CoreTestSupport {
     }
 
     @Transactional
+    public void dropTable(Table<?> table) {
+        dslContext
+                .dropTableIfExists(table)
+                .cascade()
+                .execute();
+    }
+
+    @Transactional
     public void createTable(Table<?> table) {
         List<Constraint> constraints = new ArrayList<>();
         UniqueKey<?> primaryKey = table.getPrimaryKey();
