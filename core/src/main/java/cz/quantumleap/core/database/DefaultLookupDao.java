@@ -3,7 +3,6 @@ package cz.quantumleap.core.database;
 import cz.quantumleap.core.database.domain.SliceRequest;
 import cz.quantumleap.core.database.domain.TableSlice;
 import cz.quantumleap.core.database.entity.Entity;
-import cz.quantumleap.core.database.query.DefaultFilterFactory;
 import cz.quantumleap.core.database.query.FilterFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.*;
@@ -25,13 +24,16 @@ public final class DefaultLookupDao<TABLE extends Table<? extends Record>> imple
     private DefaultLookupDao(
             Entity<TABLE> entity,
             DSLContext dslContext,
-            ListDao<TABLE> listDao,
-            FilterFactory filterFactory
+            ListDao<TABLE> listDao
     ) {
         this.entity = entity;
         this.dslContext = dslContext;
         this.listDao = listDao;
-        this.filterFactory = filterFactory;
+        this.filterFactory = new FilterFactory(
+                entity.getDefaultCondition(),
+                entity.getWordConditionBuilder(),
+                entity.getFieldMap()
+        );
     }
 
     public static <TABLE extends Table<? extends Record>> Builder<TABLE> builder(
@@ -77,8 +79,7 @@ public final class DefaultLookupDao<TABLE extends Table<? extends Record>> imple
         }
 
         Field<?> primaryKey = entity.getPrimaryKeyField();
-        Map<String, Field<?>> fieldMap = entity.getFieldMap();
-        Condition condition = filterFactory.forQuery(fieldMap, query);
+        Condition condition = filterFactory.forQuery(query);
         List<SortField<?>> sortFields = entity.getLookupOrderBy();
 
         return dslContext.select(primaryKey, entity.getLookupLabelField())
@@ -111,12 +112,10 @@ public final class DefaultLookupDao<TABLE extends Table<? extends Record>> imple
         }
 
         public DefaultLookupDao<TABLE> build() {
-            FilterFactory filterFactory = new DefaultFilterFactory(entity.getDefaultCondition(), entity.getWordConditionBuilder());
             return new DefaultLookupDao<>(
                     entity,
                     dslContext,
-                    listDao,
-                    filterFactory
+                    listDao
             );
         }
     }

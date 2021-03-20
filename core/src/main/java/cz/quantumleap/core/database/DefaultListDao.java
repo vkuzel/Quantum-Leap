@@ -5,7 +5,6 @@ import cz.quantumleap.core.database.domain.TablePreferences;
 import cz.quantumleap.core.database.domain.TableSlice;
 import cz.quantumleap.core.database.entity.Entity;
 import cz.quantumleap.core.database.query.*;
-import cz.quantumleap.core.database.query.LimitFactory.Limit;
 import org.jooq.*;
 import org.springframework.data.domain.Sort;
 
@@ -21,28 +20,28 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
 
     private final Entity<TABLE> entity;
     private final DSLContext dslContext;
-    private final QueryFieldsFactory queryFieldsFactory;
+
+    private final QueryFields queryFields;
     private final FilterFactory filterFactory;
     private final SortingFactory sortingFactory;
-    private final LimitFactory limitFactory;
     private final TableSliceFactory tableSliceFactory;
 
     private DefaultListDao(
             Entity<TABLE> entity,
             DSLContext dslContext,
-            QueryFieldsFactory queryFieldsFactory,
-            FilterFactory filterFactory,
-            SortingFactory sortingFactory,
-            LimitFactory limitFactory,
-            TableSliceFactory tableSliceFactory
+            EntityRegistry entityRegistry
     ) {
         this.entity = entity;
         this.dslContext = dslContext;
-        this.queryFieldsFactory = queryFieldsFactory;
-        this.filterFactory = filterFactory;
-        this.sortingFactory = sortingFactory;
-        this.limitFactory = limitFactory;
-        this.tableSliceFactory = tableSliceFactory;
+
+        this.queryFields = new QueryFieldsFactory(entity, entityRegistry).createQueryFields();
+        this.filterFactory = new FilterFactory(
+                entity.getDefaultCondition(),
+                entity.getWordConditionBuilder(),
+                queryFields.getQueryFieldMap()
+        );
+        this.sortingFactory = new SortingFactory(queryFields.getOrderFieldMap());
+        this.tableSliceFactory = new TableSliceFactory(entity);
     }
 
     public static <TABLE extends Table<? extends Record>> Builder<TABLE> builder(
@@ -62,10 +61,8 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
     public TableSlice fetchSlice(SliceRequest request) {
         request = setDefaultOrder(request);
         Table<?> table = entity.getTable();
-        QueryFields queryFields = queryFieldsFactory.createQueryFields();
-        Condition condition = filterFactory.forSliceRequest(queryFields.getFilterFieldMap(), request);
-        List<SortField<?>> orderBy = sortingFactory.forSliceRequest(queryFields.getOrderFieldMap(), request);
-        Limit limit = limitFactory.forSliceRequest(request);
+        Condition condition = filterFactory.forSliceRequest(request);
+        List<SortField<?>> orderBy = sortingFactory.forSliceRequest(request);
 
         SelectJoinStep<Record> selectJoinStep = dslContext
                 .select(queryFields.getQueryFieldMap().values())
@@ -76,11 +73,15 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
         Result<?> result = selectJoinStep
                 .where(condition)
                 .orderBy(orderBy)
-                .limit(limit.getOffset(), limit.getNumberOfRows())
+                .limit(request.getOffset(), resolveNumberOfRows(request))
                 .fetch();
 
         TablePreferences tablePreferences = selectTablePreferences();
         return tableSliceFactory.forRequestedResult(tablePreferences, request, result);
+    }
+
+    private int resolveNumberOfRows(SliceRequest request) {
+        return Math.min(request.getSize() + 1, SliceRequest.MAX_ITEMS);
     }
 
     public <T> List<T> fetchList(Condition condition, List<SortField<?>> orderBy, int limit, Class<T> type) {
@@ -143,20 +144,10 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
         }
 
         public DefaultListDao<TABLE> build() {
-            QueryFieldsFactory queryFieldsFactory = new QueryFieldsFactory(entity, entityRegistry);
-            FilterFactory filterFactory = new DefaultFilterFactory(entity.getDefaultCondition(), entity.getWordConditionBuilder());
-            SortingFactory sortingFactory = new DefaultSortingFactory();
-            LimitFactory limitFactory = new DefaultLimitFactory();
-            TableSliceFactory tableSliceFactory = new DefaultTableSliceFactory(entity);
-
             return new DefaultListDao<>(
                     entity,
                     dslContext,
-                    queryFieldsFactory,
-                    filterFactory,
-                    sortingFactory,
-                    limitFactory,
-                    tableSliceFactory
+                    entityRegistry
             );
         }
     }

@@ -1,24 +1,20 @@
 package cz.quantumleap.core.database.query;
 
 import org.jooq.Condition;
-import org.jooq.Field;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import java.util.Map;
 
 import static cz.quantumleap.core.database.query.QueryUtils.createFieldMap;
 import static cz.quantumleap.core.tables.PersonTable.PERSON;
 
-class DefaultFilterFactoryTest {
+class FilterFactoryTest {
 
     @Test
     public void validConditionIsCreatedForQuery() {
-        Map<String, Field<?>> fieldMap = createFieldMap(PERSON.fields());
         FilterFactory filterFactory = createFilterFactory();
         String query = "id > 1 (name = \"Forename Surname\" or email = Surname@company.cx) Title";
 
-        Condition condition = filterFactory.forQuery(fieldMap, query);
+        Condition condition = filterFactory.forQuery(query);
 
         Assertions.assertEquals("(\n" +
                 "  cast(\"core\".\"person\".\"id\" as bigint) > 1\n" +
@@ -32,11 +28,10 @@ class DefaultFilterFactoryTest {
 
     @Test
     public void validConditionIsCreatedForQueryWithMissingBrackets() {
-        Map<String, Field<?>> fieldMap = createFieldMap(PERSON.fields());
         FilterFactory filterFactory = createFilterFactory();
         String query = "id > 1 (name = \"Forename Surname\" or Title";
 
-        Condition condition = filterFactory.forQuery(fieldMap, query);
+        Condition condition = filterFactory.forQuery(query);
 
         Assertions.assertEquals("(\n" +
                 "  cast(\"core\".\"person\".\"id\" as bigint) > 1\n" +
@@ -48,9 +43,10 @@ class DefaultFilterFactoryTest {
     }
 
     private FilterFactory createFilterFactory() {
-        return new DefaultFilterFactory(
+        return new FilterFactory(
                 null,
-                q -> PERSON.NAME.like(q + "%")
+                q -> PERSON.NAME.like(q + "%"),
+                createFieldMap(PERSON.fields())
         );
     }
 }
