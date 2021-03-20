@@ -19,17 +19,11 @@ public final class DefaultLookupDao<TABLE extends Table<? extends Record>> imple
     private final Entity<TABLE> entity;
     private final DSLContext dslContext;
     private final ListDao<TABLE> listDao;
-    private final FilterFactory filterFactory;
 
     public DefaultLookupDao(Entity<TABLE> entity, DSLContext dslContext, ListDao<TABLE> listDao) {
         this.entity = entity;
         this.dslContext = dslContext;
         this.listDao = listDao;
-        this.filterFactory = new FilterFactory(
-                entity.getDefaultCondition(),
-                entity.getWordConditionBuilder(),
-                entity.getFieldMap()
-        );
     }
 
     @Override
@@ -65,6 +59,12 @@ public final class DefaultLookupDao<TABLE extends Table<? extends Record>> imple
         if (StringUtils.isEmpty(query)) {
             return Collections.emptyMap();
         }
+
+        FilterFactory filterFactory = new FilterFactory(
+                entity.getDefaultCondition(),
+                entity.getWordConditionBuilder(),
+                entity.getFieldMap()
+        );
 
         Field<?> primaryKey = entity.getPrimaryKeyField();
         Condition condition = filterFactory.forQuery(query);

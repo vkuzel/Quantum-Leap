@@ -20,24 +20,12 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
 
     private final Entity<TABLE> entity;
     private final DSLContext dslContext;
-
-    private final QueryFields queryFields;
-    private final FilterFactory filterFactory;
-    private final SortingFactory sortingFactory;
-    private final TableSliceFactory tableSliceFactory;
+    private final EntityRegistry entityRegistry;
 
     public DefaultListDao(Entity<TABLE> entity, DSLContext dslContext, EntityRegistry entityRegistry) {
         this.entity = entity;
         this.dslContext = dslContext;
-
-        this.queryFields = new QueryFieldsFactory(entity, entityRegistry).createQueryFields();
-        this.filterFactory = new FilterFactory(
-                entity.getDefaultCondition(),
-                entity.getWordConditionBuilder(),
-                queryFields.getQueryFieldMap()
-        );
-        this.sortingFactory = new SortingFactory(queryFields.getOrderFieldMap());
-        this.tableSliceFactory = new TableSliceFactory(entity);
+        this.entityRegistry = entityRegistry;
     }
 
     @Override
@@ -49,6 +37,16 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
     public TableSlice fetchSlice(SliceRequest request) {
         request = setDefaultOrder(request);
         Table<?> table = entity.getTable();
+
+        QueryFields queryFields = new QueryFieldsFactory(entity, entityRegistry).createQueryFields();
+        FilterFactory filterFactory = new FilterFactory(
+                entity.getDefaultCondition(),
+                entity.getWordConditionBuilder(),
+                queryFields.getQueryFieldMap()
+        );
+        SortingFactory sortingFactory = new SortingFactory(queryFields.getOrderFieldMap());
+        TableSliceFactory tableSliceFactory = new TableSliceFactory(entity);
+
         Condition condition = filterFactory.forSliceRequest(request);
         List<SortField<?>> orderBy = sortingFactory.forSliceRequest(request);
 
