@@ -4,11 +4,11 @@ import cz.quantumleap.core.database.domain.SliceRequest;
 import org.jooq.Condition;
 import org.jooq.Field;
 
-import java.util.List;
+import java.util.Map;
 
 public interface FilterFactory {
 
-    Condition forQuery(List<Field<?>> fields, String query);
+    Condition forQuery(Map<String, Field<?>> fieldMap, String query);
 
-    Condition forSliceRequest(List<Field<?>> fields, SliceRequest request);
+    Condition forSliceRequest(Map<String, Field<?>> fieldMap, SliceRequest request);
 }

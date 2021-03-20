@@ -11,7 +11,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import static cz.quantumleap.core.database.query.QueryUtils.createFieldMap;
 import static cz.quantumleap.core.database.query.QueryUtils.normalizeFieldName;
 import static org.jooq.SortOrder.ASC;
 import static org.jooq.SortOrder.DESC;
@@ -25,8 +24,7 @@ public final class DefaultSortingFactory implements SortingFactory {
     }
 
     @Override
-    public List<SortField<?>> forSliceRequest(List<Field<?>> fields, SliceRequest request) {
-        Map<String, Field<?>> fieldMap = createFieldMap(fields);
+    public List<SortField<?>> forSliceRequest(Map<String, Field<?>> fieldMap, SliceRequest request) {
         Sort sort = request.getSort();
         if (sort.isUnsorted()) {
             return Collections.emptyList();

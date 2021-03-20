@@ -33,8 +33,7 @@ public final class DefaultFilterFactory implements FilterFactory {
     }
 
     @Override
-    public Condition forQuery(List<Field<?>> fields, String query) {
-        Map<String, Field<?>> fieldMap = createFieldMap(fields);
+    public Condition forQuery(Map<String, Field<?>> fieldMap, String query) {
         Condition queryCondition = createConditionFromQuery(fieldMap, query);
 
         return joinConditions(
@@ -45,8 +44,7 @@ public final class DefaultFilterFactory implements FilterFactory {
     }
 
     @Override
-    public Condition forSliceRequest(List<Field<?>> fields, SliceRequest request) {
-        Map<String, Field<?>> fieldMap = createFieldMap(fields);
+    public Condition forSliceRequest(Map<String, Field<?>> fieldMap, SliceRequest request) {
         Condition filterCondition = createConditionFromFilter(fieldMap, request.getFilter());
         Condition queryCondition = createConditionFromQuery(fieldMap, request.getQuery());
 
@@ -65,8 +63,9 @@ public final class DefaultFilterFactory implements FilterFactory {
         for (Map.Entry<String, Object> fieldNameValue : filter.entrySet()) {
             String fieldName = normalizeFieldName(fieldNameValue.getKey());
             Field<Object> field = getFieldSafely(fieldMap, fieldName);
+            Object value = fieldNameValue.getValue();
 
-            Condition condition = field.eq(fieldNameValue.getValue());
+            Condition condition = field.eq(value);
             if (resultCondition == null) {
                 resultCondition = condition;
             } else {

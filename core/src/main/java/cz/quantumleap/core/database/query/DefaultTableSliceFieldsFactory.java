@@ -10,7 +10,7 @@ import org.jooq.impl.DSL;
 import java.util.ArrayList;
 import java.util.List;
 
-import static cz.quantumleap.core.database.query.QueryUtils.resolveLookupIdFieldName;
+import static cz.quantumleap.core.database.query.QueryUtils.resolveLookupFieldName;
 import static cz.quantumleap.core.database.query.QueryUtils.resolveTableAlias;
 import static cz.quantumleap.core.tables.EnumValueTable.ENUM_VALUE;
 
@@ -26,10 +26,10 @@ public final class DefaultTableSliceFieldsFactory implements TableSliceFieldsFac
 
     @Override
     public List<Field<?>> forSliceRequest(SliceRequest request) {
-        Field<?>[] originalFields = entity.getTable().fields();
-        List<Field<?>> fields = new ArrayList<>(originalFields.length);
+        List<Field<?>> entityFields = entity.getFields();
+        List<Field<?>> fields = new ArrayList<>(entityFields.size());
 
-        for (Field<?> field : originalFields) {
+        for (Field<?> field : entityFields) {
             FieldMetaType fieldMetaType = entity.getFieldMetaType(field);
             if (fieldMetaType instanceof EnumMetaType) {
                 Table<?> enumTable = resolveTableAlias(ENUM_VALUE, field);
@@ -55,11 +55,10 @@ public final class DefaultTableSliceFieldsFactory implements TableSliceFieldsFac
                 Entity<?> lookupEntity = entityRegistry.getEntity(lookupEntityIdentifier);
                 Table<?> lookupTable = resolveTableAlias(lookupEntity.getTable(), field);
 
-                String idFieldName = resolveLookupIdFieldName(field);
-                Field<?> idField = field.as(idFieldName);
-                Field<?> labelField = lookupEntity.buildLookupLabelFieldForTable(lookupTable).as(field);
+                String labelFieldName = resolveLookupFieldName(field);
+                Field<?> labelField = lookupEntity.buildLookupLabelFieldForTable(lookupTable).as(labelFieldName);
 
-                fields.add(idField);
+                fields.add(field);
                 fields.add(labelField);
             } else {
                 fields.add(field);
@@ -70,7 +69,7 @@ public final class DefaultTableSliceFieldsFactory implements TableSliceFieldsFac
     }
 
     @SuppressWarnings("unchecked")
-    private  Field<String[]> toArrayField(Field<?> field) {
+    private Field<String[]> toArrayField(Field<?> field) {
         return (Field<String[]>) field;
     }
 

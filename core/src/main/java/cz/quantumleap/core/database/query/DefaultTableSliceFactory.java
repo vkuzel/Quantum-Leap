@@ -3,7 +3,9 @@ package cz.quantumleap.core.database.query;
 import cz.quantumleap.core.database.domain.SliceRequest;
 import cz.quantumleap.core.database.domain.TablePreferences;
 import cz.quantumleap.core.database.domain.TableSlice;
+import cz.quantumleap.core.database.domain.TableSlice.Lookup;
 import cz.quantumleap.core.database.entity.Entity;
+import cz.quantumleap.core.database.entity.EntityIdentifier;
 import cz.quantumleap.core.database.entity.FieldMetaType;
 import cz.quantumleap.core.database.entity.LookupMetaType;
 import org.jooq.Field;
@@ -16,7 +18,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import static cz.quantumleap.core.database.query.QueryUtils.resolveLookupIdFieldName;
+import static cz.quantumleap.core.database.query.QueryUtils.resolveLookupFieldName;
 
 public final class DefaultTableSliceFactory implements TableSliceFactory {
 
@@ -32,7 +34,7 @@ public final class DefaultTableSliceFactory implements TableSliceFactory {
             SliceRequest sliceRequest,
             Result<?> result
     ) {
-        Map<Field<?>, TableSlice.Column> fieldColumnMap = createFieldColumnMap(result, sliceRequest.getSort());
+        Map<Field<?>, TableSlice.Column> fieldColumnMap = createFieldColumnMap(sliceRequest.getSort());
         List<TableSlice.Column> columns = new ArrayList<>(fieldColumnMap.values());
         List<Field<?>> fields = new ArrayList<>(fieldColumnMap.keySet());
         int maxSize = sliceRequest.getSize();
@@ -54,11 +56,11 @@ public final class DefaultTableSliceFactory implements TableSliceFactory {
         );
     }
 
-    private Map<Field<?>, TableSlice.Column> createFieldColumnMap(Result<?> result, Sort sort) {
+    private Map<Field<?>, TableSlice.Column> createFieldColumnMap(Sort sort) {
         List<Field<?>> primaryKeyFields = entity.getPrimaryKeyFields();
-        Field<?>[] fields = result.fields();
+        List<Field<?>> fields = entity.getFields();
 
-        Map<Field<?>, TableSlice.Column> fieldColumnMap = new LinkedHashMap<>(fields.length);
+        Map<Field<?>, TableSlice.Column> fieldColumnMap = new LinkedHashMap<>(fields.size());
         for (Field<?> field : fields) {
             FieldMetaType fieldMetaType = entity.getFieldMetaType(field);
             String fieldName = field.getName();
@@ -66,8 +68,9 @@ public final class DefaultTableSliceFactory implements TableSliceFactory {
 
             TableSlice.Column column;
             if (fieldMetaType instanceof LookupMetaType) {
+                String lookupFieldName = resolveLookupFieldName(field);
                 column = new TableSlice.LookupColumn(
-                        fieldName,
+                        lookupFieldName,
                         order,
                         fieldMetaType.asLookup().getEntityIdentifier()
                 );
@@ -89,18 +92,16 @@ public final class DefaultTableSliceFactory implements TableSliceFactory {
         for (Field<?> field : fields) {
             FieldMetaType fieldMetaType = entity.getFieldMetaType(field);
             if (fieldMetaType instanceof LookupMetaType) {
-                Object value = record.get(field);
-                String idFieldName = resolveLookupIdFieldName(field);
-                Field<?> idField = record.field(idFieldName);
-                if (idField != null) {
-                    Object id = record.get(idField);
-                    value = new TableSlice.Lookup(
-                            id,
-                            value != null ? value.toString() : (id != null ? id.toString() : null),
-                            fieldMetaType.asLookup().getEntityIdentifier()
-                    );
-                }
-                row.add(value);
+                Object id = record.get(field);
+                String lookupFieldName = resolveLookupFieldName(field);
+                Field<?> lookupField = record.field(lookupFieldName);
+
+                String label = record.get(lookupField, String.class);
+                label = label != null ? label : (id != null ? id.toString() : null);
+                EntityIdentifier<?> entityIdentifier = fieldMetaType.asLookup().getEntityIdentifier();
+
+                Lookup lookup = new Lookup(id, label, entityIdentifier);
+                row.add(lookup);
             } else {
                 Object value = record.get(field);
                 row.add(value);

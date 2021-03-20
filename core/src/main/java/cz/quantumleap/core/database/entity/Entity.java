@@ -3,11 +3,10 @@ package cz.quantumleap.core.database.entity;
 import org.apache.commons.lang3.Validate;
 import org.jooq.*;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static java.util.Collections.singletonList;
 
@@ -53,6 +52,14 @@ public class Entity<TABLE extends Table<? extends Record>> {
 
     public TABLE getTable() {
         return entityIdentifier.getTable();
+    }
+
+    public List<Field<?>> getFields() {
+        return Arrays.asList(getTable().fields());
+    }
+
+    public Map<String, Field<?>> getFieldMap() {
+        return Stream.of(getTable().fields()).collect(Collectors.toMap(Field::getName, Function.identity()));
     }
 
     public Map<Field<?>, FieldMetaType> getFieldMetaTypeMap() {

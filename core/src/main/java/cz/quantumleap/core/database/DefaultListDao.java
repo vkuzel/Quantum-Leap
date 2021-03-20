@@ -5,6 +5,7 @@ import cz.quantumleap.core.database.domain.TablePreferences;
 import cz.quantumleap.core.database.domain.TableSlice;
 import cz.quantumleap.core.database.entity.Entity;
 import cz.quantumleap.core.database.query.*;
+import cz.quantumleap.core.database.query.LimitFactory.Limit;
 import org.jooq.*;
 import org.springframework.data.domain.Sort;
 
@@ -12,7 +13,6 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static cz.quantumleap.core.database.query.LimitFactory.Limit;
 import static cz.quantumleap.core.database.query.QueryUtils.ConditionOperator.AND;
 import static cz.quantumleap.core.database.query.QueryUtils.joinConditions;
 import static cz.quantumleap.core.tables.TablePreferencesTable.TABLE_PREFERENCES;
@@ -21,6 +21,7 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
 
     private final Entity<TABLE> entity;
     private final DSLContext dslContext;
+    private final QueryFieldsFactory queryFieldsFactory;
     private final TableSliceFieldsFactory tableSliceFieldsFactory;
     private final TableSliceJoinFactory tableSliceJoinFactory;
     private final FilterFactory filterFactory;
@@ -31,7 +32,7 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
     private DefaultListDao(
             Entity<TABLE> entity,
             DSLContext dslContext,
-            TableSliceFieldsFactory tableSliceFieldsFactory,
+            QueryFieldsFactory queryFieldsFactory, TableSliceFieldsFactory tableSliceFieldsFactory,
             TableSliceJoinFactory tableSliceJoinFactory,
             FilterFactory filterFactory,
             SortingFactory sortingFactory,
@@ -40,6 +41,7 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
     ) {
         this.entity = entity;
         this.dslContext = dslContext;
+        this.queryFieldsFactory = queryFieldsFactory;
         this.tableSliceFieldsFactory = tableSliceFieldsFactory;
         this.tableSliceJoinFactory = tableSliceJoinFactory;
         this.filterFactory = filterFactory;
@@ -61,22 +63,22 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
         return entity;
     }
 
-    public TableSlice fetchSlice(SliceRequest sliceRequest) {
-        SliceRequest request = setDefaultOrder(sliceRequest);
-
+    @Override
+    public TableSlice fetchSlice(SliceRequest request) {
         Table<?> table = entity.getTable();
-        List<Field<?>> fields = tableSliceFieldsFactory.forSliceRequest(request);
-
-        Function<SelectJoinStep<Record>, SelectJoinStep<Record>> join = tableSliceJoinFactory.forSliceRequest(sliceRequest);
-        Condition conditions = filterFactory.forSliceRequest(fields, request);
-        List<SortField<?>> orderBy = sortingFactory.forSliceRequest(fields, request);
+        QueryFields queryFields = queryFieldsFactory.createQueryFields();
+        Condition condition = filterFactory.forSliceRequest(queryFields.getFilterFieldMap(), request);
+        List<SortField<?>> orderBy = sortingFactory.forSliceRequest(queryFields.getOrderFieldMap(), request);
         Limit limit = limitFactory.forSliceRequest(request);
 
         SelectJoinStep<Record> selectJoinStep = dslContext
-                .select(fields)
+                .select(queryFields.getQueryFieldMap().values())
                 .from(table);
-        Result<?> result = join.apply(selectJoinStep)
-                .where(conditions)
+        for (Function<SelectJoinStep<Record>, SelectJoinStep<Record>> joinTable : queryFields.getJoinTables()) {
+            selectJoinStep = joinTable.apply(selectJoinStep);
+        }
+        Result<?> result = selectJoinStep
+                .where(condition)
                 .orderBy(orderBy)
                 .limit(limit.getOffset(), limit.getNumberOfRows())
                 .fetch();
@@ -194,6 +196,8 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
         }
 
         public DefaultListDao<TABLE> build() {
+            QueryFieldsFactory queryFieldsFactory = new QueryFieldsFactory(entity, entityRegistry);
+
             TableSliceFieldsFactory tableSliceFieldsFactory = this.tableSliceFieldsFactory;
             if (tableSliceFieldsFactory == null) {
                 tableSliceFieldsFactory = new DefaultTableSliceFieldsFactory(entity, entityRegistry);
@@ -222,6 +226,7 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
             return new DefaultListDao<>(
                     entity,
                     dslContext,
+                    queryFieldsFactory,
                     tableSliceFieldsFactory,
                     tableSliceJoinFactory,
                     filterFactory,

@@ -10,7 +10,10 @@ import cz.quantumleap.core.database.query.SortingFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.*;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public final class DefaultLookupDao<TABLE extends Table<? extends Record>> implements LookupDao<TABLE> {
 
@@ -79,8 +82,8 @@ public final class DefaultLookupDao<TABLE extends Table<? extends Record>> imple
         }
 
         Field<?> primaryKey = entity.getPrimaryKeyField();
-        List<Field<?>> fields = Arrays.asList(entity.getTable().fields());
-        Condition condition = filterFactory.forQuery(fields, query);
+        Map<String, Field<?>> fieldMap = entity.getFieldMap();
+        Condition condition = filterFactory.forQuery(fieldMap, query);
         List<SortField<?>> sortFields = sortingFactory.forLookup();
 
         return dslContext.select(primaryKey, entity.getLookupLabelField())

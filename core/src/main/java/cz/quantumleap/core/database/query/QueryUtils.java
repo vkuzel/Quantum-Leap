@@ -17,7 +17,6 @@ public final class QueryUtils {
 
     private static final Pattern SQL_REGEXP_SPECIAL_CHARACTERS_PATTERN = Pattern.compile("[!$()*+.:<=>?\\\\\\[\\]^{|}\\-]");
 
-    @SuppressWarnings("unused")
     public static String resolveDatabaseTableNameWithSchema(Table<?> table) {
         String name = table.getName();
         if (table.getSchema() != null) {
@@ -26,18 +25,20 @@ public final class QueryUtils {
         return name;
     }
 
-    @SuppressWarnings("unused")
     public static Table<?> resolveTableAlias(Table<?> table, Field<?> field) {
         String alias = "t_" + field.getName();
         return table.as(alias);
     }
 
-    @SuppressWarnings("unused")
-    public static String resolveLookupIdFieldName(Field<?> field) {
-        return field.getName() + ".id";
+    public static String resolveLookupFieldName(Field<?> field) {
+        String fieldName = field.getName();
+        if (fieldName.endsWith("_id")) {
+            return StringUtils.removeEnd(fieldName, "_id");
+        } else {
+            return fieldName + "_lookup";
+        }
     }
 
-    @SuppressWarnings("unused")
     public static Map<String, Field<?>> createFieldMap(List<Field<?>> fields) {
         Map<String, Field<?>> fieldMap = new HashMap<>(fields.size());
         for (Field<?> field : fields) {
@@ -47,13 +48,11 @@ public final class QueryUtils {
         return fieldMap;
     }
 
-    @SuppressWarnings("unused")
     public static String normalizeFieldName(String name) {
         return name.toLowerCase();
     }
 
     @SafeVarargs
-    @SuppressWarnings("unused")
     public static Condition buildFindWordCondition(String word, TableField<?, String>... fields) {
         if (StringUtils.isBlank(word)) {
             return null;
@@ -69,7 +68,6 @@ public final class QueryUtils {
         return condition;
     }
 
-    @SuppressWarnings("unused")
     public static Condition joinConditions(ConditionOperator operator, Condition... conditions) {
         Condition condition = null;
         for (Condition cond : conditions) {
@@ -85,7 +83,6 @@ public final class QueryUtils {
         return condition;
     }
 
-    @SuppressWarnings("unused")
     public static Condition startsWithIgnoreCase(Field<String> field, String value) {
         if (StringUtils.isBlank(value)) {
             return DSL.falseCondition();
@@ -95,7 +92,6 @@ public final class QueryUtils {
         return field.likeIgnoreCase(binding + "%");
     }
 
-    @SuppressWarnings("unused")
     public static String escapeSqlLikeBinding(String binding, char escapeChar) {
         if (StringUtils.isBlank(binding)) {
             return binding;
@@ -108,7 +104,6 @@ public final class QueryUtils {
                 .replace("_", escapeChar + "_");
     }
 
-    @SuppressWarnings("unused")
     public static String escapeSqlRegexpBinding(String binding) {
         if (StringUtils.isBlank(binding)) {
             return binding;
@@ -118,12 +113,10 @@ public final class QueryUtils {
         return matcher.replaceAll("\\\\$0");
     }
 
-    @SuppressWarnings("unused")
     public static String generateSqlBindingPlaceholders(Collection<?> collection) {
         return String.join(", ", Collections.nCopies(collection.size(), "?"));
     }
 
-    @SuppressWarnings("unused")
     public static Object[] createSqlBindings(Object... params) {
         List<Object> bindings = new ArrayList<>(params.length);
         for (Object param : params) {

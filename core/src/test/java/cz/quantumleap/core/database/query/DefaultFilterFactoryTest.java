@@ -5,8 +5,10 @@ import org.jooq.Field;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static cz.quantumleap.core.tables.PersonTable.PERSON;
 
@@ -14,11 +16,11 @@ class DefaultFilterFactoryTest {
 
     @Test
     public void validConditionIsCreatedForQuery() {
-        List<Field<?>> fields = Arrays.asList(PERSON.fields());
+        Map<String, Field<?>> fieldMap = Stream.of(PERSON.fields()).collect(Collectors.toMap(Field::getName, Function.identity()));
         FilterFactory filterFactory = createFilterFactory();
         String query = "id > 1 (name = \"Forename Surname\" or email = Surname@company.cx) Title";
 
-        Condition condition = filterFactory.forQuery(fields, query);
+        Condition condition = filterFactory.forQuery(fieldMap, query);
 
         Assertions.assertEquals("(\n" +
                 "  cast(\"core\".\"person\".\"id\" as bigint) > 1\n" +
@@ -31,12 +33,12 @@ class DefaultFilterFactoryTest {
     }
 
     @Test
-    public void validConditionIsCreatedForQueryWithMissingParenteses() {
-        List<Field<?>> fields = Arrays.asList(PERSON.fields());
+    public void validConditionIsCreatedForQueryWithMissingBrackets() {
+        Map<String, Field<?>> fieldMap = Stream.of(PERSON.fields()).collect(Collectors.toMap(Field::getName, Function.identity()));
         FilterFactory filterFactory = createFilterFactory();
         String query = "id > 1 (name = \"Forename Surname\" or Title";
 
-        Condition condition = filterFactory.forQuery(fields, query);
+        Condition condition = filterFactory.forQuery(fieldMap, query);
 
         Assertions.assertEquals("(\n" +
                 "  cast(\"core\".\"person\".\"id\" as bigint) > 1\n" +

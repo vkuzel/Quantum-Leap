@@ -111,6 +111,10 @@ public class TableSlice implements Iterable<List<Object>> {
             return primaryKey;
         }
 
+        public boolean isLookup() {
+            return this instanceof LookupColumn;
+        }
+
         public Sort.Order getOrder() {
             return order;
         }

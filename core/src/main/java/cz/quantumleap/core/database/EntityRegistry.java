@@ -2,6 +2,7 @@ package cz.quantumleap.core.database;
 
 import cz.quantumleap.core.database.entity.Entity;
 import cz.quantumleap.core.database.entity.EntityIdentifier;
+import org.apache.commons.lang3.Validate;
 import org.jooq.Record;
 import org.jooq.Table;
 import org.slf4j.Logger;
@@ -64,6 +65,13 @@ public class EntityRegistry {
         if (entityIdentifier == null || entity == null) {
             return;
         }
+
+        addEntity(entityIdentifier, entity);
+    }
+
+    public void addEntity(EntityIdentifier<?> entityIdentifier, Entity<?> entity) {
+        Validate.notNull(entityIdentifier, "Entity identifier not specified!");
+        Validate.notNull(entity, "Entity not specified for identifier " + entityIdentifier);
 
         Entity<?> originalEntity = entityMap.get(entityIdentifier);
         if (originalEntity == null) {

@@ -5,10 +5,11 @@ import org.jooq.Field;
 import org.jooq.SortField;
 
 import java.util.List;
+import java.util.Map;
 
 public interface SortingFactory {
 
-    List<SortField<?>> forSliceRequest(List<Field<?>> fields, SliceRequest request);
+    List<SortField<?>> forSliceRequest(Map<String, Field<?>> fieldMap, SliceRequest request);
 
     List<SortField<?>> forLookup();
 }
