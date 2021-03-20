@@ -21,11 +21,7 @@ public final class DefaultLookupDao<TABLE extends Table<? extends Record>> imple
     private final ListDao<TABLE> listDao;
     private final FilterFactory filterFactory;
 
-    private DefaultLookupDao(
-            Entity<TABLE> entity,
-            DSLContext dslContext,
-            ListDao<TABLE> listDao
-    ) {
+    public DefaultLookupDao(Entity<TABLE> entity, DSLContext dslContext, ListDao<TABLE> listDao) {
         this.entity = entity;
         this.dslContext = dslContext;
         this.listDao = listDao;
@@ -34,14 +30,6 @@ public final class DefaultLookupDao<TABLE extends Table<? extends Record>> imple
                 entity.getWordConditionBuilder(),
                 entity.getFieldMap()
         );
-    }
-
-    public static <TABLE extends Table<? extends Record>> Builder<TABLE> builder(
-            Entity<TABLE> entity,
-            DSLContext dslContext,
-            ListDao<TABLE> listDao
-    ) {
-        return new Builder<>(entity, dslContext, listDao);
     }
 
     @Override
@@ -97,26 +85,5 @@ public final class DefaultLookupDao<TABLE extends Table<? extends Record>> imple
 
     private Table<? extends Record> getTable() {
         return entity.getTable();
-    }
-
-    public static class Builder<TABLE extends Table<? extends Record>> {
-
-        private final Entity<TABLE> entity;
-        private final DSLContext dslContext;
-        private final ListDao<TABLE> listDao;
-
-        private Builder(Entity<TABLE> entity, DSLContext dslContext, ListDao<TABLE> listDao) {
-            this.entity = entity;
-            this.dslContext = dslContext;
-            this.listDao = listDao;
-        }
-
-        public DefaultLookupDao<TABLE> build() {
-            return new DefaultLookupDao<>(
-                    entity,
-                    dslContext,
-                    listDao
-            );
-        }
     }
 }

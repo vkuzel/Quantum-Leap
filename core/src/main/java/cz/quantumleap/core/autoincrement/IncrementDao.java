@@ -28,7 +28,7 @@ public class IncrementDao implements DetailDao<IncrementTable> {
     public IncrementDao(DSLContext dslContext) {
         this.dslContext = dslContext;
         this.entity = createEntity();
-        this.detailDao = DefaultDetailDao.builder(entity, dslContext).build();
+        this.detailDao = new DefaultDetailDao<>(entity, dslContext);
     }
 
     private Entity<IncrementTable> createEntity() {

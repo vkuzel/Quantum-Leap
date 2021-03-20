@@ -11,16 +11,9 @@ public final class DefaultDetailDao<TABLE extends Table<? extends Record>> imple
     private final Entity<TABLE> entity;
     private final DSLContext dslContext;
 
-    private DefaultDetailDao(Entity<TABLE> entity, DSLContext dslContext) {
+    public DefaultDetailDao(Entity<TABLE> entity, DSLContext dslContext) {
         this.entity = entity;
         this.dslContext = dslContext;
-    }
-
-    public static <TABLE extends Table<? extends Record>> Builder<TABLE> builder(
-            Entity<TABLE> entity,
-            DSLContext dslContext
-    ) {
-        return new Builder<>(entity, dslContext);
     }
 
     @Override
@@ -162,20 +155,5 @@ public final class DefaultDetailDao<TABLE extends Table<? extends Record>> imple
                 .execute();
 
         return saveRecords(records, detailType);
-    }
-
-    public static class Builder<TABLE extends Table<? extends Record>> {
-
-        private final Entity<TABLE> entity;
-        private final DSLContext dslContext;
-
-        private Builder(Entity<TABLE> entity, DSLContext dslContext) {
-            this.entity = entity;
-            this.dslContext = dslContext;
-        }
-        
-        public DefaultDetailDao<TABLE> build() {
-            return new DefaultDetailDao<>(entity, dslContext);
-        }
     }
 }

@@ -26,11 +26,7 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
     private final SortingFactory sortingFactory;
     private final TableSliceFactory tableSliceFactory;
 
-    private DefaultListDao(
-            Entity<TABLE> entity,
-            DSLContext dslContext,
-            EntityRegistry entityRegistry
-    ) {
+    public DefaultListDao(Entity<TABLE> entity, DSLContext dslContext, EntityRegistry entityRegistry) {
         this.entity = entity;
         this.dslContext = dslContext;
 
@@ -42,14 +38,6 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
         );
         this.sortingFactory = new SortingFactory(queryFields.getOrderFieldMap());
         this.tableSliceFactory = new TableSliceFactory(entity);
-    }
-
-    public static <TABLE extends Table<? extends Record>> Builder<TABLE> builder(
-            Entity<TABLE> entity,
-            DSLContext dslContext,
-            EntityRegistry entityRegistry
-    ) {
-        return new Builder<>(entity, dslContext, entityRegistry);
     }
 
     @Override
@@ -129,26 +117,5 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
             }
         }
         return TablePreferences.EMPTY;
-    }
-
-    public static class Builder<TABLE extends Table<? extends Record>> {
-
-        private final Entity<TABLE> entity;
-        private final DSLContext dslContext;
-        private final EntityRegistry entityRegistry;
-
-        private Builder(Entity<TABLE> entity, DSLContext dslContext, EntityRegistry entityRegistry) {
-            this.entity = entity;
-            this.dslContext = dslContext;
-            this.entityRegistry = entityRegistry;
-        }
-
-        public DefaultListDao<TABLE> build() {
-            return new DefaultListDao<>(
-                    entity,
-                    dslContext,
-                    entityRegistry
-            );
-        }
     }
 }

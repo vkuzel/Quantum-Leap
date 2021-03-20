@@ -131,7 +131,7 @@ class DefaultListDaoTest {
     }
 
     private DefaultListDao<TestTable> createDefaultListDao(Entity<TestTable> entity) {
-        return DefaultListDao.builder(entity, dslContext, entityRegistry).build();
+        return new DefaultListDao<>(entity, dslContext, entityRegistry);
     }
 
     private Object getValue(TableSlice tableSlice, String columnName, int rowIndex) {
