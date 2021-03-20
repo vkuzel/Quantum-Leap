@@ -4,7 +4,10 @@ import org.apache.commons.lang3.Validate;
 import org.jooq.Condition;
 import org.springframework.data.domain.Sort;
 
+import java.util.HashMap;
 import java.util.Map;
+
+import static java.util.Collections.unmodifiableMap;
 
 public class SliceRequest {
 
@@ -24,7 +27,7 @@ public class SliceRequest {
 
     public SliceRequest(Map<String, Object> filter, String query, Condition condition, int offset, int size, Sort sort, Long tablePreferencesId) {
         Validate.notNull(sort);
-        this.filter = filter;
+        this.filter = unmodifiableMap(filter);
         this.query = query;
         this.condition = condition;
         this.offset = offset;
@@ -45,16 +48,18 @@ public class SliceRequest {
         );
     }
 
-    public SliceRequest sort(Sort sort) {
-        return new SliceRequest(filter, query, condition, offset, size, sort, tablePreferencesId);
-    }
-
     public SliceRequest addCondition(Condition condition) {
         Condition newCondition = this.condition != null ? this.condition.and(condition) : condition;
         return new SliceRequest(filter, query, newCondition, offset, size, sort, tablePreferencesId);
     }
 
     public SliceRequest withSort(Sort sort) {
+        return new SliceRequest(filter, query, condition, offset, size, sort, tablePreferencesId);
+    }
+
+    public SliceRequest addFilter(String fieldName, Object value) {
+        Map<String, Object> filter = new HashMap<>(this.filter);
+        filter.put(fieldName, value);
         return new SliceRequest(filter, query, condition, offset, size, sort, tablePreferencesId);
     }
 

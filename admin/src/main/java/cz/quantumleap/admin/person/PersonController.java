@@ -94,7 +94,7 @@ public class PersonController extends AdminController {
             return;
         }
 
-        personRoleSliceRequest.getFilter().put("person_id", person.getId());
+        personRoleSliceRequest = personRoleSliceRequest.addFilter("person_id", person.getId());
         TableSlice slice = personRoleService.findSlice(personRoleSliceRequest);
         EntityIdentifier<PersonRoleTable> identifier = personRoleService.getDetailEntityIdentifier(PersonRoleTable.class);
         List<SessionDetail> sessions = sessionService.fetchListByEmail(person.getEmail());
