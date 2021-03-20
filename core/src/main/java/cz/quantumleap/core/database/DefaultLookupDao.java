@@ -54,7 +54,7 @@ public final class DefaultLookupDao<TABLE extends Table<? extends Record>> imple
 
     public String fetchLabelById(Object id) {
         Condition condition = entity.getPrimaryKeyConditionBuilder().buildFromId(id);
-        List<SortField<?>> sortFields = sortingFactory.forLookup();
+        List<SortField<?>> sortFields = entity.getLookupOrderBy();
 
         return dslContext.select(entity.getLookupLabelField())
                 .from(getTable())
@@ -66,7 +66,7 @@ public final class DefaultLookupDao<TABLE extends Table<? extends Record>> imple
     public Map<Object, String> fetchLabelsById(Set<Object> ids) {
         Field<?> primaryKey = entity.getPrimaryKeyField();
         Condition condition = entity.getPrimaryKeyConditionBuilder().buildFromIds(ids);
-        List<SortField<?>> sortFields = sortingFactory.forLookup();
+        List<SortField<?>> sortFields = entity.getLookupOrderBy();
 
         return dslContext.select(primaryKey, entity.getLookupLabelField())
                 .from(getTable())
@@ -84,7 +84,7 @@ public final class DefaultLookupDao<TABLE extends Table<? extends Record>> imple
         Field<?> primaryKey = entity.getPrimaryKeyField();
         Map<String, Field<?>> fieldMap = entity.getFieldMap();
         Condition condition = filterFactory.forQuery(fieldMap, query);
-        List<SortField<?>> sortFields = sortingFactory.forLookup();
+        List<SortField<?>> sortFields = entity.getLookupOrderBy();
 
         return dslContext.select(primaryKey, entity.getLookupLabelField())
                 .from(getTable())
@@ -108,8 +108,6 @@ public final class DefaultLookupDao<TABLE extends Table<? extends Record>> imple
         private final Entity<TABLE> entity;
         private final DSLContext dslContext;
         private final ListDao<TABLE> listDao;
-        private FilterFactory filterFactory = null;
-        private SortingFactory sortingFactory = null;
 
         private Builder(Entity<TABLE> entity, DSLContext dslContext, ListDao<TABLE> listDao) {
             this.entity = entity;
@@ -117,27 +115,9 @@ public final class DefaultLookupDao<TABLE extends Table<? extends Record>> imple
             this.listDao = listDao;
         }
 
-        @SuppressWarnings("unused")
-        public Builder<TABLE> setFilterFactory(FilterFactory filterFactory) {
-            this.filterFactory = filterFactory;
-            return this;
-        }
-
-        @SuppressWarnings("unused")
-        public Builder<TABLE> setSortingFactory(SortingFactory sortingFactory) {
-            this.sortingFactory = sortingFactory;
-            return this;
-        }
-
         public DefaultLookupDao<TABLE> build() {
-            FilterFactory filterFactory = this.filterFactory;
-            if (filterFactory == null) {
-                filterFactory = new DefaultFilterFactory(entity.getDefaultFilterCondition(), entity.getWordConditionBuilder());
-            }
-            SortingFactory sortingFactory = this.sortingFactory;
-            if (sortingFactory == null) {
-                sortingFactory = new DefaultSortingFactory(entity.getLookupLabelField());
-            }
+            FilterFactory filterFactory = new DefaultFilterFactory(entity.getDefaultCondition(), entity.getWordConditionBuilder());
+            SortingFactory sortingFactory = new DefaultSortingFactory(entity.getLookupLabelField());
             return new DefaultLookupDao<>(
                     entity,
                     dslContext,

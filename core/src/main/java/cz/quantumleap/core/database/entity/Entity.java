@@ -10,7 +10,7 @@ import java.util.stream.Stream;
 
 import static java.util.Collections.singletonList;
 
-public class Entity<TABLE extends Table<? extends Record>> {
+public final class Entity<TABLE extends Table<? extends Record>> {
 
     private final EntityIdentifier<TABLE> entityIdentifier;
     /**
@@ -23,25 +23,28 @@ public class Entity<TABLE extends Table<? extends Record>> {
      * Builder accepts entity-table with alias.
      */
     private final Function<Table<?>, Field<String>> lookupLabelFieldBuilder;
+    private final List<SortField<?>> lookupOrderBy;
 
-    private final Condition defaultFilterCondition;
+    private final Condition defaultCondition;
     private final PrimaryKeyConditionBuilder<TABLE> primaryKeyConditionBuilder;
     private final Function<String, Condition> wordConditionBuilder;
 
-    public Entity(
+    private Entity(
             EntityIdentifier<TABLE> entityIdentifier,
             Map<Field<?>, FieldMetaType> fieldMetaTypeMap,
             List<Field<?>> primaryKeyFields,
             Function<Table<?>, Field<String>> lookupLabelFieldBuilder,
-            Condition defaultFilterCondition,
+            List<SortField<?>> lookupOrderBy,
+            Condition defaultCondition,
             Function<String, Condition> wordConditionBuilder
     ) {
         this.entityIdentifier = entityIdentifier;
         this.fieldMetaTypeMap = fieldMetaTypeMap;
         this.primaryKeyFields = primaryKeyFields;
         this.lookupLabelFieldBuilder = lookupLabelFieldBuilder;
+        this.lookupOrderBy = lookupOrderBy;
 
-        this.defaultFilterCondition = defaultFilterCondition;
+        this.defaultCondition = defaultCondition;
         this.primaryKeyConditionBuilder = new PrimaryKeyConditionBuilder<>(this);
         this.wordConditionBuilder = wordConditionBuilder;
     }
@@ -83,15 +86,19 @@ public class Entity<TABLE extends Table<? extends Record>> {
     }
 
     public Field<String> getLookupLabelField() {
-        return lookupLabelFieldBuilder.apply(entityIdentifier.getTable());
+        return buildLookupLabelFieldForTable(getTable());
     }
 
     public Field<String> buildLookupLabelFieldForTable(Table<?> table) {
-        return lookupLabelFieldBuilder.apply(table);
+        return lookupLabelFieldBuilder != null ? lookupLabelFieldBuilder.apply(table) : null;
     }
 
-    public Condition getDefaultFilterCondition() {
-        return defaultFilterCondition;
+    public List<SortField<?>> getLookupOrderBy() {
+        return lookupOrderBy;
+    }
+
+    public Condition getDefaultCondition() {
+        return defaultCondition;
     }
 
     public PrimaryKeyConditionBuilder<TABLE> getPrimaryKeyConditionBuilder() {
@@ -124,9 +131,10 @@ public class Entity<TABLE extends Table<? extends Record>> {
         private final EntityIdentifier<TABLE> entityIdentifier;
         private Map<Field<?>, FieldMetaType> fieldMetaTypeMap = new HashMap<>();
         private Field<?> primaryKeyField;
-        private Function<Table<?>, Field<String>> lookupLabelFieldBuilder = table -> null;
+        private Function<Table<?>, Field<String>> lookupLabelFieldBuilder = null;
+        private List<SortField<?>> lookupOrderBy = null;
 
-        private Condition defaultFilterCondition = null;
+        private Condition defaultCondition = null;
         private Function<String, Condition> wordConditionBuilder = q -> null;
 
         private Builder(EntityIdentifier<TABLE> entityIdentifier) {
@@ -182,8 +190,13 @@ public class Entity<TABLE extends Table<? extends Record>> {
             return this;
         }
 
-        public Builder<TABLE> setDefaultFilterCondition(Condition defaultFilterCondition) {
-            this.defaultFilterCondition = defaultFilterCondition;
+        public Builder<TABLE> setLookupOrderBy(List<SortField<?>> lookupOrderBy) {
+            this.lookupOrderBy = lookupOrderBy;
+            return this;
+        }
+
+        public Builder<TABLE> setDefaultCondition(Condition defaultCondition) {
+            this.defaultCondition = defaultCondition;
             return this;
         }
 
@@ -200,12 +213,17 @@ public class Entity<TABLE extends Table<? extends Record>> {
             } else {
                 primaryKeyFields = getPrimaryKeyFields(table);
             }
+            if (lookupOrderBy == null && lookupLabelFieldBuilder != null) {
+                Field<?> lookupField = lookupLabelFieldBuilder.apply(table);
+                lookupOrderBy = singletonList(lookupField.asc());
+            }
             return new Entity<>(
                     entityIdentifier,
                     fieldMetaTypeMap,
                     primaryKeyFields,
                     lookupLabelFieldBuilder,
-                    defaultFilterCondition,
+                    lookupOrderBy,
+                    defaultCondition,
                     wordConditionBuilder
             );
         }

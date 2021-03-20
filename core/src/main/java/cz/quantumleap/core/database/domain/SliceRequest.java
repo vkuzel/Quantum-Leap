@@ -14,9 +14,12 @@ public class SliceRequest {
     private final Map<String, Object> filter;
     private final String query;
     private final Condition condition;
+
     private final int offset;
     private final int size;
+
     private final Sort sort;
+
     private final Long tablePreferencesId;
 
     public SliceRequest(Map<String, Object> filter, String query, Condition condition, int offset, int size, Sort sort, Long tablePreferencesId) {
@@ -49,6 +52,10 @@ public class SliceRequest {
     public SliceRequest addCondition(Condition condition) {
         Condition newCondition = this.condition != null ? this.condition.and(condition) : condition;
         return new SliceRequest(filter, query, newCondition, offset, size, sort, tablePreferencesId);
+    }
+
+    public SliceRequest withSort(Sort sort) {
+        return new SliceRequest(filter, query, condition, offset, size, sort, tablePreferencesId);
     }
 
     public Map<String, Object> getFilter() {

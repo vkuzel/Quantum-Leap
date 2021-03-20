@@ -22,8 +22,6 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
     private final Entity<TABLE> entity;
     private final DSLContext dslContext;
     private final QueryFieldsFactory queryFieldsFactory;
-    private final TableSliceFieldsFactory tableSliceFieldsFactory;
-    private final TableSliceJoinFactory tableSliceJoinFactory;
     private final FilterFactory filterFactory;
     private final SortingFactory sortingFactory;
     private final LimitFactory limitFactory;
@@ -32,8 +30,7 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
     private DefaultListDao(
             Entity<TABLE> entity,
             DSLContext dslContext,
-            QueryFieldsFactory queryFieldsFactory, TableSliceFieldsFactory tableSliceFieldsFactory,
-            TableSliceJoinFactory tableSliceJoinFactory,
+            QueryFieldsFactory queryFieldsFactory,
             FilterFactory filterFactory,
             SortingFactory sortingFactory,
             LimitFactory limitFactory,
@@ -42,8 +39,6 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
         this.entity = entity;
         this.dslContext = dslContext;
         this.queryFieldsFactory = queryFieldsFactory;
-        this.tableSliceFieldsFactory = tableSliceFieldsFactory;
-        this.tableSliceJoinFactory = tableSliceJoinFactory;
         this.filterFactory = filterFactory;
         this.sortingFactory = sortingFactory;
         this.limitFactory = limitFactory;
@@ -65,6 +60,7 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
 
     @Override
     public TableSlice fetchSlice(SliceRequest request) {
+        request = setDefaultOrder(request);
         Table<?> table = entity.getTable();
         QueryFields queryFields = queryFieldsFactory.createQueryFields();
         Condition condition = filterFactory.forSliceRequest(queryFields.getFilterFieldMap(), request);
@@ -90,7 +86,7 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
     public <T> List<T> fetchList(Condition condition, List<SortField<?>> orderBy, int limit, Class<T> type) {
         Condition conditions = joinConditions(
                 AND,
-                entity.getDefaultFilterCondition(),
+                entity.getDefaultCondition(),
                 condition
         );
         return dslContext.selectFrom(getTable())
@@ -106,17 +102,10 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
             List<Sort.Order> orders = primaryKeyFields.stream()
                     .map(field -> Sort.Order.desc(field.getName()))
                     .collect(Collectors.toList());
-            return new SliceRequest(
-                    sliceRequest.getFilter(),
-                    sliceRequest.getQuery(),
-                    sliceRequest.getCondition(),
-                    sliceRequest.getOffset(),
-                    sliceRequest.getSize(),
-                    Sort.by(orders),
-                    sliceRequest.getTablePreferencesId()
-            );
+            return sliceRequest.withSort(Sort.by(orders));
+        } else {
+            return sliceRequest;
         }
-        return sliceRequest;
     }
 
     private Table<? extends Record> getTable() {
@@ -146,12 +135,6 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
         private final Entity<TABLE> entity;
         private final DSLContext dslContext;
         private final EntityRegistry entityRegistry;
-        private TableSliceFieldsFactory tableSliceFieldsFactory = null;
-        private TableSliceJoinFactory tableSliceJoinFactory = null;
-        private FilterFactory filterFactory = null;
-        private SortingFactory sortingFactory = null;
-        private LimitFactory limitFactory = null;
-        private TableSliceFactory tableSliceFactory = null;
 
         private Builder(Entity<TABLE> entity, DSLContext dslContext, EntityRegistry entityRegistry) {
             this.entity = entity;
@@ -159,76 +142,17 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
             this.entityRegistry = entityRegistry;
         }
 
-        @SuppressWarnings("unused")
-        public Builder<TABLE> setTableSliceFieldsFactory(TableSliceFieldsFactory tableSliceFieldsFactory) {
-            this.tableSliceFieldsFactory = tableSliceFieldsFactory;
-            return this;
-        }
-
-        @SuppressWarnings("unused")
-        public Builder<TABLE> setTableSliceJoinFactory(TableSliceJoinFactory tableSliceJoinFactory) {
-            this.tableSliceJoinFactory = tableSliceJoinFactory;
-            return this;
-        }
-
-        @SuppressWarnings("unused")
-        public Builder<TABLE> setFilterFactory(FilterFactory filterFactory) {
-            this.filterFactory = filterFactory;
-            return this;
-        }
-
-        @SuppressWarnings("unused")
-        public Builder<TABLE> setSortingFactory(SortingFactory sortingFactory) {
-            this.sortingFactory = sortingFactory;
-            return this;
-        }
-
-        @SuppressWarnings("unused")
-        public Builder<TABLE> setLimitFactory(LimitFactory limitFactory) {
-            this.limitFactory = limitFactory;
-            return this;
-        }
-
-        @SuppressWarnings("unused")
-        public Builder<TABLE> setTableSliceFactory(TableSliceFactory tableSliceFactory) {
-            this.tableSliceFactory = tableSliceFactory;
-            return this;
-        }
-
         public DefaultListDao<TABLE> build() {
             QueryFieldsFactory queryFieldsFactory = new QueryFieldsFactory(entity, entityRegistry);
-
-            TableSliceFieldsFactory tableSliceFieldsFactory = this.tableSliceFieldsFactory;
-            if (tableSliceFieldsFactory == null) {
-                tableSliceFieldsFactory = new DefaultTableSliceFieldsFactory(entity, entityRegistry);
-            }
-            TableSliceJoinFactory tableSliceJoinFactory = this.tableSliceJoinFactory;
-            if (tableSliceJoinFactory == null) {
-                tableSliceJoinFactory = new DefaultTableSliceJoinFactory(entity, entityRegistry);
-            }
-            FilterFactory filterFactory = this.filterFactory;
-            if (filterFactory == null) {
-                filterFactory = new DefaultFilterFactory(entity.getDefaultFilterCondition(), entity.getWordConditionBuilder());
-            }
-            SortingFactory sortingFactory = this.sortingFactory;
-            if (sortingFactory == null) {
-                sortingFactory = new DefaultSortingFactory(entity.getLookupLabelField());
-            }
-            LimitFactory limitFactory = this.limitFactory;
-            if (limitFactory == null) {
-                limitFactory = new DefaultLimitFactory();
-            }
-            TableSliceFactory tableSliceFactory = this.tableSliceFactory;
-            if (tableSliceFactory == null) {
-                tableSliceFactory = new DefaultTableSliceFactory(entity);
-            }
+            FilterFactory filterFactory = new DefaultFilterFactory(entity.getDefaultCondition(), entity.getWordConditionBuilder());
+            SortingFactory sortingFactory = new DefaultSortingFactory(entity.getLookupLabelField());
+            LimitFactory limitFactory = new DefaultLimitFactory();
+            TableSliceFactory tableSliceFactory = new DefaultTableSliceFactory(entity);
 
             return new DefaultListDao<>(
                     entity,
                     dslContext,
                     queryFieldsFactory,
-                    tableSliceFieldsFactory,
-                    tableSliceJoinFactory,
                     filterFactory,
                     sortingFactory,
                     limitFactory,
