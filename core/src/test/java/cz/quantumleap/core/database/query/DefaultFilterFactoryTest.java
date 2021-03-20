@@ -6,17 +6,15 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
+import static cz.quantumleap.core.database.query.QueryUtils.createFieldMap;
 import static cz.quantumleap.core.tables.PersonTable.PERSON;
 
 class DefaultFilterFactoryTest {
 
     @Test
     public void validConditionIsCreatedForQuery() {
-        Map<String, Field<?>> fieldMap = Stream.of(PERSON.fields()).collect(Collectors.toMap(Field::getName, Function.identity()));
+        Map<String, Field<?>> fieldMap = createFieldMap(PERSON.fields());
         FilterFactory filterFactory = createFilterFactory();
         String query = "id > 1 (name = \"Forename Surname\" or email = Surname@company.cx) Title";
 
@@ -34,7 +32,7 @@ class DefaultFilterFactoryTest {
 
     @Test
     public void validConditionIsCreatedForQueryWithMissingBrackets() {
-        Map<String, Field<?>> fieldMap = Stream.of(PERSON.fields()).collect(Collectors.toMap(Field::getName, Function.identity()));
+        Map<String, Field<?>> fieldMap = createFieldMap(PERSON.fields());
         FilterFactory filterFactory = createFilterFactory();
         String query = "id > 1 (name = \"Forename Surname\" or Title";
 

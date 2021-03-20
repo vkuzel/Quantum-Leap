@@ -10,6 +10,4 @@ import java.util.Map;
 public interface SortingFactory {
 
     List<SortField<?>> forSliceRequest(Map<String, Field<?>> fieldMap, SliceRequest request);
-
-    List<SortField<?>> forLookup();
 }

@@ -39,6 +39,10 @@ public final class QueryUtils {
         }
     }
 
+    public static Map<String, Field<?>> createFieldMap(Field<?>[] fields) {
+        return createFieldMap(Arrays.asList(fields));
+    }
+
     public static Map<String, Field<?>> createFieldMap(List<Field<?>> fields) {
         Map<String, Field<?>> fieldMap = new HashMap<>(fields.size());
         for (Field<?> field : fields) {
@@ -50,6 +54,17 @@ public final class QueryUtils {
 
     public static String normalizeFieldName(String name) {
         return name.toLowerCase();
+    }
+
+    @SuppressWarnings("unchecked")
+    public static Field<Object> getFieldSafely(Map<String, Field<?>> fieldMap, String fieldName) {
+        String normalized = normalizeFieldName(fieldName);
+        Field<?> field = fieldMap.get(normalized);
+        if (field == null) {
+            String names = String.join(", ", fieldMap.keySet());
+            throw new IllegalArgumentException("Field" + normalized + " not found in " + names);
+        }
+        return (Field<Object>) field;
     }
 
     @SafeVarargs

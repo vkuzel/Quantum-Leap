@@ -145,7 +145,7 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
         public DefaultListDao<TABLE> build() {
             QueryFieldsFactory queryFieldsFactory = new QueryFieldsFactory(entity, entityRegistry);
             FilterFactory filterFactory = new DefaultFilterFactory(entity.getDefaultCondition(), entity.getWordConditionBuilder());
-            SortingFactory sortingFactory = new DefaultSortingFactory(entity.getLookupLabelField());
+            SortingFactory sortingFactory = new DefaultSortingFactory();
             LimitFactory limitFactory = new DefaultLimitFactory();
             TableSliceFactory tableSliceFactory = new DefaultTableSliceFactory(entity);
 

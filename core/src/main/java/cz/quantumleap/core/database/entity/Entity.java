@@ -5,9 +5,8 @@ import org.jooq.*;
 
 import java.util.*;
 import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
+import static cz.quantumleap.core.database.query.QueryUtils.createFieldMap;
 import static java.util.Collections.singletonList;
 
 public final class Entity<TABLE extends Table<? extends Record>> {
@@ -62,7 +61,7 @@ public final class Entity<TABLE extends Table<? extends Record>> {
     }
 
     public Map<String, Field<?>> getFieldMap() {
-        return Stream.of(getTable().fields()).collect(Collectors.toMap(Field::getName, Function.identity()));
+        return createFieldMap(getTable().fields());
     }
 
     public Map<Field<?>, FieldMetaType> getFieldMetaTypeMap() {

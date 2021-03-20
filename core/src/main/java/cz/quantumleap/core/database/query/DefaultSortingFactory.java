@@ -11,17 +11,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import static cz.quantumleap.core.database.query.QueryUtils.normalizeFieldName;
+import static cz.quantumleap.core.database.query.QueryUtils.getFieldSafely;
 import static org.jooq.SortOrder.ASC;
 import static org.jooq.SortOrder.DESC;
 
 public final class DefaultSortingFactory implements SortingFactory {
-
-    private final Field<?> lookupLabelField;
-
-    public DefaultSortingFactory(Field<?> lookupLabelField) {
-        this.lookupLabelField = lookupLabelField;
-    }
 
     @Override
     public List<SortField<?>> forSliceRequest(Map<String, Field<?>> fieldMap, SliceRequest request) {
@@ -32,22 +26,11 @@ public final class DefaultSortingFactory implements SortingFactory {
 
         List<SortField<?>> sortFields = new ArrayList<>();
         for (Sort.Order order : sort) {
-            String name = normalizeFieldName(order.getProperty());
-            Field<?> field = fieldMap.get(name);
-            if (field == null) {
-                String names = String.join(", ", fieldMap.keySet());
-                throw new IllegalStateException("Field " + name + " was not found in " + names);
-            }
-
+            Field<?> field = getFieldSafely(fieldMap, order.getProperty());
             SortOrder sortOrder = order.isAscending() ? ASC : DESC;
             sortFields.add(field.sort(sortOrder));
         }
 
         return sortFields;
-    }
-
-    @Override
-    public List<SortField<?>> forLookup() {
-        return Collections.singletonList(lookupLabelField.asc());
     }
 }

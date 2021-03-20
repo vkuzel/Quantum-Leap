@@ -291,15 +291,4 @@ public final class DefaultFilterFactory implements FilterFactory {
             return DSL.condition(false);
         }
     }
-
-    @SuppressWarnings("unchecked")
-    private Field<Object> getFieldSafely(Map<String, Field<?>> fieldMap, String fieldName) {
-        String normalized = normalizeFieldName(fieldName);
-        Field<?> field = fieldMap.get(normalized);
-        if (field == null) {
-            String names = String.join(", ", fieldMap.keySet());
-            throw new IllegalArgumentException("Field" + normalized + " not found in " + names);
-        }
-        return (Field<Object>) field;
-    }
 }

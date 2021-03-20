@@ -4,9 +4,7 @@ import cz.quantumleap.core.database.domain.SliceRequest;
 import cz.quantumleap.core.database.domain.TableSlice;
 import cz.quantumleap.core.database.entity.Entity;
 import cz.quantumleap.core.database.query.DefaultFilterFactory;
-import cz.quantumleap.core.database.query.DefaultSortingFactory;
 import cz.quantumleap.core.database.query.FilterFactory;
-import cz.quantumleap.core.database.query.SortingFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.*;
 
@@ -23,20 +21,17 @@ public final class DefaultLookupDao<TABLE extends Table<? extends Record>> imple
     private final DSLContext dslContext;
     private final ListDao<TABLE> listDao;
     private final FilterFactory filterFactory;
-    private final SortingFactory sortingFactory;
 
     private DefaultLookupDao(
             Entity<TABLE> entity,
             DSLContext dslContext,
             ListDao<TABLE> listDao,
-            FilterFactory filterFactory,
-            SortingFactory sortingFactory
+            FilterFactory filterFactory
     ) {
         this.entity = entity;
         this.dslContext = dslContext;
         this.listDao = listDao;
         this.filterFactory = filterFactory;
-        this.sortingFactory = sortingFactory;
     }
 
     public static <TABLE extends Table<? extends Record>> Builder<TABLE> builder(
@@ -117,13 +112,11 @@ public final class DefaultLookupDao<TABLE extends Table<? extends Record>> imple
 
         public DefaultLookupDao<TABLE> build() {
             FilterFactory filterFactory = new DefaultFilterFactory(entity.getDefaultCondition(), entity.getWordConditionBuilder());
-            SortingFactory sortingFactory = new DefaultSortingFactory(entity.getLookupLabelField());
             return new DefaultLookupDao<>(
                     entity,
                     dslContext,
                     listDao,
-                    filterFactory,
-                    sortingFactory
+                    filterFactory
             );
         }
     }
