@@ -68,7 +68,7 @@ public class QueryFieldsFactory {
                 putFieldToMap(setField, orderFieldMap);
             } else if (fieldMetaType instanceof LookupMetaType) {
                 EntityIdentifier<?> lookupEntityIdentifier = fieldMetaType.asLookup().getEntityIdentifier();
-                Entity<?> lookupEntity = entityRegistry.getEntity(lookupEntityIdentifier);
+                Entity<?> lookupEntity = entityRegistry.getLookupEntity(lookupEntityIdentifier);
                 Table<?> lookupTable = resolveTableAlias(lookupEntity.getTable(), field);
 
                 String lookupFieldName = resolveLookupFieldName(field);

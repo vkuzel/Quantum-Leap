@@ -23,19 +23,16 @@ public class EntityRegistry {
 
     private final ApplicationContext applicationContext;
 
-    private final Map<EntityIdentifier<?>, Entity<?>> entityMap = new HashMap<>();
+    private final Map<EntityIdentifier<?>, Entity<?>> detailEntityMap = new HashMap<>();
+    private final Map<EntityIdentifier<?>, Entity<?>> listEntityMap = new HashMap<>();
+    private final Map<EntityIdentifier<?>, Entity<?>> lookupEntityMap = new HashMap<>();
 
     public EntityRegistry(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
     }
 
-    @SuppressWarnings("unchecked")
-    public <T extends Table<? extends Record>> Entity<T> getEntity(EntityIdentifier<T> entityIdentifier) {
-        Entity<?> entity = entityMap.get(entityIdentifier);
-        if (entity == null) {
-            throw new IllegalArgumentException("Entity not found for identifier: " + entityIdentifier);
-        }
-        return (Entity<T>) entity;
+    public <T extends Table<? extends Record>> Entity<T> getLookupEntity(EntityIdentifier<T> entityIdentifier) {
+        return getFromMap(entityIdentifier, lookupEntityMap);
     }
 
     @SuppressWarnings("rawtypes")
@@ -43,22 +40,27 @@ public class EntityRegistry {
     public void initializeEntityMap() {
         Map<String, DetailDao> detailDaoMap = applicationContext.getBeansOfType(DetailDao.class);
         for (DetailDao detailDao : detailDaoMap.values()) {
-            addEntity(detailDao, DetailDao::getDetailEntityIdentifier, DetailDao::getDetailEntity);
+            addFromDaoToMap(detailDao, DetailDao::getDetailEntityIdentifier, DetailDao::getDetailEntity, detailEntityMap);
         }
         Map<String, ListDao> listDaoMap = applicationContext.getBeansOfType(ListDao.class);
         for (ListDao listDao : listDaoMap.values()) {
-            addEntity(listDao, ListDao::getListEntityIdentifier, ListDao::getListEntity);
+            addFromDaoToMap(listDao, ListDao::getListEntityIdentifier, ListDao::getListEntity, listEntityMap);
         }
         Map<String, LookupDao> lookupDaoMap = applicationContext.getBeansOfType(LookupDao.class);
         for (LookupDao lookupDao : lookupDaoMap.values()) {
-            addEntity(lookupDao, LookupDao::getLookupEntityIdentifier, LookupDao::getLookupEntity);
+            addFromDaoToMap(lookupDao, LookupDao::getLookupEntityIdentifier, LookupDao::getLookupEntity, lookupEntityMap);
         }
     }
 
-    private <DAO> void addEntity(
+    public void addLookupEntity(EntityIdentifier<?> entityIdentifier, Entity<?> entity) {
+        addToMap(entityIdentifier, entity, lookupEntityMap);
+    }
+
+    private <DAO> void addFromDaoToMap(
             DAO dao,
             Function<DAO, EntityIdentifier<?>> entityIdentifierGetter,
-            Function<DAO, Entity<?>> entityGetter
+            Function<DAO, Entity<?>> entityGetter,
+            Map<EntityIdentifier<?>, Entity<?>> entityMap
     ) {
         EntityIdentifier<?> entityIdentifier = entityIdentifierGetter.apply(dao);
         Entity<?> entity = entityGetter.apply(dao);
@@ -66,10 +68,14 @@ public class EntityRegistry {
             return;
         }
 
-        addEntity(entityIdentifier, entity);
+        addToMap(entityIdentifier, entity, entityMap);
     }
 
-    public void addEntity(EntityIdentifier<?> entityIdentifier, Entity<?> entity) {
+    private void addToMap(
+            EntityIdentifier<?> entityIdentifier,
+            Entity<?> entity,
+            Map<EntityIdentifier<?>, Entity<?>> entityMap
+    ) {
         Validate.notNull(entityIdentifier, "Entity identifier not specified!");
         Validate.notNull(entity, "Entity not specified for identifier " + entityIdentifier);
 
@@ -80,5 +86,17 @@ public class EntityRegistry {
             String msg = "Two different entities for entity identifier {}, first: {}, second: {}";
             log.error(msg, entityIdentifier, entity, originalEntity);
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T extends Table<? extends Record>> Entity<T> getFromMap(
+            EntityIdentifier<T> entityIdentifier,
+            Map<EntityIdentifier<?>, Entity<?>> entityMap
+    ) {
+        Entity<?> entity = entityMap.get(entityIdentifier);
+        if (entity == null) {
+            throw new IllegalArgumentException("Entity not found for identifier: " + entityIdentifier);
+        }
+        return (Entity<T>) entity;
     }
 }
