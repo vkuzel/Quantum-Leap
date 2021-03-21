@@ -5,11 +5,11 @@ import cz.quantumleap.core.database.domain.TablePreferences;
 import cz.quantumleap.core.database.domain.TableSlice;
 import cz.quantumleap.core.database.entity.Entity;
 import cz.quantumleap.core.database.query.*;
+import cz.quantumleap.core.database.query.TableSliceQueryFieldsFactory.QueryFields;
 import org.jooq.*;
 import org.springframework.data.domain.Sort;
 
 import java.util.List;
-import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -22,6 +22,16 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
     private final Entity<TABLE> entity;
     private final DSLContext dslContext;
     private final EntityRegistry entityRegistry;
+
+    private QueryFields sliceQueryFields;
+    private FilterConditionFactory sliceFilterConditionFactory;
+    private QueryConditionFactory sliceQueryConditionFactory;
+    private SortingFactory sliceSortingFactory;
+    private TableSliceFactory sliceFactory;
+
+    private FilterConditionFactory listFilterConditionFactory;
+    private QueryConditionFactory listQueryConditionFactory;
+    private SortingFactory listSortingFactory;
 
     public DefaultListDao(Entity<TABLE> entity, DSLContext dslContext, EntityRegistry entityRegistry) {
         this.entity = entity;
@@ -36,25 +46,22 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
 
     @Override
     public TableSlice fetchSlice(FetchParams params) {
+        initFactories();
         params = setDefaultOrder(params);
-        Table<?> table = entity.getTable();
 
-        QueryFields queryFields = new QueryFieldsFactory(entity, entityRegistry).createQueryFields();
-        FilterFactory filterFactory = new FilterFactory(
+        Condition condition = QueryUtils.joinConditions(
+                AND,
                 entity.getDefaultCondition(),
-                entity.getWordConditionBuilder(),
-                queryFields.getQueryFieldMap()
+                params.getCondition(),
+                sliceFilterConditionFactory.forFilter(params.getFilter()),
+                sliceQueryConditionFactory.forQuery(params.getQuery())
         );
-        SortingFactory sortingFactory = new SortingFactory(queryFields.getOrderFieldMap());
-        TableSliceFactory tableSliceFactory = new TableSliceFactory(entity);
-
-        Condition condition = filterFactory.forFetchParams(params);
-        List<SortField<?>> orderBy = sortingFactory.forFetchParams(params);
+        List<SortField<?>> orderBy = sliceSortingFactory.forFetchParams(params);
 
         SelectJoinStep<Record> selectJoinStep = dslContext
-                .select(queryFields.getQueryFieldMap().values())
-                .from(table);
-        for (Function<SelectJoinStep<Record>, SelectJoinStep<Record>> joinTable : queryFields.getJoinTables()) {
+                .select(sliceQueryFields.getQueryFieldMap().values())
+                .from(entity.getTable());
+        for (Function<SelectJoinStep<Record>, SelectJoinStep<Record>> joinTable : sliceQueryFields.getJoinTables()) {
             selectJoinStep = joinTable.apply(selectJoinStep);
         }
         Result<?> result = selectJoinStep
@@ -64,29 +71,7 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
                 .fetch();
 
         TablePreferences tablePreferences = selectTablePreferences();
-        return tableSliceFactory.forRequestedResult(tablePreferences, params, result);
-    }
-
-    private int resolveNumberOfRows(FetchParams request) {
-        return Math.min(request.getSize() + 1, FetchParams.MAX_ITEMS);
-    }
-
-    @Override
-    public <T> List<T> fetchList(FetchParams params, Class<T> type) {
-        Map<String, Field<?>> fieldMap = entity.getFieldMap();
-        SortingFactory sortingFactory = new SortingFactory(fieldMap);
-        List<SortField<?>> orderBy = sortingFactory.forFetchParams(params);
-
-        Condition conditions = joinConditions(
-                AND,
-                entity.getDefaultCondition(),
-                params.getCondition()
-        );
-        return dslContext.selectFrom(getTable())
-                .where(conditions)
-                .orderBy(orderBy)
-                .limit(params.getOffset(), resolveNumberOfRows(params))
-                .fetchInto(type);
+        return sliceFactory.forRequestedResult(tablePreferences, params, result);
     }
 
     private FetchParams setDefaultOrder(FetchParams fetchParams) {
@@ -101,8 +86,28 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
         }
     }
 
-    private Table<? extends Record> getTable() {
-        return entity.getTable();
+    @Override
+    public <T> List<T> fetchList(FetchParams params, Class<T> type) {
+        initFactories();
+
+        Condition conditions = joinConditions(
+                AND,
+                entity.getDefaultCondition(),
+                params.getCondition(),
+                listFilterConditionFactory.forFilter(params.getFilter()),
+                listQueryConditionFactory.forQuery(params.getQuery())
+        );
+        List<SortField<?>> orderBy = listSortingFactory.forFetchParams(params);
+
+        return dslContext.selectFrom(entity.getTable())
+                .where(conditions)
+                .orderBy(orderBy)
+                .limit(params.getOffset(), resolveNumberOfRows(params))
+                .fetchInto(type);
+    }
+
+    private int resolveNumberOfRows(FetchParams request) {
+        return Math.min(request.getSize() + 1, FetchParams.MAX_ITEMS);
     }
 
     private TablePreferences selectTablePreferences() {
@@ -121,5 +126,26 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
             }
         }
         return TablePreferences.EMPTY;
+    }
+
+    /**
+     * {@link TableSliceQueryFieldsFactory} does need {@link EntityRegistry} to
+     * be fully initialised to work properly. That is why factories cannot be
+     * initialised in the constructor, but has to be lazy-initialised here.
+     */
+    private synchronized void initFactories() {
+        if (sliceQueryFields != null) {
+            return;
+        }
+
+        sliceQueryFields = new TableSliceQueryFieldsFactory(entity, entityRegistry).createQueryFields();
+        sliceFilterConditionFactory = new FilterConditionFactory(sliceQueryFields.getConditionFieldMap());
+        sliceQueryConditionFactory = new QueryConditionFactory(entity.getWordConditionBuilder(), sliceQueryFields.getConditionFieldMap());
+        sliceSortingFactory = new SortingFactory(sliceQueryFields.getOrderFieldMap());
+        sliceFactory = new TableSliceFactory(entity);
+
+        listFilterConditionFactory = new FilterConditionFactory(entity.getFieldMap());
+        listQueryConditionFactory = new QueryConditionFactory(entity.getWordConditionBuilder(), entity.getFieldMap());
+        listSortingFactory = new SortingFactory(entity.getFieldMap());
     }
 }

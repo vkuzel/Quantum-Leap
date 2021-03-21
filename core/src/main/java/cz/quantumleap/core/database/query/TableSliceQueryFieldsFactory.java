@@ -15,12 +15,12 @@ import static cz.quantumleap.core.database.query.QueryUtils.resolveLookupFieldNa
 import static cz.quantumleap.core.database.query.QueryUtils.resolveTableAlias;
 import static cz.quantumleap.core.tables.EnumValueTable.ENUM_VALUE;
 
-public class QueryFieldsFactory {
+public class TableSliceQueryFieldsFactory {
 
     private final Entity<?> entity;
     private final EntityRegistry entityRegistry;
 
-    public QueryFieldsFactory(Entity<?> entity, EntityRegistry entityRegistry) {
+    public TableSliceQueryFieldsFactory(Entity<?> entity, EntityRegistry entityRegistry) {
         this.entity = entity;
         this.entityRegistry = entityRegistry;
     }
@@ -133,6 +133,42 @@ public class QueryFieldsFactory {
         } else {
             String msg = "Field " + field + " of type " + field.getType() + " cannot be cast to type " + type;
             throw new IllegalArgumentException(msg);
+        }
+    }
+
+    public static class QueryFields {
+
+        private final List<Function<SelectJoinStep<Record>, SelectJoinStep<Record>>> joinTables;
+        private final Map<String, Field<?>> queryFieldMap;
+        private final Map<String, Field<?>> conditionFieldMap;
+        private final Map<String, Field<?>> orderFieldMap;
+
+        public QueryFields(
+                List<Function<SelectJoinStep<Record>, SelectJoinStep<Record>>> joinTables,
+                Map<String, Field<?>> queryFieldMap,
+                Map<String, Field<?>> conditionFieldMap,
+                Map<String, Field<?>> orderFieldMap
+        ) {
+            this.joinTables = joinTables;
+            this.queryFieldMap = queryFieldMap;
+            this.conditionFieldMap = conditionFieldMap;
+            this.orderFieldMap = orderFieldMap;
+        }
+
+        public List<Function<SelectJoinStep<Record>, SelectJoinStep<Record>>> getJoinTables() {
+            return joinTables;
+        }
+
+        public Map<String, Field<?>> getQueryFieldMap() {
+            return queryFieldMap;
+        }
+
+        public Map<String, Field<?>> getConditionFieldMap() {
+            return conditionFieldMap;
+        }
+
+        public Map<String, Field<?>> getOrderFieldMap() {
+            return orderFieldMap;
         }
     }
 }

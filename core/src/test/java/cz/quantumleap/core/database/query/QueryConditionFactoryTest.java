@@ -7,14 +7,14 @@ import org.junit.jupiter.api.Test;
 import static cz.quantumleap.core.database.query.QueryUtils.createFieldMap;
 import static cz.quantumleap.core.tables.PersonTable.PERSON;
 
-class FilterFactoryTest {
+class QueryConditionFactoryTest {
 
     @Test
     public void validConditionIsCreatedForQuery() {
-        FilterFactory filterFactory = createFilterFactory();
+        QueryConditionFactory queryConditionFactory = createQueryConditionFactory();
         String query = "id > 1 (name = \"Forename Surname\" or email = Surname@company.cx) Title";
 
-        Condition condition = filterFactory.forQuery(query);
+        Condition condition = queryConditionFactory.forQuery(query);
 
         Assertions.assertEquals("(\n" +
                 "  cast(\"core\".\"person\".\"id\" as bigint) > 1\n" +
@@ -28,10 +28,10 @@ class FilterFactoryTest {
 
     @Test
     public void validConditionIsCreatedForQueryWithMissingBrackets() {
-        FilterFactory filterFactory = createFilterFactory();
+        QueryConditionFactory queryConditionFactory = createQueryConditionFactory();
         String query = "id > 1 (name = \"Forename Surname\" or Title";
 
-        Condition condition = filterFactory.forQuery(query);
+        Condition condition = queryConditionFactory.forQuery(query);
 
         Assertions.assertEquals("(\n" +
                 "  cast(\"core\".\"person\".\"id\" as bigint) > 1\n" +
@@ -42,9 +42,8 @@ class FilterFactoryTest {
                 ")", condition.toString());
     }
 
-    private FilterFactory createFilterFactory() {
-        return new FilterFactory(
-                null,
+    private QueryConditionFactory createQueryConditionFactory() {
+        return new QueryConditionFactory(
                 q -> PERSON.NAME.like(q + "%"),
                 createFieldMap(PERSON.fields())
         );

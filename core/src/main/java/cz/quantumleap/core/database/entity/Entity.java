@@ -96,7 +96,8 @@ public final class Entity<TABLE extends Table<? extends Record>> {
     }
 
     public Field<String> buildLookupLabelFieldForTable(Table<?> table) {
-        return lookupLabelFieldBuilder != null ? lookupLabelFieldBuilder.apply(table) : null;
+        Validate.notNull(lookupLabelFieldBuilder);
+        return lookupLabelFieldBuilder.apply(table);
     }
 
     public List<SortField<?>> getLookupOrderBy() {

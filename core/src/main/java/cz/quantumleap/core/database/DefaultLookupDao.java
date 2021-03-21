@@ -3,7 +3,8 @@ package cz.quantumleap.core.database;
 import cz.quantumleap.core.database.domain.FetchParams;
 import cz.quantumleap.core.database.domain.TableSlice;
 import cz.quantumleap.core.database.entity.Entity;
-import cz.quantumleap.core.database.query.FilterFactory;
+import cz.quantumleap.core.database.query.QueryConditionFactory;
+import cz.quantumleap.core.database.query.QueryUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.*;
 
@@ -11,6 +12,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import static cz.quantumleap.core.database.query.QueryUtils.ConditionOperator.AND;
 
 public final class DefaultLookupDao<TABLE extends Table<? extends Record>> implements LookupDao<TABLE> {
 
@@ -20,10 +23,17 @@ public final class DefaultLookupDao<TABLE extends Table<? extends Record>> imple
     private final DSLContext dslContext;
     private final ListDao<TABLE> listDao;
 
+    private final QueryConditionFactory queryConditionFactory;
+
     public DefaultLookupDao(Entity<TABLE> entity, DSLContext dslContext, ListDao<TABLE> listDao) {
         this.entity = entity;
         this.dslContext = dslContext;
         this.listDao = listDao;
+
+        this.queryConditionFactory = new QueryConditionFactory(
+                entity.getWordConditionBuilder(),
+                entity.getFieldMap()
+        );
     }
 
     @Override
@@ -36,7 +46,7 @@ public final class DefaultLookupDao<TABLE extends Table<? extends Record>> imple
         List<SortField<?>> sortFields = entity.getLookupOrderBy();
 
         return dslContext.select(entity.getLookupLabelField())
-                .from(getTable())
+                .from(entity.getTable())
                 .where(condition)
                 .orderBy(sortFields)
                 .fetchOneInto(String.class);
@@ -48,7 +58,7 @@ public final class DefaultLookupDao<TABLE extends Table<? extends Record>> imple
         List<SortField<?>> sortFields = entity.getLookupOrderBy();
 
         return dslContext.select(primaryKey, entity.getLookupLabelField())
-                .from(getTable())
+                .from(entity.getTable())
                 .where(condition)
                 .orderBy(sortFields)
                 .fetchMap(Record2::value1, Record2::value2);
@@ -60,18 +70,16 @@ public final class DefaultLookupDao<TABLE extends Table<? extends Record>> imple
             return Collections.emptyMap();
         }
 
-        FilterFactory filterFactory = new FilterFactory(
-                entity.getDefaultCondition(),
-                entity.getWordConditionBuilder(),
-                entity.getFieldMap()
-        );
-
         Field<?> primaryKey = entity.getPrimaryKeyField();
-        Condition condition = filterFactory.forQuery(query);
+        Condition condition = QueryUtils.joinConditions(
+                AND,
+                entity.getDefaultCondition(),
+                queryConditionFactory.forQuery(query)
+        );
         List<SortField<?>> sortFields = entity.getLookupOrderBy();
 
         return dslContext.select(primaryKey, entity.getLookupLabelField())
-                .from(getTable())
+                .from(entity.getTable())
                 .where(condition)
                 .orderBy(sortFields)
                 .limit(MAX_FILTERED_ROWS)
@@ -81,9 +89,5 @@ public final class DefaultLookupDao<TABLE extends Table<? extends Record>> imple
     @Override
     public TableSlice fetchSlice(FetchParams fetchParams) {
         return listDao.fetchSlice(fetchParams);
-    }
-
-    private Table<? extends Record> getTable() {
-        return entity.getTable();
     }
 }

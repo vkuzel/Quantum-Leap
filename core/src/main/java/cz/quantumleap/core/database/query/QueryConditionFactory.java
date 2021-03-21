@@ -1,6 +1,5 @@
 package cz.quantumleap.core.database.query;
 
-import cz.quantumleap.core.database.domain.FetchParams;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -13,68 +12,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
-import static cz.quantumleap.core.database.query.QueryUtils.*;
 import static cz.quantumleap.core.database.query.QueryUtils.ConditionOperator.AND;
 import static cz.quantumleap.core.database.query.QueryUtils.ConditionOperator.OR;
+import static cz.quantumleap.core.database.query.QueryUtils.joinConditions;
+import static cz.quantumleap.core.database.query.QueryUtils.normalizeFieldName;
 
-public final class FilterFactory {
+public class QueryConditionFactory {
 
     private enum ComparisonOperator {EQ, LT, GT, LE, GE}
 
-    private final Condition defaultCondition;
     private final Function<String, Condition> wordConditionBuilder;
     private final Map<String, Field<?>> fieldMap;
 
-    public FilterFactory(
-            Condition defaultCondition,
-            Function<String, Condition> wordConditionBuilder,
-            Map<String, Field<?>> fieldMap
-    ) {
-        this.defaultCondition = defaultCondition;
+    public QueryConditionFactory(Function<String, Condition> wordConditionBuilder, Map<String, Field<?>> fieldMap) {
         this.wordConditionBuilder = wordConditionBuilder;
         this.fieldMap = fieldMap;
-    }
-
-    public Condition forQuery(String query) {
-        Condition queryCondition = createConditionFromQuery(fieldMap, query);
-
-        return joinConditions(
-                AND,
-                defaultCondition,
-                queryCondition
-        );
-    }
-
-    public Condition forFetchParams(FetchParams params) {
-        Condition filterCondition = createConditionFromFilter(fieldMap, params.getFilter());
-        Condition queryCondition = createConditionFromQuery(fieldMap, params.getQuery());
-
-        return joinConditions(
-                AND,
-                defaultCondition,
-                params.getCondition(),
-                filterCondition,
-                queryCondition
-        );
-    }
-
-    private Condition createConditionFromFilter(Map<String, Field<?>> fieldMap, Map<String, Object> filter) {
-        Condition resultCondition = null;
-
-        for (Map.Entry<String, Object> fieldNameValue : filter.entrySet()) {
-            String fieldName = normalizeFieldName(fieldNameValue.getKey());
-            Field<Object> field = getFieldSafely(fieldMap, fieldName);
-            Object value = fieldNameValue.getValue();
-
-            Condition condition = field.eq(value);
-            if (resultCondition == null) {
-                resultCondition = condition;
-            } else {
-                resultCondition = resultCondition.and(condition);
-            }
-        }
-
-        return resultCondition;
     }
 
     /**
@@ -96,7 +48,7 @@ public final class FilterFactory {
      * @param query See syntax.
      * @return Condition or null.
      */
-    private Condition createConditionFromQuery(Map<String, Field<?>> fieldMap, String query) {
+    public Condition forQuery(String query) {
         if (StringUtils.isNotBlank(query)) {
             List<String> tokens = tokenize(query);
             return createCondition(fieldMap, tokens);
@@ -104,7 +56,6 @@ public final class FilterFactory {
             return null;
         }
     }
-
 
     private Condition createCondition(Map<String, Field<?>> fieldMap, List<String> tokens) {
         return new CreateCondition(fieldMap, tokens).create();
@@ -157,7 +108,7 @@ public final class FilterFactory {
         return tokens;
     }
 
-    private static ConditionOperator resolveConditionOperator(String token) {
+    private static QueryUtils.ConditionOperator resolveConditionOperator(String token) {
         token = token != null ? token.toLowerCase() : null;
         if ("and".equals(token)) {
             return AND;
@@ -216,7 +167,7 @@ public final class FilterFactory {
                 String current = tokens.get(currentTokenIndex);
                 String next = currentTokenIndex < size - 1 ? tokens.get(currentTokenIndex + 1) : null;
                 String next2 = currentTokenIndex < size - 2 ? tokens.get(currentTokenIndex + 2) : null;
-                ConditionOperator conditionOperator = resolveConditionOperator(previous);
+                QueryUtils.ConditionOperator conditionOperator = resolveConditionOperator(previous);
 
                 if (resolveConditionOperator(current) != null) {
                     continue;
