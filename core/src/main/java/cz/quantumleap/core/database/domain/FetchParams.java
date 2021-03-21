@@ -1,12 +1,12 @@
 package cz.quantumleap.core.database.domain;
 
-import org.apache.commons.lang3.Validate;
 import org.jooq.Condition;
 import org.springframework.data.domain.Sort;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import static java.util.Collections.emptyMap;
 import static java.util.Collections.unmodifiableMap;
 
 public class FetchParams {
@@ -26,7 +26,6 @@ public class FetchParams {
     private final Long tablePreferencesId;
 
     public FetchParams(Map<String, Object> filter, String query, Condition condition, int offset, int size, Sort sort, Long tablePreferencesId) {
-        Validate.notNull(sort);
         this.filter = unmodifiableMap(filter);
         this.query = query;
         this.condition = condition;
@@ -36,25 +35,16 @@ public class FetchParams {
         this.tablePreferencesId = tablePreferencesId;
     }
 
-    public static FetchParams filteredSorted(Map<String, Object> filter, Sort sort) {
+    public static FetchParams empty() {
         return new FetchParams(
-                filter,
+                emptyMap(),
                 null,
                 null,
                 0,
                 MAX_ITEMS,
-                sort,
+                null,
                 null
         );
-    }
-
-    public FetchParams addCondition(Condition condition) {
-        Condition newCondition = this.condition != null ? this.condition.and(condition) : condition;
-        return new FetchParams(filter, query, newCondition, offset, size, sort, tablePreferencesId);
-    }
-
-    public FetchParams withSort(Sort sort) {
-        return new FetchParams(filter, query, condition, offset, size, sort, tablePreferencesId);
     }
 
     public FetchParams addFilter(String fieldName, Object value) {
@@ -71,6 +61,11 @@ public class FetchParams {
         return query;
     }
 
+    public FetchParams addCondition(Condition condition) {
+        condition = this.condition != null ? this.condition.and(condition) : condition;
+        return new FetchParams(filter, query, condition, offset, size, sort, tablePreferencesId);
+    }
+
     public Condition getCondition() {
         return condition;
     }
@@ -79,8 +74,16 @@ public class FetchParams {
         return offset;
     }
 
+    public FetchParams withSize(int size) {
+        return new FetchParams(filter, query, condition, offset, size, sort, tablePreferencesId);
+    }
+
     public int getSize() {
         return size;
+    }
+
+    public FetchParams withSort(Sort sort) {
+        return new FetchParams(filter, query, condition, offset, size, sort, tablePreferencesId);
     }
 
     public Sort getSort() {

@@ -3,7 +3,9 @@ package cz.quantumleap.core.database;
 import cz.quantumleap.core.database.domain.FetchParams;
 import cz.quantumleap.core.database.domain.TableSlice;
 import cz.quantumleap.core.database.entity.Entity;
-import org.jooq.*;
+import org.jooq.DSLContext;
+import org.jooq.Record;
+import org.jooq.Table;
 
 import java.util.List;
 import java.util.Map;
@@ -56,7 +58,7 @@ public class LookupListDaoStub<TABLE extends Table<? extends Record>> implements
     }
 
     @Override
-    public <T> List<T> fetchList(Condition condition, List<SortField<?>> orderBy, int limit, Class<T> type) {
-        return listDao.fetchList(condition, orderBy, limit, type);
+    public <T> List<T> fetchList(FetchParams fetchParams, Class<T> type) {
+        return listDao.fetchList(fetchParams, type);
     }
 }

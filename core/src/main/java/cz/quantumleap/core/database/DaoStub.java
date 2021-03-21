@@ -83,8 +83,8 @@ public class DaoStub<TABLE extends Table<? extends Record>> implements DetailDao
     }
 
     @Override
-    public <T> List<T> fetchList(Condition condition, List<SortField<?>> orderBy, int limit, Class<T> type) {
-        return listDao.fetchList(condition, orderBy, limit, type);
+    public <T> List<T> fetchList(FetchParams fetchParams, Class<T> type) {
+        return listDao.fetchList(fetchParams, type);
     }
 
     @Override

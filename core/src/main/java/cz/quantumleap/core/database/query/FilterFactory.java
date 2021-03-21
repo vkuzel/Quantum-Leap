@@ -45,14 +45,14 @@ public final class FilterFactory {
         );
     }
 
-    public Condition forFetchParams(FetchParams request) {
-        Condition filterCondition = createConditionFromFilter(fieldMap, request.getFilter());
-        Condition queryCondition = createConditionFromQuery(fieldMap, request.getQuery());
+    public Condition forFetchParams(FetchParams params) {
+        Condition filterCondition = createConditionFromFilter(fieldMap, params.getFilter());
+        Condition queryCondition = createConditionFromQuery(fieldMap, params.getQuery());
 
         return joinConditions(
                 AND,
                 defaultCondition,
-                request.getCondition(),
+                params.getCondition(),
                 filterCondition,
                 queryCondition
         );

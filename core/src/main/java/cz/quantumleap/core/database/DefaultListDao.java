@@ -9,6 +9,7 @@ import org.jooq.*;
 import org.springframework.data.domain.Sort;
 
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -34,8 +35,8 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
     }
 
     @Override
-    public TableSlice fetchSlice(FetchParams request) {
-        request = setDefaultOrder(request);
+    public TableSlice fetchSlice(FetchParams params) {
+        params = setDefaultOrder(params);
         Table<?> table = entity.getTable();
 
         QueryFields queryFields = new QueryFieldsFactory(entity, entityRegistry).createQueryFields();
@@ -47,8 +48,8 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
         SortingFactory sortingFactory = new SortingFactory(queryFields.getOrderFieldMap());
         TableSliceFactory tableSliceFactory = new TableSliceFactory(entity);
 
-        Condition condition = filterFactory.forFetchParams(request);
-        List<SortField<?>> orderBy = sortingFactory.forFetchParams(request);
+        Condition condition = filterFactory.forFetchParams(params);
+        List<SortField<?>> orderBy = sortingFactory.forFetchParams(params);
 
         SelectJoinStep<Record> selectJoinStep = dslContext
                 .select(queryFields.getQueryFieldMap().values())
@@ -59,32 +60,37 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
         Result<?> result = selectJoinStep
                 .where(condition)
                 .orderBy(orderBy)
-                .limit(request.getOffset(), resolveNumberOfRows(request))
+                .limit(params.getOffset(), resolveNumberOfRows(params))
                 .fetch();
 
         TablePreferences tablePreferences = selectTablePreferences();
-        return tableSliceFactory.forRequestedResult(tablePreferences, request, result);
+        return tableSliceFactory.forRequestedResult(tablePreferences, params, result);
     }
 
     private int resolveNumberOfRows(FetchParams request) {
         return Math.min(request.getSize() + 1, FetchParams.MAX_ITEMS);
     }
 
-    public <T> List<T> fetchList(Condition condition, List<SortField<?>> orderBy, int limit, Class<T> type) {
+    @Override
+    public <T> List<T> fetchList(FetchParams params, Class<T> type) {
+        Map<String, Field<?>> fieldMap = entity.getFieldMap();
+        SortingFactory sortingFactory = new SortingFactory(fieldMap);
+        List<SortField<?>> orderBy = sortingFactory.forFetchParams(params);
+
         Condition conditions = joinConditions(
                 AND,
                 entity.getDefaultCondition(),
-                condition
+                params.getCondition()
         );
         return dslContext.selectFrom(getTable())
                 .where(conditions)
                 .orderBy(orderBy)
-                .limit(limit)
+                .limit(params.getOffset(), resolveNumberOfRows(params))
                 .fetchInto(type);
     }
 
     private FetchParams setDefaultOrder(FetchParams fetchParams) {
-        if (fetchParams.getSort().isUnsorted()) {
+        if (fetchParams.getSort() == null || fetchParams.getSort().isUnsorted()) {
             List<Field<?>> primaryKeyFields = entity.getPrimaryKeyFields();
             List<Sort.Order> orders = primaryKeyFields.stream()
                     .map(field -> Sort.Order.desc(field.getName()))

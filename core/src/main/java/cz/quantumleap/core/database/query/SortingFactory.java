@@ -23,9 +23,9 @@ public final class SortingFactory {
         this.fieldMap = fieldMap;
     }
 
-    public List<SortField<?>> forFetchParams(FetchParams request) {
-        Sort sort = request.getSort();
-        if (sort.isUnsorted()) {
+    public List<SortField<?>> forFetchParams(FetchParams params) {
+        Sort sort = params.getSort();
+        if (sort == null || sort.isUnsorted()) {
             return Collections.emptyList();
         }
 

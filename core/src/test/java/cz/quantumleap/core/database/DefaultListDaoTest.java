@@ -19,13 +19,9 @@ import org.springframework.data.domain.Sort;
 
 import java.util.List;
 
-import static cz.quantumleap.core.database.domain.FetchParams.filteredSorted;
-import static java.util.Collections.emptyMap;
-import static java.util.Collections.singletonMap;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.data.domain.Sort.Direction.ASC;
-import static org.springframework.data.domain.Sort.unsorted;
 
 @CoreSpringBootTest
 class DefaultListDaoTest {
@@ -43,7 +39,7 @@ class DefaultListDaoTest {
         Entity<TestTable> referencingEntity = createReferencingEntity(entity.getTable());
         DefaultListDao<TestTable> defaultListDao = createDefaultListDao(referencingEntity);
 
-        FetchParams fetchParams = filteredSorted(emptyMap(), unsorted());
+        FetchParams fetchParams = FetchParams.empty();
         TableSlice tableSlice = defaultListDao.fetchSlice(fetchParams);
 
         assertEquals(2, tableSlice.getColumns().size());
@@ -66,7 +62,7 @@ class DefaultListDaoTest {
 
         DefaultListDao<TestTable> defaultListDao = createDefaultListDao(referencingEntity);
 
-        FetchParams fetchParams = filteredSorted(emptyMap(), Sort.by(ASC, "entity_id"));
+        FetchParams fetchParams = FetchParams.empty().withSort(Sort.by(ASC, "entity_id"));
         TableSlice tableSlice = defaultListDao.fetchSlice(fetchParams);
 
         assertEquals(3, tableSlice.getRows().size());
@@ -88,7 +84,7 @@ class DefaultListDaoTest {
 
         DefaultListDao<TestTable> defaultListDao = createDefaultListDao(referencingEntity);
 
-        FetchParams fetchParams = filteredSorted(singletonMap("entity_id", "Aaa"), unsorted());
+        FetchParams fetchParams = FetchParams.empty().addFilter("entity_id", "Aaa");
         TableSlice tableSlice = defaultListDao.fetchSlice(fetchParams);
 
         assertEquals(1, tableSlice.getRows().size());
