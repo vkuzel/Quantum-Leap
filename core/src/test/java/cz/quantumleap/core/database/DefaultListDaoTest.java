@@ -109,7 +109,7 @@ class DefaultListDaoTest {
                 .setLookupLabelFieldBuilder(table -> table.field("name", String.class))
                 .build();
 
-        entityRegistry.addLookupEntity(entity.getIdentifier(), entity);
+        entityRegistry.addLookupEntity(entity);
 
         return entity;
     }

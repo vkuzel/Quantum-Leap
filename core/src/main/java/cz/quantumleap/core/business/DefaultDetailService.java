@@ -20,7 +20,8 @@ public final class DefaultDetailService<T> implements DetailService<T> {
 
     @Override
     public <TABLE extends Table<? extends Record>> EntityIdentifier<TABLE> getDetailEntityIdentifier(Class<TABLE> type) {
-        return Utils.checkTableType(detailDao.getDetailEntityIdentifier(), type);
+        EntityIdentifier<?> entityIdentifier = detailDao.getDetailEntity().getIdentifier();
+        return Utils.checkTableType(entityIdentifier, type);
     }
 
     @Override

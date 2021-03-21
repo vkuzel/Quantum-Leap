@@ -3,7 +3,6 @@ package cz.quantumleap.core.database;
 import cz.quantumleap.core.database.domain.SliceRequest;
 import cz.quantumleap.core.database.domain.TableSlice;
 import cz.quantumleap.core.database.entity.Entity;
-import cz.quantumleap.core.database.entity.EntityIdentifier;
 import org.jooq.Condition;
 import org.jooq.Record;
 import org.jooq.SortField;
@@ -16,10 +15,6 @@ import static java.util.Collections.emptyList;
 public interface ListDao<TABLE extends Table<? extends Record>> {
 
     Entity<TABLE> getListEntity();
-
-    default EntityIdentifier<TABLE> getListEntityIdentifier() {
-        return getListEntity().getIdentifier();
-    }
 
     TableSlice fetchSlice(SliceRequest sliceRequest);
 

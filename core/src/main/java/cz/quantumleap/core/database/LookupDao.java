@@ -3,7 +3,6 @@ package cz.quantumleap.core.database;
 import cz.quantumleap.core.database.domain.SliceRequest;
 import cz.quantumleap.core.database.domain.TableSlice;
 import cz.quantumleap.core.database.entity.Entity;
-import cz.quantumleap.core.database.entity.EntityIdentifier;
 import org.jooq.Record;
 import org.jooq.Table;
 
@@ -17,10 +16,6 @@ public interface LookupDao<TABLE extends Table<? extends Record>> {
      * will allow to register a lookup DAO based on an view for a table.
      */
     Entity<?> getLookupEntity();
-
-    default EntityIdentifier<?> getLookupEntityIdentifier() {
-        return getLookupEntity().getIdentifier();
-    }
 
     String fetchLabelById(Object id);
 

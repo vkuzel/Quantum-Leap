@@ -22,7 +22,8 @@ public final class DefaultLookupService implements LookupService {
 
     @Override
     public <TABLE extends Table<? extends Record>> EntityIdentifier<?> getLookupEntityIdentifier(Class<TABLE> type) {
-        return Utils.checkTableType(lookupDao.getLookupEntityIdentifier(), type);
+        EntityIdentifier<?> entityIdentifier = lookupDao.getLookupEntity().getIdentifier();
+        return Utils.checkTableType(entityIdentifier, type);
     }
 
     @Override

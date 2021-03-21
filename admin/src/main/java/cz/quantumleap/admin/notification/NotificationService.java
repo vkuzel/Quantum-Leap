@@ -36,7 +36,7 @@ public class NotificationService {
     }
 
     public EntityIdentifier<NotificationTable> getListEntityIdentifier() {
-        return notificationDao.getListEntityIdentifier();
+        return notificationDao.getListEntity().getIdentifier();
     }
 
     @Transactional

@@ -40,45 +40,40 @@ public class EntityRegistry {
     public void initializeEntityMap() {
         Map<String, DetailDao> detailDaoMap = applicationContext.getBeansOfType(DetailDao.class);
         for (DetailDao detailDao : detailDaoMap.values()) {
-            addFromDaoToMap(detailDao, DetailDao::getDetailEntityIdentifier, DetailDao::getDetailEntity, detailEntityMap);
+            addFromDaoToMap(detailDao, DetailDao::getDetailEntity, detailEntityMap);
         }
         Map<String, ListDao> listDaoMap = applicationContext.getBeansOfType(ListDao.class);
         for (ListDao listDao : listDaoMap.values()) {
-            addFromDaoToMap(listDao, ListDao::getListEntityIdentifier, ListDao::getListEntity, listEntityMap);
+            addFromDaoToMap(listDao, ListDao::getListEntity, listEntityMap);
         }
         Map<String, LookupDao> lookupDaoMap = applicationContext.getBeansOfType(LookupDao.class);
         for (LookupDao lookupDao : lookupDaoMap.values()) {
-            addFromDaoToMap(lookupDao, LookupDao::getLookupEntityIdentifier, LookupDao::getLookupEntity, lookupEntityMap);
+            addFromDaoToMap(lookupDao, LookupDao::getLookupEntity, lookupEntityMap);
         }
     }
 
-    public void addLookupEntity(EntityIdentifier<?> entityIdentifier, Entity<?> entity) {
-        addToMap(entityIdentifier, entity, lookupEntityMap);
+    public void addLookupEntity(Entity<?> entity) {
+        addToMap(entity, lookupEntityMap);
     }
 
     private <DAO> void addFromDaoToMap(
             DAO dao,
-            Function<DAO, EntityIdentifier<?>> entityIdentifierGetter,
             Function<DAO, Entity<?>> entityGetter,
             Map<EntityIdentifier<?>, Entity<?>> entityMap
     ) {
-        EntityIdentifier<?> entityIdentifier = entityIdentifierGetter.apply(dao);
         Entity<?> entity = entityGetter.apply(dao);
-        if (entityIdentifier == null || entity == null) {
-            return;
+        if (entity != null) {
+            addToMap(entity, entityMap);
         }
-
-        addToMap(entityIdentifier, entity, entityMap);
     }
 
     private void addToMap(
-            EntityIdentifier<?> entityIdentifier,
             Entity<?> entity,
             Map<EntityIdentifier<?>, Entity<?>> entityMap
     ) {
-        Validate.notNull(entityIdentifier, "Entity identifier not specified!");
-        Validate.notNull(entity, "Entity not specified for identifier " + entityIdentifier);
+        Validate.notNull(entity, "Entity not specified!");
 
+        EntityIdentifier<?> entityIdentifier = entity.getIdentifier();
         Entity<?> originalEntity = entityMap.get(entityIdentifier);
         if (originalEntity == null) {
             entityMap.put(entityIdentifier, entity);
