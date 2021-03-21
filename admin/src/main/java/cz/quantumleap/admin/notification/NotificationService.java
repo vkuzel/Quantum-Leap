@@ -51,17 +51,14 @@ public class NotificationService {
         Locale locale = LocaleContextHolder.getLocale();
         TableSlice slice = notificationDao.fetchSlice(personId, fetchParams);
 
-        List<Column> columns = slice.getColumns();
         Column codeColumn = slice.getColumnByName("code");
         Column messageArgumentsColumn = slice.getColumnByName("message_arguments");
         Column messageColumn = new Column(String.class, "message", false, null);
 
-        int codeColumnIndex = columns.indexOf(codeColumn);
-        int messageArgumentsColumnIndex = columns.indexOf(messageArgumentsColumn);
         List<Object> messages = new ArrayList<>();
         for (List<Object> row : slice) {
-            String code = (String) row.get(codeColumnIndex);
-            Object[] messageArguments = (String[]) row.get(messageArgumentsColumnIndex);
+            String code = (String) slice.getValue(codeColumn, row);
+            Object[] messageArguments = (Object[]) slice.getValue(messageArgumentsColumn, row);
 
             NotificationDefinition definition = notificationManager.getNotificationDefinitionByCode(code);
             Validate.notNull(definition, "Notification definition not found for notification code " + code);
