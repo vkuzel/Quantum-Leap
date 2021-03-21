@@ -1,6 +1,6 @@
 package cz.quantumleap.core.database;
 
-import cz.quantumleap.core.database.domain.SliceRequest;
+import cz.quantumleap.core.database.domain.FetchParams;
 import cz.quantumleap.core.database.domain.TablePreferences;
 import cz.quantumleap.core.database.domain.TableSlice;
 import cz.quantumleap.core.database.entity.Entity;
@@ -34,7 +34,7 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
     }
 
     @Override
-    public TableSlice fetchSlice(SliceRequest request) {
+    public TableSlice fetchSlice(FetchParams request) {
         request = setDefaultOrder(request);
         Table<?> table = entity.getTable();
 
@@ -47,8 +47,8 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
         SortingFactory sortingFactory = new SortingFactory(queryFields.getOrderFieldMap());
         TableSliceFactory tableSliceFactory = new TableSliceFactory(entity);
 
-        Condition condition = filterFactory.forSliceRequest(request);
-        List<SortField<?>> orderBy = sortingFactory.forSliceRequest(request);
+        Condition condition = filterFactory.forFetchParams(request);
+        List<SortField<?>> orderBy = sortingFactory.forFetchParams(request);
 
         SelectJoinStep<Record> selectJoinStep = dslContext
                 .select(queryFields.getQueryFieldMap().values())
@@ -66,8 +66,8 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
         return tableSliceFactory.forRequestedResult(tablePreferences, request, result);
     }
 
-    private int resolveNumberOfRows(SliceRequest request) {
-        return Math.min(request.getSize() + 1, SliceRequest.MAX_ITEMS);
+    private int resolveNumberOfRows(FetchParams request) {
+        return Math.min(request.getSize() + 1, FetchParams.MAX_ITEMS);
     }
 
     public <T> List<T> fetchList(Condition condition, List<SortField<?>> orderBy, int limit, Class<T> type) {
@@ -83,15 +83,15 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
                 .fetchInto(type);
     }
 
-    private SliceRequest setDefaultOrder(SliceRequest sliceRequest) {
-        if (sliceRequest.getSort().isUnsorted()) {
+    private FetchParams setDefaultOrder(FetchParams fetchParams) {
+        if (fetchParams.getSort().isUnsorted()) {
             List<Field<?>> primaryKeyFields = entity.getPrimaryKeyFields();
             List<Sort.Order> orders = primaryKeyFields.stream()
                     .map(field -> Sort.Order.desc(field.getName()))
                     .collect(Collectors.toList());
-            return sliceRequest.withSort(Sort.by(orders));
+            return fetchParams.withSort(Sort.by(orders));
         } else {
-            return sliceRequest;
+            return fetchParams;
         }
     }
 

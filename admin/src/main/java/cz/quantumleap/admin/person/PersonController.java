@@ -8,7 +8,7 @@ import cz.quantumleap.admin.notification.NotificationService;
 import cz.quantumleap.admin.personrole.PersonRoleController;
 import cz.quantumleap.admin.personrole.PersonRoleService;
 import cz.quantumleap.core.common.Utils;
-import cz.quantumleap.core.database.domain.SliceRequest;
+import cz.quantumleap.core.database.domain.FetchParams;
 import cz.quantumleap.core.database.domain.TableSlice;
 import cz.quantumleap.core.database.entity.EntityIdentifier;
 import cz.quantumleap.core.person.domain.Person;
@@ -65,37 +65,37 @@ public class PersonController extends AdminController {
 
     @AdminMenuItemActive("admin.menu.people")
     @GetMapping(path = {DETAIL_URL, DETAIL_URL + "/{id}"})
-    public String showPerson(@PathVariable(required = false) Long id, @Qualifier("personRole") SliceRequest personRoleSliceRequest, Model model) {
+    public String showPerson(@PathVariable(required = false) Long id, @Qualifier("personRole") FetchParams personRoleFetchParams, Model model) {
         return detailController.show(id, model, (p) -> {
-            addPersonRoleTableAttributes(p, personRoleSliceRequest, model);
+            addPersonRoleTableAttributes(p, personRoleFetchParams, model);
             return DETAIL_VIEW;
         });
     }
 
     @PostMapping(params = "save", path = {DETAIL_URL, DETAIL_URL + "/{id}"})
-    public String savePerson(@Valid Person person, Errors errors, @Qualifier("personRole") SliceRequest personRoleSliceRequest, Model model, RedirectAttributes redirectAttributes) {
+    public String savePerson(@Valid Person person, Errors errors, @Qualifier("personRole") FetchParams personRoleFetchParams, Model model, RedirectAttributes redirectAttributes) {
         String view = detailController.save(person, errors, model, redirectAttributes);
         if (errors.hasErrors() && person.getId() != null) {
-            addPersonRoleTableAttributes(person, personRoleSliceRequest, model);
+            addPersonRoleTableAttributes(person, personRoleFetchParams, model);
         }
         return view;
     }
 
     @PostMapping(params = "invalidateSession", path = {DETAIL_URL, DETAIL_URL + "/{id}"})
-    public String invalidateSession(Person person, @Qualifier("personRole") SliceRequest personRoleSliceRequest, HttpServletRequest request, Model model, @RequestParam("invalidateSession") String sessionId) {
+    public String invalidateSession(Person person, @Qualifier("personRole") FetchParams personRoleFetchParams, HttpServletRequest request, Model model, @RequestParam("invalidateSession") String sessionId) {
         sessionService.invalidate(sessionId);
         model.addAttribute(person);
-        addPersonRoleTableAttributes(person, personRoleSliceRequest, model);
+        addPersonRoleTableAttributes(person, personRoleFetchParams, model);
         return Utils.isAjaxRequest(request) ? SESSIONS_VIEW : DETAIL_VIEW;
     }
 
-    private void addPersonRoleTableAttributes(Person person, SliceRequest personRoleSliceRequest, Model model) {
+    private void addPersonRoleTableAttributes(Person person, FetchParams personRoleFetchParams, Model model) {
         if (person == null || person.getId() == null) {
             return;
         }
 
-        personRoleSliceRequest = personRoleSliceRequest.addFilter("person_id", person.getId());
-        TableSlice slice = personRoleService.findSlice(personRoleSliceRequest);
+        personRoleFetchParams = personRoleFetchParams.addFilter("person_id", person.getId());
+        TableSlice slice = personRoleService.findSlice(personRoleFetchParams);
         EntityIdentifier<PersonRoleTable> identifier = personRoleService.getDetailEntityIdentifier(PersonRoleTable.class);
         List<SessionDetail> sessions = sessionService.fetchListByEmail(person.getEmail());
 
@@ -107,7 +107,7 @@ public class PersonController extends AdminController {
 
     @AdminMenuItemDefinition(title = "admin.menu.people", fontAwesomeIcon = "fas fa-users")
     @GetMapping(LIST_URL)
-    public String showPeople(SliceRequest sliceRequest, Model model, HttpServletRequest request) {
-        return listController.list(sliceRequest, model, request);
+    public String showPeople(FetchParams fetchParams, Model model, HttpServletRequest request) {
+        return listController.list(fetchParams, model, request);
     }
 }

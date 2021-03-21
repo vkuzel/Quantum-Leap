@@ -1,6 +1,6 @@
 package cz.quantumleap.core.database.query;
 
-import cz.quantumleap.core.database.domain.SliceRequest;
+import cz.quantumleap.core.database.domain.FetchParams;
 import org.jooq.Field;
 import org.jooq.SortField;
 import org.jooq.SortOrder;
@@ -23,7 +23,7 @@ public final class SortingFactory {
         this.fieldMap = fieldMap;
     }
 
-    public List<SortField<?>> forSliceRequest(SliceRequest request) {
+    public List<SortField<?>> forFetchParams(FetchParams request) {
         Sort sort = request.getSort();
         if (sort.isUnsorted()) {
             return Collections.emptyList();

@@ -1,6 +1,6 @@
 package cz.quantumleap.core.database.query;
 
-import cz.quantumleap.core.database.domain.SliceRequest;
+import cz.quantumleap.core.database.domain.FetchParams;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -45,7 +45,7 @@ public final class FilterFactory {
         );
     }
 
-    public Condition forSliceRequest(SliceRequest request) {
+    public Condition forFetchParams(FetchParams request) {
         Condition filterCondition = createConditionFromFilter(fieldMap, request.getFilter());
         Condition queryCondition = createConditionFromQuery(fieldMap, request.getQuery());
 

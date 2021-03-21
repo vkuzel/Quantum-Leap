@@ -1,6 +1,6 @@
 package cz.quantumleap.core.view.controllerargument;
 
-import cz.quantumleap.core.database.domain.SliceRequest;
+import cz.quantumleap.core.database.domain.FetchParams;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.MethodParameter;
 import org.springframework.data.domain.Sort;
@@ -10,11 +10,10 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
-import java.util.HashMap;
+import static cz.quantumleap.core.database.domain.FetchParams.MAX_ITEMS;
+import static java.util.Collections.emptyMap;
 
-import static cz.quantumleap.core.database.domain.SliceRequest.MAX_ITEMS;
-
-public class SliceRequestControllerArgumentResolver implements HandlerMethodArgumentResolver {
+public class FetchParamsControllerArgumentResolver implements HandlerMethodArgumentResolver {
 
     public static final String SORT_PARAM_NAME = "sort";
     public static final String QUERY_PARAM_NAME = "query";
@@ -26,21 +25,21 @@ public class SliceRequestControllerArgumentResolver implements HandlerMethodArgu
 
     private final SortHandlerMethodArgumentResolver sortHandlerMethodArgumentResolver;
 
-    public SliceRequestControllerArgumentResolver(SortHandlerMethodArgumentResolver sortHandlerMethodArgumentResolver) {
+    public FetchParamsControllerArgumentResolver(SortHandlerMethodArgumentResolver sortHandlerMethodArgumentResolver) {
         this.sortHandlerMethodArgumentResolver = sortHandlerMethodArgumentResolver;
     }
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
-        return SliceRequest.class.equals(parameter.getParameterType());
+        return FetchParams.class.equals(parameter.getParameterType());
     }
 
     @Override
-    public SliceRequest resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
-        String qualifier = parameter != null && parameter.hasParameterAnnotation(Qualifier.class) ? parameter.getParameterAnnotation(Qualifier.class).value() : null;
+    public FetchParams resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
+        String qualifier = parameter.hasParameterAnnotation(Qualifier.class) ? parameter.getParameterAnnotation(Qualifier.class).value() : null;
         String query = getWebRequestStringParameter(webRequest, qualifier, QUERY_PARAM_NAME, null);
         int offset = getWebRequestIntParameter(webRequest, qualifier, OFFSET_PARAM_NAME, DEFAULT_OFFSET);
-        int size = getWebRequestIntParameter(webRequest, qualifier, SIZE_PARAM_NAME, SliceRequest.CHUNK_SIZE);
+        int size = getWebRequestIntParameter(webRequest, qualifier, SIZE_PARAM_NAME, FetchParams.CHUNK_SIZE);
 
         if (offset >= MAX_ITEMS) {
             offset = MAX_ITEMS - 1;
@@ -51,7 +50,7 @@ public class SliceRequestControllerArgumentResolver implements HandlerMethodArgu
 
         Sort sort = sortHandlerMethodArgumentResolver.resolveArgument(parameter, mavContainer, webRequest, binderFactory);
 
-        return new SliceRequest(new HashMap<>(), query, null, offset, size, sort, null);
+        return new FetchParams(emptyMap(), query, null, offset, size, sort, null);
     }
 
     private int getWebRequestIntParameter(NativeWebRequest webRequest, String qualifier, String paramName, int defaultValue) {

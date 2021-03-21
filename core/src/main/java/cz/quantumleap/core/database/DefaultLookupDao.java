@@ -1,6 +1,6 @@
 package cz.quantumleap.core.database;
 
-import cz.quantumleap.core.database.domain.SliceRequest;
+import cz.quantumleap.core.database.domain.FetchParams;
 import cz.quantumleap.core.database.domain.TableSlice;
 import cz.quantumleap.core.database.entity.Entity;
 import cz.quantumleap.core.database.query.FilterFactory;
@@ -79,8 +79,8 @@ public final class DefaultLookupDao<TABLE extends Table<? extends Record>> imple
     }
 
     @Override
-    public TableSlice fetchSlice(SliceRequest sliceRequest) {
-        return listDao.fetchSlice(sliceRequest);
+    public TableSlice fetchSlice(FetchParams fetchParams) {
+        return listDao.fetchSlice(fetchParams);
     }
 
     private Table<? extends Record> getTable() {

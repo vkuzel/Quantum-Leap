@@ -9,7 +9,7 @@ import java.util.Map;
 
 import static java.util.Collections.unmodifiableMap;
 
-public class SliceRequest {
+public class FetchParams {
 
     public static final int CHUNK_SIZE = 15;
     public static final int MAX_ITEMS = 2000;
@@ -25,7 +25,7 @@ public class SliceRequest {
 
     private final Long tablePreferencesId;
 
-    public SliceRequest(Map<String, Object> filter, String query, Condition condition, int offset, int size, Sort sort, Long tablePreferencesId) {
+    public FetchParams(Map<String, Object> filter, String query, Condition condition, int offset, int size, Sort sort, Long tablePreferencesId) {
         Validate.notNull(sort);
         this.filter = unmodifiableMap(filter);
         this.query = query;
@@ -36,8 +36,8 @@ public class SliceRequest {
         this.tablePreferencesId = tablePreferencesId;
     }
 
-    public static SliceRequest filteredSorted(Map<String, Object> filter, Sort sort) {
-        return new SliceRequest(
+    public static FetchParams filteredSorted(Map<String, Object> filter, Sort sort) {
+        return new FetchParams(
                 filter,
                 null,
                 null,
@@ -48,19 +48,19 @@ public class SliceRequest {
         );
     }
 
-    public SliceRequest addCondition(Condition condition) {
+    public FetchParams addCondition(Condition condition) {
         Condition newCondition = this.condition != null ? this.condition.and(condition) : condition;
-        return new SliceRequest(filter, query, newCondition, offset, size, sort, tablePreferencesId);
+        return new FetchParams(filter, query, newCondition, offset, size, sort, tablePreferencesId);
     }
 
-    public SliceRequest withSort(Sort sort) {
-        return new SliceRequest(filter, query, condition, offset, size, sort, tablePreferencesId);
+    public FetchParams withSort(Sort sort) {
+        return new FetchParams(filter, query, condition, offset, size, sort, tablePreferencesId);
     }
 
-    public SliceRequest addFilter(String fieldName, Object value) {
+    public FetchParams addFilter(String fieldName, Object value) {
         Map<String, Object> filter = new HashMap<>(this.filter);
         filter.put(fieldName, value);
-        return new SliceRequest(filter, query, condition, offset, size, sort, tablePreferencesId);
+        return new FetchParams(filter, query, condition, offset, size, sort, tablePreferencesId);
     }
 
     public Map<String, Object> getFilter() {
@@ -91,10 +91,10 @@ public class SliceRequest {
         return tablePreferencesId;
     }
 
-    public SliceRequest extend() {
+    public FetchParams extend() {
         if (offset + size < MAX_ITEMS) {
             int nextSize = Math.min(MAX_ITEMS - offset, offset + size + CHUNK_SIZE);
-            return new SliceRequest(filter, query, condition, offset, nextSize, sort, tablePreferencesId);
+            return new FetchParams(filter, query, condition, offset, nextSize, sort, tablePreferencesId);
         }
         return null;
     }

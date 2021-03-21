@@ -1,7 +1,7 @@
 package cz.quantumleap.core.view;
 
 import cz.quantumleap.core.business.LookupService;
-import cz.quantumleap.core.database.domain.SliceRequest;
+import cz.quantumleap.core.database.domain.FetchParams;
 import cz.quantumleap.core.database.entity.EntityIdentifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -105,7 +105,7 @@ public class LookupRegistry {
             Method lookupListMethod = getLookupControllerMethod(
                     lookupController.getClass(),
                     "lookupList",
-                    SliceRequest.class,
+                    FetchParams.class,
                     Model.class,
                     HttpServletRequest.class,
                     HttpServletResponse.class

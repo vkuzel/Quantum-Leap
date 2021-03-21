@@ -1,7 +1,7 @@
 package cz.quantumleap.core.view;
 
 import cz.quantumleap.core.filestorage.FileStorageManager;
-import cz.quantumleap.core.view.controllerargument.SliceRequestControllerArgumentResolver;
+import cz.quantumleap.core.view.controllerargument.FetchParamsControllerArgumentResolver;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.context.MessageSource;
@@ -47,8 +47,8 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
                 .resourceChain(false);
     }
 
-    private SliceRequestControllerArgumentResolver createPageableResolver() {
-        return new SliceRequestControllerArgumentResolver(createSortResolver());
+    private FetchParamsControllerArgumentResolver createPageableResolver() {
+        return new FetchParamsControllerArgumentResolver(createSortResolver());
     }
 
     private SortHandlerMethodArgumentResolver createSortResolver() {

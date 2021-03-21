@@ -1,6 +1,6 @@
 package cz.quantumleap.admin.notification;
 
-import cz.quantumleap.core.database.domain.SliceRequest;
+import cz.quantumleap.core.database.domain.FetchParams;
 import cz.quantumleap.core.database.domain.TableSlice;
 import cz.quantumleap.core.database.domain.TableSlice.Column;
 import cz.quantumleap.core.database.entity.EntityIdentifier;
@@ -47,9 +47,9 @@ public class NotificationService {
     }
 
     @Transactional
-    public TableSlice findSlice(long personId, SliceRequest sliceRequest) {
+    public TableSlice findSlice(long personId, FetchParams fetchParams) {
         Locale locale = LocaleContextHolder.getLocale();
-        TableSlice slice = notificationDao.fetchSlice(personId, sliceRequest);
+        TableSlice slice = notificationDao.fetchSlice(personId, fetchParams);
 
         List<Column> columns = slice.getColumns();
         Column codeColumn = slice.getColumnByName("code");

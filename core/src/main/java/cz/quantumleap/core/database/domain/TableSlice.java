@@ -15,23 +15,23 @@ public class TableSlice implements Iterable<List<Object>> {
 
     private final EntityIdentifier<?> entityIdentifier;
     private final TablePreferences tablePreferences;
-    private final SliceRequest sliceRequest;
+    private final FetchParams fetchParams;
     private final boolean canExtend;
 
     private final List<Column> columns;
     private final List<List<Object>> rows;
 
-    public TableSlice(EntityIdentifier<?> entityIdentifier, TablePreferences tablePreferences, SliceRequest sliceRequest, boolean canExtend, List<Column> columns, List<List<Object>> rows) {
+    public TableSlice(EntityIdentifier<?> entityIdentifier, TablePreferences tablePreferences, FetchParams fetchParams, boolean canExtend, List<Column> columns, List<List<Object>> rows) {
         this.entityIdentifier = entityIdentifier;
         this.tablePreferences = tablePreferences;
-        this.sliceRequest = sliceRequest;
+        this.fetchParams = fetchParams;
         this.canExtend = canExtend;
         this.columns = columns;
         this.rows = rows;
     }
 
     public Builder builder() {
-        return new Builder(entityIdentifier, tablePreferences, sliceRequest, canExtend, columns, rows);
+        return new Builder(entityIdentifier, tablePreferences, fetchParams, canExtend, columns, rows);
     }
 
     public EntityIdentifier<?> getEntityIdentifier() {
@@ -85,8 +85,8 @@ public class TableSlice implements Iterable<List<Object>> {
         return canExtend;
     }
 
-    public SliceRequest extend() {
-        return canExtend ? sliceRequest.extend() : null;
+    public FetchParams extend() {
+        return canExtend ? fetchParams.extend() : null;
     }
 
     public static class Column {
@@ -172,7 +172,7 @@ public class TableSlice implements Iterable<List<Object>> {
 
         private final EntityIdentifier<?> entityIdentifier;
         private final TablePreferences tablePreferences;
-        private final SliceRequest sliceRequest;
+        private final FetchParams fetchParams;
         private final boolean canExtend;
 
         private final List<Column> columns;
@@ -181,14 +181,14 @@ public class TableSlice implements Iterable<List<Object>> {
         private Builder(
                 EntityIdentifier<?> entityIdentifier,
                 TablePreferences tablePreferences,
-                SliceRequest sliceRequest,
+                FetchParams fetchParams,
                 boolean canExtend,
                 List<Column> columns,
                 List<List<Object>> rows
         ) {
             this.entityIdentifier = entityIdentifier;
             this.tablePreferences = tablePreferences;
-            this.sliceRequest = sliceRequest;
+            this.fetchParams = fetchParams;
             this.canExtend = canExtend;
             this.columns = new ArrayList<>(columns);
             this.rows = new ArrayList<>(rows);
@@ -203,7 +203,7 @@ public class TableSlice implements Iterable<List<Object>> {
         }
 
         public TableSlice build() {
-            return new TableSlice(entityIdentifier, tablePreferences, sliceRequest, canExtend, columns, rows);
+            return new TableSlice(entityIdentifier, tablePreferences, fetchParams, canExtend, columns, rows);
         }
     }
 }

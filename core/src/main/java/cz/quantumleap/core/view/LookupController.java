@@ -1,6 +1,6 @@
 package cz.quantumleap.core.view;
 
-import cz.quantumleap.core.database.domain.SliceRequest;
+import cz.quantumleap.core.database.domain.FetchParams;
 import cz.quantumleap.core.database.entity.EntityIdentifier;
 import org.springframework.ui.Model;
 
@@ -23,5 +23,5 @@ public interface LookupController {
 
     String findLookupLabels(String query, Model model, HttpServletRequest request, HttpServletResponse response);
 
-    String lookupList(SliceRequest sliceRequest, Model model, HttpServletRequest request, HttpServletResponse response);
+    String lookupList(FetchParams fetchParams, Model model, HttpServletRequest request, HttpServletResponse response);
 }

@@ -1,7 +1,7 @@
 package cz.quantumleap.core.view;
 
 import cz.quantumleap.core.business.LookupService;
-import cz.quantumleap.core.database.domain.SliceRequest;
+import cz.quantumleap.core.database.domain.FetchParams;
 import cz.quantumleap.core.database.domain.TableSlice;
 import cz.quantumleap.core.database.entity.EntityIdentifier;
 import cz.quantumleap.core.security.WebSecurityExpressionEvaluator;
@@ -84,11 +84,11 @@ public final class DefaultLookupController implements LookupController {
     }
 
     @Override
-    public String lookupList(SliceRequest sliceRequest, Model model, HttpServletRequest request, HttpServletResponse response) {
+    public String lookupList(FetchParams fetchParams, Model model, HttpServletRequest request, HttpServletResponse response) {
         checkPermission(request, response);
 
         EntityIdentifier<?> identifier = lookupService.getListEntityIdentifier(null);
-        TableSlice slice = lookupService.findSlice(sliceRequest);
+        TableSlice slice = lookupService.findSlice(fetchParams);
 
         model.addAttribute(TABLE_SLICE_MODEL_ATTRIBUTE_NAME, slice);
         model.addAttribute(LIST_ENTITY_IDENTIFIER_MODEL_ATTRIBUTE_NAME, identifier.toString());

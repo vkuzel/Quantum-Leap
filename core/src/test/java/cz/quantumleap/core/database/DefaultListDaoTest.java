@@ -1,6 +1,6 @@
 package cz.quantumleap.core.database;
 
-import cz.quantumleap.core.database.domain.SliceRequest;
+import cz.quantumleap.core.database.domain.FetchParams;
 import cz.quantumleap.core.database.domain.TableSlice;
 import cz.quantumleap.core.database.domain.TableSlice.Column;
 import cz.quantumleap.core.database.entity.Entity;
@@ -19,7 +19,7 @@ import org.springframework.data.domain.Sort;
 
 import java.util.List;
 
-import static cz.quantumleap.core.database.domain.SliceRequest.filteredSorted;
+import static cz.quantumleap.core.database.domain.FetchParams.filteredSorted;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonMap;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -43,8 +43,8 @@ class DefaultListDaoTest {
         Entity<TestTable> referencingEntity = createReferencingEntity(entity.getTable());
         DefaultListDao<TestTable> defaultListDao = createDefaultListDao(referencingEntity);
 
-        SliceRequest sliceRequest = filteredSorted(emptyMap(), unsorted());
-        TableSlice tableSlice = defaultListDao.fetchSlice(sliceRequest);
+        FetchParams fetchParams = filteredSorted(emptyMap(), unsorted());
+        TableSlice tableSlice = defaultListDao.fetchSlice(fetchParams);
 
         assertEquals(2, tableSlice.getColumns().size());
         assertTrue(tableSlice.getColumnByName("id").isPrimaryKey());
@@ -66,8 +66,8 @@ class DefaultListDaoTest {
 
         DefaultListDao<TestTable> defaultListDao = createDefaultListDao(referencingEntity);
 
-        SliceRequest sliceRequest = filteredSorted(emptyMap(), Sort.by(ASC, "entity_id"));
-        TableSlice tableSlice = defaultListDao.fetchSlice(sliceRequest);
+        FetchParams fetchParams = filteredSorted(emptyMap(), Sort.by(ASC, "entity_id"));
+        TableSlice tableSlice = defaultListDao.fetchSlice(fetchParams);
 
         assertEquals(3, tableSlice.getRows().size());
         assertEquals(3L, getValue(tableSlice, "id", 0));
@@ -88,8 +88,8 @@ class DefaultListDaoTest {
 
         DefaultListDao<TestTable> defaultListDao = createDefaultListDao(referencingEntity);
 
-        SliceRequest sliceRequest = filteredSorted(singletonMap("entity_id", "Aaa"), unsorted());
-        TableSlice tableSlice = defaultListDao.fetchSlice(sliceRequest);
+        FetchParams fetchParams = filteredSorted(singletonMap("entity_id", "Aaa"), unsorted());
+        TableSlice tableSlice = defaultListDao.fetchSlice(fetchParams);
 
         assertEquals(1, tableSlice.getRows().size());
         assertEquals(1L, getValue(tableSlice, "id", 0));

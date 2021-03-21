@@ -1,7 +1,7 @@
 package cz.quantumleap.admin.web;
 
 import cz.quantumleap.core.database.domain.TableSlice;
-import cz.quantumleap.core.view.controllerargument.SliceRequestControllerArgumentResolver;
+import cz.quantumleap.core.view.controllerargument.FetchParamsControllerArgumentResolver;
 
 public class TemplateHelper {
 
@@ -24,15 +24,15 @@ public class TemplateHelper {
         }
 
         public String getSortParamName() {
-            return SliceRequestControllerArgumentResolver.qualifyParamName(qualifier, SliceRequestControllerArgumentResolver.SORT_PARAM_NAME);
+            return FetchParamsControllerArgumentResolver.qualifyParamName(qualifier, FetchParamsControllerArgumentResolver.SORT_PARAM_NAME);
         }
 
         public String getOffsetParamName() {
-            return SliceRequestControllerArgumentResolver.qualifyParamName(qualifier, SliceRequestControllerArgumentResolver.OFFSET_PARAM_NAME);
+            return FetchParamsControllerArgumentResolver.qualifyParamName(qualifier, FetchParamsControllerArgumentResolver.OFFSET_PARAM_NAME);
         }
 
         public String getSizeParamName() {
-            return SliceRequestControllerArgumentResolver.qualifyParamName(qualifier, SliceRequestControllerArgumentResolver.SIZE_PARAM_NAME);
+            return FetchParamsControllerArgumentResolver.qualifyParamName(qualifier, FetchParamsControllerArgumentResolver.SIZE_PARAM_NAME);
         }
     }
 }

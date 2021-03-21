@@ -1,6 +1,6 @@
 package cz.quantumleap.core.database;
 
-import cz.quantumleap.core.database.domain.SliceRequest;
+import cz.quantumleap.core.database.domain.FetchParams;
 import cz.quantumleap.core.database.domain.TableSlice;
 import cz.quantumleap.core.database.entity.Entity;
 import org.jooq.Condition;
@@ -16,7 +16,7 @@ public interface ListDao<TABLE extends Table<? extends Record>> {
 
     Entity<TABLE> getListEntity();
 
-    TableSlice fetchSlice(SliceRequest sliceRequest);
+    TableSlice fetchSlice(FetchParams fetchParams);
 
     <T> List<T> fetchList(Condition condition, List<SortField<?>> orderBy, int limit, Class<T> type);
 

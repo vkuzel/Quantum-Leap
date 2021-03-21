@@ -1,6 +1,6 @@
 package cz.quantumleap.core.database.query;
 
-import cz.quantumleap.core.database.domain.SliceRequest;
+import cz.quantumleap.core.database.domain.FetchParams;
 import cz.quantumleap.core.database.domain.TablePreferences;
 import cz.quantumleap.core.database.domain.TableSlice;
 import cz.quantumleap.core.database.entity.Entity;
@@ -29,13 +29,13 @@ public final class TableSliceFactory {
 
     public TableSlice forRequestedResult(
             TablePreferences tablePreferences,
-            SliceRequest sliceRequest,
+            FetchParams fetchParams,
             Result<?> result
     ) {
-        Map<Field<?>, TableSlice.Column> fieldColumnMap = createFieldColumnMap(sliceRequest.getSort());
+        Map<Field<?>, TableSlice.Column> fieldColumnMap = createFieldColumnMap(fetchParams.getSort());
         List<TableSlice.Column> columns = new ArrayList<>(fieldColumnMap.values());
         List<Field<?>> fields = new ArrayList<>(fieldColumnMap.keySet());
-        int maxSize = sliceRequest.getSize();
+        int maxSize = fetchParams.getSize();
 
         List<List<Object>> rows = new ArrayList<>(result.size());
         for (Record record : result) {
@@ -47,7 +47,7 @@ public final class TableSliceFactory {
         return new TableSlice(
                 entity.getIdentifier(),
                 tablePreferences,
-                sliceRequest,
+                fetchParams,
                 result.size() > maxSize,
                 columns,
                 rows

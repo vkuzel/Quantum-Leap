@@ -2,7 +2,7 @@ package cz.quantumleap.core.notification;
 
 import cz.quantumleap.core.database.DaoStub;
 import cz.quantumleap.core.database.EntityRegistry;
-import cz.quantumleap.core.database.domain.SliceRequest;
+import cz.quantumleap.core.database.domain.FetchParams;
 import cz.quantumleap.core.database.domain.TableSlice;
 import cz.quantumleap.core.database.entity.Entity;
 import cz.quantumleap.core.notification.domain.Notification;
@@ -34,8 +34,8 @@ public class NotificationDao extends DaoStub<NotificationTable> {
         return super.fetchByCondition(condition, Notification.class);
     }
 
-    public TableSlice fetchSlice(long personId, SliceRequest sliceRequest) {
-        return super.fetchSlice(sliceRequest.addCondition(createPersonNotificationsCondition(personId)));
+    public TableSlice fetchSlice(long personId, FetchParams fetchParams) {
+        return super.fetchSlice(fetchParams.addCondition(createPersonNotificationsCondition(personId)));
     }
 
     Notification fetchUnresolvedByDefinition(Notification notification) {

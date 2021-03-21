@@ -6,7 +6,7 @@ import cz.quantumleap.admin.menu.AdminMenuItemDefinition;
 import cz.quantumleap.admin.menu.AdminMenuManager;
 import cz.quantumleap.admin.notification.NotificationService;
 import cz.quantumleap.admin.person.PersonService;
-import cz.quantumleap.core.database.domain.SliceRequest;
+import cz.quantumleap.core.database.domain.FetchParams;
 import cz.quantumleap.core.role.domain.Role;
 import cz.quantumleap.core.security.WebSecurityExpressionEvaluator;
 import cz.quantumleap.core.view.*;
@@ -61,7 +61,7 @@ public class RoleController extends AdminController {
 
     @AdminMenuItemDefinition(title = "admin.menu.roles", parentByTitle = "admin.menu.people", fontAwesomeIcon = "far fa-id-card")
     @GetMapping(LIST_URL)
-    public String showRoles(SliceRequest sliceRequest, Model model, HttpServletRequest request) {
-        return listController.list(sliceRequest, model, request);
+    public String showRoles(FetchParams fetchParams, Model model, HttpServletRequest request) {
+        return listController.list(fetchParams, model, request);
     }
 }

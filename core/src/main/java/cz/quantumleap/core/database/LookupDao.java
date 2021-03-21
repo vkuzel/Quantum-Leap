@@ -1,6 +1,6 @@
 package cz.quantumleap.core.database;
 
-import cz.quantumleap.core.database.domain.SliceRequest;
+import cz.quantumleap.core.database.domain.FetchParams;
 import cz.quantumleap.core.database.domain.TableSlice;
 import cz.quantumleap.core.database.entity.Entity;
 import org.jooq.Record;
@@ -23,5 +23,5 @@ public interface LookupDao<TABLE extends Table<? extends Record>> {
 
     Map<Object, String> fetchLabelsByFilter(String query);
 
-    TableSlice fetchSlice(SliceRequest sliceRequest);
+    TableSlice fetchSlice(FetchParams fetchParams);
 }
