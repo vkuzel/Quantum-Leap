@@ -13,6 +13,11 @@ public final class Entity<TABLE extends Table<? extends Record>> {
 
     private final EntityIdentifier<TABLE> entityIdentifier;
     /**
+     * Table from which data will be queried can be different to the
+     * identifier. Usually it's a view.
+     */
+    private final Table<?> table;
+    /**
      * Additional type info for entity fields. Can be null for fields which
      * does not have any extra info.
      */
@@ -30,6 +35,7 @@ public final class Entity<TABLE extends Table<? extends Record>> {
 
     private Entity(
             EntityIdentifier<TABLE> entityIdentifier,
+            Table<?> table,
             Map<Field<?>, FieldMetaType> fieldMetaTypeMap,
             List<Field<?>> primaryKeyFields,
             Function<Table<?>, Field<String>> lookupLabelFieldBuilder,
@@ -38,6 +44,7 @@ public final class Entity<TABLE extends Table<? extends Record>> {
             Function<String, Condition> wordConditionBuilder
     ) {
         this.entityIdentifier = entityIdentifier;
+        this.table = table;
         this.fieldMetaTypeMap = fieldMetaTypeMap;
         this.primaryKeyFields = primaryKeyFields;
         this.lookupLabelFieldBuilder = lookupLabelFieldBuilder;
@@ -52,8 +59,8 @@ public final class Entity<TABLE extends Table<? extends Record>> {
         return entityIdentifier;
     }
 
-    public TABLE getTable() {
-        return entityIdentifier.getTable();
+    public Table<?> getTable() {
+        return table;
     }
 
     public List<Field<?>> getFields() {
@@ -113,11 +120,15 @@ public final class Entity<TABLE extends Table<? extends Record>> {
     }
 
     public static <TABLE extends Table<? extends Record>> Builder<TABLE> builder(TABLE table, String qualifier) {
-        return builder(EntityIdentifier.forTableWithQualifier(table, qualifier));
+        return builder(EntityIdentifier.forTableWithQualifier(table, qualifier), table);
     }
 
     public static <TABLE extends Table<? extends Record>> Builder<TABLE> builder(EntityIdentifier<TABLE> entityIdentifier) {
-        return new Builder<>(entityIdentifier);
+        return new Builder<>(entityIdentifier, entityIdentifier.getTable());
+    }
+
+    public static <TABLE extends Table<? extends Record>> Builder<TABLE> builder(EntityIdentifier<TABLE> entityIdentifier, Table<?> table) {
+        return new Builder<>(entityIdentifier, table);
     }
 
     @Override
@@ -128,6 +139,7 @@ public final class Entity<TABLE extends Table<? extends Record>> {
     public static class Builder<TABLE extends Table<? extends Record>> {
 
         private final EntityIdentifier<TABLE> entityIdentifier;
+        private final Table<?> table;
         private Map<Field<?>, FieldMetaType> fieldMetaTypeMap = new HashMap<>();
         private Field<?> primaryKeyField;
         private Function<Table<?>, Field<String>> lookupLabelFieldBuilder = null;
@@ -136,9 +148,11 @@ public final class Entity<TABLE extends Table<? extends Record>> {
         private Condition defaultCondition = null;
         private Function<String, Condition> wordConditionBuilder = q -> null;
 
-        private Builder(EntityIdentifier<TABLE> entityIdentifier) {
+        private Builder(EntityIdentifier<TABLE> entityIdentifier, Table<?> table) {
             Validate.notNull(entityIdentifier);
+            Validate.notNull(table);
             this.entityIdentifier = entityIdentifier;
+            this.table = table;
         }
 
         public Builder<TABLE> addEnumMetaType(Field<?> field) {
@@ -205,7 +219,6 @@ public final class Entity<TABLE extends Table<? extends Record>> {
         }
 
         public Entity<TABLE> build() {
-            TABLE table = entityIdentifier.getTable();
             List<Field<?>> primaryKeyFields;
             if (this.primaryKeyField != null) {
                 primaryKeyFields = singletonList(this.primaryKeyField);
@@ -218,6 +231,7 @@ public final class Entity<TABLE extends Table<? extends Record>> {
             }
             return new Entity<>(
                     entityIdentifier,
+                    table,
                     fieldMetaTypeMap,
                     primaryKeyFields,
                     lookupLabelFieldBuilder,
