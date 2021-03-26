@@ -133,19 +133,25 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
      * be fully initialised to work properly. That is why factories cannot be
      * initialised in the constructor, but has to be lazy-initialised here.
      */
-    private synchronized void initFactories() {
+    private void initFactories() {
         if (sliceQueryFields != null) {
             return;
         }
 
-        sliceQueryFields = new TableSliceQueryFieldsFactory(entity, entityRegistry).createQueryFields();
-        sliceFilterConditionFactory = new FilterConditionFactory(sliceQueryFields.getConditionFieldMap());
-        sliceQueryConditionFactory = new QueryConditionFactory(entity.getWordConditionBuilder(), sliceQueryFields.getConditionFieldMap());
-        sliceSortingFactory = new SortingFactory(sliceQueryFields.getOrderFieldMap());
-        sliceFactory = new TableSliceFactory(entity);
+        synchronized (this) {
+            if (sliceQueryFields != null) {
+                return;
+            }
 
-        listFilterConditionFactory = new FilterConditionFactory(entity.getFieldMap());
-        listQueryConditionFactory = new QueryConditionFactory(entity.getWordConditionBuilder(), entity.getFieldMap());
-        listSortingFactory = new SortingFactory(entity.getFieldMap());
+            sliceQueryFields = new TableSliceQueryFieldsFactory(entity, entityRegistry).createQueryFields();
+            sliceFilterConditionFactory = new FilterConditionFactory(sliceQueryFields.getConditionFieldMap());
+            sliceQueryConditionFactory = new QueryConditionFactory(entity.getWordConditionBuilder(), sliceQueryFields.getConditionFieldMap());
+            sliceSortingFactory = new SortingFactory(sliceQueryFields.getOrderFieldMap());
+            sliceFactory = new TableSliceFactory(entity);
+
+            listFilterConditionFactory = new FilterConditionFactory(entity.getFieldMap());
+            listQueryConditionFactory = new QueryConditionFactory(entity.getWordConditionBuilder(), entity.getFieldMap());
+            listSortingFactory = new SortingFactory(entity.getFieldMap());
+        }
     }
 }
