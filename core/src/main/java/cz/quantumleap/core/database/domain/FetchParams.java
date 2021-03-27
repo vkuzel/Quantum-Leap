@@ -57,6 +57,10 @@ public class FetchParams {
         return filter;
     }
 
+    public FetchParams withQuery(String query) {
+        return new FetchParams(filter, query, condition, offset, size, sort, tablePreferencesId);
+    }
+
     public String getQuery() {
         return query;
     }

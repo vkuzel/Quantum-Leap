@@ -22,7 +22,8 @@
                         </div>
                         <input type="text" id="search" class="form-control"
                                th:placeholder="#{admin.table.title.core.search-people}"
-                               th:aria-label="#{admin.table.title.core.search-people}" aria-describedby="search-label">
+                               th:aria-label="#{admin.table.title.core.search-people}" aria-describedby="search-label"
+                               th:value="${tableSlice.fetchParams.query}">
                     </div>
                 </div>
                 <div class="col-sm-4">

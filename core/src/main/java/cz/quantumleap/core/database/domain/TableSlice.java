@@ -21,7 +21,14 @@ public class TableSlice implements Iterable<List<Object>> {
     private final List<Column> columns;
     private final List<List<Object>> rows;
 
-    public TableSlice(EntityIdentifier<?> entityIdentifier, TablePreferences tablePreferences, FetchParams fetchParams, boolean canExtend, List<Column> columns, List<List<Object>> rows) {
+    public TableSlice(
+            EntityIdentifier<?> entityIdentifier,
+            TablePreferences tablePreferences,
+            FetchParams fetchParams,
+            boolean canExtend,
+            List<Column> columns,
+            List<List<Object>> rows
+    ) {
         this.entityIdentifier = entityIdentifier;
         this.tablePreferences = tablePreferences;
         this.fetchParams = fetchParams;
@@ -79,6 +86,10 @@ public class TableSlice implements Iterable<List<Object>> {
 
     public boolean isEmpty() {
         return rows.isEmpty();
+    }
+
+    public FetchParams getFetchParams() {
+        return fetchParams;
     }
 
     public boolean canExtend() {
