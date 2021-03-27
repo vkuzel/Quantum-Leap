@@ -5,6 +5,8 @@ import cz.quantumleap.core.database.domain.TableSlice;
 import cz.quantumleap.core.database.entity.Entity;
 import cz.quantumleap.core.database.query.*;
 import cz.quantumleap.core.database.query.TableSliceQueryFieldsFactory.QueryFields;
+import cz.quantumleap.core.slicequery.SliceQueryDao;
+import cz.quantumleap.core.slicequery.domain.SliceQuery;
 import org.jooq.*;
 import org.springframework.data.domain.Sort;
 
@@ -20,6 +22,7 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
     private final Entity<TABLE> entity;
     private final DSLContext dslContext;
     private final EntityRegistry entityRegistry;
+    private final SliceQueryDao sliceQueryDao;
 
     private QueryFields sliceQueryFields;
     private FilterConditionFactory sliceFilterConditionFactory;
@@ -31,10 +34,16 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
     private QueryConditionFactory listQueryConditionFactory;
     private SortingFactory listSortingFactory;
 
-    public DefaultListDao(Entity<TABLE> entity, DSLContext dslContext, EntityRegistry entityRegistry) {
+    public DefaultListDao(
+            Entity<TABLE> entity,
+            DSLContext dslContext,
+            EntityRegistry entityRegistry,
+            SliceQueryDao sliceQueryDao
+    ) {
         this.entity = entity;
         this.dslContext = dslContext;
         this.entityRegistry = entityRegistry;
+        this.sliceQueryDao = sliceQueryDao;
     }
 
     @Override
@@ -45,7 +54,8 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
     @Override
     public TableSlice fetchSlice(FetchParams params) {
         initFactories();
-        params = setDefaultOrder(params);
+        List<SliceQuery> sliceQueries = sliceQueryDao.fetchByIdentifierForCurrentUser(entity.getIdentifier());
+        params = setParamsDefaultValues(params, sliceQueries);
 
         Condition condition = QueryUtils.joinConditions(
                 AND,
@@ -68,7 +78,29 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
                 .limit(params.getOffset(), resolveNumberOfRows(params))
                 .fetch();
 
-        return sliceFactory.forRequestedResult(params, result);
+        return sliceFactory.forRequestedResult(params, result, sliceQueries);
+    }
+
+    private FetchParams setParamsDefaultValues(FetchParams fetchParams, List<SliceQuery> sliceQueries) {
+        if (fetchParams.getQuery() == null) {
+            for (SliceQuery sliceQuery : sliceQueries) {
+                if (sliceQuery.isDefault()) {
+                    String query = sliceQuery.getQuery();
+                    fetchParams = fetchParams.withQuery(query);
+                    break;
+                }
+            }
+        }
+
+        if (fetchParams.getSort() == null || fetchParams.getSort().isUnsorted()) {
+            List<Field<?>> primaryKeyFields = entity.getPrimaryKeyFields();
+            List<Sort.Order> orders = primaryKeyFields.stream()
+                    .map(field -> Sort.Order.desc(field.getName()))
+                    .collect(Collectors.toList());
+            fetchParams = fetchParams.withSort(Sort.by(orders));
+        }
+
+        return fetchParams;
     }
 
     private FetchParams setDefaultOrder(FetchParams fetchParams) {

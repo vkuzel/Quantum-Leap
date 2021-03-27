@@ -4,6 +4,7 @@ import cz.quantumleap.core.database.DaoStub;
 import cz.quantumleap.core.database.EntityRegistry;
 import cz.quantumleap.core.database.entity.Entity;
 import cz.quantumleap.core.person.domain.Person;
+import cz.quantumleap.core.slicequery.SliceQueryDao;
 import cz.quantumleap.core.tables.PersonTable;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
@@ -18,8 +19,8 @@ import static cz.quantumleap.core.tables.PersonTable.PERSON;
 @Repository
 public class PersonDao extends DaoStub<PersonTable> {
 
-    protected PersonDao(DSLContext dslContext, EntityRegistry entityRegistry) {
-        super(createEntity(), dslContext, entityRegistry);
+    protected PersonDao(DSLContext dslContext, EntityRegistry entityRegistry, SliceQueryDao sliceQueryDao) {
+        super(createEntity(), dslContext, entityRegistry, sliceQueryDao);
     }
 
     private static Entity<PersonTable> createEntity() {

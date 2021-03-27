@@ -6,6 +6,7 @@ import cz.quantumleap.core.database.entity.Entity;
 import cz.quantumleap.core.database.entity.EntityIdentifier;
 import cz.quantumleap.core.database.entity.FieldMetaType;
 import cz.quantumleap.core.database.entity.LookupMetaType;
+import cz.quantumleap.core.slicequery.domain.SliceQuery;
 import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.Result;
@@ -29,7 +30,8 @@ public final class TableSliceFactory {
 
     public TableSlice forRequestedResult(
             FetchParams fetchParams,
-            Result<?> result
+            Result<?> result,
+            List<SliceQuery> sliceQueries
     ) {
         Map<Field<?>, TableSlice.Column> fieldColumnMap = createFieldColumnMap(fetchParams.getSort());
         List<TableSlice.Column> columns = new ArrayList<>(fieldColumnMap.values());
@@ -46,6 +48,7 @@ public final class TableSliceFactory {
         return new TableSlice(
                 entity.getIdentifier(),
                 fetchParams,
+                sliceQueries,
                 result.size() > maxSize,
                 columns,
                 rows

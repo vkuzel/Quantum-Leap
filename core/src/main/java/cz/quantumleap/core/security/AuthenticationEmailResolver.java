@@ -14,7 +14,10 @@ public class AuthenticationEmailResolver {
     private final AuthenticationTrustResolver trustResolver = new AuthenticationTrustResolverImpl();
 
     public String resolve(Authentication authentication) {
-        Validate.notNull(authentication);
+        if (authentication == null) {
+            return null;
+        }
+
         if (!authentication.isAuthenticated() || trustResolver.isAnonymous(authentication)) {
             return null;
         }

@@ -6,6 +6,7 @@ import cz.quantumleap.core.database.domain.FetchParams;
 import cz.quantumleap.core.database.domain.TableSlice;
 import cz.quantumleap.core.database.entity.Entity;
 import cz.quantumleap.core.notification.domain.Notification;
+import cz.quantumleap.core.slicequery.SliceQueryDao;
 import cz.quantumleap.core.tables.NotificationTable;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
@@ -21,8 +22,8 @@ import static org.springframework.data.domain.Sort.Direction.ASC;
 @Repository
 public class NotificationDao extends DaoStub<NotificationTable> {
 
-    protected NotificationDao(DSLContext dslContext, EntityRegistry entityRegistry) {
-        super(createEntity(), dslContext, entityRegistry);
+    protected NotificationDao(DSLContext dslContext, EntityRegistry entityRegistry, SliceQueryDao sliceQueryDao) {
+        super(createEntity(), dslContext, entityRegistry, sliceQueryDao);
     }
 
     private static Entity<NotificationTable> createEntity() {

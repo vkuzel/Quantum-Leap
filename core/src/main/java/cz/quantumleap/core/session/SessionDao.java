@@ -94,10 +94,6 @@ public class SessionDao implements SessionRepository<MapSession> {
         }
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null) {
-            return;
-        }
-
         String email = authenticationEmailResolver.resolve(authentication);
         session.setAttribute(EMAIL_ATTRIBUTE, email);
     }

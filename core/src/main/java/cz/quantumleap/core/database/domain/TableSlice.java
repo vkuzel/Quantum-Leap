@@ -1,6 +1,7 @@
 package cz.quantumleap.core.database.domain;
 
 import cz.quantumleap.core.database.entity.EntityIdentifier;
+import cz.quantumleap.core.slicequery.domain.SliceQuery;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.data.domain.Sort;
 
@@ -13,6 +14,7 @@ public class TableSlice implements Iterable<List<Object>> {
 
     private final EntityIdentifier<?> entityIdentifier;
     private final FetchParams fetchParams;
+    private final List<SliceQuery> sliceQueries;
     private final boolean canExtend;
 
     private final List<Column> columns;
@@ -21,19 +23,21 @@ public class TableSlice implements Iterable<List<Object>> {
     public TableSlice(
             EntityIdentifier<?> entityIdentifier,
             FetchParams fetchParams,
+            List<SliceQuery> sliceQueries,
             boolean canExtend,
             List<Column> columns,
             List<List<Object>> rows
     ) {
         this.entityIdentifier = entityIdentifier;
         this.fetchParams = fetchParams;
+        this.sliceQueries = sliceQueries;
         this.canExtend = canExtend;
         this.columns = columns;
         this.rows = rows;
     }
 
     public Builder builder() {
-        return new Builder(entityIdentifier, fetchParams, canExtend, columns, rows);
+        return new Builder(entityIdentifier, fetchParams, sliceQueries, canExtend, columns, rows);
     }
 
     public EntityIdentifier<?> getEntityIdentifier() {
@@ -78,6 +82,10 @@ public class TableSlice implements Iterable<List<Object>> {
 
     public FetchParams getFetchParams() {
         return fetchParams;
+    }
+
+    public List<SliceQuery> getSliceQueries() {
+        return sliceQueries;
     }
 
     public boolean canExtend() {
@@ -171,6 +179,7 @@ public class TableSlice implements Iterable<List<Object>> {
 
         private final EntityIdentifier<?> entityIdentifier;
         private final FetchParams fetchParams;
+        private final List<SliceQuery> sliceQueries;
         private final boolean canExtend;
 
         private final List<Column> columns;
@@ -179,12 +188,14 @@ public class TableSlice implements Iterable<List<Object>> {
         private Builder(
                 EntityIdentifier<?> entityIdentifier,
                 FetchParams fetchParams,
+                List<SliceQuery> sliceQueries,
                 boolean canExtend,
                 List<Column> columns,
                 List<List<Object>> rows
         ) {
             this.entityIdentifier = entityIdentifier;
             this.fetchParams = fetchParams;
+            this.sliceQueries = sliceQueries;
             this.canExtend = canExtend;
             this.columns = new ArrayList<>(columns);
             this.rows = new ArrayList<>(rows);
@@ -199,7 +210,7 @@ public class TableSlice implements Iterable<List<Object>> {
         }
 
         public TableSlice build() {
-            return new TableSlice(entityIdentifier, fetchParams, canExtend, columns, rows);
+            return new TableSlice(entityIdentifier, fetchParams, sliceQueries, canExtend, columns, rows);
         }
     }
 }

@@ -5,6 +5,7 @@ import cz.quantumleap.core.database.domain.TableSlice;
 import cz.quantumleap.core.database.domain.TableSlice.Column;
 import cz.quantumleap.core.database.entity.Entity;
 import cz.quantumleap.core.database.entity.EntityIdentifier;
+import cz.quantumleap.core.slicequery.SliceQueryDao;
 import cz.quantumleap.core.test.CoreSpringBootTest;
 import cz.quantumleap.core.test.common.CoreTestSupport;
 import cz.quantumleap.core.test.data.TestTableBuilder;
@@ -32,6 +33,8 @@ class DefaultListDaoTest {
     private DSLContext dslContext;
     @Autowired
     private EntityRegistry entityRegistry;
+    @Autowired
+    private SliceQueryDao sliceQueryDao;
 
     @Test
     void fetchSliceGeneratesCorrectColumnTypes() {
@@ -127,7 +130,7 @@ class DefaultListDaoTest {
     }
 
     private DefaultListDao<TestTable> createDefaultListDao(Entity<TestTable> entity) {
-        return new DefaultListDao<>(entity, dslContext, entityRegistry);
+        return new DefaultListDao<>(entity, dslContext, entityRegistry, sliceQueryDao);
     }
 
     private Object getValue(TableSlice tableSlice, String columnName, int rowIndex) {

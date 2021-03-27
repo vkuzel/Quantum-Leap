@@ -3,6 +3,7 @@ package cz.quantumleap.core.role;
 import cz.quantumleap.core.database.DaoStub;
 import cz.quantumleap.core.database.EntityRegistry;
 import cz.quantumleap.core.database.entity.Entity;
+import cz.quantumleap.core.slicequery.SliceQueryDao;
 import cz.quantumleap.core.tables.RoleTable;
 import org.jooq.DSLContext;
 import org.jooq.Record;
@@ -17,8 +18,8 @@ import static cz.quantumleap.core.tables.RoleTable.ROLE;
 @Repository
 public class RoleDao extends DaoStub<RoleTable> {
 
-    protected RoleDao(DSLContext dslContext, EntityRegistry entityRegistry) {
-        super(createEntity(), dslContext, entityRegistry);
+    protected RoleDao(DSLContext dslContext, EntityRegistry entityRegistry, SliceQueryDao sliceQueryDao) {
+        super(createEntity(), dslContext, entityRegistry, sliceQueryDao);
     }
 
     private static Entity<RoleTable> createEntity() {

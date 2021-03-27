@@ -3,6 +3,7 @@ package cz.quantumleap.core.database;
 import cz.quantumleap.core.database.domain.FetchParams;
 import cz.quantumleap.core.database.domain.TableSlice;
 import cz.quantumleap.core.database.entity.Entity;
+import cz.quantumleap.core.slicequery.SliceQueryDao;
 import org.jooq.*;
 
 import java.util.Collection;
@@ -19,11 +20,16 @@ public class DaoStub<TABLE extends Table<? extends Record>> implements DetailDao
     protected final ListDao<TABLE> listDao;
     protected final LookupDao<TABLE> lookupDao;
 
-    protected DaoStub(Entity<TABLE> entity, DSLContext dslContext, EntityRegistry entityRegistry) {
+    protected DaoStub(
+            Entity<TABLE> entity,
+            DSLContext dslContext,
+            EntityRegistry entityRegistry,
+            SliceQueryDao sliceQueryDao
+    ) {
         this.entity = entity;
         this.dslContext = dslContext;
         this.detailDao = new DefaultDetailDao<>(entity, dslContext);
-        this.listDao = new DefaultListDao<>(entity, dslContext, entityRegistry);
+        this.listDao = new DefaultListDao<>(entity, dslContext, entityRegistry, sliceQueryDao);
         this.lookupDao = new DefaultLookupDao<>(entity, dslContext, listDao);
     }
 
