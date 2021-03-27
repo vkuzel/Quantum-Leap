@@ -3,7 +3,7 @@ package cz.quantumleap.core.view;
 import cz.quantumleap.core.business.ListService;
 import cz.quantumleap.core.common.Utils;
 import cz.quantumleap.core.database.domain.FetchParams;
-import cz.quantumleap.core.database.domain.TableSlice;
+import cz.quantumleap.core.database.domain.Slice;
 import cz.quantumleap.core.database.entity.EntityIdentifier;
 import org.springframework.ui.Model;
 
@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 
 public final class DefaultListController implements ListController {
 
-    public static final String TABLE_SLICE_MODEL_ATTRIBUTE_NAME = "tableSlice";
+    public static final String SLICE_MODEL_ATTRIBUTE_NAME = "slice";
     public static final String ENTITY_IDENTIFIER_MODEL_ATTRIBUTE_NAME = "entityIdentifier";
     public static final String DETAIL_URL_MODEL_ATTRIBUTE_NAME = "detailUrl";
 
@@ -30,9 +30,9 @@ public final class DefaultListController implements ListController {
     @Override
     public String list(FetchParams fetchParams, Model model, HttpServletRequest request) {
         EntityIdentifier<?> identifier = listService.getListEntityIdentifier(null);
-        TableSlice slice = listService.findSlice(fetchParams);
+        Slice slice = listService.findSlice(fetchParams);
 
-        model.addAttribute(TABLE_SLICE_MODEL_ATTRIBUTE_NAME, slice);
+        model.addAttribute(SLICE_MODEL_ATTRIBUTE_NAME, slice);
         model.addAttribute(ENTITY_IDENTIFIER_MODEL_ATTRIBUTE_NAME, identifier.toString());
         model.addAttribute(DETAIL_URL_MODEL_ATTRIBUTE_NAME, detailUrl);
 

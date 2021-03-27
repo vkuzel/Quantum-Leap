@@ -37,8 +37,8 @@ public final class Entity<TABLE extends Table<? extends Record>> {
     private final PrimaryKeyConditionBuilder<TABLE> primaryKeyConditionBuilder;
     private final Function<String, Condition> wordConditionBuilder;
 
-    private final List<String> defaultTableSliceFieldNames;
-    private final String defaultTableSliceQuery;
+    private final List<String> defaultSliceFieldNames;
+    private final String defaultSliceQuery;
 
     private Entity(
             EntityIdentifier<TABLE> entityIdentifier,
@@ -49,8 +49,8 @@ public final class Entity<TABLE extends Table<? extends Record>> {
             List<SortField<?>> lookupOrderBy,
             Condition condition,
             Function<String, Condition> wordConditionBuilder,
-            List<String> defaultTableSliceFieldNames,
-            String defaultTableSliceQuery
+            List<String> defaultSliceFieldNames,
+            String defaultSliceQuery
     ) {
         this.entityIdentifier = entityIdentifier;
         this.table = table;
@@ -63,8 +63,8 @@ public final class Entity<TABLE extends Table<? extends Record>> {
         this.primaryKeyConditionBuilder = new PrimaryKeyConditionBuilder<>(this);
         this.wordConditionBuilder = wordConditionBuilder;
 
-        this.defaultTableSliceFieldNames = defaultTableSliceFieldNames;
-        this.defaultTableSliceQuery = defaultTableSliceQuery;
+        this.defaultSliceFieldNames = defaultSliceFieldNames;
+        this.defaultSliceQuery = defaultSliceQuery;
     }
 
     public EntityIdentifier<TABLE> getIdentifier() {
@@ -128,12 +128,12 @@ public final class Entity<TABLE extends Table<? extends Record>> {
         return wordConditionBuilder;
     }
 
-    public List<String> getDefaultTableSliceFieldNames() {
-        return defaultTableSliceFieldNames;
+    public List<String> getDefaultSliceFieldNames() {
+        return defaultSliceFieldNames;
     }
 
-    public String getDefaultTableSliceQuery() {
-        return defaultTableSliceQuery;
+    public String getDefaultSliceQuery() {
+        return defaultSliceQuery;
     }
 
     public static <TABLE extends Table<? extends Record>> Builder<TABLE> builder(TABLE table) {
@@ -169,8 +169,8 @@ public final class Entity<TABLE extends Table<? extends Record>> {
         private Condition condition = null;
         private Function<String, Condition> wordConditionBuilder = q -> null;
 
-        private List<String> defaultTableSliceFieldNames = null;
-        private String defaultTableSliceQuery = null;
+        private List<String> defaultSliceFieldNames = null;
+        private String defaultSliceQuery = null;
 
         private Builder(EntityIdentifier<TABLE> entityIdentifier, Table<?> table) {
             Validate.notNull(entityIdentifier);
@@ -242,13 +242,13 @@ public final class Entity<TABLE extends Table<? extends Record>> {
             return this;
         }
 
-        public Builder<TABLE> setDefaultTableSliceFieldNames(String... defaultTableSliceFieldNames) {
-            this.defaultTableSliceFieldNames = asList(defaultTableSliceFieldNames);
+        public Builder<TABLE> setDefaultSliceFieldNames(String... defaultSliceFieldNames) {
+            this.defaultSliceFieldNames = asList(defaultSliceFieldNames);
             return this;
         }
 
-        public Builder<TABLE> setDefaultTableSliceQuery(String defaultTableSliceQuery) {
-            this.defaultTableSliceQuery = defaultTableSliceQuery;
+        public Builder<TABLE> setDefaultSliceQuery(String defaultSliceQuery) {
+            this.defaultSliceQuery = defaultSliceQuery;
             return this;
         }
 
@@ -272,8 +272,8 @@ public final class Entity<TABLE extends Table<? extends Record>> {
                     lookupOrderBy,
                     condition,
                     wordConditionBuilder,
-                    defaultTableSliceFieldNames,
-                    defaultTableSliceQuery
+                    defaultSliceFieldNames,
+                    defaultSliceQuery
             );
         }
 

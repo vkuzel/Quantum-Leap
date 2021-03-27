@@ -31,7 +31,7 @@ public class RoleController extends AdminController {
 
     private static final String LIST_URL = "/roles";
     private static final String LIST_VIEW = "admin/roles";
-    private static final String AJAX_LIST_VIEW = "admin/components/table";
+    private static final String AJAX_LIST_VIEW = "admin/components/slice";
 
     private static final String LOOKUP_LABEL_URL = "/role-lookup-label";
     private static final String LOOKUP_LABELS_URL = "/roles-lookup-labels";

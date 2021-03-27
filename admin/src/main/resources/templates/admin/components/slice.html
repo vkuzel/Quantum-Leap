@@ -7,15 +7,15 @@
     Template params:
         qualifier ... In case more than one table is present on a page. It will be prepend in front of filtering or sorting query parameters.
         entityIdentifier ... Used in column name message `admin.table.<entityIdentifier>.<columnName>'
-        tableSlice ... TableSlice object.
+        slice ... Slice object.
         detailUrl ... Detail endpoint URL to which detail ID will be appended.
         cellTemplate__column name__ ... Fragment to replace the default cell template.
 */-->
-<table th:fragment="table" th:assert="tableSlice" class="table table-striped table-bordered table-hover data-table" th:data-qualifier="${qualifier}"
-       th:with="urlBuilder=${T(org.springframework.web.servlet.support.ServletUriComponentsBuilder)},templateTable=${T(cz.quantumleap.admin.web.TemplateHelper).createTemplateTable(qualifier,entityIdentifier,tableSlice,detailUrl)}">
+<table th:fragment="table" th:assert="slice" class="table table-striped table-bordered table-hover data-table" th:data-qualifier="${qualifier}"
+       th:with="urlBuilder=${T(org.springframework.web.servlet.support.ServletUriComponentsBuilder)},templateTable=${T(cz.quantumleap.admin.web.TemplateHelper).createTemplateTable(qualifier,entityIdentifier,slice,detailUrl)}">
     <thead>
     <tr>
-        <th th:each="column : ${tableSlice.getColumns()}"
+        <th th:each="column : ${slice.getColumns()}"
             th:object="${column}"
             class="sorting"
             th:classappend="*{order} ? (*{order.direction.isAscending()} ? 'asc' : 'desc') : ''">
@@ -27,11 +27,11 @@
     </tr>
     </thead>
     <tbody>
-    <tr th:each="row : ${tableSlice}">
-        <td th:each="column : ${tableSlice.getColumns()}"
-            th:with="value=${tableSlice.getValue(column, row)},
+    <tr th:each="row : ${slice}">
+        <td th:each="column : ${slice.getColumns()}"
+            th:with="value=${slice.getValue(column, row)},
                      primaryKey=${column.primaryKey && !#strings.isEmpty(detailUrl)},
-                     lookup=${tableSlice.isLookup(value)}"
+                     lookup=${slice.isLookup(value)}"
             th:classappend="${primaryKey} ? 'primary-key'">
             <a th:if="${primaryKey}" th:href="@{|${detailUrl}/${value}|}"
                th:text="${{value}}">id</a>
@@ -45,16 +45,16 @@
             <span th:replace="${__|cellTemplate${column.name}|__} ?: ~{}">Custom column</span>
         </td>
     </tr>
-    <tr th:if="${tableSlice.empty}">
-        <td th:colspan="${1 + tableSlice.getColumns().size()}" th:text="#{admin.table.empty}">
+    <tr th:if="${slice.empty}">
+        <td th:colspan="${1 + slice.getColumns().size()}" th:text="#{admin.table.empty}">
             No data found!
         </td>
     </tr>
     </tbody>
-    <tfoot th:if="${tableSlice.canExtend()}">
+    <tfoot th:if="${slice.canExtend()}">
     <tr>
-        <td class="text-center" th:colspan="${1 + tableSlice.getColumns().size()}">
-            <a th:href="${urlBuilder.fromCurrentRequest().replaceQueryParam(templateTable.getSizeParamName(), '__${tableSlice.extend().size}__').build()}"
+        <td class="text-center" th:colspan="${1 + slice.getColumns().size()}">
+            <a th:href="${urlBuilder.fromCurrentRequest().replaceQueryParam(templateTable.getSizeParamName(), '__${slice.extend().size}__').build()}"
                class="btn btn-outline-secondary btn-sm btn-load-more">Load more</a>
         </td>
     </tr>

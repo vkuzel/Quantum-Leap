@@ -10,7 +10,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.function.BiFunction;
 
-public class TableSlice implements Iterable<List<Object>> {
+public class Slice implements Iterable<List<Object>> {
 
     private final EntityIdentifier<?> entityIdentifier;
     private final FetchParams fetchParams;
@@ -20,7 +20,7 @@ public class TableSlice implements Iterable<List<Object>> {
     private final List<Column> columns;
     private final List<List<Object>> rows;
 
-    public TableSlice(
+    public Slice(
             EntityIdentifier<?> entityIdentifier,
             FetchParams fetchParams,
             List<SliceQuery> sliceQueries,
@@ -209,8 +209,8 @@ public class TableSlice implements Iterable<List<Object>> {
             return this;
         }
 
-        public TableSlice build() {
-            return new TableSlice(entityIdentifier, fetchParams, sliceQueries, canExtend, columns, rows);
+        public Slice build() {
+            return new Slice(entityIdentifier, fetchParams, sliceQueries, canExtend, columns, rows);
         }
     }
 }

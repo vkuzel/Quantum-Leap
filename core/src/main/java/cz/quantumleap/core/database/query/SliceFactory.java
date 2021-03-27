@@ -1,7 +1,7 @@
 package cz.quantumleap.core.database.query;
 
 import cz.quantumleap.core.database.domain.FetchParams;
-import cz.quantumleap.core.database.domain.TableSlice;
+import cz.quantumleap.core.database.domain.Slice;
 import cz.quantumleap.core.database.entity.Entity;
 import cz.quantumleap.core.database.entity.EntityIdentifier;
 import cz.quantumleap.core.database.entity.FieldMetaType;
@@ -20,21 +20,21 @@ import java.util.Map;
 import static cz.quantumleap.core.database.query.QueryUtils.resolveLookupFieldName;
 import static java.lang.String.join;
 
-public final class TableSliceFactory {
+public final class SliceFactory {
 
     private final Entity<?> entity;
 
-    public TableSliceFactory(Entity<?> entity) {
+    public SliceFactory(Entity<?> entity) {
         this.entity = entity;
     }
 
-    public TableSlice forRequestedResult(
+    public Slice forRequestedResult(
             FetchParams fetchParams,
             Result<?> result,
             List<SliceQuery> sliceQueries
     ) {
-        Map<Field<?>, TableSlice.Column> fieldColumnMap = createFieldColumnMap(fetchParams.getSort());
-        List<TableSlice.Column> columns = new ArrayList<>(fieldColumnMap.values());
+        Map<Field<?>, Slice.Column> fieldColumnMap = createFieldColumnMap(fetchParams.getSort());
+        List<Slice.Column> columns = new ArrayList<>(fieldColumnMap.values());
         List<Field<?>> fields = new ArrayList<>(fieldColumnMap.keySet());
         int maxSize = fetchParams.getSize();
 
@@ -45,7 +45,7 @@ public final class TableSliceFactory {
             }
         }
 
-        return new TableSlice(
+        return new Slice(
                 entity.getIdentifier(),
                 fetchParams,
                 sliceQueries,
@@ -55,26 +55,26 @@ public final class TableSliceFactory {
         );
     }
 
-    private Map<Field<?>, TableSlice.Column> createFieldColumnMap(Sort sort) {
+    private Map<Field<?>, Slice.Column> createFieldColumnMap(Sort sort) {
         List<Field<?>> primaryKeyFields = entity.getPrimaryKeyFields();
         List<Field<?>> fields = createFieldsList();
 
-        Map<Field<?>, TableSlice.Column> fieldColumnMap = new LinkedHashMap<>(fields.size());
+        Map<Field<?>, Slice.Column> fieldColumnMap = new LinkedHashMap<>(fields.size());
         for (Field<?> field : fields) {
             FieldMetaType fieldMetaType = entity.getFieldMetaType(field);
             String fieldName = field.getName();
             Sort.Order order = sort != null ? sort.getOrderFor(fieldName) : null;
 
-            TableSlice.Column column;
+            Slice.Column column;
             if (fieldMetaType instanceof LookupMetaType) {
                 String lookupFieldName = resolveLookupFieldName(field);
-                column = new TableSlice.LookupColumn(
+                column = new Slice.LookupColumn(
                         lookupFieldName,
                         order,
                         fieldMetaType.asLookup().getEntityIdentifier()
                 );
             } else {
-                column = new TableSlice.Column(
+                column = new Slice.Column(
                         field.getType(),
                         fieldName,
                         primaryKeyFields.contains(field),
@@ -87,7 +87,7 @@ public final class TableSliceFactory {
     }
 
     private List<Field<?>> createFieldsList() {
-        List<String> fieldNames = entity.getDefaultTableSliceFieldNames();
+        List<String> fieldNames = entity.getDefaultSliceFieldNames();
         if (fieldNames == null) {
             return entity.getFields();
         }
@@ -118,7 +118,7 @@ public final class TableSliceFactory {
                 label = label != null ? label : (id != null ? id.toString() : null);
                 EntityIdentifier<?> entityIdentifier = fieldMetaType.asLookup().getEntityIdentifier();
 
-                TableSlice.Lookup lookup = new TableSlice.Lookup(id, label, entityIdentifier);
+                Slice.Lookup lookup = new Slice.Lookup(id, label, entityIdentifier);
                 row.add(lookup);
             } else {
                 Object value = record.get(field);

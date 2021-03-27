@@ -1,10 +1,10 @@
 package cz.quantumleap.core.database;
 
 import cz.quantumleap.core.database.domain.FetchParams;
-import cz.quantumleap.core.database.domain.TableSlice;
+import cz.quantumleap.core.database.domain.Slice;
 import cz.quantumleap.core.database.entity.Entity;
 import cz.quantumleap.core.database.query.*;
-import cz.quantumleap.core.database.query.TableSliceQueryFieldsFactory.QueryFields;
+import cz.quantumleap.core.database.query.SliceQueryFieldsFactory.QueryFields;
 import cz.quantumleap.core.slicequery.SliceQueryDao;
 import cz.quantumleap.core.slicequery.domain.SliceQuery;
 import org.jooq.*;
@@ -28,7 +28,7 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
     private FilterConditionFactory sliceFilterConditionFactory;
     private QueryConditionFactory sliceQueryConditionFactory;
     private SortingFactory sliceSortingFactory;
-    private TableSliceFactory sliceFactory;
+    private SliceFactory sliceFactory;
 
     private FilterConditionFactory listFilterConditionFactory;
     private QueryConditionFactory listQueryConditionFactory;
@@ -52,7 +52,7 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
     }
 
     @Override
-    public TableSlice fetchSlice(FetchParams params) {
+    public Slice fetchSlice(FetchParams params) {
         initFactories();
         List<SliceQuery> sliceQueries = sliceQueryDao.fetchByIdentifierForCurrentUser(entity.getIdentifier());
         params = setParamsDefaultValues(params, sliceQueries);
@@ -140,7 +140,7 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
     }
 
     /**
-     * {@link TableSliceQueryFieldsFactory} does need {@link EntityRegistry} to
+     * {@link SliceQueryFieldsFactory} does need {@link EntityRegistry} to
      * be fully initialised to work properly. That is why factories cannot be
      * initialised in the constructor, but has to be lazy-initialised here.
      */
@@ -154,11 +154,11 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
                 return;
             }
 
-            sliceQueryFields = new TableSliceQueryFieldsFactory(entity, entityRegistry).createQueryFields();
+            sliceQueryFields = new SliceQueryFieldsFactory(entity, entityRegistry).createQueryFields();
             sliceFilterConditionFactory = new FilterConditionFactory(sliceQueryFields.getConditionFieldMap());
             sliceQueryConditionFactory = new QueryConditionFactory(entity.getWordConditionBuilder(), sliceQueryFields.getConditionFieldMap());
             sliceSortingFactory = new SortingFactory(sliceQueryFields.getOrderFieldMap());
-            sliceFactory = new TableSliceFactory(entity);
+            sliceFactory = new SliceFactory(entity);
 
             listFilterConditionFactory = new FilterConditionFactory(entity.getFieldMap());
             listQueryConditionFactory = new QueryConditionFactory(entity.getWordConditionBuilder(), entity.getFieldMap());

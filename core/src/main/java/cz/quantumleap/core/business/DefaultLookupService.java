@@ -3,7 +3,7 @@ package cz.quantumleap.core.business;
 import cz.quantumleap.core.common.Utils;
 import cz.quantumleap.core.database.LookupDao;
 import cz.quantumleap.core.database.domain.FetchParams;
-import cz.quantumleap.core.database.domain.TableSlice;
+import cz.quantumleap.core.database.domain.Slice;
 import cz.quantumleap.core.database.entity.EntityIdentifier;
 import org.jooq.Record;
 import org.jooq.Table;
@@ -42,7 +42,7 @@ public final class DefaultLookupService implements LookupService {
     }
 
     @Override
-    public TableSlice findSlice(FetchParams fetchParams) {
+    public Slice findSlice(FetchParams fetchParams) {
         return listService.findSlice(fetchParams);
     }
 }

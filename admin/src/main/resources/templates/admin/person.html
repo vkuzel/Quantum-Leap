@@ -63,7 +63,7 @@
             </div>
             <div class="card-body table-container">
                 <div class="table-responsive"
-                     th:insert="admin/components/table::table(qualifier='personRole',entityIdentifier=${personRoleEntityIdentifier},tableSlice=${personRoleTableSlice},detailUrl=${personRoleDetailUrl})">
+                     th:insert="admin/components/slice::table(qualifier='personRole',entityIdentifier=${personRoleEntityIdentifier},slice=${personRoleSlice},detailUrl=${personRoleDetailUrl})">
                 </div>
             </div>
         </div>

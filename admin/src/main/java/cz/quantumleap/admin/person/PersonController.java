@@ -9,7 +9,7 @@ import cz.quantumleap.admin.personrole.PersonRoleController;
 import cz.quantumleap.admin.personrole.PersonRoleService;
 import cz.quantumleap.core.common.Utils;
 import cz.quantumleap.core.database.domain.FetchParams;
-import cz.quantumleap.core.database.domain.TableSlice;
+import cz.quantumleap.core.database.domain.Slice;
 import cz.quantumleap.core.database.entity.EntityIdentifier;
 import cz.quantumleap.core.person.domain.Person;
 import cz.quantumleap.core.security.WebSecurityExpressionEvaluator;
@@ -42,7 +42,7 @@ public class PersonController extends AdminController {
 
     private static final String LIST_URL = "/people";
     private static final String LIST_VIEW = "admin/people";
-    private static final String AJAX_LIST_VIEW = "admin/components/table";
+    private static final String AJAX_LIST_VIEW = "admin/components/slice";
 
     private static final String LOOKUP_LABEL_URL = "/person-lookup-label";
     private static final String LOOKUP_LABELS_URL = "/people-lookup-labels";
@@ -95,11 +95,11 @@ public class PersonController extends AdminController {
         }
 
         personRoleFetchParams = personRoleFetchParams.addFilter("person_id", person.getId());
-        TableSlice slice = personRoleService.findSlice(personRoleFetchParams);
+        Slice slice = personRoleService.findSlice(personRoleFetchParams);
         EntityIdentifier<PersonRoleTable> identifier = personRoleService.getDetailEntityIdentifier(PersonRoleTable.class);
         List<SessionDetail> sessions = sessionService.fetchListByEmail(person.getEmail());
 
-        model.addAttribute("personRoleTableSlice", slice);
+        model.addAttribute("personRoleSlice", slice);
         model.addAttribute("personRoleEntityIdentifier", identifier.toString());
         model.addAttribute("personRoleDetailUrl", PersonRoleController.DETAIL_URL.replace("{personId}", String.valueOf(person.getId())));
         model.addAttribute("sessions", sessions);

@@ -1,7 +1,7 @@
 package cz.quantumleap.core.database;
 
 import cz.quantumleap.core.database.domain.FetchParams;
-import cz.quantumleap.core.database.domain.TableSlice;
+import cz.quantumleap.core.database.domain.Slice;
 import cz.quantumleap.core.database.entity.Entity;
 import cz.quantumleap.core.slicequery.SliceQueryDao;
 import org.jooq.*;
@@ -84,7 +84,7 @@ public class DaoStub<TABLE extends Table<? extends Record>> implements DetailDao
     }
 
     @Override
-    public TableSlice fetchSlice(FetchParams fetchParams) {
+    public Slice fetchSlice(FetchParams fetchParams) {
         return listDao.fetchSlice(fetchParams);
     }
 

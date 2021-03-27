@@ -6,13 +6,13 @@
 <!--/*
     Template params:
         entityIdentifier ... Used in column name message `admin.table.<entityIdentifier>.<columnName>'
-        tableSlice ... TableSlice object.
+        slice ... Slice object.
 */-->
 <table class="table table-striped table-bordered table-hover data-table"
        th:with="urlBuilder=${T(org.springframework.web.servlet.support.ServletUriComponentsBuilder)}">
     <thead>
     <tr>
-        <th th:each="column : ${tableSlice.getColumns()}"
+        <th th:each="column : ${slice.getColumns()}"
             th:object="${column}"
             class="sorting"
             th:classappend="*{order} ? (*{order.direction.isAscending()} ? 'asc' : 'desc')">
@@ -24,24 +24,24 @@
     </tr>
     </thead>
     <tbody th:remove="all-but-first">
-    <tr th:each="row : ${tableSlice}"
-        th:with="primaryKeyColumn=${tableSlice.getColumns().?[primaryKey].get(0)}"
-        th:data-id="${tableSlice.getValue(primaryKeyColumn, row)}">
-        <td th:each="column : ${tableSlice.getColumns()}">
-            <span th:text="${{tableSlice.getValue(column, row)}}"
+    <tr th:each="row : ${slice}"
+        th:with="primaryKeyColumn=${slice.getColumns().?[primaryKey].get(0)}"
+        th:data-id="${slice.getValue(primaryKeyColumn, row)}">
+        <td th:each="column : ${slice.getColumns()}">
+            <span th:text="${{slice.getValue(column, row)}}"
                   th:remove="tag">Value</span>
         </td>
     </tr>
     <tr>
-        <td th:colspan="${1 + tableSlice.getColumns().size()}" th:text="#{admin.table.empty}">
+        <td th:colspan="${1 + slice.getColumns().size()}" th:text="#{admin.table.empty}">
             No data found!
         </td>
     </tr>
     </tbody>
-    <tfoot th:if="${tableSlice.canExtend()}">
+    <tfoot th:if="${slice.canExtend()}">
     <tr>
-        <td class="text-center" th:colspan="${1 + tableSlice.getColumns().size()}">
-            <a th:href="${urlBuilder.fromCurrentRequest().replaceQueryParam('size', '__${tableSlice.extend().size}__').build()}"
+        <td class="text-center" th:colspan="${1 + slice.getColumns().size()}">
+            <a th:href="${urlBuilder.fromCurrentRequest().replaceQueryParam('size', '__${slice.extend().size}__').build()}"
                class="btn btn-outline-secondary btn-sm btn-load-more">Load more</a>
         </td>
     </tr>

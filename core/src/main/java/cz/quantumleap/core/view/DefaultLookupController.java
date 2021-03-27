@@ -2,7 +2,7 @@ package cz.quantumleap.core.view;
 
 import cz.quantumleap.core.business.LookupService;
 import cz.quantumleap.core.database.domain.FetchParams;
-import cz.quantumleap.core.database.domain.TableSlice;
+import cz.quantumleap.core.database.domain.Slice;
 import cz.quantumleap.core.database.entity.EntityIdentifier;
 import cz.quantumleap.core.security.WebSecurityExpressionEvaluator;
 import org.springframework.http.HttpStatus;
@@ -20,7 +20,7 @@ public final class DefaultLookupController implements LookupController {
     private static final String LOOKUP_LABELS_ATTRIBUTE_NAME = "lookupLabels";
     private static final String LOOKUP_LABELS_VIEW = "admin/components/lookup-labels";
 
-    private static final String TABLE_SLICE_MODEL_ATTRIBUTE_NAME = "tableSlice";
+    private static final String SLICE_MODEL_ATTRIBUTE_NAME = "slice";
     private static final String LIST_ENTITY_IDENTIFIER_MODEL_ATTRIBUTE_NAME = "entityIdentifier";
     private static final String LOOKUP_LIST_VIEW = "admin/components/lookup-modal-table";
 
@@ -88,9 +88,9 @@ public final class DefaultLookupController implements LookupController {
         checkPermission(request, response);
 
         EntityIdentifier<?> identifier = lookupService.getListEntityIdentifier(null);
-        TableSlice slice = lookupService.findSlice(fetchParams);
+        Slice slice = lookupService.findSlice(fetchParams);
 
-        model.addAttribute(TABLE_SLICE_MODEL_ATTRIBUTE_NAME, slice);
+        model.addAttribute(SLICE_MODEL_ATTRIBUTE_NAME, slice);
         model.addAttribute(LIST_ENTITY_IDENTIFIER_MODEL_ATTRIBUTE_NAME, identifier.toString());
         model.addAttribute(DETAIL_URL_MODEL_ATTRIBUTE_NAME, detailUrl);
 

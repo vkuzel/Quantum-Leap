@@ -1,8 +1,8 @@
 package cz.quantumleap.core.database;
 
 import cz.quantumleap.core.database.domain.FetchParams;
-import cz.quantumleap.core.database.domain.TableSlice;
-import cz.quantumleap.core.database.domain.TableSlice.Column;
+import cz.quantumleap.core.database.domain.Slice;
+import cz.quantumleap.core.database.domain.Slice.Column;
 import cz.quantumleap.core.database.entity.Entity;
 import cz.quantumleap.core.database.entity.EntityIdentifier;
 import cz.quantumleap.core.slicequery.SliceQueryDao;
@@ -43,11 +43,11 @@ class DefaultListDaoTest {
         DefaultListDao<TestTable> defaultListDao = createDefaultListDao(referencingEntity);
 
         FetchParams fetchParams = FetchParams.empty();
-        TableSlice tableSlice = defaultListDao.fetchSlice(fetchParams);
+        Slice slice = defaultListDao.fetchSlice(fetchParams);
 
-        assertEquals(2, tableSlice.getColumns().size());
-        assertTrue(tableSlice.getColumnByName("id").isPrimaryKey());
-        assertTrue(tableSlice.getColumnByName("entity_id").isLookup());
+        assertEquals(2, slice.getColumns().size());
+        assertTrue(slice.getColumnByName("id").isPrimaryKey());
+        assertTrue(slice.getColumnByName("entity_id").isLookup());
     }
 
     @Test
@@ -66,12 +66,12 @@ class DefaultListDaoTest {
         DefaultListDao<TestTable> defaultListDao = createDefaultListDao(referencingEntity);
 
         FetchParams fetchParams = FetchParams.empty().withSort(Sort.by(ASC, "entity_id"));
-        TableSlice tableSlice = defaultListDao.fetchSlice(fetchParams);
+        Slice slice = defaultListDao.fetchSlice(fetchParams);
 
-        assertEquals(3, tableSlice.getRows().size());
-        assertEquals(3L, getValue(tableSlice, "id", 0));
-        assertEquals(2L, getValue(tableSlice, "id", 1));
-        assertEquals(1L, getValue(tableSlice, "id", 2));
+        assertEquals(3, slice.getRows().size());
+        assertEquals(3L, getValue(slice, "id", 0));
+        assertEquals(2L, getValue(slice, "id", 1));
+        assertEquals(1L, getValue(slice, "id", 2));
     }
 
     @Test
@@ -88,10 +88,10 @@ class DefaultListDaoTest {
         DefaultListDao<TestTable> defaultListDao = createDefaultListDao(referencingEntity);
 
         FetchParams fetchParams = FetchParams.empty().addFilter("entity_id", "Aaa");
-        TableSlice tableSlice = defaultListDao.fetchSlice(fetchParams);
+        Slice slice = defaultListDao.fetchSlice(fetchParams);
 
-        assertEquals(1, tableSlice.getRows().size());
-        assertEquals(1L, getValue(tableSlice, "id", 0));
+        assertEquals(1, slice.getRows().size());
+        assertEquals(1L, getValue(slice, "id", 0));
     }
 
     private Entity<TestTable> createEntity() {
@@ -133,9 +133,9 @@ class DefaultListDaoTest {
         return new DefaultListDao<>(entity, dslContext, entityRegistry, sliceQueryDao);
     }
 
-    private Object getValue(TableSlice tableSlice, String columnName, int rowIndex) {
-        Column column = tableSlice.getColumnByName(columnName);
-        List<Object> row = tableSlice.getRows().get(rowIndex);
-        return tableSlice.getValue(column, row);
+    private Object getValue(Slice slice, String columnName, int rowIndex) {
+        Column column = slice.getColumnByName(columnName);
+        List<Object> row = slice.getRows().get(rowIndex);
+        return slice.getValue(column, row);
     }
 }

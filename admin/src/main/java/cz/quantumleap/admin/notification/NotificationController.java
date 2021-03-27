@@ -5,7 +5,7 @@ import cz.quantumleap.admin.menu.AdminMenuManager;
 import cz.quantumleap.admin.person.PersonService;
 import cz.quantumleap.core.common.Utils;
 import cz.quantumleap.core.database.domain.FetchParams;
-import cz.quantumleap.core.database.domain.TableSlice;
+import cz.quantumleap.core.database.domain.Slice;
 import cz.quantumleap.core.notification.domain.Notification;
 import cz.quantumleap.core.person.domain.Person;
 import cz.quantumleap.core.security.WebSecurityExpressionEvaluator;
@@ -27,7 +27,7 @@ public class NotificationController extends AdminController {
 
     private static final String LIST_URL = "/notifications";
     private static final String LIST_VIEW = "admin/notifications";
-    private static final String AJAX_LIST_VIEW = "admin/components/table";
+    private static final String AJAX_LIST_VIEW = "admin/components/slice";
 
     private final NotificationService notificationService;
     private final PersonService personService;
@@ -56,8 +56,8 @@ public class NotificationController extends AdminController {
     @GetMapping(LIST_URL)
     public String showNotifications(FetchParams fetchParams, Model model, HttpServletRequest request, Authentication authentication) {
         Person person = personService.fetchByAuthentication(authentication);
-        TableSlice slice = notificationService.findSlice(person.getId(), fetchParams);
-        model.addAttribute(DefaultListController.TABLE_SLICE_MODEL_ATTRIBUTE_NAME, slice);
+        Slice slice = notificationService.findSlice(person.getId(), fetchParams);
+        model.addAttribute(DefaultListController.SLICE_MODEL_ATTRIBUTE_NAME, slice);
         model.addAttribute(DefaultListController.ENTITY_IDENTIFIER_MODEL_ATTRIBUTE_NAME, notificationService.getListEntityIdentifier().toString());
         model.addAttribute(DefaultListController.DETAIL_URL_MODEL_ATTRIBUTE_NAME, DETAIL_URL);
 

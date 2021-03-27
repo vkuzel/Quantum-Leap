@@ -15,12 +15,12 @@ import static cz.quantumleap.core.database.query.QueryUtils.resolveLookupFieldNa
 import static cz.quantumleap.core.database.query.QueryUtils.resolveTableAlias;
 import static cz.quantumleap.core.tables.EnumValueTable.ENUM_VALUE;
 
-public class TableSliceQueryFieldsFactory {
+public class SliceQueryFieldsFactory {
 
     private final Entity<?> entity;
     private final EntityRegistry entityRegistry;
 
-    public TableSliceQueryFieldsFactory(Entity<?> entity, EntityRegistry entityRegistry) {
+    public SliceQueryFieldsFactory(Entity<?> entity, EntityRegistry entityRegistry) {
         this.entity = entity;
         this.entityRegistry = entityRegistry;
     }

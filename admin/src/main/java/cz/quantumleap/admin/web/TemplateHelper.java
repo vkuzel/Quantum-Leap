@@ -1,25 +1,25 @@
 package cz.quantumleap.admin.web;
 
-import cz.quantumleap.core.database.domain.TableSlice;
+import cz.quantumleap.core.database.domain.Slice;
 import cz.quantumleap.core.view.controllerargument.FetchParamsControllerArgumentResolver;
 
 public class TemplateHelper {
 
-    public static TemplateTable createTemplateTable(String qualifier, String entityIdentifier, TableSlice tableSlice, String detailUrl) {
-        return new TemplateTable(qualifier, entityIdentifier, tableSlice, detailUrl);
+    public static TemplateTable createTemplateTable(String qualifier, String entityIdentifier, Slice slice, String detailUrl) {
+        return new TemplateTable(qualifier, entityIdentifier, slice, detailUrl);
     }
 
     public static class TemplateTable {
 
         private final String qualifier;
         private final String entityIdentifier;
-        private final TableSlice tableSlice;
+        private final Slice slice;
         private final String detailUrl;
 
-        public TemplateTable(String qualifier, String entityIdentifier, TableSlice tableSlice, String detailUrl) {
+        public TemplateTable(String qualifier, String entityIdentifier, Slice slice, String detailUrl) {
             this.qualifier = qualifier;
             this.entityIdentifier = entityIdentifier;
-            this.tableSlice = tableSlice;
+            this.slice = slice;
             this.detailUrl = detailUrl;
         }
 
