@@ -41,7 +41,7 @@ public class Sequences {
     public static final Sequence<Long> ROLE_ID_SEQ = Internal.createSequence("role_id_seq", Core.CORE, SQLDataType.BIGINT.nullable(false), null, null, null, null, false, null);
 
     /**
-     * The sequence <code>core.table_preferences_id_seq</code>
+     * The sequence <code>core.slice_query_id_seq</code>
      */
-    public static final Sequence<Long> TABLE_PREFERENCES_ID_SEQ = Internal.createSequence("table_preferences_id_seq", Core.CORE, SQLDataType.BIGINT.nullable(false), null, null, null, null, false, null);
+    public static final Sequence<Long> SLICE_QUERY_ID_SEQ = Internal.createSequence("slice_query_id_seq", Core.CORE, SQLDataType.BIGINT.nullable(false), null, null, null, null, false, null);
 }

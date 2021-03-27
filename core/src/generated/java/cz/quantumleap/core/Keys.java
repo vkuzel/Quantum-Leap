@@ -34,8 +34,8 @@ public class Keys {
     public static final UniqueKey<PersonRoleRecord> PERSON_ROLE_PKEY = Internal.createUniqueKey(PersonRoleTable.PERSON_ROLE, DSL.name("person_role_pkey"), new TableField[] { PersonRoleTable.PERSON_ROLE.ID }, true);
     public static final UniqueKey<RoleRecord> ROLE_NAME_KEY = Internal.createUniqueKey(RoleTable.ROLE, DSL.name("role_name_key"), new TableField[] { RoleTable.ROLE.NAME }, true);
     public static final UniqueKey<RoleRecord> ROLE_PKEY = Internal.createUniqueKey(RoleTable.ROLE, DSL.name("role_pkey"), new TableField[] { RoleTable.ROLE.ID }, true);
-    public static final UniqueKey<TablePreferencesRecord> TABLE_PREFERENCES_ENTITY_IDENTIFIER_IS_DEFAULT_KEY = Internal.createUniqueKey(TablePreferencesTable.TABLE_PREFERENCES, DSL.name("table_preferences_entity_identifier_is_default_key"), new TableField[] { TablePreferencesTable.TABLE_PREFERENCES.ENTITY_IDENTIFIER, TablePreferencesTable.TABLE_PREFERENCES.IS_DEFAULT }, true);
-    public static final UniqueKey<TablePreferencesRecord> TABLE_PREFERENCES_PKEY = Internal.createUniqueKey(TablePreferencesTable.TABLE_PREFERENCES, DSL.name("table_preferences_pkey"), new TableField[] { TablePreferencesTable.TABLE_PREFERENCES.ID }, true);
+    public static final UniqueKey<SliceQueryRecord> SLICE_QUERY_ENTITY_IDENTIFIER_PERSON_ID_IS_DEFAULT_KEY = Internal.createUniqueKey(SliceQueryTable.SLICE_QUERY, DSL.name("slice_query_entity_identifier_person_id_is_default_key"), new TableField[] { SliceQueryTable.SLICE_QUERY.ENTITY_IDENTIFIER, SliceQueryTable.SLICE_QUERY.PERSON_ID, SliceQueryTable.SLICE_QUERY.IS_DEFAULT }, true);
+    public static final UniqueKey<SliceQueryRecord> SLICE_QUERY_PKEY = Internal.createUniqueKey(SliceQueryTable.SLICE_QUERY, DSL.name("slice_query_pkey"), new TableField[] { SliceQueryTable.SLICE_QUERY.ID }, true);
 
     // -------------------------------------------------------------------------
     // FOREIGN KEY definitions
@@ -47,4 +47,5 @@ public class Keys {
     public static final ForeignKey<NotificationRecord, RoleRecord> NOTIFICATION__NOTIFICATION_ROLE_ID_FKEY = Internal.createForeignKey(NotificationTable.NOTIFICATION, DSL.name("notification_role_id_fkey"), new TableField[] { NotificationTable.NOTIFICATION.ROLE_ID }, Keys.ROLE_PKEY, new TableField[] { RoleTable.ROLE.ID }, true);
     public static final ForeignKey<PersonRoleRecord, PersonRecord> PERSON_ROLE__PERSON_ROLE_PERSON_ID_FKEY = Internal.createForeignKey(PersonRoleTable.PERSON_ROLE, DSL.name("person_role_person_id_fkey"), new TableField[] { PersonRoleTable.PERSON_ROLE.PERSON_ID }, Keys.PERSON_PKEY, new TableField[] { PersonTable.PERSON.ID }, true);
     public static final ForeignKey<PersonRoleRecord, RoleRecord> PERSON_ROLE__PERSON_ROLE_ROLE_ID_FKEY = Internal.createForeignKey(PersonRoleTable.PERSON_ROLE, DSL.name("person_role_role_id_fkey"), new TableField[] { PersonRoleTable.PERSON_ROLE.ROLE_ID }, Keys.ROLE_PKEY, new TableField[] { RoleTable.ROLE.ID }, true);
+    public static final ForeignKey<SliceQueryRecord, PersonRecord> SLICE_QUERY__SLICE_QUERY_PERSON_ID_FKEY = Internal.createForeignKey(SliceQueryTable.SLICE_QUERY, DSL.name("slice_query_person_id_fkey"), new TableField[] { SliceQueryTable.SLICE_QUERY.PERSON_ID }, Keys.PERSON_PKEY, new TableField[] { PersonTable.PERSON.ID }, true);
 }

@@ -4,28 +4,14 @@
 package cz.quantumleap.core;
 
 
-import cz.quantumleap.core.tables.EnumTable;
-import cz.quantumleap.core.tables.EnumValueTable;
-import cz.quantumleap.core.tables.GenerateIntervalsTable;
-import cz.quantumleap.core.tables.IncrementTable;
-import cz.quantumleap.core.tables.NotificationTable;
-import cz.quantumleap.core.tables.PersonRoleTable;
-import cz.quantumleap.core.tables.PersonTable;
-import cz.quantumleap.core.tables.RoleTable;
-import cz.quantumleap.core.tables.TablePreferencesTable;
+import cz.quantumleap.core.tables.*;
 import cz.quantumleap.core.tables.records.GenerateIntervalsRecord;
+import org.jooq.*;
+import org.jooq.impl.SchemaImpl;
 
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
-
-import org.jooq.Catalog;
-import org.jooq.Configuration;
-import org.jooq.Field;
-import org.jooq.Result;
-import org.jooq.Sequence;
-import org.jooq.Table;
-import org.jooq.impl.SchemaImpl;
 
 
 /**
@@ -128,9 +114,9 @@ public class Core extends SchemaImpl {
     public final RoleTable ROLE = RoleTable.ROLE;
 
     /**
-     * The table <code>core.table_preferences</code>.
+     * The table <code>core.slice_query</code>.
      */
-    public final TablePreferencesTable TABLE_PREFERENCES = TablePreferencesTable.TABLE_PREFERENCES;
+    public final SliceQueryTable SLICE_QUERY = SliceQueryTable.SLICE_QUERY;
 
     /**
      * No further instances allowed
@@ -153,7 +139,7 @@ public class Core extends SchemaImpl {
             Sequences.PERSON_ID_SEQ,
             Sequences.PERSON_ROLE_ID_SEQ,
             Sequences.ROLE_ID_SEQ,
-            Sequences.TABLE_PREFERENCES_ID_SEQ);
+            Sequences.SLICE_QUERY_ID_SEQ);
     }
 
     @Override
@@ -167,6 +153,6 @@ public class Core extends SchemaImpl {
             PersonTable.PERSON,
             PersonRoleTable.PERSON_ROLE,
             RoleTable.ROLE,
-            TablePreferencesTable.TABLE_PREFERENCES);
+            SliceQueryTable.SLICE_QUERY);
     }
 }
