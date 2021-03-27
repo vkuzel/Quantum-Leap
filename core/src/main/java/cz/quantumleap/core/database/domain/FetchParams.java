@@ -23,16 +23,13 @@ public class FetchParams {
 
     private final Sort sort;
 
-    private final Long tablePreferencesId;
-
-    public FetchParams(Map<String, Object> filter, String query, Condition condition, int offset, int size, Sort sort, Long tablePreferencesId) {
+    public FetchParams(Map<String, Object> filter, String query, Condition condition, int offset, int size, Sort sort) {
         this.filter = unmodifiableMap(filter);
         this.query = query;
         this.condition = condition;
         this.offset = offset;
         this.size = size;
         this.sort = sort;
-        this.tablePreferencesId = tablePreferencesId;
     }
 
     public static FetchParams empty() {
@@ -42,7 +39,6 @@ public class FetchParams {
                 null,
                 0,
                 MAX_ITEMS,
-                null,
                 null
         );
     }
@@ -50,7 +46,7 @@ public class FetchParams {
     public FetchParams addFilter(String fieldName, Object value) {
         Map<String, Object> filter = new HashMap<>(this.filter);
         filter.put(fieldName, value);
-        return new FetchParams(filter, query, condition, offset, size, sort, tablePreferencesId);
+        return new FetchParams(filter, query, condition, offset, size, sort);
     }
 
     public Map<String, Object> getFilter() {
@@ -58,7 +54,7 @@ public class FetchParams {
     }
 
     public FetchParams withQuery(String query) {
-        return new FetchParams(filter, query, condition, offset, size, sort, tablePreferencesId);
+        return new FetchParams(filter, query, condition, offset, size, sort);
     }
 
     public String getQuery() {
@@ -67,7 +63,7 @@ public class FetchParams {
 
     public FetchParams addCondition(Condition condition) {
         condition = this.condition != null ? this.condition.and(condition) : condition;
-        return new FetchParams(filter, query, condition, offset, size, sort, tablePreferencesId);
+        return new FetchParams(filter, query, condition, offset, size, sort);
     }
 
     public Condition getCondition() {
@@ -79,7 +75,7 @@ public class FetchParams {
     }
 
     public FetchParams withSize(int size) {
-        return new FetchParams(filter, query, condition, offset, size, sort, tablePreferencesId);
+        return new FetchParams(filter, query, condition, offset, size, sort);
     }
 
     public int getSize() {
@@ -87,21 +83,17 @@ public class FetchParams {
     }
 
     public FetchParams withSort(Sort sort) {
-        return new FetchParams(filter, query, condition, offset, size, sort, tablePreferencesId);
+        return new FetchParams(filter, query, condition, offset, size, sort);
     }
 
     public Sort getSort() {
         return sort;
     }
 
-    public Long getTablePreferencesId() {
-        return tablePreferencesId;
-    }
-
     public FetchParams extend() {
         if (offset + size < MAX_ITEMS) {
             int nextSize = Math.min(MAX_ITEMS - offset, offset + size + CHUNK_SIZE);
-            return new FetchParams(filter, query, condition, offset, nextSize, sort, tablePreferencesId);
+            return new FetchParams(filter, query, condition, offset, nextSize, sort);
         }
         return null;
     }

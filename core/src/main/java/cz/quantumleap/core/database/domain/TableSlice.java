@@ -12,7 +12,6 @@ import java.util.function.BiFunction;
 public class TableSlice implements Iterable<List<Object>> {
 
     private final EntityIdentifier<?> entityIdentifier;
-    private final TablePreferences tablePreferences;
     private final FetchParams fetchParams;
     private final boolean canExtend;
 
@@ -21,14 +20,12 @@ public class TableSlice implements Iterable<List<Object>> {
 
     public TableSlice(
             EntityIdentifier<?> entityIdentifier,
-            TablePreferences tablePreferences,
             FetchParams fetchParams,
             boolean canExtend,
             List<Column> columns,
             List<List<Object>> rows
     ) {
         this.entityIdentifier = entityIdentifier;
-        this.tablePreferences = tablePreferences;
         this.fetchParams = fetchParams;
         this.canExtend = canExtend;
         this.columns = columns;
@@ -36,7 +33,7 @@ public class TableSlice implements Iterable<List<Object>> {
     }
 
     public Builder builder() {
-        return new Builder(entityIdentifier, tablePreferences, fetchParams, canExtend, columns, rows);
+        return new Builder(entityIdentifier, fetchParams, canExtend, columns, rows);
     }
 
     public EntityIdentifier<?> getEntityIdentifier() {
@@ -173,7 +170,6 @@ public class TableSlice implements Iterable<List<Object>> {
     public static class Builder {
 
         private final EntityIdentifier<?> entityIdentifier;
-        private final TablePreferences tablePreferences;
         private final FetchParams fetchParams;
         private final boolean canExtend;
 
@@ -182,14 +178,12 @@ public class TableSlice implements Iterable<List<Object>> {
 
         private Builder(
                 EntityIdentifier<?> entityIdentifier,
-                TablePreferences tablePreferences,
                 FetchParams fetchParams,
                 boolean canExtend,
                 List<Column> columns,
                 List<List<Object>> rows
         ) {
             this.entityIdentifier = entityIdentifier;
-            this.tablePreferences = tablePreferences;
             this.fetchParams = fetchParams;
             this.canExtend = canExtend;
             this.columns = new ArrayList<>(columns);
@@ -205,7 +199,7 @@ public class TableSlice implements Iterable<List<Object>> {
         }
 
         public TableSlice build() {
-            return new TableSlice(entityIdentifier, tablePreferences, fetchParams, canExtend, columns, rows);
+            return new TableSlice(entityIdentifier, fetchParams, canExtend, columns, rows);
         }
     }
 }

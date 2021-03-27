@@ -27,14 +27,6 @@ CREATE TABLE core.person_role (
   UNIQUE (person_id, role_id)
 );
 
-CREATE TABLE core.table_preferences (
-  id                BIGSERIAL PRIMARY KEY,
-  entity_identifier VARCHAR(128) NOT NULL,
-  is_default        BOOLEAN      NOT NULL,
-  enabled_columns   VARCHAR[]    NOT NULL DEFAULT '{}',
-  UNIQUE (entity_identifier, is_default)
-);
-
 CREATE TABLE core.enum (
   id   VARCHAR(255) NOT NULL PRIMARY KEY,
   name VARCHAR(255) NOT NULL

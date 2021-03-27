@@ -1,7 +1,6 @@
 package cz.quantumleap.core.database;
 
 import cz.quantumleap.core.database.domain.FetchParams;
-import cz.quantumleap.core.database.domain.TablePreferences;
 import cz.quantumleap.core.database.domain.TableSlice;
 import cz.quantumleap.core.database.entity.Entity;
 import cz.quantumleap.core.database.query.*;
@@ -15,7 +14,6 @@ import java.util.stream.Collectors;
 
 import static cz.quantumleap.core.database.query.QueryUtils.ConditionOperator.AND;
 import static cz.quantumleap.core.database.query.QueryUtils.joinConditions;
-import static cz.quantumleap.core.tables.TablePreferencesTable.TABLE_PREFERENCES;
 
 public final class DefaultListDao<TABLE extends Table<? extends Record>> implements ListDao<TABLE> {
 
@@ -70,8 +68,7 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
                 .limit(params.getOffset(), resolveNumberOfRows(params))
                 .fetch();
 
-        TablePreferences tablePreferences = selectTablePreferences();
-        return sliceFactory.forRequestedResult(tablePreferences, params, result);
+        return sliceFactory.forRequestedResult(params, result);
     }
 
     private FetchParams setDefaultOrder(FetchParams fetchParams) {
@@ -108,24 +105,6 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
 
     private int resolveNumberOfRows(FetchParams request) {
         return Math.min(request.getSize() + 1, FetchParams.MAX_ITEMS);
-    }
-
-    private TablePreferences selectTablePreferences() {
-        List<TablePreferences> tablePreferencesList = dslContext.select(
-                TABLE_PREFERENCES.ID,
-                TABLE_PREFERENCES.IS_DEFAULT,
-                TABLE_PREFERENCES.ENABLED_COLUMNS
-        )
-                .from(TABLE_PREFERENCES)
-                .where(TABLE_PREFERENCES.ENTITY_IDENTIFIER.equal(entity.getIdentifier().toString()))
-                .fetchInto(TablePreferences.class);
-
-        for (TablePreferences preferences : tablePreferencesList) {
-            if (preferences.isDefault()) {
-                return preferences;
-            }
-        }
-        return TablePreferences.EMPTY;
     }
 
     /**

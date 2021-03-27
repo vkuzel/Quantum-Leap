@@ -35,7 +35,7 @@ public class FetchParamsControllerArgumentResolver implements HandlerMethodArgum
     }
 
     @Override
-    public FetchParams resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
+    public FetchParams resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) {
         String qualifier = parameter.hasParameterAnnotation(Qualifier.class) ? parameter.getParameterAnnotation(Qualifier.class).value() : null;
         String query = getWebRequestStringParameter(webRequest, qualifier, QUERY_PARAM_NAME, null);
         int offset = getWebRequestIntParameter(webRequest, qualifier, OFFSET_PARAM_NAME, DEFAULT_OFFSET);
@@ -50,7 +50,7 @@ public class FetchParamsControllerArgumentResolver implements HandlerMethodArgum
 
         Sort sort = sortHandlerMethodArgumentResolver.resolveArgument(parameter, mavContainer, webRequest, binderFactory);
 
-        return new FetchParams(emptyMap(), query, null, offset, size, sort, null);
+        return new FetchParams(emptyMap(), query, null, offset, size, sort);
     }
 
     private int getWebRequestIntParameter(NativeWebRequest webRequest, String qualifier, String paramName, int defaultValue) {

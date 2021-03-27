@@ -1,7 +1,6 @@
 package cz.quantumleap.core.database.query;
 
 import cz.quantumleap.core.database.domain.FetchParams;
-import cz.quantumleap.core.database.domain.TablePreferences;
 import cz.quantumleap.core.database.domain.TableSlice;
 import cz.quantumleap.core.database.entity.Entity;
 import cz.quantumleap.core.database.entity.EntityIdentifier;
@@ -29,7 +28,6 @@ public final class TableSliceFactory {
     }
 
     public TableSlice forRequestedResult(
-            TablePreferences tablePreferences,
             FetchParams fetchParams,
             Result<?> result
     ) {
@@ -47,7 +45,6 @@ public final class TableSliceFactory {
 
         return new TableSlice(
                 entity.getIdentifier(),
-                tablePreferences,
                 fetchParams,
                 result.size() > maxSize,
                 columns,
