@@ -23,6 +23,7 @@ public class PersonRoleDao extends DaoStub<PersonRoleTable> {
         return Entity.builder(PERSON_ROLE)
                 .addLookupMetaType(PERSON_ROLE.PERSON_ID, EntityIdentifier.forTable(PERSON))
                 .addLookupMetaType(PERSON_ROLE.ROLE_ID, EntityIdentifier.forTable(ROLE))
+                .setDefaultTableSliceFieldNames("id", "role")
                 .build();
     }
 }

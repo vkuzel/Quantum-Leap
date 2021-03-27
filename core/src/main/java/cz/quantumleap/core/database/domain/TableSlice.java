@@ -5,11 +5,9 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.data.domain.Sort;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.BiFunction;
-import java.util.stream.Collectors;
 
 public class TableSlice implements Iterable<List<Object>> {
 
@@ -46,14 +44,7 @@ public class TableSlice implements Iterable<List<Object>> {
     }
 
     public List<Column> getColumns() {
-        List<String> enabledColumns = tablePreferences.getEnabledColumns();
-        if (enabledColumns.isEmpty()) {
-            return columns;
-        }
-        return columns.stream()
-                .filter(column -> enabledColumns.contains(column.name))
-                .sorted(Comparator.comparingLong(o -> enabledColumns.indexOf(o.name)))
-                .collect(Collectors.toList());
+        return columns;
     }
 
     public Column getColumnByName(String name) {

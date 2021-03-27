@@ -26,7 +26,9 @@ public class NotificationDao extends DaoStub<NotificationTable> {
     }
 
     private static Entity<NotificationTable> createEntity() {
-        return Entity.builder(NOTIFICATION).build();
+        return Entity.builder(NOTIFICATION)
+                .setDefaultTableSliceFieldNames("id", "message", "created_at", "resolved_at")
+                .build();
     }
 
     public Notification fetch(long personId, long id) {
