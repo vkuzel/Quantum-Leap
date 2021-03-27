@@ -1,0 +1,34 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+</head>
+<body>
+<!--/*
+    Template params:
+        qualifier ... In case there is more than one table / query field on a page.
+        tableSlice ... TableSlice object.
+*/-->
+<div th:fragment="query" th:assert="tableSlice" th:with="qualifier=${qualifier?:''}" class="input-group input-group-sm">
+    <div th:if="${#lists.isEmpty(tableSlice.sliceQueries)}" class="input-group-prepend">
+        <div class="input-group-text" id="search-label">
+            <i class="fas fa-search"></i>
+        </div>
+    </div>
+    <div th:if="${!#lists.isEmpty(tableSlice.sliceQueries)}" class="input-group-prepend">
+        <button class="btn btn-secondary dropdown-toggle" type="button" id="queryButton"
+                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="fas fa-search"></i>
+        </button>
+        <div class="dropdown-menu" aria-labelledby="queryButton">
+            <a th:each="sliceQuery : ${tableSlice.sliceQueries}" class="dropdown-item"
+               th:classappend="|${qualifier}query|" href="#" th:data-query="${sliceQuery.query}"
+               th:text="${sliceQuery.query}">Query</a>
+        </div>
+    </div>
+    <input type="text" th:id="|${qualifier}search|" class="form-control"
+           th:placeholder="#{admin.table.title.meal.search-meals}"
+           th:aria-label="#{admin.table.title.meal.search-meals}" aria-describedby="search-label"
+           th:value="${tableSlice.fetchParams.query}">
+</div>
+</body>
+</html>

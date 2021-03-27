@@ -35,40 +35,42 @@ var Loader = {
 };
 
 function TableControl(tableSelector, tBodyListenersBinder) {
-    var $table = $(tableSelector);
+    const $table = $(tableSelector);
+    const qualifier = $table.attr('data-qualifier') || '';
 
-    var tableControl = {
+    const tableControl = {
         $table: $table,
-        qualifier: $table.attr('data-qualifier'),
+        qualifier: qualifier,
 
         $tHead: $table.find('thead'),
         $tBody: $table.find('tbody'),
         $tFoot: $table.find('tfoot'),
-        $searchInput: $($table.attr('data-search-selector'))
+        $searchInput: $(`#${qualifier}search`),
+        $searchQueries: $(`.${qualifier}query`)
     };
 
-    var qualifyParamName = function (qualifier, paramName) {
+    const qualifyParamName = function (qualifier, paramName) {
         return qualifier ? qualifier + '_' + paramName : paramName;
     };
 
     tableControl.bindListeners = function () {
-        var $loadMoreButton = tableControl.$tFoot.find('.btn-load-more');
+        const $loadMoreButton = tableControl.$tFoot.find('.btn-load-more');
         $loadMoreButton.click(tableControl.fetchMore);
 
         if (tBodyListenersBinder) {
             tBodyListenersBinder(tableControl.$tBody);
         }
 
-        var $sortButtons = tableControl.$tHead.find('a');
+        const $sortButtons = tableControl.$tHead.find('a');
         $sortButtons.click(tableControl.sort);
     };
 
     tableControl.appendContent = function (table) {
-        var $table = $(table);
+        const $table = $(table);
 
-        var $tHead = $table.find('thead');
-        var $tBody = $table.find('tbody');
-        var $tFoot = $table.find('tfoot');
+        const $tHead = $table.find('thead');
+        const $tBody = $table.find('tbody');
+        const $tFoot = $table.find('tfoot');
 
         tableControl.$tHead.replaceWith($tHead);
         tableControl.$tHead = $tHead;
@@ -80,11 +82,11 @@ function TableControl(tableSelector, tBodyListenersBinder) {
     };
 
     tableControl.replaceContent = function (table) {
-        var $table = $(table);
+        const $table = $(table);
 
-        var $tHead = $table.find('thead');
-        var $tBody = $table.find('tbody');
-        var $tFoot = $table.find('tfoot');
+        const $tHead = $table.find('thead');
+        const $tBody = $table.find('tbody');
+        const $tFoot = $table.find('tfoot');
 
         tableControl.$tHead.replaceWith($tHead);
         tableControl.$tHead = $tHead;
@@ -97,11 +99,11 @@ function TableControl(tableSelector, tBodyListenersBinder) {
     };
 
     tableControl.fetchMore = function () {
-        var offset = tableControl.$tBody.find('tr').length;
-        var offsetParamName = qualifyParamName(tableControl.qualifier, 'offset');
+        const offset = tableControl.$tBody.find('tr').length;
+        const offsetParamName = qualifyParamName(tableControl.qualifier, 'offset');
 
-        var url = UrlUtils.removeQueryParams(this.href, qualifyParamName(tableControl.qualifier, 'size'), offsetParamName);
-        var data = {};
+        const url = UrlUtils.removeQueryParams(this.href, qualifyParamName(tableControl.qualifier, 'size'), offsetParamName);
+        const data = {};
         data[offsetParamName] = offset;
 
         $.get(url, data, tableControl.appendContent);
@@ -110,20 +112,31 @@ function TableControl(tableSelector, tBodyListenersBinder) {
     };
 
     tableControl.fetchSearchResults = DelayedFunctionCall(function () {
-        var query = tableControl.$searchInput.val();
-        var url = UrlUtils.removeQueryParams(location.href, qualifyParamName(tableControl.qualifier, 'size'), qualifyParamName(tableControl.qualifier, 'offset'));
+        const query = tableControl.$searchInput.val();
+        const sizeParamName = qualifyParamName(tableControl.qualifier, 'size');
+        const offsetParamName = qualifyParamName(tableControl.qualifier, 'offset');
+        const url = UrlUtils.removeQueryParams(location.href, sizeParamName, offsetParamName);
 
         $.get(url, {query: query}, tableControl.replaceContent);
 
         return false;
     }, 500);
 
-    tableControl.sort = function () {
-        var size = tableControl.$tBody.find('tr').length;
-        var sizeParamName = qualifyParamName(tableControl.qualifier, 'size');
+    tableControl.selectQuery = function (a) {
+        const $a = $(a);
 
-        var url = UrlUtils.removeQueryParams(this.href, sizeParamName, qualifyParamName(tableControl.qualifier, 'offset'));
-        var data = {};
+        const query = $a.attr('data-query');
+        tableControl.$searchInput.val(query);
+        tableControl.fetchSearchResults.call();
+    }
+
+    tableControl.sort = function () {
+        const size = tableControl.$tBody.find('tr').length;
+        const sizeParamName = qualifyParamName(tableControl.qualifier, 'size');
+        const offsetParamName = qualifyParamName(tableControl.qualifier, 'offset');
+
+        const url = UrlUtils.removeQueryParams(this.href, sizeParamName, offsetParamName);
+        const data = {};
         data[sizeParamName] = size;
 
         $.get(url, data, tableControl.replaceContent);
@@ -135,6 +148,11 @@ function TableControl(tableSelector, tBodyListenersBinder) {
     if (tableControl.$searchInput) {
         tableControl.$searchInput.keyup(tableControl.fetchSearchResults.call);
         tableControl.$searchInput.blur(tableControl.fetchSearchResults.cancel);
+        tableControl.$searchQueries.click(function (event) {
+            event.preventDefault();
+
+            tableControl.selectQuery(this);
+        });
     }
 }
 

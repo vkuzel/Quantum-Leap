@@ -11,8 +11,7 @@
         detailUrl ... Detail endpoint URL to which detail ID will be appended.
         cellTemplate__column name__ ... Fragment to replace the default cell template.
 */-->
-<table th:fragment="table" class="table table-striped table-bordered table-hover data-table"
-       th:data-qualifier="${qualifier}" th:data-search-selector="${searchSelector}"
+<table th:fragment="table" th:assert="tableSlice" class="table table-striped table-bordered table-hover data-table" th:data-qualifier="${qualifier}"
        th:with="urlBuilder=${T(org.springframework.web.servlet.support.ServletUriComponentsBuilder)},templateTable=${T(cz.quantumleap.admin.web.TemplateHelper).createTemplateTable(qualifier,entityIdentifier,tableSlice,detailUrl)}">
     <thead>
     <tr>
