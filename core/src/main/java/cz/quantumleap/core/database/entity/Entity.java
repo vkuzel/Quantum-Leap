@@ -3,10 +3,14 @@ package cz.quantumleap.core.database.entity;
 import org.apache.commons.lang3.Validate;
 import org.jooq.*;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 
 import static cz.quantumleap.core.database.query.QueryUtils.createFieldMap;
+import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 
 public final class Entity<TABLE extends Table<? extends Record>> {
@@ -29,7 +33,7 @@ public final class Entity<TABLE extends Table<? extends Record>> {
     private final Function<Table<?>, Field<String>> lookupLabelFieldBuilder;
     private final List<SortField<?>> lookupOrderBy;
 
-    private final Condition defaultCondition;
+    private final Condition condition;
     private final PrimaryKeyConditionBuilder<TABLE> primaryKeyConditionBuilder;
     private final Function<String, Condition> wordConditionBuilder;
 
@@ -40,7 +44,7 @@ public final class Entity<TABLE extends Table<? extends Record>> {
             List<Field<?>> primaryKeyFields,
             Function<Table<?>, Field<String>> lookupLabelFieldBuilder,
             List<SortField<?>> lookupOrderBy,
-            Condition defaultCondition,
+            Condition condition,
             Function<String, Condition> wordConditionBuilder
     ) {
         this.entityIdentifier = entityIdentifier;
@@ -50,7 +54,7 @@ public final class Entity<TABLE extends Table<? extends Record>> {
         this.lookupLabelFieldBuilder = lookupLabelFieldBuilder;
         this.lookupOrderBy = lookupOrderBy;
 
-        this.defaultCondition = defaultCondition;
+        this.condition = condition;
         this.primaryKeyConditionBuilder = new PrimaryKeyConditionBuilder<>(this);
         this.wordConditionBuilder = wordConditionBuilder;
     }
@@ -64,7 +68,7 @@ public final class Entity<TABLE extends Table<? extends Record>> {
     }
 
     public List<Field<?>> getFields() {
-        return Arrays.asList(getTable().fields());
+        return asList(getTable().fields());
     }
 
     public Map<String, Field<?>> getFieldMap() {
@@ -104,8 +108,8 @@ public final class Entity<TABLE extends Table<? extends Record>> {
         return lookupOrderBy;
     }
 
-    public Condition getDefaultCondition() {
-        return defaultCondition;
+    public Condition getCondition() {
+        return condition;
     }
 
     public PrimaryKeyConditionBuilder<TABLE> getPrimaryKeyConditionBuilder() {
@@ -146,7 +150,7 @@ public final class Entity<TABLE extends Table<? extends Record>> {
         private Function<Table<?>, Field<String>> lookupLabelFieldBuilder = null;
         private List<SortField<?>> lookupOrderBy = null;
 
-        private Condition defaultCondition = null;
+        private Condition condition = null;
         private Function<String, Condition> wordConditionBuilder = q -> null;
 
         private Builder(EntityIdentifier<TABLE> entityIdentifier, Table<?> table) {
@@ -209,8 +213,8 @@ public final class Entity<TABLE extends Table<? extends Record>> {
             return this;
         }
 
-        public Builder<TABLE> setDefaultCondition(Condition defaultCondition) {
-            this.defaultCondition = defaultCondition;
+        public Builder<TABLE> setCondition(Condition condition) {
+            this.condition = condition;
             return this;
         }
 
@@ -237,7 +241,7 @@ public final class Entity<TABLE extends Table<? extends Record>> {
                     primaryKeyFields,
                     lookupLabelFieldBuilder,
                     lookupOrderBy,
-                    defaultCondition,
+                    condition,
                     wordConditionBuilder
             );
         }

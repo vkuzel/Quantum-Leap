@@ -73,7 +73,7 @@ public final class DefaultLookupDao<TABLE extends Table<? extends Record>> imple
         Field<?> primaryKey = entity.getPrimaryKeyField();
         Condition condition = QueryUtils.joinConditions(
                 AND,
-                entity.getDefaultCondition(),
+                entity.getCondition(),
                 queryConditionFactory.forQuery(query)
         );
         List<SortField<?>> sortFields = entity.getLookupOrderBy();

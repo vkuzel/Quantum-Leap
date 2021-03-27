@@ -51,7 +51,7 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
 
         Condition condition = QueryUtils.joinConditions(
                 AND,
-                entity.getDefaultCondition(),
+                entity.getCondition(),
                 params.getCondition(),
                 sliceFilterConditionFactory.forFilter(params.getFilter()),
                 sliceQueryConditionFactory.forQuery(params.getQuery())
@@ -92,7 +92,7 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
 
         Condition conditions = joinConditions(
                 AND,
-                entity.getDefaultCondition(),
+                entity.getCondition(),
                 params.getCondition(),
                 listFilterConditionFactory.forFilter(params.getFilter()),
                 listQueryConditionFactory.forQuery(params.getQuery())
