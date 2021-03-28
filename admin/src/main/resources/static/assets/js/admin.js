@@ -376,8 +376,8 @@ function TagsControl(tagsFieldSelector) {
 }
 
 function AsyncFormPartControl(formPartSelector, actionElementsSelector, formPartPromiseConsumer) {
-    var $formPart = $(formPartSelector);
-    var asyncFormPartControl = {
+    const $formPart = $(formPartSelector);
+    const asyncFormPartControl = {
         $formPart: $formPart,
         $form: $formPart.parents('form'),
         $actionElements: $(actionElementsSelector)
@@ -391,9 +391,9 @@ function AsyncFormPartControl(formPartSelector, actionElementsSelector, formPart
 
     asyncFormPartControl.onActionButtonClick = function (event) {
         event.preventDefault();
-        var $actionButton = $(this);
-        var additionalData = '&' + encodeURI($actionButton.attr('name'));
-        var actionButtonValue = $actionButton.val();
+        const $actionButton = $(this);
+        let additionalData = '&' + encodeURI($actionButton.attr('name'));
+        const actionButtonValue = $actionButton.val();
         if (actionButtonValue) {
             additionalData += '=' + encodeURI(actionButtonValue);
         }
@@ -401,22 +401,22 @@ function AsyncFormPartControl(formPartSelector, actionElementsSelector, formPart
     };
 
     asyncFormPartControl.onActionElementChange = function () {
-        var additionalData = $(this).attr('data-async-form-action');
+        const additionalData = $(this).attr('data-async-form-action');
         asyncFormPartControl.requestFormPart(additionalData);
     };
 
     asyncFormPartControl.requestFormPart = function (additionalData) {
-        var action = asyncFormPartControl.$form.attr('action');
-        var data = asyncFormPartControl.$form.serialize();
+        const action = asyncFormPartControl.$form.attr('action');
+        let data = asyncFormPartControl.$form.serialize();
         data += '&' + additionalData;
-        var formPartPromise = $.post(action, data).done(asyncFormPartControl.replaceFormPartContent);
+        const formPartPromise = $.post(action, data).done(asyncFormPartControl.replaceFormPartContent);
         if (formPartPromiseConsumer) {
             formPartPromiseConsumer(formPartPromise, asyncFormPartControl);
         }
     };
 
     asyncFormPartControl.replaceFormPartContent = function (html) {
-        var $formPartReplacement = $(html);
+        const $formPartReplacement = $(html);
 
         asyncFormPartControl.$formPart.replaceWith($formPartReplacement);
         asyncFormPartControl.$formPart = $formPartReplacement;
@@ -430,7 +430,7 @@ function AsyncFormPartControl(formPartSelector, actionElementsSelector, formPart
 
     asyncFormPartControl.bindListeners();
     if (formPartPromiseConsumer) {
-        var formPartPromise = $.Deferred();
+        const formPartPromise = $.Deferred();
         formPartPromiseConsumer(formPartPromise, asyncFormPartControl);
         formPartPromise.resolve(asyncFormPartControl.$formPart);
     }
