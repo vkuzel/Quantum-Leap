@@ -26,9 +26,8 @@
         </div>
     </div>
     <input type="text" th:id="|${qualifier}search|" class="form-control"
-           th:placeholder="#{admin.table.title.meal.search-meals}"
-           th:aria-label="#{admin.table.title.meal.search-meals}" aria-describedby="search-label"
-           th:value="${slice.fetchParams.query}">
+           th:placeholder="#{admin.table.search}" th:aria-label="#{admin.table.search}"
+           aria-describedby="search-label" th:value="${slice.fetchParams.query}">
 </div>
 </body>
 </html>
