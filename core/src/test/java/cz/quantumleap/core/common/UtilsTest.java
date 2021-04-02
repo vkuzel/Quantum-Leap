@@ -15,14 +15,11 @@ class UtilsTest {
 
     @Test
     void generatedDatesIncludeStartAndEndDay() {
-        // given
         LocalDate start = LocalDate.parse("2020-05-01");
         LocalDate end = LocalDate.parse("2020-05-10");
 
-        // when
         List<LocalDate> days = Utils.generateDaysBetween(start, end);
 
-        // then
         Assertions.assertEquals(10, days.size());
         Assertions.assertTrue(days.contains(start));
         Assertions.assertTrue(days.contains(end));
@@ -30,22 +27,17 @@ class UtilsTest {
 
     @Test
     void checkTableTypeThrowsExceptionForIdentifierWithDifferentType() {
-        // given
         EntityIdentifier<PersonTable> identifier = EntityIdentifier.forTable(PERSON);
 
-        // when, then
         Assertions.assertThrows(IllegalStateException.class, () -> Utils.checkTableType(identifier, RoleTable.class));
     }
 
     @Test
     void checkTableTypeDoesNotFailForNullType() {
-        // given
         EntityIdentifier<PersonTable> identifier = EntityIdentifier.forTable(PERSON);
 
-        // when
         EntityIdentifier<?> checkedIdentifier = Utils.checkTableType(identifier, null);
 
-        // then
         Assertions.assertNotNull(checkedIdentifier);
     }
 }

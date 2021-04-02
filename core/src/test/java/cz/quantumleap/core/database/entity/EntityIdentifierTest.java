@@ -18,10 +18,8 @@ class EntityIdentifierTest {
     @ParameterizedTest
     @MethodSource("provideArgumentsForSuccessfulParseTest")
     void parseParsesTextToEntityIdentifier(String text, EntityIdentifier<?> expected) {
-        // when
         EntityIdentifier<?> identifier = EntityIdentifier.parse(text);
 
-        // then
         assertEquals(expected, identifier);
     }
 
@@ -39,7 +37,6 @@ class EntityIdentifierTest {
     @ParameterizedTest
     @MethodSource("provideArgumentsForIncorrectParseTest")
     void parseThrowsExceptionForIncorrectText(String text) {
-        // when, then
         Assertions.assertThrows(IllegalArgumentException.class, () -> EntityIdentifier.parse(text));
     }
 

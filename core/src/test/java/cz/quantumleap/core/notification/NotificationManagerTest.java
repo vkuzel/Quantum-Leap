@@ -35,15 +35,12 @@ class NotificationManagerTest {
 
     @Test
     void createNotificationForPersonCreatesNotificationInDatabase() {
-        // given
         List<NotificationDefinition> definitions = createNotificationDefinition(NOTIFICATION_CODE1);
         NotificationManager notificationManager = new NotificationManager(notificationDao, definitions);
         Person person = testSupport.createPerson();
 
-        // when
         long id = notificationManager.createNotificationForPerson(person.getId(), NOTIFICATION_CODE1).getId();
 
-        // then
         Notification notification = notificationDao.fetchById(id, Notification.class);
         assertEquals(NOTIFICATION_CODE1, notification.getCode());
         assertEquals(person.getId(), notification.getPersonId());
@@ -52,27 +49,22 @@ class NotificationManagerTest {
 
     @Test
     void createNotificationForPersonThrowsExceptionForNonExistingCode() {
-        // given
         List<NotificationDefinition> definitions = createNotificationDefinition(NOTIFICATION_CODE1);
         NotificationManager notificationManager = new NotificationManager(notificationDao, definitions);
         Person person = testSupport.createPerson();
 
-        // when, then
         Assertions.assertThrows(IllegalArgumentException.class, () ->
                 notificationManager.createNotificationForPerson(person.getId(), NOTIFICATION_CODE2));
     }
 
     @Test
     void createNotificationForRoleCreatesNotificationInDatabase() {
-        // given
         List<NotificationDefinition> definitions = createNotificationDefinition(NOTIFICATION_CODE1);
         NotificationManager notificationManager = new NotificationManager(notificationDao, definitions);
         Role role = testSupport.createRole();
 
-        // when
         long id = notificationManager.createNotificationForRole(role.getId(), NOTIFICATION_CODE1).getId();
 
-        // then
         Notification notification = notificationDao.fetchById(id, Notification.class);
         assertEquals(NOTIFICATION_CODE1, notification.getCode());
         assertEquals(role.getId(), notification.getRoleId());
@@ -81,14 +73,11 @@ class NotificationManagerTest {
 
     @Test
     void createNotificationForAllCreatesNotificationInDatabase() {
-        // given
         List<NotificationDefinition> definitions = createNotificationDefinition(NOTIFICATION_CODE1);
         NotificationManager notificationManager = new NotificationManager(notificationDao, definitions);
 
-        // when
         long id = notificationManager.createNotificationForAll(NOTIFICATION_CODE1).getId();
 
-        // then
         Notification notification = notificationDao.fetchById(id, Notification.class);
         assertEquals(NOTIFICATION_CODE1, notification.getCode());
         assertNull(notification.getPersonId());

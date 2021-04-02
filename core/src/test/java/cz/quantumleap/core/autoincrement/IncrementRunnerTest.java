@@ -44,7 +44,6 @@ public class IncrementRunnerTest {
 
     @Test
     public void newIncrementsAreExecuted() {
-        // given
         List<IncrementService.IncrementScript> incrementScripts = ImmutableList.of(
                 createIncrementScript("classpath:/test_db/inc/v01/01_testEntity.sql", 1),
                 createIncrementScript("classpath:/test_db/inc/v02/01_testFunction.sql", 2),
@@ -56,14 +55,12 @@ public class IncrementRunnerTest {
         Map<String, Integer> lastIncrements = ImmutableMap.of("core", 0);
         IncrementRunner incrementRunner = new IncrementRunner(environment, incrementService, transactionExecutor, incrementDao);
 
-        // when
         try {
             incrementRunner.runIncrements(lastIncrements, incrementScripts);
         } catch (BadSqlGrammarException e) {
             log.debug(e.getMessage());
         }
 
-        // then
         Assertions.assertEquals(2, testSupport.countRowsInTable("core.increment"));
         Assertions.assertEquals(0, testSupport.countRowsInTable("core.test_entity"));
         Assertions.assertEquals(0, testSupport.countRowsInTable("core.related_test_entity"));

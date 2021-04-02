@@ -42,16 +42,13 @@ public class DatabaseAuthoritiesLoaderTest {
 
     @Test
     public void grantedAuthorityIsMappedForUser() {
-        // given
         Map<String, Object> oauthAttributes = ImmutableMap.of("email", USER_EMAIL, "name", "John Doe");
         GrantedAuthority oauthAuthority = new OAuth2UserAuthority(oauthAttributes);
         Collection<GrantedAuthority> oauthAuthorities = Collections.singleton(oauthAuthority);
         DatabaseAuthoritiesLoader loader = new DatabaseAuthoritiesLoader(personDao, roleDao);
 
-        // when
         Collection<? extends GrantedAuthority> authorities = loader.mapAuthorities(oauthAuthorities);
 
-        // then
         verify(personDao, times(1)).fetchByEmail(USER_EMAIL);
         verify(personDao, times(1)).save(person);
         verify(roleDao, times(1)).fetchRolesByPersonId(1L);
@@ -60,22 +57,18 @@ public class DatabaseAuthoritiesLoaderTest {
 
     @Test
     public void unsupportedAuthorityMappingFails() {
-        // given
         GrantedAuthority oauthAuthority = new SimpleGrantedAuthority("ASD");
         Collection<GrantedAuthority> oauthAuthorities = Collections.singleton(oauthAuthority);
         DatabaseAuthoritiesLoader loader = new DatabaseAuthoritiesLoader(personDao, roleDao);
 
-        // when...then
         Assertions.assertThrows(DatabaseAuthoritiesLoadingException.class, () ->
                 loader.mapAuthorities(oauthAuthorities));
     }
 
     @Test
     public void missingAuthorityMappingFails() {
-        // Given
         DatabaseAuthoritiesLoader loader = new DatabaseAuthoritiesLoader(personDao, roleDao);
 
-        // when...then
         Assertions.assertThrows(DatabaseAuthoritiesLoadingException.class, () ->
                 loader.mapAuthorities(Collections.emptySet()));
     }

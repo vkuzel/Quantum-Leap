@@ -30,7 +30,6 @@ public class WebSecurityExpressionEvaluatorTest {
 
     @Test
     public void filterInvocationSecrityHandlerEvaluatesExpression() {
-        // given
         Expression expression = Mockito.mock(Expression.class);
         EvaluationContext evaluationContext = Mockito.mock(EvaluationContext.class);
         doReturn(true).when(expression).getValue(evaluationContext, Boolean.class);
@@ -39,10 +38,8 @@ public class WebSecurityExpressionEvaluatorTest {
         TestSecurityExpressionHandler testSecurityExpressionHandler = new TestSecurityExpressionHandler(expressionParser, evaluationContext);
         WebSecurityExpressionEvaluator evaluator = new WebSecurityExpressionEvaluator(Collections.singletonList(testSecurityExpressionHandler));
 
-        // when
         boolean result = evaluator.evaluate("expression", httpServletRequest, httpServletResponse);
 
-        // then
         Assertions.assertTrue(result);
     }
 

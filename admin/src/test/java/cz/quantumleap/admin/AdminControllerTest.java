@@ -38,7 +38,6 @@ public class AdminControllerTest {
 
     @Test
     public void onlyAccessibleMenuItemsAreReturned() {
-        // given
         HttpServletRequest httpServletRequest = mock(HttpServletRequest.class);
         doReturn("/").when(httpServletRequest).getContextPath();
         doReturn("/").when(httpServletRequest).getServletPath();
@@ -62,10 +61,8 @@ public class AdminControllerTest {
         AdminController controller = new AdminController(adminMenuManager, personService, notificationService, webSecurityExpressionEvaluator) {
         };
 
-        // when
         List<AdminMenuItem> menuItems = controller.getMenuItems(httpServletRequest, httpServletResponse);
 
-        // then
         Assertions.assertEquals(1, menuItems.size());
         AdminMenuItem menuItem = menuItems.get(0);
         Assertions.assertEquals(1, menuItem.getChildren().size());

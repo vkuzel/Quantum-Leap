@@ -16,10 +16,8 @@ public class ResizableImageTagProcessorTest {
     @MethodSource("provideArgumentsForLimitTest")
     public void limitDimensionsAreCorrect(int originalWidth, int originalHeight, int widht, int height,
                                           int expectedWidth, int expectedHeight) {
-        // When
         ResizeLimit resizeLimit = new ResizeLimit(originalWidth, originalHeight, widht, height);
 
-        // Then
         assertEquals(expectedWidth, resizeLimit.getCalculatedWidth());
         assertEquals(expectedHeight, resizeLimit.getCalculatedHeight());
     }
@@ -43,10 +41,8 @@ public class ResizableImageTagProcessorTest {
     @MethodSource("provideArgumentsForCropTest")
     public void cropDimensionsAreCorrect(int originalWidth, int originalHeight, int width, int height,
                                          int expectedX, int expectedY, int expectedWidth, int expectedHeight) {
-        // When
         ResizeCrop resizeCrop = new ResizeCrop(originalWidth,originalHeight, width, height);
 
-        // Then
         assertEquals(expectedX, resizeCrop.getX());
         assertEquals(expectedY, resizeCrop.getY());
         assertEquals(expectedWidth, resizeCrop.getCropWidth());
