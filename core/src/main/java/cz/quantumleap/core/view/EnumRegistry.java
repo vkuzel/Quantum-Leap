@@ -26,15 +26,17 @@ public class EnumRegistry {
         this.dslContext = dslContext;
     }
 
-    public boolean isEnum(String enumId) {
-        return enumValueLabels.containsRow(enumId);
-    }
-
+    @SuppressWarnings("unused")
     public List<IdLabel> getValueLabels(String enumId) {
         return enumValueLabels.row(enumId).entrySet()
                 .stream()
                 .map(e -> new IdLabel(e.getKey(), e.getValue()))
                 .collect(Collectors.toList());
+    }
+
+    @SuppressWarnings("unused")
+    public String getLabel(String enumId, String value) {
+        return enumValueLabels.get(enumId, value);
     }
 
     @EventListener(ContextRefreshedEvent.class)
