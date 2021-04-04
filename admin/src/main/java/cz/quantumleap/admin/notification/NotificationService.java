@@ -66,10 +66,14 @@ public class NotificationService {
             messages.add(message);
         }
 
-        return slice.builder().addColumn(messageColumn, messages, (row, o) -> {
-            row.add(o);
-            return row;
-        }).build();
+        return slice.builder()
+                .addColumn(messageColumn, messages, (row, o) -> {
+                    row.add(o);
+                    return row;
+                })
+                .removeColumn(codeColumn)
+                .removeColumn(messageArgumentsColumn)
+                .build();
     }
 
     @Transactional

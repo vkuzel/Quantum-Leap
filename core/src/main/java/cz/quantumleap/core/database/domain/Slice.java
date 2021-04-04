@@ -2,6 +2,7 @@ package cz.quantumleap.core.database.domain;
 
 import cz.quantumleap.core.database.entity.EntityIdentifier;
 import cz.quantumleap.core.slicequery.domain.SliceQuery;
+import org.apache.commons.lang3.Validate;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.data.domain.Sort;
 
@@ -9,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.BiFunction;
+import java.util.stream.Collectors;
 
 public class Slice implements Iterable<List<Object>> {
 
@@ -54,7 +56,8 @@ public class Slice implements Iterable<List<Object>> {
                 return column;
             }
         }
-        throw new IllegalArgumentException("Column " + name + " not found!");
+        String cols = columns.stream().map(Column::getName).collect(Collectors.joining(", "));
+        throw new IllegalArgumentException("Column " + name + " not found! Columns: " + cols);
     }
 
     public List<List<Object>> getRows() {
@@ -203,8 +206,18 @@ public class Slice implements Iterable<List<Object>> {
 
         public Builder addColumn(Column column, List<Object> values, BiFunction<List<Object>, Object, List<Object>> mergeRow) {
             columns.add(column);
-            for (int i = 0; i < this.rows.size(); i++) {
-                this.rows.set(i, mergeRow.apply(this.rows.get(i), values.get(i)));
+            for (int i = 0; i < rows.size(); i++) {
+                rows.set(i, mergeRow.apply(rows.get(i), values.get(i)));
+            }
+            return this;
+        }
+
+        public Builder removeColumn(Column column) {
+            int index = columns.indexOf(column);
+            Validate.isTrue(index != -1);
+            columns.remove(index);
+            for (List<Object> row : rows) {
+                row.remove(index);
             }
             return this;
         }
