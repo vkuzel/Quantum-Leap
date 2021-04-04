@@ -7,6 +7,8 @@ import org.springframework.validation.ObjectError;
 
 import java.util.List;
 
+import static java.util.Collections.emptyList;
+
 public class ExceptionErrors extends AbstractErrors {
 
     @Override
@@ -26,21 +28,23 @@ public class ExceptionErrors extends AbstractErrors {
 
     @Override
     public void addAllErrors(Errors errors) {
-        throw new UnsupportedOperationException();
+        for (ObjectError error : errors.getAllErrors()) {
+            throw new IllegalArgumentException(error.getCode());
+        }
     }
 
     @Override
     public List<ObjectError> getGlobalErrors() {
-        throw new UnsupportedOperationException();
+        return emptyList();
     }
 
     @Override
     public List<FieldError> getFieldErrors() {
-        throw new UnsupportedOperationException();
+        return emptyList();
     }
 
     @Override
     public Object getFieldValue(String field) {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException(field);
     }
 }
