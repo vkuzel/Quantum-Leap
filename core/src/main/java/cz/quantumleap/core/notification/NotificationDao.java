@@ -14,9 +14,11 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static cz.quantumleap.core.tables.NotificationTable.NOTIFICATION;
 import static cz.quantumleap.core.tables.PersonRoleTable.PERSON_ROLE;
+import static java.lang.String.format;
 import static org.springframework.data.domain.Sort.Direction.ASC;
 
 @Repository
@@ -50,7 +52,13 @@ public class NotificationDao extends DaoStub<NotificationTable> {
         Condition condition = NOTIFICATION.CODE.eq(code)
                 .and(NOTIFICATION.RESOLVED_AT.isNull());
         if (!arguments.isEmpty()) {
-            condition = condition.and("message_arguments :: VARCHAR = ? :: VARCHAR", arguments.toArray());
+            if (arguments.size() > 100) {
+                String msg = format("Notification %d has too many arguments: %d!", code, arguments.size());
+                throw new IllegalStateException(msg);
+            }
+
+            String params = arguments.stream().map(a -> "?").collect(Collectors.joining(","));
+            condition = condition.and("message_arguments = ARRAY[" + params + "] :: VARCHAR[]", arguments.toArray());
         } else {
             condition = condition.and("message_arguments = ARRAY[] :: VARCHAR[]", arguments.toArray());
         }
