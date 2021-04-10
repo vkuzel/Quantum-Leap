@@ -1,13 +1,13 @@
-var lookupControlRegister = {};
+const lookupControlRegister = {};
 
-var UrlUtils = {
+const UrlUtils = {
     getQueryParam: function (url, name) {
-        var regExp = new RegExp(name + "=([^&#]+)");
-        var match = url.match(regExp);
+        const regExp = new RegExp(name + "=([^&#]+)");
+        const match = url.match(regExp);
         return match !== null ? match[1] : null;
     },
     replaceQueryParam: function (url, name, value) {
-        var regExp = new RegExp(name + '=[^&#]+');
+        const regExp = new RegExp(name + '=[^&#]+');
         if (url.match(regExp) != null) {
             return url.replace(regExp, name + '=' + encodeURIComponent(value));
         } else if (url.indexOf('?') < 0) {
@@ -17,15 +17,15 @@ var UrlUtils = {
         }
     },
     removeQueryParams: function (url, name) {
-        for (var i = 1; i < arguments.length; i++) {
-            var regExp = new RegExp(arguments[i] + '=[^&#]+&?');
+        for (let argument of arguments) {
+            const regExp = new RegExp(argument + '=[^&#]+&?');
             url = url.replace(regExp, '');
         }
         return url;
     }
 };
 
-var Loader = {
+const Loader = {
     show: function () {
         $('#loader').show();
     },
@@ -157,9 +157,9 @@ function TableControl(tableSelector, tBodyListenersBinder) {
 }
 
 function LookupControl(lookupField) {
-    var $lookupField = $(lookupField);
+    const $lookupField = $(lookupField);
 
-    var lookupControl = {
+    const lookupControl = {
         $lookupField: $lookupField,
 
         $dataInput: $lookupField.find(':hidden'),
@@ -185,7 +185,7 @@ function LookupControl(lookupField) {
         return lookupControl.$dataInput.val();
     };
 
-    var dropDownControl = {
+    const dropDownControl = {
         labelsUrl: lookupControl.$labelInput.attr('data-lookup-labels-url'),
         $dropDown: $lookupField.find('div.dropdown-menu')
     };
@@ -197,18 +197,18 @@ function LookupControl(lookupField) {
     };
 
     dropDownControl.selectDropdownItem = function (a) {
-        var $a = $(a);
+        const $a = $(a);
 
-        var id = $a.attr('data-id');
+        const id = $a.attr('data-id');
         if (id) {
-            var label = $a.html();
+            const label = $a.html();
             lookupControl.setValues(id, label);
         }
         dropDownControl.$dropDown.removeClass('show');
     };
 
     dropDownControl.replaceDropdownContent = function (html) {
-        var $dropDownReplacement = $(html).next('div.dropdown-menu');
+        const $dropDownReplacement = $(html).next('div.dropdown-menu');
 
         $dropDownReplacement.find('a[data-id]').click(function (event) {
             event.preventDefault();
@@ -221,11 +221,11 @@ function LookupControl(lookupField) {
     };
 
     dropDownControl.fetchLabels = DelayedFunctionCall(function () {
-        var query = lookupControl.$labelInput.val();
+        let query = lookupControl.$labelInput.val();
         if (!query) {
             return;
         }
-        var queryPrefix = lookupControl.$labelInput.attr('data-query-prefix');
+        const queryPrefix = lookupControl.$labelInput.attr('data-query-prefix');
         if (queryPrefix) {
             query = queryPrefix + ' ' + query;
         }
@@ -243,10 +243,10 @@ function LookupControl(lookupField) {
 
     dropDownControl.bindListeners();
 
-    var $lookupButton = $lookupField.find('button[data-lookup-list-url]');
-    var $modal = $lookupField.find('div.modal');
+    const $lookupButton = $lookupField.find('button[data-lookup-list-url]');
+    const $modal = $lookupField.find('div.modal');
 
-    var modalControl = {
+    const modalControl = {
         $lookupButton: $lookupField.find('button[data-lookup-list-url]'),
         lookupListUrl: $lookupButton.attr('data-lookup-list-url'),
         lookupLabelUrl: $lookupButton.attr('data-lookup-label-url'),
@@ -260,9 +260,9 @@ function LookupControl(lookupField) {
     };
 
     modalControl.selectTableRow = function (tr) {
-        var $tr = $(tr);
+        const $tr = $(tr);
 
-        var id = $tr.attr('data-id');
+        const id = $tr.attr('data-id');
         if (id) {
             $.get(modalControl.lookupLabelUrl, {id: id}, function (label) {
                 lookupControl.setValues(id, label);
@@ -275,9 +275,9 @@ function LookupControl(lookupField) {
     };
 
     modalControl.replaceModalContent = function (html) {
-        var $table = $(html).next('table');
+        const $table = $(html).next('table');
 
-        var tBodyListenersBinder = function ($tBody) {
+        const tBodyListenersBinder = function ($tBody) {
             $tBody.find('tr[data-id]').click(function () {
                 modalControl.selectTableRow(this);
             });
@@ -297,9 +297,9 @@ function LookupControl(lookupField) {
 }
 
 function TagsControl(tagsFieldSelector) {
-    var $tagsField = $(tagsFieldSelector);
+    const $tagsField = $(tagsFieldSelector);
 
-    var modalControl = {
+    const modalControl = {
         $tagsInput: $tagsField.find('input[name="tags"]'),
         $tagsButton: $tagsField.find('button[name="select-tags"]'),
         $modal: $tagsField.find('div.modal'),
@@ -332,18 +332,18 @@ function TagsControl(tagsFieldSelector) {
     };
 
     modalControl.addTag = function (tag) {
-        var tagsValue = modalControl.$tagsInput.val();
-        var tags = tagsValue.length === 0 ? [] : tagsValue.split(',');
+        const tagsValue = modalControl.$tagsInput.val();
+        const tags = tagsValue.length === 0 ? [] : tagsValue.split(',');
         tags.push(tag);
         modalControl.$tagsInput.val(tags.join(','));
     };
 
     modalControl.removeTag = function (tag) {
-        var tags = modalControl.$tagsInput.val().split(',');
-        tags = tags.filter(function (t) {
-            return t !== tag;
-        });
-        modalControl.$tagsInput.val(tags.join(','));
+        const tags = modalControl.$tagsInput.val()
+            .split(',')
+            .filter((t) => t !== tag)
+            .join(',')
+        modalControl.$tagsInput.val(tags);
     };
 
     modalControl.createTag = function (tag) {
@@ -352,17 +352,17 @@ function TagsControl(tagsFieldSelector) {
             return;
         }
 
-        var $checkbox = modalControl.$tagsCheckboxes.filter('[value="' + tag + '"]');
+        const $checkbox = modalControl.$tagsCheckboxes.filter('[value="' + tag + '"]');
         if ($checkbox.length > 0) {
             if (!$checkbox.prop('checked')) {
                 $checkbox.prop('checked', true);
                 modalControl.addTag(tag);
             }
         } else {
-            var html = '<div class="form-group w-25"><label class="form-check-label">';
+            let html = '<div class="form-group w-25"><label class="form-check-label">';
             html += '<input class="form-check-input" type="checkbox" value="' + tag + '" checked> ' + tag + '</label></div>';
-            var $element = $(html);
-            var $newCheckbox = $element.find('input');
+            const $element = $(html);
+            const $newCheckbox = $element.find('input');
             $newCheckbox.click(function () {
                 modalControl.changeTag(this.value, this.checked);
             });
@@ -437,9 +437,9 @@ function AsyncFormPartControl(formPartSelector, actionElementsSelector, formPart
 }
 
 function ModalFormControl(modalSelector, openModalButtonsSelector, submitPromiseConsumer) {
-    var $modal = $(modalSelector);
+    const $modal = $(modalSelector);
 
-    var modalFormControl = {
+    const modalFormControl = {
         $modal: $modal,
         $openModalButtons: $(openModalButtonsSelector),
         $submitModalButtons: $()
@@ -461,9 +461,9 @@ function ModalFormControl(modalSelector, openModalButtonsSelector, submitPromise
 
     modalFormControl.onSubmitModalButtonClick = function (event) {
         event.preventDefault();
-        var $actionButton = $(this);
-        var additionalData = '&' + encodeURI($actionButton.attr('name'));
-        var actionButtonValue = $actionButton.val();
+        const $actionButton = $(this);
+        let additionalData = '&' + encodeURI($actionButton.attr('name'));
+        const actionButtonValue = $actionButton.val();
         if (actionButtonValue) {
             additionalData += '=' + encodeURI(actionButtonValue);
         }
@@ -476,8 +476,8 @@ function ModalFormControl(modalSelector, openModalButtonsSelector, submitPromise
     };
 
     modalFormControl.replaceModalContent = function (html) {
-        var $modalBodyReplacement = $(html);
-        var $modalBody = modalFormControl.$modal.find('.modal-body').first();
+        const $modalBodyReplacement = $(html);
+        const $modalBody = modalFormControl.$modal.find('.modal-body').first();
 
         $modalBody.replaceWith($modalBodyReplacement);
         modalFormControl.$submitModalButtons = modalFormControl.$modal.find('input[type="submit"],button[type="submit"]');
@@ -488,18 +488,18 @@ function ModalFormControl(modalSelector, openModalButtonsSelector, submitPromise
     };
 
     modalFormControl.fetchModal = function () {
-        var url = modalFormControl.$openModalButtons.attr('data-modal-url');
+        const url = modalFormControl.$openModalButtons.attr('data-modal-url');
         $.get(url, {}, modalFormControl.replaceModalContent);
     };
 
     modalFormControl.submitModal = function (additionalData) {
-        var $form = modalFormControl.$modal.find('form');
-        var action = $form.attr('action');
-        var data = $form.serialize();
+        const $form = modalFormControl.$modal.find('form');
+        const action = $form.attr('action');
+        let data = $form.serialize();
         if (additionalData) {
             data += '&' + additionalData;
         }
-        var submitPromise = $.post(action, data).done(modalFormControl.replaceModalContent);
+        const submitPromise = $.post(action, data).done(modalFormControl.replaceModalContent);
         if (submitPromiseConsumer) {
             submitPromiseConsumer(submitPromise, modalFormControl);
         }
@@ -535,10 +535,10 @@ function DelayedFunctionCall(func, wait) {
 
 $(function () {
     $('table.data-table').each(function (i, table) {
-        var tBodyListenersBinder = function ($tBody) {
+        const tBodyListenersBinder = function ($tBody) {
             $tBody.find('tr > td').click(function () {
-                var $primaryKeyAnchors = $(this).parent().find('> td.primary-key > a');
-                var $anchors = $(this).children('a');
+                const $primaryKeyAnchors = $(this).parent().find('> td.primary-key > a');
+                const $anchors = $(this).children('a');
                 if ($anchors.length) {
                     window.location = $anchors.first().attr('href');
                 } else if ($primaryKeyAnchors.length) {
