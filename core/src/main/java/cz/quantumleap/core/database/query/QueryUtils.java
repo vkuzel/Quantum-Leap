@@ -4,7 +4,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.Table;
-import org.jooq.TableField;
 import org.jooq.impl.DSL;
 
 import java.util.*;
@@ -68,7 +67,7 @@ public final class QueryUtils {
     }
 
     @SafeVarargs
-    public static Condition buildFindWordCondition(String word, TableField<?, String>... fields) {
+    public static Condition buildFindWordCondition(String word, Field<String>... fields) {
         if (StringUtils.isBlank(word)) {
             return null;
         }
@@ -76,7 +75,7 @@ public final class QueryUtils {
         Condition condition = null;
         String pattern = "(^|[^a-z0-9])" + escapeSqlRegexpBinding(word);
 
-        for (TableField<?, String> field : fields) {
+        for (Field<String> field : fields) {
             condition = joinConditions(ConditionOperator.OR, condition, DSL.condition("{0} ~* {1}", field, pattern));
         }
 
