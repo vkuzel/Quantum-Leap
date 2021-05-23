@@ -1,5 +1,34 @@
 const lookupControlRegister = {};
 
+function cancellableDebounce(func, wait = 500) {
+    let timeout;
+
+    return {
+        call: function () {
+            const context = this;
+            const args = arguments;
+
+            if (timeout) {
+                clearTimeout(timeout);
+            }
+
+            timeout = setTimeout(function () {
+                timeout = null;
+                func.apply(context, args);
+            }, wait);
+        },
+        cancel: function () {
+            if (timeout) {
+                clearTimeout(timeout);
+            }
+        }
+    }
+}
+
+function debounce(func, wait = 500) {
+    return cancellableDebounce(func, wait).call
+}
+
 const UrlUtils = {
     getQueryParam: function (url, name) {
         const regExp = new RegExp(name + "=([^&#]+)");
@@ -111,7 +140,7 @@ function TableControl(tableSelector, tBodyListenersBinder) {
         return false;
     };
 
-    tableControl.fetchSearchResults = DelayedFunctionCall(function () {
+    tableControl.fetchSearchResults = cancellableDebounce(function () {
         const query = tableControl.$searchInput.val();
         const sizeParamName = qualifyParamName(tableControl.qualifier, 'size');
         const offsetParamName = qualifyParamName(tableControl.qualifier, 'offset');
@@ -120,7 +149,7 @@ function TableControl(tableSelector, tBodyListenersBinder) {
         $.get(url, {query: query}, tableControl.replaceContent);
 
         return false;
-    }, 500);
+    });
 
     tableControl.selectQuery = function (a) {
         const $a = $(a);
@@ -220,7 +249,7 @@ function LookupControl(lookupField) {
         dropDownControl.$dropDown = $dropDownReplacement;
     };
 
-    dropDownControl.fetchLabels = DelayedFunctionCall(function () {
+    dropDownControl.fetchLabels = cancellableDebounce(function () {
         let query = lookupControl.$labelInput.val();
         if (!query) {
             return;
@@ -506,31 +535,6 @@ function ModalFormControl(modalSelector, openModalButtonsSelector, submitPromise
     };
 
     modalFormControl.bindListeners();
-}
-
-function DelayedFunctionCall(func, wait) {
-    var timeout;
-
-    return {
-        call: function () {
-            var context = this;
-            var args = arguments;
-
-            if (timeout) {
-                clearTimeout(timeout);
-            }
-
-            timeout = setTimeout(function () {
-                timeout = null;
-                func.apply(context, args);
-            }, wait);
-        },
-        cancel: function () {
-            if (timeout) {
-                clearTimeout(timeout);
-            }
-        }
-    }
 }
 
 $(function () {
