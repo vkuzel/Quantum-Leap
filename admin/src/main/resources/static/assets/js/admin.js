@@ -54,14 +54,18 @@ const UrlUtils = {
     }
 };
 
-const Loader = {
-    show: function () {
-        $('#loader').show();
-    },
-    hide: function () {
-        $('#loader').hide();
+// There can be only one loader on a page
+class Loader {
+    static show() {
+        const el = document.getElementById('loader')
+        el.style.display = 'block';
     }
-};
+
+    static hide() {
+        const el = document.getElementById('loader')
+        el.style.display = 'none';
+    }
+}
 
 function TableControl(tableSelector, tBodyListenersBinder) {
     const $table = $(tableSelector);
