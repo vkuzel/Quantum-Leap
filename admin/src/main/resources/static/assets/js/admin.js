@@ -29,31 +29,6 @@ function debounce(func, wait = 500) {
     return cancellableDebounce(func, wait).call
 }
 
-const UrlUtils = {
-    getQueryParam: function (url, name) {
-        const regExp = new RegExp(name + "=([^&#]+)");
-        const match = url.match(regExp);
-        return match !== null ? match[1] : null;
-    },
-    replaceQueryParam: function (url, name, value) {
-        const regExp = new RegExp(name + '=[^&#]+');
-        if (url.match(regExp) != null) {
-            return url.replace(regExp, name + '=' + encodeURIComponent(value));
-        } else if (url.indexOf('?') < 0) {
-            return url + '?' + name + '=' + encodeURIComponent(value);
-        } else {
-            return url + '&' + name + '=' + encodeURIComponent(value);
-        }
-    },
-    removeQueryParams: function (url, name) {
-        for (let argument of arguments) {
-            const regExp = new RegExp(argument + '=[^&#]+&?');
-            url = url.replace(regExp, '');
-        }
-        return url;
-    }
-};
-
 // There can be only one loader on a page
 class Loader {
     static show() {
@@ -132,10 +107,14 @@ function TableControl(tableSelector, tBodyListenersBinder) {
     };
 
     tableControl.fetchMore = function () {
+        const sizeParamName = qualifyParamName(tableControl.qualifier, 'size');
         const offset = tableControl.$tBody.find('tr').length;
         const offsetParamName = qualifyParamName(tableControl.qualifier, 'offset');
 
-        const url = UrlUtils.removeQueryParams(this.href, qualifyParamName(tableControl.qualifier, 'size'), offsetParamName);
+        const url = new URL(this.href)
+        url.searchParams.delete(offsetParamName)
+        url.searchParams.delete(sizeParamName)
+
         const data = {};
         data[offsetParamName] = offset;
 
@@ -148,7 +127,9 @@ function TableControl(tableSelector, tBodyListenersBinder) {
         const query = tableControl.$searchInput.val();
         const sizeParamName = qualifyParamName(tableControl.qualifier, 'size');
         const offsetParamName = qualifyParamName(tableControl.qualifier, 'offset');
-        const url = UrlUtils.removeQueryParams(location.href, sizeParamName, offsetParamName);
+        const url = new URL(location.href);
+        url.searchParams.delete(sizeParamName);
+        url.searchParams.delete(offsetParamName);
 
         $.get(url, {query: query}, tableControl.replaceContent);
 
@@ -168,7 +149,9 @@ function TableControl(tableSelector, tBodyListenersBinder) {
         const sizeParamName = qualifyParamName(tableControl.qualifier, 'size');
         const offsetParamName = qualifyParamName(tableControl.qualifier, 'offset');
 
-        const url = UrlUtils.removeQueryParams(this.href, sizeParamName, offsetParamName);
+        const url = new URL(this.href);
+        url.searchParams.delete(sizeParamName);
+        url.searchParams.delete(offsetParamName);
         const data = {};
         data[sizeParamName] = size;
 
