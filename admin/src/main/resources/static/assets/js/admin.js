@@ -42,133 +42,204 @@ class Loader {
     }
 }
 
-function TableControl(tableSelector, tBodyListenersBinder) {
-    const $table = $(tableSelector);
-    const qualifier = $table.attr('data-qualifier') || '';
+class TableControl {
 
-    const tableControl = {
-        $table: $table,
-        qualifier: qualifier,
+    #table = null
+    #qualifier = null
 
-        $tHead: $table.find('thead'),
-        $tBody: $table.find('tbody'),
-        $tFoot: $table.find('tfoot'),
-        $searchInput: $(`#${qualifier}search`),
-        $searchQueries: $(`.${qualifier}query`)
-    };
+    #tHead = null
+    #tBody = null
+    #tFoot = null
+    #searchInputListenersBound = false
+    #searchInput = null
+    #searchQueries = null
 
-    const qualifyParamName = function (qualifier, paramName) {
-        return qualifier ? qualifier + '_' + paramName : paramName;
-    };
+    constructor(table) {
+        this.#table = table
+        this.#qualifier = this.#table.getAttribute('data-qualifier') || ''
 
-    tableControl.bindListeners = function () {
-        const $loadMoreButton = tableControl.$tFoot.find('.btn-load-more');
-        $loadMoreButton.click(tableControl.fetchMore);
-
-        if (tBodyListenersBinder) {
-            tBodyListenersBinder(tableControl.$tBody);
-        }
-
-        const $sortButtons = tableControl.$tHead.find('a');
-        $sortButtons.click(tableControl.sort);
-    };
-
-    tableControl.appendContent = function (table) {
-        const $table = $(table);
-
-        const $tHead = $table.find('thead');
-        const $tBody = $table.find('tbody');
-        const $tFoot = $table.find('tfoot');
-
-        tableControl.$tHead.replaceWith($tHead);
-        tableControl.$tHead = $tHead;
-        tableControl.$tBody.append($tBody.html());
-        tableControl.$tFoot.replaceWith($tFoot);
-        tableControl.$tFoot = $tFoot;
-
-        tableControl.bindListeners();
-    };
-
-    tableControl.replaceContent = function (table) {
-        const $table = $(table);
-
-        const $tHead = $table.find('thead');
-        const $tBody = $table.find('tbody');
-        const $tFoot = $table.find('tfoot');
-
-        tableControl.$tHead.replaceWith($tHead);
-        tableControl.$tHead = $tHead;
-        tableControl.$tBody.replaceWith($tBody);
-        tableControl.$tBody = $tBody;
-        tableControl.$tFoot.replaceWith($tFoot);
-        tableControl.$tFoot = $tFoot;
-
-        tableControl.bindListeners();
-    };
-
-    tableControl.fetchMore = function () {
-        const sizeParamName = qualifyParamName(tableControl.qualifier, 'size');
-        const offset = tableControl.$tBody.find('tr').length;
-        const offsetParamName = qualifyParamName(tableControl.qualifier, 'offset');
-
-        const url = new URL(this.href)
-        url.searchParams.delete(offsetParamName)
-        url.searchParams.delete(sizeParamName)
-
-        const data = {};
-        data[offsetParamName] = offset;
-
-        $.get(url, data, tableControl.appendContent);
-
-        return false;
-    };
-
-    tableControl.fetchSearchResults = cancellableDebounce(function () {
-        const query = tableControl.$searchInput.val();
-        const sizeParamName = qualifyParamName(tableControl.qualifier, 'size');
-        const offsetParamName = qualifyParamName(tableControl.qualifier, 'offset');
-        const url = new URL(location.href);
-        url.searchParams.delete(sizeParamName);
-        url.searchParams.delete(offsetParamName);
-
-        $.get(url, {query: query}, tableControl.replaceContent);
-
-        return false;
-    });
-
-    tableControl.selectQuery = function (a) {
-        const $a = $(a);
-
-        const query = $a.attr('data-query');
-        tableControl.$searchInput.val(query);
-        tableControl.fetchSearchResults.call();
+        this.#tHead = this.#table.getElementsByTagName('thead')[0]
+        this.#tBody = this.#table.getElementsByTagName('tbody')[0]
+        this.#tFoot = this.#table.getElementsByTagName('tfoot')[0]
+        this.#searchInput = document.getElementById(`${this.#qualifier}search`)
+        this.#searchQueries = document.getElementsByClassName(`${this.#qualifier}query`)
     }
 
-    tableControl.sort = function () {
-        const size = tableControl.$tBody.find('tr').length;
-        const sizeParamName = qualifyParamName(tableControl.qualifier, 'size');
-        const offsetParamName = qualifyParamName(tableControl.qualifier, 'offset');
+    #qualifyParamName(paramName) {
+        return this.#qualifier ? `${this.#qualifier}_paramName` : paramName
+    }
 
-        const url = new URL(this.href);
-        url.searchParams.delete(sizeParamName);
-        url.searchParams.delete(offsetParamName);
-        const data = {};
-        data[sizeParamName] = size;
+    #bindListeners() {
+        if (this.#tHead) {
+            const sortButtons = this.#tHead.getElementsByTagName('a')
+            for (let sortButton of sortButtons) {
+                this.#bindSortListener(sortButton)
+            }
+        }
 
-        $.get(url, data, tableControl.replaceContent);
+        if (this.#tBody) {
+            const trs = this.#tBody.getElementsByTagName('tr')
+            for (let tr of trs) {
+                this.#bindOpenDetailListeners(tr)
+            }
+        }
 
-        return false;
-    };
+        if (this.#tFoot) {
+            const loadMoreButtons = this.#tFoot.getElementsByClassName('btn-load-more')
+            for (let loadMoreButton of loadMoreButtons) {
+                this.#bindLoadMoreListener(loadMoreButton)
+            }
+        }
 
-    tableControl.bindListeners();
-    if (tableControl.$searchInput) {
-        tableControl.$searchInput.keyup(tableControl.fetchSearchResults.call);
-        tableControl.$searchInput.blur(tableControl.fetchSearchResults.cancel);
-        tableControl.$searchQueries.click(function (event) {
-            event.preventDefault();
+        if (this.#searchInput && !this.#searchInputListenersBound) {
+            this.#searchInputListenersBound = true
+            this.#bindSearchInputListener(this.#searchInput)
+            for (const searchQuery of this.#searchQueries) {
+                this.#bindSearchQueryListener(searchQuery)
+            }
+        }
+    }
 
-            tableControl.selectQuery(this);
-        });
+    #bindSortListener(sortButton) {
+        sortButton.addEventListener('click', (event) => {
+            event.preventDefault()
+            this.#sort(sortButton)
+        })
+    }
+
+    #bindOpenDetailListeners(tr) {
+        const tds = tr.getElementsByTagName('td')
+        for (const td of tds) {
+            td.addEventListener('click', (event) => {
+                event.preventDefault()
+                const primaryKeyAnchors = td.parentElement.querySelectorAll('td.primary-key > a')
+                const anchors = td.getElementsByTagName('a')
+                if (anchors.length) {
+                    window.location = anchors[0].href
+                } else if (primaryKeyAnchors.length) {
+                    window.location = primaryKeyAnchors[0].href
+                }
+            })
+        }
+    }
+
+    #bindLoadMoreListener(loadMoreButton) {
+        loadMoreButton.addEventListener("click", (event) => {
+            event.preventDefault()
+            this.#fetchMore(loadMoreButton)
+        })
+    }
+
+    #bindSearchInputListener(searchInput) {
+        searchInput.addEventListener('keyup', (event) => {
+            event.preventDefault()
+            this.#fetchSearchResults.call()
+        })
+        searchInput.addEventListener('blur', (event) => {
+            event.preventDefault()
+            this.#fetchSearchResults.cancel()
+        })
+    }
+
+    #bindSearchQueryListener(searchQuery) {
+        searchQuery.addEventListener('click', (event) => {
+            event.preventDefault()
+            this.#selectQuery(event.target)
+        })
+    }
+
+    #appendContent(html) {
+        const tHeadHtml = TableControl.#extractTagContentFromStringHtml('thead', html)
+        const tBodyHtml = TableControl.#extractTagContentFromStringHtml('tbody', html)
+        const tFootHtml = TableControl.#extractTagContentFromStringHtml('tfoot', html)
+
+        this.#tHead.innerHTML = tHeadHtml
+        this.#tBody.innerHTML += tBodyHtml
+        this.#tFoot.innerHTML = tFootHtml
+
+        this.#bindListeners()
+    }
+
+    #replaceContent(html) {
+        const tHeadHtml = TableControl.#extractTagContentFromStringHtml('thead', html)
+        const tBodyHtml = TableControl.#extractTagContentFromStringHtml('tbody', html)
+        const tFootHtml = TableControl.#extractTagContentFromStringHtml('tfoot', html)
+
+        this.#tHead.innerHTML = tHeadHtml
+        this.#tBody.innerHTML = tBodyHtml
+        if (!this.#tFoot && tFootHtml) {
+            this.#tFoot = document.createElement('tfoot')
+            this.#tBody.parentElement.appendChild(this.#tFoot)
+        }
+        if (this.#tFoot) {
+            this.#tFoot.innerHTML = tFootHtml
+        }
+
+        this.#bindListeners()
+    }
+
+    static #extractTagContentFromStringHtml(tagName, html) {
+        const regExp = new RegExp(`<${tagName}>(.*)</${tagName}>`, 'is')
+        const match = html.match(regExp);
+        return match !== null ? match[1] : '';
+    }
+
+    #fetchMore(loadMoreButton) {
+        const sizeParamName = this.#qualifyParamName('size')
+        const offset = this.#tBody.getElementsByTagName('tr').length
+        const offsetParamName = this.#qualifyParamName('offset')
+
+        const buttonHref = loadMoreButton.getAttribute('href')
+        const url = new URL(buttonHref)
+        url.searchParams.delete(sizeParamName)
+        url.searchParams.set(offsetParamName, offset)
+
+        this.#get(url, (responseText) => this.#appendContent(responseText))
+    }
+
+    #fetchSearchResults = cancellableDebounce(() => {
+        const query = this.#searchInput.value
+        const sizeParamName = this.#qualifyParamName('size')
+        const offsetParamName = this.#qualifyParamName('offset')
+
+        const url = new URL(location.href)
+        url.searchParams.delete(sizeParamName)
+        url.searchParams.delete(offsetParamName)
+        url.searchParams.set('query', query)
+
+        this.#get(url, (responseText) => this.#replaceContent(responseText))
+    })
+
+    #selectQuery(a) {
+        this.#searchInput.value = a.getAttribute('data-query')
+        this.#fetchSearchResults.call()
+    }
+
+    #sort(sortButton) {
+        const size = this.#tBody.getElementsByTagName('tr').length
+        const sizeParamName = this.#qualifyParamName('size');
+        const offsetParamName = this.#qualifyParamName('offset');
+
+        const url = new URL(sortButton.href)
+        url.searchParams.set(sizeParamName, size)
+        url.searchParams.delete(offsetParamName)
+
+        this.#get(url, (responseText) => this.#replaceContent(responseText))
+    }
+
+    #get(url, loadListener) {
+        const request = new XMLHttpRequest()
+        const listener = (event) => loadListener(event.target.responseText)
+        request.addEventListener('load', listener)
+        request.open('GET', url)
+        request.setRequestHeader('X-Requested-With', 'XMLHttpRequest')
+        request.send()
+    }
+
+    static create(table) {
+        const tableControl = new TableControl(table)
+        tableControl.#bindListeners()
+        return tableControl
     }
 }
 
@@ -525,21 +596,10 @@ function ModalFormControl(modalSelector, openModalButtonsSelector, submitPromise
 }
 
 $(function () {
-    $('table.data-table').each(function (i, table) {
-        const tBodyListenersBinder = function ($tBody) {
-            $tBody.find('tr > td').click(function () {
-                const $primaryKeyAnchors = $(this).parent().find('> td.primary-key > a');
-                const $anchors = $(this).children('a');
-                if ($anchors.length) {
-                    window.location = $anchors.first().attr('href');
-                } else if ($primaryKeyAnchors.length) {
-                    window.location = $primaryKeyAnchors.first().attr('href');
-                }
-            });
-        };
-
-        TableControl(table, tBodyListenersBinder);
-    });
+    const tables = document.querySelectorAll('table.data-table')
+    for (let table of tables) {
+        TableControl.create(table)
+    }
 
     $('div.lookup').each(function (i, lookupField) {
         LookupControl(lookupField);
