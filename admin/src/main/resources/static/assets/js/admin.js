@@ -46,6 +46,7 @@ class TableControl {
 
     #table = null
     #qualifier = null
+    #tBodyListenersBinder = null
 
     #tHead = null
     #tBody = null
@@ -54,9 +55,10 @@ class TableControl {
     #searchInput = null
     #searchQueries = null
 
-    constructor(table) {
+    constructor(table, tBodyListenersBinder) {
         this.#table = table
         this.#qualifier = this.#table.getAttribute('data-qualifier') || ''
+        this.#tBodyListenersBinder = tBodyListenersBinder
 
         this.#tHead = this.#table.getElementsByTagName('thead')[0]
         this.#tBody = this.#table.getElementsByTagName('tbody')[0]
@@ -77,11 +79,8 @@ class TableControl {
             }
         }
 
-        if (this.#tBody) {
-            const trs = this.#tBody.getElementsByTagName('tr')
-            for (let tr of trs) {
-                this.#bindOpenDetailListeners(tr)
-            }
+        if (this.#tBody && this.#tBodyListenersBinder) {
+            this.#tBodyListenersBinder(this.#tBody)
         }
 
         if (this.#tFoot) {
@@ -105,22 +104,6 @@ class TableControl {
             event.preventDefault()
             this.#sort(sortButton)
         })
-    }
-
-    #bindOpenDetailListeners(tr) {
-        const tds = tr.getElementsByTagName('td')
-        for (const td of tds) {
-            td.addEventListener('click', (event) => {
-                event.preventDefault()
-                const primaryKeyAnchors = td.parentElement.querySelectorAll('td.primary-key > a')
-                const anchors = td.getElementsByTagName('a')
-                if (anchors.length) {
-                    window.location = anchors[0].href
-                } else if (primaryKeyAnchors.length) {
-                    window.location = primaryKeyAnchors[0].href
-                }
-            })
-        }
     }
 
     #bindLoadMoreListener(loadMoreButton) {
@@ -236,8 +219,8 @@ class TableControl {
         request.send()
     }
 
-    static create(table) {
-        const tableControl = new TableControl(table)
+    static create(table, tBodyListenersBinder) {
+        const tableControl = new TableControl(table, tBodyListenersBinder)
         tableControl.#bindListeners()
         return tableControl
     }
@@ -363,14 +346,17 @@ function LookupControl(lookupField) {
 
     modalControl.replaceModalContent = function (html) {
         const $table = $(html).next('table');
+        const bindSelectRowListener = (tBody) => {
+            const trs = tBody.querySelectorAll('tr[data-id]')
+            for (let tr of trs) {
+                tr.addEventListener('click', (event) => {
+                    event.preventDefault()
+                    modalControl.selectTableRow(tr)
+                })
+            }
+        }
 
-        const tBodyListenersBinder = function ($tBody) {
-            $tBody.find('tr[data-id]').click(function () {
-                modalControl.selectTableRow(this);
-            });
-        };
-
-        new TableControl($table, tBodyListenersBinder);
+        TableControl.create($table.get(0), bindSelectRowListener);
         modalControl.$modalBody.empty().append($table);
 
         modalControl.$modal.modal();
@@ -598,7 +584,23 @@ function ModalFormControl(modalSelector, openModalButtonsSelector, submitPromise
 $(function () {
     const tables = document.querySelectorAll('table.data-table')
     for (let table of tables) {
-        TableControl.create(table)
+        const bindOpenDetailListeners = (tBody) => {
+            const tds = tBody.querySelectorAll('tr > td')
+            for (let td of tds) {
+                td.addEventListener('click', (event) => {
+                    event.preventDefault()
+                    const primaryKeyAnchors = td.parentElement.querySelectorAll('td.primary-key > a')
+                    const anchors = td.getElementsByTagName('a')
+                    if (anchors.length) {
+                        window.location = anchors[0].href
+                    } else if (primaryKeyAnchors.length) {
+                        window.location = primaryKeyAnchors[0].href
+                    }
+                })
+            }
+        }
+
+        TableControl.create(table, bindOpenDetailListeners)
     }
 
     $('div.lookup').each(function (i, lookupField) {
