@@ -226,147 +226,192 @@ class TableControl {
     }
 }
 
-function LookupControl(lookupField) {
-    const $lookupField = $(lookupField);
+class LookupControl {
 
-    const lookupControl = {
-        $lookupField: $lookupField,
+    static #DROP_DOWN_CONTENT_REGEXP = new RegExp('<div class="[^"]*dropdown-menu[^"]*">(.*)</div>', 'is')
+    static #MODAL_BODY_CONTENT_REGEXP = new RegExp('(<table[^>]*>.*</table>)', 'is')
 
-        $dataInput: $lookupField.find(':hidden'),
-        $labelInput: $lookupField.find(':text'),
-        $resetButtonWrapper: $lookupField.find('.reset-wrapper'),
-        $resetButton: $lookupField.find('.reset-wrapper > button')
-    };
+    static #registry = {}
 
-    lookupControlRegister[lookupControl.$labelInput.attr('id')] = lookupControl;
+    #lookupField = null
 
-    lookupControl.setValues = function (id, label) {
-        lookupControl.$dataInput.val(id);
-        lookupControl.$labelInput.val(label);
-        lookupControl.$resetButtonWrapper.attr('hidden', !id);
-        lookupControl.$dataInput.trigger('change');
-    };
+    #dataInput = null
+    #labelInput = null
+    #resetButtonWrapper = null
+    #resetButton = null
 
-    lookupControl.resetValues = function () {
-        lookupControl.setValues(null, null);
-    };
+    #dropDownLabelsUrl = null
+    #dropDown = null
 
-    lookupControl.getId = function() {
-        return lookupControl.$dataInput.val();
-    };
+    #openModalButton = null
+    #listUrl = null
+    #labelUrl = null
+    #modal = null
+    #modalBody = null
 
-    const dropDownControl = {
-        labelsUrl: lookupControl.$labelInput.attr('data-lookup-labels-url'),
-        $dropDown: $lookupField.find('div.dropdown-menu')
-    };
+    constructor(lookupField) {
+        this.#lookupField = lookupField
 
-    dropDownControl.bindListeners = function () {
-        lookupControl.$labelInput.keyup(dropDownControl.fetchLabels.call);
-        lookupControl.$labelInput.blur(dropDownControl.fieldLostFocus);
-        lookupControl.$resetButton.click(lookupControl.resetValues);
-    };
+        this.#dataInput = this.#lookupField.querySelector('input[type="hidden"]')
+        this.#labelInput = this.#lookupField.querySelector('input[type="text"]')
+        this.#resetButtonWrapper = this.#lookupField.querySelector('.reset-wrapper')
+        this.#resetButton = this.#lookupField.querySelector('.reset-wrapper > button')
 
-    dropDownControl.selectDropdownItem = function (a) {
-        const $a = $(a);
+        this.#dropDownLabelsUrl = this.#labelInput.getAttribute('data-lookup-labels-url')
+        this.#dropDown = this.#lookupField.querySelector('div.dropdown-menu')
 
-        const id = $a.attr('data-id');
+        this.#openModalButton = this.#lookupField.querySelector('button[data-lookup-list-url]')
+        this.#listUrl = this.#openModalButton.getAttribute('data-lookup-list-url')
+        this.#labelUrl = this.#openModalButton.getAttribute('data-lookup-label-url')
+        this.#modal = this.#lookupField.querySelector('div.modal')
+        this.#modalBody = this.#modal.querySelector('.modal-body')
+
+        const id = this.#labelInput.getAttribute('id')
+        LookupControl.#registry[id] = this
+    }
+
+    #setValues(id, label) {
+        this.#dataInput.value = id
+        this.#labelInput.value = label
         if (id) {
-            const label = $a.html();
-            lookupControl.setValues(id, label);
+            this.#resetButtonWrapper.removeAttribute('hidden')
+        } else {
+            this.#resetButtonWrapper.setAttribute('hidden', 'hidden')
         }
-        dropDownControl.$dropDown.removeClass('show');
-    };
+        const event = new Event('change')
+        this.#dataInput.dispatchEvent(event)
+    }
 
-    dropDownControl.replaceDropdownContent = function (html) {
-        const $dropDownReplacement = $(html).next('div.dropdown-menu');
+    resetValues() {
+        this.#setValues(null, null)
+    }
 
-        $dropDownReplacement.find('a[data-id]').click(function (event) {
-            event.preventDefault();
+    #bindListeners() {
+        this.#labelInput.addEventListener('keyup', (event) => {
+            event.preventDefault()
+            this.#fetchLabels.call()
+        })
+        this.#labelInput.addEventListener('blur', (event) => {
+            event.preventDefault()
+            this.#fetchLabels.cancel()
+            setTimeout(() => this.#dropDown.classList.remove('show'), 300)
+        })
+        this.#resetButton.addEventListener('click', (event) => {
+            event.preventDefault()
+            this.resetValues()
+        })
+        this.#openModalButton.addEventListener('click', (event) => {
+            event.preventDefault()
+            this.#fetchList()
+        })
+    }
 
-            dropDownControl.selectDropdownItem(this);
-        });
+    #selectDropDownItem(anchor) {
+        const id = anchor.getAttribute('data-id')
+        if (id) {
+            const label = anchor.innerHTML
+            this.#setValues(id, label)
+        }
+        this.#dropDown.classList.remove('show')
+    }
 
-        dropDownControl.$dropDown.replaceWith($dropDownReplacement);
-        dropDownControl.$dropDown = $dropDownReplacement;
-    };
+    #replaceDropDownContent(html) {
+        const match = html.match(LookupControl.#DROP_DOWN_CONTENT_REGEXP)
+        const dropDownHtml = match !== null ? match[1] : ''
 
-    dropDownControl.fetchLabels = cancellableDebounce(function () {
-        let query = lookupControl.$labelInput.val();
+        this.#dropDown.innerHTML = dropDownHtml
+        this.#dropDown.classList.add('show')
+        const anchors = this.#dropDown.querySelectorAll('a[data-id]')
+        for (let anchor of anchors) {
+            anchor.addEventListener('click', (event) => {
+                event.preventDefault()
+                this.#selectDropDownItem(anchor)
+            })
+        }
+    }
+
+    #fetchLabels = cancellableDebounce(() => {
+        let query = this.#labelInput.value
         if (!query) {
-            return;
+            return
         }
-        const queryPrefix = lookupControl.$labelInput.attr('data-query-prefix');
+        const queryPrefix = this.#labelInput.getAttribute('data-query-prefix')
         if (queryPrefix) {
-            query = queryPrefix + ' ' + query;
+            query = queryPrefix + ' ' + query
         }
 
-        $.get(dropDownControl.labelsUrl, {query: query}, dropDownControl.replaceDropdownContent);
-    }, 300);
+        const url = new URL(location.href)
+        url.pathname = this.#dropDownLabelsUrl
+        url.search = ''
+        url.searchParams.set('query', query)
 
-    dropDownControl.fieldLostFocus = function () {
-        dropDownControl.fetchLabels.cancel();
+        this.#get(url, (responseText) => this.#replaceDropDownContent(responseText))
+    }, 300)
 
-        setTimeout(function () {
-            dropDownControl.$dropDown.removeClass('show');
-        }, 300);
-    };
-
-    dropDownControl.bindListeners();
-
-    const $lookupButton = $lookupField.find('button[data-lookup-list-url]');
-    const $modal = $lookupField.find('div.modal');
-
-    const modalControl = {
-        $lookupButton: $lookupField.find('button[data-lookup-list-url]'),
-        lookupListUrl: $lookupButton.attr('data-lookup-list-url'),
-        lookupLabelUrl: $lookupButton.attr('data-lookup-label-url'),
-        $modal: $modal,
-
-        $modalBody: $modal.find('.modal-body').first()
-    };
-
-    modalControl.bindListeners = function () {
-        modalControl.$lookupButton.click(modalControl.fetchList);
-    };
-
-    modalControl.selectTableRow = function (tr) {
-        const $tr = $(tr);
-
-        const id = $tr.attr('data-id');
+    #selectTableRow(tr) {
+        const id = tr.getAttribute('data-id')
         if (id) {
-            $.get(modalControl.lookupLabelUrl, {id: id}, function (label) {
-                lookupControl.setValues(id, label);
-            }).fail(function () {
-                lookupControl.setValues(id, id);
-            });
+            const url = new URL(location.href)
+            url.pathname = this.#labelUrl
+            url.search = ''
+            url.searchParams.set('id', id)
+
+            this.#get(
+                url,
+                (label) => this.#setValues(id, label),
+                () => this.resetValues()
+            )
         }
 
-        modalControl.$modal.modal('hide');
-    };
+        $(this.#modal).modal('hide')
+    }
 
-    modalControl.replaceModalContent = function (html) {
-        const $table = $(html).next('table');
+    #replaceModalContent(html) {
+        const match = html.match(LookupControl.#MODAL_BODY_CONTENT_REGEXP)
+        const dropDownHtml = match !== null ? match[1] : ''
+
+        this.#modalBody.innerHTML = dropDownHtml
+        const table = this.#modalBody.getElementsByTagName('table')[0]
         const bindSelectRowListener = (tBody) => {
             const trs = tBody.querySelectorAll('tr[data-id]')
             for (let tr of trs) {
                 tr.addEventListener('click', (event) => {
                     event.preventDefault()
-                    modalControl.selectTableRow(tr)
+                    this.#selectTableRow(tr)
                 })
             }
         }
 
-        TableControl.create($table.get(0), bindSelectRowListener);
-        modalControl.$modalBody.empty().append($table);
+        TableControl.create(table, bindSelectRowListener)
 
-        modalControl.$modal.modal();
-    };
+        $(this.#modal).modal()
+    }
 
-    modalControl.fetchList = function () {
-        $.get(modalControl.lookupListUrl, {}, modalControl.replaceModalContent);
-    };
+    #fetchList() {
+        const url = new URL(location.href)
+        url.pathname = this.#listUrl
+        this.#get(url, (responseText) => this.#replaceModalContent(responseText))
+    }
 
-    modalControl.bindListeners();
+    #get(url, loadListener, errorListener) {
+        const request = new XMLHttpRequest()
+        const listener = (event) => loadListener(event.target.responseText)
+        request.addEventListener('load', listener)
+        request.addEventListener('error', (event) => errorListener(event))
+        request.open('GET', url)
+        request.setRequestHeader('X-Requested-With', 'XMLHttpRequest')
+        request.send()
+    }
+
+    static create(lookupField) {
+        const lookupControl = new LookupControl(lookupField)
+        lookupControl.#bindListeners()
+        return lookupControl
+    }
+
+    static getById(id) {
+        return LookupControl.#registry[id]
+    }
 }
 
 function TagsControl(tagsFieldSelector) {
@@ -497,7 +542,7 @@ function AsyncFormPartControl(formPartSelector, actionElementsSelector, formPart
 
         asyncFormPartControl.bindListeners();
         asyncFormPartControl.$formPart.find('div.lookup').each(function (i, lookupField) {
-            LookupControl(lookupField);
+            LookupControl.create(lookupField);
         });
     };
 
@@ -556,7 +601,7 @@ function ModalFormControl(modalSelector, openModalButtonsSelector, submitPromise
         modalFormControl.$submitModalButtons = modalFormControl.$modal.find('input[type="submit"],button[type="submit"]');
         modalFormControl.bindListeners();
         $modalBodyReplacement.find('form div.lookup').each(function (i, lookupField) {
-            LookupControl(lookupField);
+            LookupControl.create(lookupField);
         });
     };
 
@@ -581,7 +626,7 @@ function ModalFormControl(modalSelector, openModalButtonsSelector, submitPromise
     modalFormControl.bindListeners();
 }
 
-$(function () {
+document.addEventListener('DOMContentLoaded', () => {
     const tables = document.querySelectorAll('table.data-table')
     for (let table of tables) {
         const bindOpenDetailListeners = (tBody) => {
@@ -603,12 +648,12 @@ $(function () {
         TableControl.create(table, bindOpenDetailListeners)
     }
 
-    $('div.lookup').each(function (i, lookupField) {
-        LookupControl(lookupField);
-    });
+    const lookups = document.querySelectorAll('div.lookup')
+    for (let lookup of lookups) {
+        LookupControl.create(lookup)
+    }
 
     $('div.tags').each(function (i, tagsField) {
         TagsControl(tagsField);
     });
-});
-
+})
