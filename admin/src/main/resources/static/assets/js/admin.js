@@ -317,9 +317,7 @@ class LookupControl {
 
     #replaceDropDownContent(html) {
         const match = html.match(LookupControl.#DROP_DOWN_CONTENT_REGEXP)
-        const dropDownHtml = match !== null ? match[1] : ''
-
-        this.#dropDown.innerHTML = dropDownHtml
+        this.#dropDown.innerHTML = match[1] || ''
         this.#dropDown.classList.add('show')
         const anchors = this.#dropDown.querySelectorAll('a[data-id]')
         for (let anchor of anchors) {
@@ -368,9 +366,7 @@ class LookupControl {
 
     #replaceModalContent(html) {
         const match = html.match(LookupControl.#MODAL_BODY_CONTENT_REGEXP)
-        const dropDownHtml = match !== null ? match[1] : ''
-
-        this.#modalBody.innerHTML = dropDownHtml
+        this.#modalBody.innerHTML = match[1] || ''
         const table = this.#modalBody.getElementsByTagName('table')[0]
         const bindSelectRowListener = (tBody) => {
             const trs = tBody.querySelectorAll('tr[data-id]')
@@ -414,83 +410,106 @@ class LookupControl {
     }
 }
 
-function TagsControl(tagsFieldSelector) {
-    const $tagsField = $(tagsFieldSelector);
+class TagsControl {
 
-    const modalControl = {
-        $tagsInput: $tagsField.find('input[name="tags"]'),
-        $tagsButton: $tagsField.find('button[name="select-tags"]'),
-        $modal: $tagsField.find('div.modal'),
-        $tagsContainer: $tagsField.find('.tags-container'),
-        $tagsCheckboxes: $tagsField.find('input[type="checkbox"]'),
-        $newTagInput: $tagsField.find('input[name="new-tag"]'),
-        $createNewTagButton: $tagsField.find('button[name="create-new-tag"]')
-    };
+    #tagsField = null
 
-    modalControl.bindListeners = function () {
-        modalControl.$tagsButton.click(modalControl.show);
-        modalControl.$tagsCheckboxes.click(function () {
-            modalControl.changeTag(this.value, this.checked);
-        });
-        modalControl.$createNewTagButton.click(function () {
-            modalControl.createTag(modalControl.$newTagInput.val());
-        });
-    };
+    #tagsInput = null
+    #tagsButton = null
+    #modal = null
+    #tagsContainer = null
+    #tagsCheckboxes = null
+    #newTagInput = null
+    #createNewTagInput = null
 
-    modalControl.show = function () {
-        modalControl.$modal.modal();
-    };
+    constructor(tagsField) {
+        this.#tagsField = tagsField
 
-    modalControl.changeTag = function (tag, checked) {
-        if (checked) {
-            modalControl.addTag(tag);
-        } else {
-            modalControl.removeTag(tag);
+        this.#tagsInput = this.#tagsField.querySelector('input[name="tags"]')
+        this.#tagsButton = this.#tagsField.querySelector('button[name="select-tags"]')
+        this.#modal = this.#tagsField.querySelector('div.modal')
+        this.#tagsContainer = this.#tagsField.querySelector('.tags-container')
+        this.#tagsCheckboxes = [...this.#tagsField.querySelectorAll('input[type="checkbox"]')]
+        this.#newTagInput = this.#tagsField.querySelector('input[name="new-tag"]')
+        this.#createNewTagInput = this.#tagsField.querySelector('button[name="create-new-tag"]')
+    }
+
+    #bindListeners() {
+        this.#tagsButton.addEventListener('click', (event) => {
+            event.preventDefault()
+            $(this.#modal).modal()
+        })
+        this.#bindCheckboxListeners()
+        this.#createNewTagInput.addEventListener('click', (event) => {
+            event.preventDefault()
+            this.#createTag(this.#newTagInput.value)
+        })
+    }
+
+    #bindCheckboxListeners() {
+        for (const checkbox of this.#tagsCheckboxes) {
+            checkbox.addEventListener('click', () => {
+                this.#changeTag(checkbox.value, checkbox.checked)
+            })
         }
-    };
+    }
 
-    modalControl.addTag = function (tag) {
-        const tagsValue = modalControl.$tagsInput.val();
-        const tags = tagsValue.length === 0 ? [] : tagsValue.split(',');
-        tags.push(tag);
-        modalControl.$tagsInput.val(tags.join(','));
-    };
+    #changeTag(tag, checked) {
+        if (checked) {
+            this.#addTag(tag)
+        } else {
+            this.#removeTag(tag)
+        }
+    }
 
-    modalControl.removeTag = function (tag) {
-        const tags = modalControl.$tagsInput.val()
+    #addTag(tag) {
+        const tagsValue = this.#tagsInput.value
+        const tags = tagsValue ? tagsValue.split(',') : []
+        tags.push(tag)
+        this.#tagsInput.value = tags.join(',')
+    }
+
+    #removeTag(tag) {
+        this.#tagsInput.value = this.#tagsInput.value
             .split(',')
             .filter((t) => t !== tag)
             .join(',')
-        modalControl.$tagsInput.val(tags);
-    };
+    }
 
-    modalControl.createTag = function (tag) {
+    #createTag(tag) {
         tag = tag.replace(/[^a-z0-9]/gi, '').toLowerCase();
         if (!tag) {
             return;
         }
 
-        const $checkbox = modalControl.$tagsCheckboxes.filter('[value="' + tag + '"]');
-        if ($checkbox.length > 0) {
-            if (!$checkbox.prop('checked')) {
-                $checkbox.prop('checked', true);
-                modalControl.addTag(tag);
-            }
-        } else {
-            let html = '<div class="form-group w-25"><label class="form-check-label">';
-            html += '<input class="form-check-input" type="checkbox" value="' + tag + '" checked> ' + tag + '</label></div>';
-            const $element = $(html);
-            const $newCheckbox = $element.find('input');
-            $newCheckbox.click(function () {
-                modalControl.changeTag(this.value, this.checked);
-            });
-            modalControl.$tagsCheckboxes = modalControl.$tagsCheckboxes.add($newCheckbox);
-            modalControl.$tagsContainer.append($element);
-            modalControl.addTag(tag);
-        }
-    };
+        let checkbox = this.#findTagCheckbox(tag)
+        if (!checkbox) {
+            let html = `<div class="form-group w-25"><label class="form-check-label">
+            <input class="form-check-input" type="checkbox" value="${tag}" checked> ${tag}</label></div>`;
+            this.#tagsContainer.innerHTML += html
+            this.#tagsCheckboxes = [...this.#tagsField.querySelectorAll('input[type="checkbox"]')]
+            this.#bindCheckboxListeners()
 
-    modalControl.bindListeners();
+            this.#addTag(tag)
+        }
+
+        checkbox = this.#findTagCheckbox(tag)
+        if (!checkbox.checked) {
+            checkbox.checked = true
+            this.#addTag(tag)
+        }
+    }
+
+    #findTagCheckbox(tag) {
+        return this.#tagsCheckboxes
+            .find((checkbox) => checkbox.value === tag)
+    }
+
+    static create(tagsField) {
+        const tagsControl = new TagsControl(tagsField)
+        tagsControl.#bindListeners()
+        return tagsControl
+    }
 }
 
 function AsyncFormPartControl(formPartSelector, actionElementsSelector, formPartPromiseConsumer) {
@@ -653,7 +672,8 @@ document.addEventListener('DOMContentLoaded', () => {
         LookupControl.create(lookup)
     }
 
-    $('div.tags').each(function (i, tagsField) {
-        TagsControl(tagsField);
-    });
+    const tags = document.querySelectorAll('div.tags')
+    for (let tag of tags) {
+        TagsControl.create(tag)
+    }
 })
