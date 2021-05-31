@@ -439,19 +439,19 @@ class TagsControl {
             event.preventDefault()
             $(this.#modal).modal()
         })
-        this.#bindCheckboxListeners()
+        for (const checkbox of this.#tagsCheckboxes) {
+            this.#bindCheckboxListener(checkbox)
+        }
         this.#createNewTagInput.addEventListener('click', (event) => {
             event.preventDefault()
             this.#createTag(this.#newTagInput.value)
         })
     }
 
-    #bindCheckboxListeners() {
-        for (const checkbox of this.#tagsCheckboxes) {
-            checkbox.addEventListener('click', () => {
-                this.#changeTag(checkbox.value, checkbox.checked)
-            })
-        }
+    #bindCheckboxListener(checkbox) {
+        checkbox.addEventListener('click', () => {
+            this.#changeTag(checkbox.value, checkbox.checked)
+        })
     }
 
     #changeTag(tag, checked) {
@@ -482,27 +482,33 @@ class TagsControl {
             return;
         }
 
-        let checkbox = this.#findTagCheckbox(tag)
-        if (!checkbox) {
-            let html = `<div class="form-group w-25"><label class="form-check-label">
-            <input class="form-check-input" type="checkbox" value="${tag}" checked> ${tag}</label></div>`;
-            this.#tagsContainer.innerHTML += html
-            this.#tagsCheckboxes = [...this.#tagsField.querySelectorAll('input[type="checkbox"]')]
-            this.#bindCheckboxListeners()
+        let checkbox = this.#tagsCheckboxes
+            .find((checkbox) => checkbox.value === tag)
 
-            this.#addTag(tag)
+        if (!checkbox) {
+            checkbox = document.createElement('input')
+            checkbox.type = 'checkbox'
+            checkbox.value = tag
+            checkbox.className = 'form-check-input'
+            this.#bindCheckboxListener(checkbox)
+            this.#tagsCheckboxes.push(checkbox)
+
+            const label = document.createElement('label')
+            label.className = 'form-check-label'
+            label.appendChild(checkbox)
+            label.appendChild(document.createTextNode(` ${tag}`))
+
+            const div = document.createElement('div')
+            div.className = 'form-group w-25'
+            div.appendChild(label)
+
+            this.#tagsContainer.appendChild(div)
         }
 
-        checkbox = this.#findTagCheckbox(tag)
         if (!checkbox.checked) {
             checkbox.checked = true
             this.#addTag(tag)
         }
-    }
-
-    #findTagCheckbox(tag) {
-        return this.#tagsCheckboxes
-            .find((checkbox) => checkbox.value === tag)
     }
 
     static create(tagsField) {
