@@ -65,6 +65,8 @@ class TableControl {
         this.#tFoot = this.#table.getElementsByTagName('tfoot')[0]
         this.#searchInput = document.getElementById(`${this.#qualifier}search`)
         this.#searchQueries = document.getElementsByClassName(`${this.#qualifier}query`)
+
+        this.#bindListeners()
     }
 
     #qualifyParamName(paramName) {
@@ -218,12 +220,6 @@ class TableControl {
         request.setRequestHeader('X-Requested-With', 'XMLHttpRequest')
         request.send()
     }
-
-    static create(table, tBodyListenersBinder) {
-        const tableControl = new TableControl(table, tBodyListenersBinder)
-        tableControl.#bindListeners()
-        return tableControl
-    }
 }
 
 class LookupControl {
@@ -268,6 +264,8 @@ class LookupControl {
 
         const id = this.#labelInput.getAttribute('id')
         LookupControl.#registry[id] = this
+
+        this.#bindListeners()
     }
 
     #setValues(id, label) {
@@ -378,7 +376,7 @@ class LookupControl {
             }
         }
 
-        TableControl.create(table, bindSelectRowListener)
+        new TableControl(table, bindSelectRowListener)
 
         $(this.#modal).modal()
     }
@@ -397,12 +395,6 @@ class LookupControl {
         request.open('GET', url)
         request.setRequestHeader('X-Requested-With', 'XMLHttpRequest')
         request.send()
-    }
-
-    static create(lookupField) {
-        const lookupControl = new LookupControl(lookupField)
-        lookupControl.#bindListeners()
-        return lookupControl
     }
 
     static getById(id) {
@@ -432,6 +424,8 @@ class TagsControl {
         this.#tagsCheckboxes = [...this.#tagsField.querySelectorAll('input[type="checkbox"]')]
         this.#newTagInput = this.#tagsField.querySelector('input[name="new-tag"]')
         this.#createNewTagInput = this.#tagsField.querySelector('button[name="create-new-tag"]')
+
+        this.#bindListeners()
     }
 
     #bindListeners() {
@@ -510,12 +504,6 @@ class TagsControl {
             this.#addTag(tag)
         }
     }
-
-    static create(tagsField) {
-        const tagsControl = new TagsControl(tagsField)
-        tagsControl.#bindListeners()
-        return tagsControl
-    }
 }
 
 function AsyncFormPartControl(formPartSelector, actionElementsSelector, formPartPromiseConsumer) {
@@ -567,7 +555,7 @@ function AsyncFormPartControl(formPartSelector, actionElementsSelector, formPart
 
         asyncFormPartControl.bindListeners();
         asyncFormPartControl.$formPart.find('div.lookup').each(function (i, lookupField) {
-            LookupControl.create(lookupField);
+            new LookupControl(lookupField);
         });
     };
 
@@ -626,7 +614,7 @@ function ModalFormControl(modalSelector, openModalButtonsSelector, submitPromise
         modalFormControl.$submitModalButtons = modalFormControl.$modal.find('input[type="submit"],button[type="submit"]');
         modalFormControl.bindListeners();
         $modalBodyReplacement.find('form div.lookup').each(function (i, lookupField) {
-            LookupControl.create(lookupField);
+            new LookupControl(lookupField);
         });
     };
 
@@ -670,16 +658,16 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        TableControl.create(table, bindOpenDetailListeners)
+        new TableControl(table, bindOpenDetailListeners)
     }
 
     const lookups = document.querySelectorAll('div.lookup')
     for (let lookup of lookups) {
-        LookupControl.create(lookup)
+        new LookupControl(lookup)
     }
 
     const tags = document.querySelectorAll('div.tags')
     for (let tag of tags) {
-        TagsControl.create(tag)
+        new TagsControl(tag)
     }
 })
