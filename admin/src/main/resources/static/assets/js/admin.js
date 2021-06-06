@@ -40,7 +40,7 @@ class Validate {
     }
 
     static isInstanceOf(object, clazz) {
-        if (!object instanceof clazz) {
+        if (!(object instanceof clazz)) {
             throw `${object} has to be instance of ${clazz}`
         }
     }
@@ -537,9 +537,9 @@ class AsyncFormPartControl {
 
     _formPart = null
     _actionElementsSelector = null
+    _formPartChangeListener = null
 
     _form = null
-    _formPartChangeListener = null
 
     constructor(formPart, actionElementsSelector, formPartChangeListener) {
         Validate.isInstanceOf(formPart, HTMLElement)
@@ -629,76 +629,118 @@ class AsyncFormPartControl {
     }
 }
 
-function ModalFormControl(modalSelector, openModalButtonsSelector, submitPromiseConsumer) {
-    const $modal = $(modalSelector);
+class ModalFormControl {
 
-    const modalFormControl = {
-        $modal: $modal,
-        $openModalButtons: $(openModalButtonsSelector),
-        $submitModalButtons: $()
-    };
+    _modal = null
+    _openModalButton = null
+    _modalBodyChangeListener = null
 
-    modalFormControl.bindListeners = function () {
-        this.$openModalButtons.off('click', this.onOpenModalButtonClick);
-        this.$openModalButtons.on('click', this.onOpenModalButtonClick);
-        this.$submitModalButtons.off('click', this.onSubmitModalButtonClick);
-        this.$submitModalButtons.on('click', this.onSubmitModalButtonClick);
-        this.$modal.find('.modal-body form').first().off('submit', this.onSubmitModal);
-        this.$modal.find('.modal-body form').first().on('submit', this.onSubmitModal);
-    };
+    _modalBody = null
+    _modalForm = null
 
-    modalFormControl.onOpenModalButtonClick = function (event) {
-        event.preventDefault();
-        modalFormControl.fetchModal();
-    };
+    constructor(modal, openModalButton, modalBodyChangeListener) {
+        Validate.isInstanceOf(modal, HTMLDivElement)
+        Validate.isInstanceOf(openModalButton, HTMLElement)
+        Validate.isTrue(openModalButton.hasAttribute('data-modal-url'))
+        Validate.isInstanceOfOrEmpty(modalBodyChangeListener, Function)
 
-    modalFormControl.onSubmitModalButtonClick = function (event) {
-        event.preventDefault();
-        const $actionButton = $(this);
-        let additionalData = '&' + encodeURI($actionButton.attr('name'));
-        const actionButtonValue = $actionButton.val();
-        if (actionButtonValue) {
-            additionalData += '=' + encodeURI(actionButtonValue);
+        this._modal = modal
+        this._openModalButton = openModalButton
+        this._modalBodyChangeListener = modalBodyChangeListener
+
+        this._modalBody = this._modal.querySelector('.modal-body')
+        this._modalForm = this._modalBody.querySelector('form')
+
+        this._bindListeners()
+    }
+
+    _bindListeners() {
+        this._openModalButton.addEventListener('click', (event) => {
+            event.preventDefault()
+            this._fetchModal()
+        })
+        const submitModalButtons = this._modal.querySelectorAll('input[type="submit"],button[type="submit"]')
+        for (let button of submitModalButtons) {
+            this._bindSubmitModalButtonListeners(button)
         }
-        modalFormControl.submitModal(additionalData);
-    };
+    }
 
-    modalFormControl.onSubmitModal = function (event) {
-        event.preventDefault();
-        modalFormControl.submitModal();
-    };
+    _bindModalFormListeners(modalForm) {
+        modalForm.addEventListener('submit', (event) => {
+            event.preventDefault()
+            this._submitModal()
+        })
+    }
 
-    modalFormControl.replaceModalContent = function (html) {
-        const $modalBodyReplacement = $(html);
-        const $modalBody = modalFormControl.$modal.find('.modal-body').first();
+    _bindSubmitModalButtonListeners(button) {
+        button.addEventListener('click', (event) => {
+            event.preventDefault()
+            this._submitModal((formData) => {
+                const name = button.getAttribute('name')
+                const value = button.getAttribute('value') || null
+                formData.set(name, value)
+            })
+        })
+    }
 
-        $modalBody.replaceWith($modalBodyReplacement);
-        modalFormControl.$submitModalButtons = modalFormControl.$modal.find('input[type="submit"],button[type="submit"]');
-        modalFormControl.bindListeners();
-        $modalBodyReplacement.find('form div.lookup').each(function (i, lookupField) {
-            new LookupControl(lookupField);
-        });
-    };
-
-    modalFormControl.fetchModal = function () {
-        const url = modalFormControl.$openModalButtons.attr('data-modal-url');
-        $.get(url, {}, modalFormControl.replaceModalContent);
-    };
-
-    modalFormControl.submitModal = function (additionalData) {
-        const $form = modalFormControl.$modal.find('form');
-        const action = $form.attr('action');
-        let data = $form.serialize();
-        if (additionalData) {
-            data += '&' + additionalData;
+    _publishModalBodyChange() {
+        if (this._modalBodyChangeListener) {
+            this._modalBodyChangeListener(this._modalBody)
         }
-        const submitPromise = $.post(action, data).done(modalFormControl.replaceModalContent);
-        if (submitPromiseConsumer) {
-            submitPromiseConsumer(submitPromise, modalFormControl);
-        }
-    };
+    }
 
-    modalFormControl.bindListeners();
+    _fetchModal() {
+        const modalUrl = this._openModalButton.getAttribute('data-modal-url')
+        const url = new URL(modalUrl, location.origin)
+        this._get(url, (html) => this._replaceModalBodyContent(html))
+    }
+
+    _submitModal(formDataConsumer) {
+        const url = new URL(this._modalForm.getAttribute('action'), location.origin)
+        const formData = new FormData(this._modalForm)
+        if (formDataConsumer) {
+            formDataConsumer(formData)
+        }
+
+        this._post(url, formData, (html) => this._replaceModalBodyContent(html))
+    }
+
+    _get(url, loadListener) {
+        const request = new XMLHttpRequest()
+        const listener = (event) => loadListener(event.target.responseText)
+        request.addEventListener('load', listener)
+        request.open('GET', url)
+        request.setRequestHeader('X-Requested-With', 'XMLHttpRequest')
+        request.send()
+    }
+
+    _post(url, formData, loadListener) {
+        const request = new XMLHttpRequest()
+        const listener = (event) => loadListener(event.target.responseText)
+        request.addEventListener('load', listener)
+        request.open('POST', url)
+        request.setRequestHeader('X-Requested-With', 'XMLHttpRequest')
+        request.send(formData)
+    }
+
+    _replaceModalBodyContent(html) {
+        this._modalBody.innerHTML = html
+        this._modalForm = this._modalBody.querySelector('form')
+
+        if (this._modalForm) {
+            this._bindModalFormListeners(this._modalForm)
+        }
+        const submitModalButtons = this._modalBody.querySelectorAll('input[type="submit"],button[type="submit"]')
+        for (let button of submitModalButtons) {
+            this._bindSubmitModalButtonListeners(button)
+        }
+
+        const lookups = this._modalBody.querySelectorAll('div.lookup')
+        for (let lookup of lookups) {
+            new LookupControl(lookup)
+        }
+        this._publishModalBodyChange()
+    }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
