@@ -1,5 +1,3 @@
-const lookupControlRegister = {};
-
 function cancellableDebounce(func, wait = 500) {
     let timeout;
 
@@ -69,178 +67,178 @@ class Loader {
 
 class TableControl {
 
-    #table = null
-    #qualifier = null
-    #tBodyListenersBinder = null
+    _table = null
+    _qualifier = null
+    _tBodyListenersBinder = null
 
-    #tHead = null
-    #tBody = null
-    #tFoot = null
-    #searchInputListenersBound = false
-    #searchInput = null
-    #searchQueries = null
+    _tHead = null
+    _tBody = null
+    _tFoot = null
+    _searchInputListenersBound = false
+    _searchInput = null
+    _searchQueries = null
 
     constructor(table, tBodyListenersBinder) {
         Validate.isInstanceOf(table, HTMLTableElement)
         Validate.isInstanceOfOrEmpty(tBodyListenersBinder, Function)
 
-        this.#table = table
-        this.#qualifier = this.#table.getAttribute('data-qualifier') || ''
-        this.#tBodyListenersBinder = tBodyListenersBinder
+        this._table = table
+        this._qualifier = this._table.getAttribute('data-qualifier') || ''
+        this._tBodyListenersBinder = tBodyListenersBinder
 
-        this.#tHead = this.#table.getElementsByTagName('thead')[0]
-        this.#tBody = this.#table.getElementsByTagName('tbody')[0]
-        this.#tFoot = this.#table.getElementsByTagName('tfoot')[0]
-        this.#searchInput = document.getElementById(`${this.#qualifier}search`)
-        this.#searchQueries = document.getElementsByClassName(`${this.#qualifier}query`)
+        this._tHead = this._table.getElementsByTagName('thead')[0]
+        this._tBody = this._table.getElementsByTagName('tbody')[0]
+        this._tFoot = this._table.getElementsByTagName('tfoot')[0]
+        this._searchInput = document.getElementById(`${this._qualifier}search`)
+        this._searchQueries = document.getElementsByClassName(`${this._qualifier}query`)
 
-        this.#bindListeners()
+        this._bindListeners()
     }
 
-    #qualifyParamName(paramName) {
-        return this.#qualifier ? `${this.#qualifier}_paramName` : paramName
+    _qualifyParamName(paramName) {
+        return this._qualifier ? `${this._qualifier}_paramName` : paramName
     }
 
-    #bindListeners() {
-        if (this.#tHead) {
-            const sortButtons = this.#tHead.getElementsByTagName('a')
+    _bindListeners() {
+        if (this._tHead) {
+            const sortButtons = this._tHead.getElementsByTagName('a')
             for (let sortButton of sortButtons) {
-                this.#bindSortListener(sortButton)
+                this._bindSortListener(sortButton)
             }
         }
 
-        if (this.#tBody && this.#tBodyListenersBinder) {
-            this.#tBodyListenersBinder(this.#tBody)
+        if (this._tBody && this._tBodyListenersBinder) {
+            this._tBodyListenersBinder(this._tBody)
         }
 
-        if (this.#tFoot) {
-            const loadMoreButtons = this.#tFoot.getElementsByClassName('btn-load-more')
+        if (this._tFoot) {
+            const loadMoreButtons = this._tFoot.getElementsByClassName('btn-load-more')
             for (let loadMoreButton of loadMoreButtons) {
-                this.#bindLoadMoreListener(loadMoreButton)
+                this._bindLoadMoreListener(loadMoreButton)
             }
         }
 
-        if (this.#searchInput && !this.#searchInputListenersBound) {
-            this.#searchInputListenersBound = true
-            this.#bindSearchInputListener(this.#searchInput)
-            for (const searchQuery of this.#searchQueries) {
-                this.#bindSearchQueryListener(searchQuery)
+        if (this._searchInput && !this._searchInputListenersBound) {
+            this._searchInputListenersBound = true
+            this._bindSearchInputListener(this._searchInput)
+            for (const searchQuery of this._searchQueries) {
+                this._bindSearchQueryListener(searchQuery)
             }
         }
     }
 
-    #bindSortListener(sortButton) {
+    _bindSortListener(sortButton) {
         sortButton.addEventListener('click', (event) => {
             event.preventDefault()
-            this.#sort(sortButton)
+            this._sort(sortButton)
         })
     }
 
-    #bindLoadMoreListener(loadMoreButton) {
+    _bindLoadMoreListener(loadMoreButton) {
         loadMoreButton.addEventListener("click", (event) => {
             event.preventDefault()
-            this.#fetchMore(loadMoreButton)
+            this._fetchMore(loadMoreButton)
         })
     }
 
-    #bindSearchInputListener(searchInput) {
+    _bindSearchInputListener(searchInput) {
         searchInput.addEventListener('keyup', (event) => {
             event.preventDefault()
-            this.#fetchSearchResults.call()
+            this._fetchSearchResults.call()
         })
         searchInput.addEventListener('blur', (event) => {
             event.preventDefault()
-            this.#fetchSearchResults.cancel()
+            this._fetchSearchResults.cancel()
         })
     }
 
-    #bindSearchQueryListener(searchQuery) {
+    _bindSearchQueryListener(searchQuery) {
         searchQuery.addEventListener('click', (event) => {
             event.preventDefault()
-            this.#selectQuery(searchQuery)
+            this._selectQuery(searchQuery)
         })
     }
 
-    #appendContent(html) {
-        const tHeadHtml = TableControl.#extractTagContentFromStringHtml('thead', html)
-        const tBodyHtml = TableControl.#extractTagContentFromStringHtml('tbody', html)
-        const tFootHtml = TableControl.#extractTagContentFromStringHtml('tfoot', html)
+    _appendContent(html) {
+        const tHeadHtml = TableControl._extractTagContentFromStringHtml('thead', html)
+        const tBodyHtml = TableControl._extractTagContentFromStringHtml('tbody', html)
+        const tFootHtml = TableControl._extractTagContentFromStringHtml('tfoot', html)
 
-        this.#tHead.innerHTML = tHeadHtml
-        this.#tBody.innerHTML += tBodyHtml
-        this.#tFoot.innerHTML = tFootHtml
+        this._tHead.innerHTML = tHeadHtml
+        this._tBody.innerHTML += tBodyHtml
+        this._tFoot.innerHTML = tFootHtml
 
-        this.#bindListeners()
+        this._bindListeners()
     }
 
-    #replaceContent(html) {
-        const tHeadHtml = TableControl.#extractTagContentFromStringHtml('thead', html)
-        const tBodyHtml = TableControl.#extractTagContentFromStringHtml('tbody', html)
-        const tFootHtml = TableControl.#extractTagContentFromStringHtml('tfoot', html)
+    _replaceContent(html) {
+        const tHeadHtml = TableControl._extractTagContentFromStringHtml('thead', html)
+        const tBodyHtml = TableControl._extractTagContentFromStringHtml('tbody', html)
+        const tFootHtml = TableControl._extractTagContentFromStringHtml('tfoot', html)
 
-        this.#tHead.innerHTML = tHeadHtml
-        this.#tBody.innerHTML = tBodyHtml
-        if (!this.#tFoot && tFootHtml) {
-            this.#tFoot = document.createElement('tfoot')
-            this.#tBody.parentElement.appendChild(this.#tFoot)
+        this._tHead.innerHTML = tHeadHtml
+        this._tBody.innerHTML = tBodyHtml
+        if (!this._tFoot && tFootHtml) {
+            this._tFoot = document.createElement('tfoot')
+            this._tBody.parentElement.appendChild(this._tFoot)
         }
-        if (this.#tFoot) {
-            this.#tFoot.innerHTML = tFootHtml
+        if (this._tFoot) {
+            this._tFoot.innerHTML = tFootHtml
         }
 
-        this.#bindListeners()
+        this._bindListeners()
     }
 
-    static #extractTagContentFromStringHtml(tagName, html) {
+    static _extractTagContentFromStringHtml(tagName, html) {
         const regExp = new RegExp(`<${tagName}>(.*)</${tagName}>`, 'is')
         const match = html.match(regExp);
         return match !== null ? match[1] : '';
     }
 
-    #fetchMore(loadMoreButton) {
-        const sizeParamName = this.#qualifyParamName('size')
-        const offset = this.#tBody.getElementsByTagName('tr').length
-        const offsetParamName = this.#qualifyParamName('offset')
+    _fetchMore(loadMoreButton) {
+        const sizeParamName = this._qualifyParamName('size')
+        const offset = this._tBody.getElementsByTagName('tr').length
+        const offsetParamName = this._qualifyParamName('offset')
 
         const buttonHref = loadMoreButton.getAttribute('href')
         const url = new URL(buttonHref)
         url.searchParams.delete(sizeParamName)
         url.searchParams.set(offsetParamName, offset)
 
-        this.#get(url, (responseText) => this.#appendContent(responseText))
+        this._get(url, (responseText) => this._appendContent(responseText))
     }
 
-    #fetchSearchResults = cancellableDebounce(() => {
-        const query = this.#searchInput.value
-        const sizeParamName = this.#qualifyParamName('size')
-        const offsetParamName = this.#qualifyParamName('offset')
+    _fetchSearchResults = cancellableDebounce(() => {
+        const query = this._searchInput.value
+        const sizeParamName = this._qualifyParamName('size')
+        const offsetParamName = this._qualifyParamName('offset')
 
         const url = new URL(location.href)
         url.searchParams.delete(sizeParamName)
         url.searchParams.delete(offsetParamName)
         url.searchParams.set('query', query)
 
-        this.#get(url, (responseText) => this.#replaceContent(responseText))
+        this._get(url, (responseText) => this._replaceContent(responseText))
     })
 
-    #selectQuery(a) {
-        this.#searchInput.value = a.getAttribute('data-query')
-        this.#fetchSearchResults.call()
+    _selectQuery(a) {
+        this._searchInput.value = a.getAttribute('data-query')
+        this._fetchSearchResults.call()
     }
 
-    #sort(sortButton) {
-        const size = this.#tBody.getElementsByTagName('tr').length
-        const sizeParamName = this.#qualifyParamName('size');
-        const offsetParamName = this.#qualifyParamName('offset');
+    _sort(sortButton) {
+        const size = this._tBody.getElementsByTagName('tr').length
+        const sizeParamName = this._qualifyParamName('size');
+        const offsetParamName = this._qualifyParamName('offset');
 
         const url = new URL(sortButton.href)
         url.searchParams.set(sizeParamName, size)
         url.searchParams.delete(offsetParamName)
 
-        this.#get(url, (responseText) => this.#replaceContent(responseText))
+        this._get(url, (responseText) => this._replaceContent(responseText))
     }
 
-    #get(url, loadListener) {
+    _get(url, loadListener) {
         const request = new XMLHttpRequest()
         const listener = (event) => loadListener(event.target.responseText)
         request.addEventListener('load', listener)
@@ -252,167 +250,167 @@ class TableControl {
 
 class LookupControl {
 
-    static #DROP_DOWN_CONTENT_REGEXP = new RegExp('<div class="[^"]*dropdown-menu[^"]*">(.*)</div>', 'is')
-    static #MODAL_BODY_CONTENT_REGEXP = new RegExp('(<table[^>]*>.*</table>)', 'is')
+    static _DROP_DOWN_CONTENT_REGEXP = new RegExp('<div class="[^"]*dropdown-menu[^"]*">(.*)</div>', 'is')
+    static _MODAL_BODY_CONTENT_REGEXP = new RegExp('(<table[^>]*>.*</table>)', 'is')
 
-    static #registry = {}
+    static _registry = {}
 
-    #lookupField = null
+    _lookupField = null
 
-    #dataInput = null
-    #labelInput = null
-    #resetButtonWrapper = null
-    #resetButton = null
+    _dataInput = null
+    _labelInput = null
+    _resetButtonWrapper = null
+    _resetButton = null
 
-    #dropDownLabelsUrl = null
-    #dropDown = null
+    _dropDownLabelsUrl = null
+    _dropDown = null
 
-    #openModalButton = null
-    #listUrl = null
-    #labelUrl = null
-    #modal = null
-    #modalBody = null
+    _openModalButton = null
+    _listUrl = null
+    _labelUrl = null
+    _modal = null
+    _modalBody = null
 
     constructor(lookupField) {
         Validate.isInstanceOf(lookupField, HTMLDivElement)
 
-        this.#lookupField = lookupField
+        this._lookupField = lookupField
 
-        this.#dataInput = this.#lookupField.querySelector('input[type="hidden"]')
-        this.#labelInput = this.#lookupField.querySelector('input[type="text"]')
-        this.#resetButtonWrapper = this.#lookupField.querySelector('.reset-wrapper')
-        this.#resetButton = this.#lookupField.querySelector('.reset-wrapper > button')
+        this._dataInput = this._lookupField.querySelector('input[type="hidden"]')
+        this._labelInput = this._lookupField.querySelector('input[type="text"]')
+        this._resetButtonWrapper = this._lookupField.querySelector('.reset-wrapper')
+        this._resetButton = this._lookupField.querySelector('.reset-wrapper > button')
 
-        this.#dropDownLabelsUrl = this.#labelInput.getAttribute('data-lookup-labels-url')
-        this.#dropDown = this.#lookupField.querySelector('div.dropdown-menu')
+        this._dropDownLabelsUrl = this._labelInput.getAttribute('data-lookup-labels-url')
+        this._dropDown = this._lookupField.querySelector('div.dropdown-menu')
 
-        this.#openModalButton = this.#lookupField.querySelector('button[data-lookup-list-url]')
-        this.#listUrl = this.#openModalButton.getAttribute('data-lookup-list-url')
-        this.#labelUrl = this.#openModalButton.getAttribute('data-lookup-label-url')
-        this.#modal = this.#lookupField.querySelector('div.modal')
-        this.#modalBody = this.#modal.querySelector('.modal-body')
+        this._openModalButton = this._lookupField.querySelector('button[data-lookup-list-url]')
+        this._listUrl = this._openModalButton.getAttribute('data-lookup-list-url')
+        this._labelUrl = this._openModalButton.getAttribute('data-lookup-label-url')
+        this._modal = this._lookupField.querySelector('div.modal')
+        this._modalBody = this._modal.querySelector('.modal-body')
 
-        const id = this.#labelInput.getAttribute('id')
-        LookupControl.#registry[id] = this
+        const id = this._labelInput.getAttribute('id')
+        LookupControl._registry[id] = this
 
-        this.#bindListeners()
+        this._bindListeners()
     }
 
-    #setValues(id, label) {
-        this.#dataInput.value = id
-        this.#labelInput.value = label
+    _setValues(id, label) {
+        this._dataInput.value = id
+        this._labelInput.value = label
         if (id) {
-            this.#resetButtonWrapper.removeAttribute('hidden')
+            this._resetButtonWrapper.removeAttribute('hidden')
         } else {
-            this.#resetButtonWrapper.setAttribute('hidden', 'hidden')
+            this._resetButtonWrapper.setAttribute('hidden', 'hidden')
         }
         const event = new Event('change')
-        this.#dataInput.dispatchEvent(event)
+        this._dataInput.dispatchEvent(event)
     }
 
     resetValues() {
-        this.#setValues(null, null)
+        this._setValues(null, null)
     }
 
-    #bindListeners() {
-        this.#labelInput.addEventListener('keyup', (event) => {
+    _bindListeners() {
+        this._labelInput.addEventListener('keyup', (event) => {
             event.preventDefault()
-            this.#fetchLabels.call()
+            this._fetchLabels.call()
         })
-        this.#labelInput.addEventListener('blur', (event) => {
+        this._labelInput.addEventListener('blur', (event) => {
             event.preventDefault()
-            this.#fetchLabels.cancel()
-            setTimeout(() => this.#dropDown.classList.remove('show'), 300)
+            this._fetchLabels.cancel()
+            setTimeout(() => this._dropDown.classList.remove('show'), 300)
         })
-        this.#resetButton.addEventListener('click', (event) => {
+        this._resetButton.addEventListener('click', (event) => {
             event.preventDefault()
             this.resetValues()
         })
-        this.#openModalButton.addEventListener('click', (event) => {
+        this._openModalButton.addEventListener('click', (event) => {
             event.preventDefault()
-            this.#fetchList()
+            this._fetchList()
         })
     }
 
-    #selectDropDownItem(anchor) {
+    _selectDropDownItem(anchor) {
         const id = anchor.getAttribute('data-id')
         if (id) {
             const label = anchor.innerHTML
-            this.#setValues(id, label)
+            this._setValues(id, label)
         }
-        this.#dropDown.classList.remove('show')
+        this._dropDown.classList.remove('show')
     }
 
-    #replaceDropDownContent(html) {
-        const match = html.match(LookupControl.#DROP_DOWN_CONTENT_REGEXP)
-        this.#dropDown.innerHTML = match[1] || ''
-        this.#dropDown.classList.add('show')
-        const anchors = this.#dropDown.querySelectorAll('a[data-id]')
+    _replaceDropDownContent(html) {
+        const match = html.match(LookupControl._DROP_DOWN_CONTENT_REGEXP)
+        this._dropDown.innerHTML = match[1] || ''
+        this._dropDown.classList.add('show')
+        const anchors = this._dropDown.querySelectorAll('a[data-id]')
         for (let anchor of anchors) {
             anchor.addEventListener('click', (event) => {
                 event.preventDefault()
-                this.#selectDropDownItem(anchor)
+                this._selectDropDownItem(anchor)
             })
         }
     }
 
-    #fetchLabels = cancellableDebounce(() => {
-        let query = this.#labelInput.value
+    _fetchLabels = cancellableDebounce(() => {
+        let query = this._labelInput.value
         if (!query) {
             return
         }
-        const queryPrefix = this.#labelInput.getAttribute('data-query-prefix')
+        const queryPrefix = this._labelInput.getAttribute('data-query-prefix')
         if (queryPrefix) {
             query = queryPrefix + ' ' + query
         }
 
-        const url = new URL(this.#dropDownLabelsUrl, location.origin)
+        const url = new URL(this._dropDownLabelsUrl, location.origin)
         url.searchParams.set('query', query)
 
-        this.#get(url, (responseText) => this.#replaceDropDownContent(responseText))
+        this._get(url, (responseText) => this._replaceDropDownContent(responseText))
     }, 300)
 
-    #selectTableRow(tr) {
+    _selectTableRow(tr) {
         const id = tr.getAttribute('data-id')
         if (id) {
-            const url = new URL(this.#labelUrl, location.origin)
+            const url = new URL(this._labelUrl, location.origin)
             url.searchParams.set('id', id)
 
-            this.#get(
+            this._get(
                 url,
-                (label) => this.#setValues(id, label),
+                (label) => this._setValues(id, label),
                 () => this.resetValues()
             )
         }
 
-        $(this.#modal).modal('hide')
+        $(this._modal).modal('hide')
     }
 
-    #replaceModalContent(html) {
-        const match = html.match(LookupControl.#MODAL_BODY_CONTENT_REGEXP)
-        this.#modalBody.innerHTML = match[1] || ''
-        const table = this.#modalBody.getElementsByTagName('table')[0]
+    _replaceModalContent(html) {
+        const match = html.match(LookupControl._MODAL_BODY_CONTENT_REGEXP)
+        this._modalBody.innerHTML = match[1] || ''
+        const table = this._modalBody.getElementsByTagName('table')[0]
         const bindSelectRowListener = (tBody) => {
             const trs = tBody.querySelectorAll('tr[data-id]')
             for (let tr of trs) {
                 tr.addEventListener('click', (event) => {
                     event.preventDefault()
-                    this.#selectTableRow(tr)
+                    this._selectTableRow(tr)
                 })
             }
         }
 
         new TableControl(table, bindSelectRowListener)
 
-        $(this.#modal).modal()
+        $(this._modal).modal()
     }
 
-    #fetchList() {
-        const url = new URL(this.#listUrl, location.origin)
-        this.#get(url, (responseText) => this.#replaceModalContent(responseText))
+    _fetchList() {
+        const url = new URL(this._listUrl, location.origin)
+        this._get(url, (responseText) => this._replaceModalContent(responseText))
     }
 
-    #get(url, loadListener, errorListener) {
+    _get(url, loadListener, errorListener) {
         const request = new XMLHttpRequest()
         const listener = (event) => loadListener(event.target.responseText)
         request.addEventListener('load', listener)
@@ -423,87 +421,87 @@ class LookupControl {
     }
 
     static getById(id) {
-        return LookupControl.#registry[id]
+        return LookupControl._registry[id]
     }
 }
 
 class TagsControl {
 
-    #tagsField = null
+    _tagsField = null
 
-    #tagsInput = null
-    #tagsButton = null
-    #modal = null
-    #tagsContainer = null
-    #tagsCheckboxes = null
-    #newTagInput = null
-    #createNewTagInput = null
+    _tagsInput = null
+    _tagsButton = null
+    _modal = null
+    _tagsContainer = null
+    _tagsCheckboxes = null
+    _newTagInput = null
+    _createNewTagInput = null
 
     constructor(tagsField) {
         Validate.isInstanceOf(tagsField, HTMLDivElement)
 
-        this.#tagsField = tagsField
+        this._tagsField = tagsField
 
-        this.#tagsInput = this.#tagsField.querySelector('input[name="tags"]')
-        this.#tagsButton = this.#tagsField.querySelector('button[name="select-tags"]')
-        this.#modal = this.#tagsField.querySelector('div.modal')
-        this.#tagsContainer = this.#tagsField.querySelector('.tags-container')
-        this.#tagsCheckboxes = [...this.#tagsField.querySelectorAll('input[type="checkbox"]')]
-        this.#newTagInput = this.#tagsField.querySelector('input[name="new-tag"]')
-        this.#createNewTagInput = this.#tagsField.querySelector('button[name="create-new-tag"]')
+        this._tagsInput = this._tagsField.querySelector('input[name="tags"]')
+        this._tagsButton = this._tagsField.querySelector('button[name="select-tags"]')
+        this._modal = this._tagsField.querySelector('div.modal')
+        this._tagsContainer = this._tagsField.querySelector('.tags-container')
+        this._tagsCheckboxes = [...this._tagsField.querySelectorAll('input[type="checkbox"]')]
+        this._newTagInput = this._tagsField.querySelector('input[name="new-tag"]')
+        this._createNewTagInput = this._tagsField.querySelector('button[name="create-new-tag"]')
 
-        this.#bindListeners()
+        this._bindListeners()
     }
 
-    #bindListeners() {
-        this.#tagsButton.addEventListener('click', (event) => {
+    _bindListeners() {
+        this._tagsButton.addEventListener('click', (event) => {
             event.preventDefault()
-            $(this.#modal).modal()
+            $(this._modal).modal()
         })
-        for (const checkbox of this.#tagsCheckboxes) {
-            this.#bindCheckboxListener(checkbox)
+        for (const checkbox of this._tagsCheckboxes) {
+            this._bindCheckboxListener(checkbox)
         }
-        this.#createNewTagInput.addEventListener('click', (event) => {
+        this._createNewTagInput.addEventListener('click', (event) => {
             event.preventDefault()
-            this.#createTag(this.#newTagInput.value)
+            this._createTag(this._newTagInput.value)
         })
     }
 
-    #bindCheckboxListener(checkbox) {
+    _bindCheckboxListener(checkbox) {
         checkbox.addEventListener('click', () => {
-            this.#changeTag(checkbox.value, checkbox.checked)
+            this._changeTag(checkbox.value, checkbox.checked)
         })
     }
 
-    #changeTag(tag, checked) {
+    _changeTag(tag, checked) {
         if (checked) {
-            this.#addTag(tag)
+            this._addTag(tag)
         } else {
-            this.#removeTag(tag)
+            this._removeTag(tag)
         }
     }
 
-    #addTag(tag) {
-        const tagsValue = this.#tagsInput.value
+    _addTag(tag) {
+        const tagsValue = this._tagsInput.value
         const tags = tagsValue ? tagsValue.split(',') : []
         tags.push(tag)
-        this.#tagsInput.value = tags.join(',')
+        this._tagsInput.value = tags.join(',')
     }
 
-    #removeTag(tag) {
-        this.#tagsInput.value = this.#tagsInput.value
+    _removeTag(tag) {
+        this._tagsInput.value = this._tagsInput.value
             .split(',')
             .filter((t) => t !== tag)
             .join(',')
     }
 
-    #createTag(tag) {
+    _createTag(tag) {
         tag = tag.replace(/[^a-z0-9]/gi, '').toLowerCase();
         if (!tag) {
             return;
         }
 
-        let checkbox = this.#tagsCheckboxes
+        let checkbox = this._tagsCheckboxes
             .find((checkbox) => checkbox.value === tag)
 
         if (!checkbox) {
@@ -511,8 +509,8 @@ class TagsControl {
             checkbox.type = 'checkbox'
             checkbox.value = tag
             checkbox.className = 'form-check-input'
-            this.#bindCheckboxListener(checkbox)
-            this.#tagsCheckboxes.push(checkbox)
+            this._bindCheckboxListener(checkbox)
+            this._tagsCheckboxes.push(checkbox)
 
             const label = document.createElement('label')
             label.className = 'form-check-label'
@@ -523,43 +521,43 @@ class TagsControl {
             div.className = 'form-group w-25'
             div.appendChild(label)
 
-            this.#tagsContainer.appendChild(div)
+            this._tagsContainer.appendChild(div)
         }
 
         if (!checkbox.checked) {
             checkbox.checked = true
-            this.#addTag(tag)
+            this._addTag(tag)
         }
     }
 }
 
 class AsyncFormPartControl {
 
-    static #CONTENT_REGEXP = new RegExp('^\\s*<[^>]+>(.*)</[^>]+>\\s*$', 'is')
+    static _CONTENT_REGEXP = new RegExp('^\\s*<[^>]+>(.*)</[^>]+>\\s*$', 'is')
 
-    #formPart = null
-    #actionElementsSelector = null
+    _formPart = null
+    _actionElementsSelector = null
 
-    #form = null
-    #formPartChangeListener = null
+    _form = null
+    _formPartChangeListener = null
 
     constructor(formPart, actionElementsSelector, formPartChangeListener) {
         Validate.isInstanceOf(formPart, HTMLElement)
         Validate.isInstanceOf(actionElementsSelector, String)
         Validate.isInstanceOfOrEmpty(formPartChangeListener, Function)
 
-        this.#formPart = formPart
-        this.#actionElementsSelector = actionElementsSelector
-        this.#formPartChangeListener = formPartChangeListener
+        this._formPart = formPart
+        this._actionElementsSelector = actionElementsSelector
+        this._formPartChangeListener = formPartChangeListener
 
-        this.#form = AsyncFormPartControl.#findParentForm(this.#formPart)
+        this._form = AsyncFormPartControl._findParentForm(this._formPart)
 
         const actionElements = document.querySelectorAll(actionElementsSelector)
-        this.#bindActionElementsListeners(actionElements)
-        this.#publishFormPartChange()
+        this._bindActionElementsListeners(actionElements)
+        this._publishFormPartChange()
     }
 
-    static #findParentForm(element) {
+    static _findParentForm(element) {
         for (let parent = element.parentElement; parent; parent = parent.parentElement) {
             if (parent.tagName.toLowerCase() === 'form') {
                 return parent
@@ -567,47 +565,47 @@ class AsyncFormPartControl {
         }
     }
 
-    #bindActionElementsListeners(actionElements) {
+    _bindActionElementsListeners(actionElements) {
         for (const actionElement of actionElements) {
             actionElement.addEventListener('click', (event) => {
                 event.preventDefault()
-                this.#onActionElementClick(actionElement)
+                this._onActionElementClick(actionElement)
             })
             actionElement.addEventListener('change', (event) => {
-                this.#onActionElementChange(actionElement)
+                this._onActionElementChange(actionElement)
             })
         }
     }
 
-    #publishFormPartChange() {
-        if (this.#formPartChangeListener) {
-            this.#formPartChangeListener(this.#formPart)
+    _publishFormPartChange() {
+        if (this._formPartChangeListener) {
+            this._formPartChangeListener(this._formPart)
         }
     }
 
-    #onActionElementClick(actionElement) {
+    _onActionElementClick(actionElement) {
         const name = actionElement.getAttribute('name')
         const value = actionElement.getAttribute('value') || null
-        this.#fetchFormPart((formData) => formData.set(name, value))
+        this._fetchFormPart((formData) => formData.set(name, value))
     }
 
-    #onActionElementChange(actionElement) {
+    _onActionElementChange(actionElement) {
         // Because the actionElement can be part of form data, to distinguish
         // its change action the "change" string is prepend to its name
         const name = actionElement.getAttribute('name')
         const actionName = `change${name[0].toUpperCase()}${name.substring(1)}`
-        this.#fetchFormPart((formData) => formData.set(actionName, null))
+        this._fetchFormPart((formData) => formData.set(actionName, null))
     }
 
-    #fetchFormPart(formDataConsumer) {
-        const url = new URL(this.#form.getAttribute('action'), location.origin)
-        const formData = new FormData(this.#form)
+    _fetchFormPart(formDataConsumer) {
+        const url = new URL(this._form.getAttribute('action'), location.origin)
+        const formData = new FormData(this._form)
         formDataConsumer(formData)
 
-        this.#post(url, formData, (responseText) => this.#replaceFormPartContent(responseText))
+        this._post(url, formData, (responseText) => this._replaceFormPartContent(responseText))
     }
 
-    #post(url, formData, loadListener) {
+    _post(url, formData, loadListener) {
         const request = new XMLHttpRequest()
         const listener = (event) => loadListener(event.target.responseText)
         request.addEventListener('load', listener)
@@ -616,18 +614,18 @@ class AsyncFormPartControl {
         request.send(formData)
     }
 
-    #replaceFormPartContent(html) {
-        const match = html.match(AsyncFormPartControl.#CONTENT_REGEXP)
-        this.#formPart.innerHTML = match[1] || ''
+    _replaceFormPartContent(html) {
+        const match = html.match(AsyncFormPartControl._CONTENT_REGEXP)
+        this._formPart.innerHTML = match[1] || ''
 
-        const actionElements = this.#formPart.querySelectorAll(this.#actionElementsSelector)
-        this.#bindActionElementsListeners(actionElements)
+        const actionElements = this._formPart.querySelectorAll(this._actionElementsSelector)
+        this._bindActionElementsListeners(actionElements)
 
-        const lookups = this.#formPart.querySelectorAll('div.lookup')
+        const lookups = this._formPart.querySelectorAll('div.lookup')
         for (let lookup of lookups) {
             new LookupControl(lookup)
         }
-        this.#publishFormPartChange()
+        this._publishFormPartChange()
     }
 }
 
