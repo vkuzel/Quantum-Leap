@@ -708,13 +708,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const tds = tBody.querySelectorAll('tr > td')
             for (let td of tds) {
                 td.addEventListener('click', (event) => {
-                    event.preventDefault()
                     const primaryKeyAnchors = td.parentElement.querySelectorAll('td.primary-key > a')
                     const anchors = td.getElementsByTagName('a')
                     if (anchors.length) {
                         window.location = anchors[0].href
+                        event.preventDefault()
                     } else if (primaryKeyAnchors.length) {
                         window.location = primaryKeyAnchors[0].href
+                        event.preventDefault()
                     }
                 })
             }
