@@ -3,12 +3,11 @@
       layout:decorate="~{admin/layout}">
 <head>
     <script type="text/javascript">
-
-        $(function () {
-            var actionElementsSelector = 'button[name="invalidateSession"]';
-            AsyncFormPartControl('#sessions', actionElementsSelector);
-        });
-
+        document.addEventListener('DOMContentLoaded', () => {
+            const sessions = document.getElementById('sessions')
+            const actionElementsSelector = 'button[name="invalidateSession"]';
+            new AsyncFormPartControl(sessions, actionElementsSelector);
+        })
     </script>
 </head>
 <body>

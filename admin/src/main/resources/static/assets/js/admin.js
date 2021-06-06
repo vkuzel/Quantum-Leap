@@ -129,7 +129,7 @@ class TableControl {
     #bindSearchQueryListener(searchQuery) {
         searchQuery.addEventListener('click', (event) => {
             event.preventDefault()
-            this.#selectQuery(event.target)
+            this.#selectQuery(searchQuery)
         })
     }
 
@@ -506,64 +506,97 @@ class TagsControl {
     }
 }
 
-function AsyncFormPartControl(formPartSelector, actionElementsSelector, formPartPromiseConsumer) {
-    const $formPart = $(formPartSelector);
-    const asyncFormPartControl = {
-        $formPart: $formPart,
-        $form: $formPart.parents('form'),
-        $actionElements: $(actionElementsSelector)
-    };
+class AsyncFormPartControl {
 
-    asyncFormPartControl.bindListeners = function () {
-        this.$actionElements.off('click', this.onActionButtonClick);
-        this.$actionElements.on('click', this.onActionButtonClick);
-        this.$actionElements.change(this.onActionElementChange);
-    };
+    static #CONTENT_REGEXP = new RegExp('^\\s*<[^>]+>(.*)</[^>]+>\\s*$', 'is')
 
-    asyncFormPartControl.onActionButtonClick = function (event) {
-        event.preventDefault();
-        const $actionButton = $(this);
-        let additionalData = '&' + encodeURI($actionButton.attr('name'));
-        const actionButtonValue = $actionButton.val();
-        if (actionButtonValue) {
-            additionalData += '=' + encodeURI(actionButtonValue);
+    #formPart = null
+    #actionElementsSelector = null
+
+    #form = null
+    #formPartChangeListener = null
+
+    constructor(formPart, actionElementsSelector, formPartChangeListener) {
+        this.#formPart = formPart
+        this.#actionElementsSelector = actionElementsSelector
+        this.#formPartChangeListener = formPartChangeListener
+
+        this.#form = AsyncFormPartControl.#findParentForm(this.#formPart)
+
+        const actionElements = document.querySelectorAll(actionElementsSelector)
+        this.#bindActionElementsListeners(actionElements)
+        this.#publishFormPartChange()
+    }
+
+    static #findParentForm(element) {
+        for (let parent = element.parentElement; parent; parent = parent.parentElement) {
+            if (parent.tagName.toLowerCase() === 'form') {
+                return parent
+            }
         }
-        asyncFormPartControl.requestFormPart(additionalData);
-    };
+    }
 
-    asyncFormPartControl.onActionElementChange = function () {
-        const additionalData = $(this).attr('data-async-form-action');
-        asyncFormPartControl.requestFormPart(additionalData);
-    };
-
-    asyncFormPartControl.requestFormPart = function (additionalData) {
-        const action = asyncFormPartControl.$form.attr('action');
-        let data = asyncFormPartControl.$form.serialize();
-        data += '&' + additionalData;
-        const formPartPromise = $.post(action, data).done(asyncFormPartControl.replaceFormPartContent);
-        if (formPartPromiseConsumer) {
-            formPartPromiseConsumer(formPartPromise, asyncFormPartControl);
+    #bindActionElementsListeners(actionElements) {
+        for (const actionElement of actionElements) {
+            actionElement.addEventListener('click', (event) => {
+                event.preventDefault()
+                this.#onActionElementClick(actionElement)
+            })
+            actionElement.addEventListener('change', (event) => {
+                this.#onActionElementChange(actionElement)
+            })
         }
-    };
+    }
 
-    asyncFormPartControl.replaceFormPartContent = function (html) {
-        const $formPartReplacement = $(html);
+    #publishFormPartChange() {
+        if (this.#formPartChangeListener) {
+            this.#formPartChangeListener(this.#formPart)
+        }
+    }
 
-        asyncFormPartControl.$formPart.replaceWith($formPartReplacement);
-        asyncFormPartControl.$formPart = $formPartReplacement;
-        asyncFormPartControl.$actionElements = $(actionElementsSelector);
+    #onActionElementClick(actionElement) {
+        const name = actionElement.getAttribute('name')
+        const value = actionElement.getAttribute('value') || null
+        this.#fetchFormPart((formData) => formData.set(name, value))
+    }
 
-        asyncFormPartControl.bindListeners();
-        asyncFormPartControl.$formPart.find('div.lookup').each(function (i, lookupField) {
-            new LookupControl(lookupField);
-        });
-    };
+    #onActionElementChange(actionElement) {
+        // Because the actionElement can be part of form data, to distinguish
+        // its change action the "change" string is prepend to its name
+        const name = actionElement.getAttribute('name')
+        const actionName = `change${name[0].toUpperCase()}${name.substring(1)}`
+        this.#fetchFormPart((formData) => formData.set(actionName, null))
+    }
 
-    asyncFormPartControl.bindListeners();
-    if (formPartPromiseConsumer) {
-        const formPartPromise = $.Deferred();
-        formPartPromiseConsumer(formPartPromise, asyncFormPartControl);
-        formPartPromise.resolve(asyncFormPartControl.$formPart);
+    #fetchFormPart(formDataConsumer) {
+        const url = new URL(this.#form.getAttribute('action'), location.origin)
+        const formData = new FormData(this.#form)
+        formDataConsumer(formData)
+
+        this.#post(url, formData, (responseText) => this.#replaceFormPartContent(responseText))
+    }
+
+    #post(url, formData, loadListener) {
+        const request = new XMLHttpRequest()
+        const listener = (event) => loadListener(event.target.responseText)
+        request.addEventListener('load', listener)
+        request.open('POST', url)
+        request.setRequestHeader('X-Requested-With', 'XMLHttpRequest')
+        request.send(formData)
+    }
+
+    #replaceFormPartContent(html) {
+        const match = html.match(AsyncFormPartControl.#CONTENT_REGEXP)
+        this.#formPart.innerHTML = match[1] || ''
+
+        const actionElements = this.#formPart.querySelectorAll(this.#actionElementsSelector)
+        this.#bindActionElementsListeners(actionElements)
+
+        const lookups = this.#formPart.querySelectorAll('div.lookup')
+        for (let lookup of lookups) {
+            new LookupControl(lookup)
+        }
+        this.#publishFormPartChange()
     }
 }
 
