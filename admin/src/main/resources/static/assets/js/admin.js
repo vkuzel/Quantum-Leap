@@ -29,6 +29,31 @@ function debounce(func, wait = 500) {
     return cancellableDebounce(func, wait).call
 }
 
+class Validate {
+
+    static nonNull(value) {
+        throw 'Value has to be non-null!'
+    }
+
+    static isTrue(value) {
+        if (!value) {
+            throw 'Value has to be true!'
+        }
+    }
+
+    static isInstanceOf(object, clazz) {
+        if (!object instanceof clazz) {
+            throw `${object} has to be instance of ${clazz}`
+        }
+    }
+
+    static isInstanceOfOrEmpty(object, clazz) {
+        if (object != null && !object instanceof clazz) {
+            throw `${object} has to be instance of ${clazz}`
+        }
+    }
+}
+
 // There can be only one loader on a page
 class Loader {
     static show() {
@@ -56,6 +81,9 @@ class TableControl {
     #searchQueries = null
 
     constructor(table, tBodyListenersBinder) {
+        Validate.isInstanceOf(table, HTMLTableElement)
+        Validate.isInstanceOfOrEmpty(tBodyListenersBinder, Function)
+
         this.#table = table
         this.#qualifier = this.#table.getAttribute('data-qualifier') || ''
         this.#tBodyListenersBinder = tBodyListenersBinder
@@ -246,6 +274,8 @@ class LookupControl {
     #modalBody = null
 
     constructor(lookupField) {
+        Validate.isInstanceOf(lookupField, HTMLDivElement)
+
         this.#lookupField = lookupField
 
         this.#dataInput = this.#lookupField.querySelector('input[type="hidden"]')
@@ -410,6 +440,8 @@ class TagsControl {
     #createNewTagInput = null
 
     constructor(tagsField) {
+        Validate.isInstanceOf(tagsField, HTMLDivElement)
+
         this.#tagsField = tagsField
 
         this.#tagsInput = this.#tagsField.querySelector('input[name="tags"]')
@@ -512,6 +544,10 @@ class AsyncFormPartControl {
     #formPartChangeListener = null
 
     constructor(formPart, actionElementsSelector, formPartChangeListener) {
+        Validate.isInstanceOf(formPart, HTMLElement)
+        Validate.isInstanceOf(actionElementsSelector, String)
+        Validate.isInstanceOfOrEmpty(formPartChangeListener, Function)
+
         this.#formPart = formPart
         this.#actionElementsSelector = actionElementsSelector
         this.#formPartChangeListener = formPartChangeListener
