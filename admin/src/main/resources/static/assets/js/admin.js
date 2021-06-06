@@ -336,9 +336,7 @@ class LookupControl {
             query = queryPrefix + ' ' + query
         }
 
-        const url = new URL(location.href)
-        url.pathname = this.#dropDownLabelsUrl
-        url.search = ''
+        const url = new URL(this.#dropDownLabelsUrl, location.origin)
         url.searchParams.set('query', query)
 
         this.#get(url, (responseText) => this.#replaceDropDownContent(responseText))
@@ -347,9 +345,7 @@ class LookupControl {
     #selectTableRow(tr) {
         const id = tr.getAttribute('data-id')
         if (id) {
-            const url = new URL(location.href)
-            url.pathname = this.#labelUrl
-            url.search = ''
+            const url = new URL(this.#labelUrl, location.origin)
             url.searchParams.set('id', id)
 
             this.#get(
@@ -382,8 +378,7 @@ class LookupControl {
     }
 
     #fetchList() {
-        const url = new URL(location.href)
-        url.pathname = this.#listUrl
+        const url = new URL(this.#listUrl, location.origin)
         this.#get(url, (responseText) => this.#replaceModalContent(responseText))
     }
 
