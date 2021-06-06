@@ -39,6 +39,12 @@ class Validate {
         }
     }
 
+    static isString(value) {
+        if (typeof value !== 'string' && (value instanceof String)) {
+            throw `${value} is not string!`
+        }
+    }
+
     static isInstanceOf(object, clazz) {
         if (!(object instanceof clazz)) {
             throw `${object} has to be instance of ${clazz}`
@@ -543,7 +549,7 @@ class AsyncFormPartControl {
 
     constructor(formPart, actionElementsSelector, formPartChangeListener) {
         Validate.isInstanceOf(formPart, HTMLElement)
-        Validate.isInstanceOf(actionElementsSelector, String)
+        Validate.isString(actionElementsSelector)
         Validate.isInstanceOfOrEmpty(formPartChangeListener, Function)
 
         this._formPart = formPart
