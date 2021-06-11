@@ -29,8 +29,12 @@ function debounce(func, wait = 500) {
 
 class Validate {
 
-    static nonNull(value) {
-        throw 'Value has to be non-null!'
+    static ensureNotNull(value) {
+        if (value !== null) {
+            return value
+        } else {
+            throw 'Value is null!'
+        }
     }
 
     static isTrue(value) {
@@ -39,21 +43,27 @@ class Validate {
         }
     }
 
-    static isString(value) {
-        if (typeof value !== 'string' && (value instanceof String)) {
+    static ensureString(value) {
+        if (typeof value === 'string' || value instanceof String) {
+            return value
+        } else {
             throw `${value} is not string!`
         }
     }
 
-    static isInstanceOf(object, clazz) {
-        if (!(object instanceof clazz)) {
-            throw `${object} has to be instance of ${clazz}`
+    static ensureInstanceOf(object, type) {
+        if (object instanceof type) {
+            return object
+        } else {
+            throw `${object} has to be instance of ${type}`
         }
     }
 
-    static isInstanceOfOrEmpty(object, clazz) {
-        if (object != null && !object instanceof clazz) {
-            throw `${object} has to be instance of ${clazz}`
+    static ensureInstanceOfOrEmpty(object, type) {
+        if (object === null || object instanceof type) {
+            return object
+        } else {
+            throw `${object} has to be instance of ${type}`
         }
     }
 }
@@ -85,12 +95,9 @@ class TableControl {
     _searchQueries = null
 
     constructor(table, tBodyListenersBinder) {
-        Validate.isInstanceOf(table, HTMLTableElement)
-        Validate.isInstanceOfOrEmpty(tBodyListenersBinder, Function)
-
-        this._table = table
+        this._table = Validate.ensureInstanceOf(table, HTMLTableElement)
         this._qualifier = this._table.getAttribute('data-qualifier') || ''
-        this._tBodyListenersBinder = tBodyListenersBinder
+        this._tBodyListenersBinder = Validate.ensureInstanceOfOrEmpty(tBodyListenersBinder, Function)
 
         this._tHead = this._table.getElementsByTagName('thead')[0]
         this._tBody = this._table.getElementsByTagName('tbody')[0]
@@ -278,9 +285,7 @@ class LookupControl {
     _modalBody = null
 
     constructor(lookupField) {
-        Validate.isInstanceOf(lookupField, HTMLDivElement)
-
-        this._lookupField = lookupField
+        this._lookupField = Validate.ensureInstanceOf(lookupField, HTMLDivElement)
 
         this._dataInput = this._lookupField.querySelector('input[type="hidden"]')
         this._labelInput = this._lookupField.querySelector('input[type="text"]')
@@ -444,9 +449,7 @@ class TagsControl {
     _createNewTagInput = null
 
     constructor(tagsField) {
-        Validate.isInstanceOf(tagsField, HTMLDivElement)
-
-        this._tagsField = tagsField
+        this._tagsField = Validate.ensureInstanceOf(tagsField, HTMLDivElement)
 
         this._tagsInput = this._tagsField.querySelector('input[name="tags"]')
         this._tagsButton = this._tagsField.querySelector('button[name="select-tags"]')
@@ -548,13 +551,9 @@ class AsyncFormPartControl {
     _form = null
 
     constructor(formPart, actionElementsSelector, formPartChangeListener) {
-        Validate.isInstanceOf(formPart, HTMLElement)
-        Validate.isString(actionElementsSelector)
-        Validate.isInstanceOfOrEmpty(formPartChangeListener, Function)
-
-        this._formPart = formPart
-        this._actionElementsSelector = actionElementsSelector
-        this._formPartChangeListener = formPartChangeListener
+        this._formPart = Validate.ensureInstanceOf(formPart, HTMLElement)
+        this._actionElementsSelector = Validate.ensureString(actionElementsSelector)
+        this._formPartChangeListener = Validate.ensureInstanceOfOrEmpty(formPartChangeListener, Function)
 
         this._form = AsyncFormPartControl._findParentForm(this._formPart)
 
@@ -645,14 +644,11 @@ class ModalFormControl {
     _modalForm = null
 
     constructor(modal, openModalButton, modalBodyChangeListener) {
-        Validate.isInstanceOf(modal, HTMLDivElement)
-        Validate.isInstanceOf(openModalButton, HTMLElement)
         Validate.isTrue(openModalButton.hasAttribute('data-modal-url'))
-        Validate.isInstanceOfOrEmpty(modalBodyChangeListener, Function)
 
-        this._modal = modal
-        this._openModalButton = openModalButton
-        this._modalBodyChangeListener = modalBodyChangeListener
+        this._modal = Validate.ensureInstanceOf(modal, HTMLDivElement)
+        this._openModalButton = Validate.ensureInstanceOf(openModalButton, HTMLElement)
+        this._modalBodyChangeListener = Validate.ensureInstanceOfOrEmpty(modalBodyChangeListener, Function)
 
         this._modalBody = this._modal.querySelector('.modal-body')
         this._modalForm = this._modalBody.querySelector('form')
