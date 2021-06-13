@@ -60,7 +60,7 @@ class Validate {
     }
 
     static ensureInstanceOfOrEmpty(object, type) {
-        if (object === null || object instanceof type) {
+        if (!object || object instanceof type) {
             return object
         } else {
             throw `${object} has to be instance of ${type}`
@@ -576,7 +576,7 @@ class AsyncFormPartControl {
                 event.preventDefault()
                 this._onActionElementClick(actionElement)
             })
-            actionElement.addEventListener('change', (event) => {
+            actionElement.addEventListener('change', () => {
                 this._onActionElementChange(actionElement)
             })
         }
