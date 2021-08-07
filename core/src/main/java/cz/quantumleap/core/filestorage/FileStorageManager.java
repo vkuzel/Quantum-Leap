@@ -12,9 +12,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.PostConstruct;
 import java.io.*;
-import java.nio.channels.Channels;
-import java.nio.channels.FileChannel;
-import java.nio.channels.FileLock;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.FileTime;
@@ -77,9 +74,8 @@ public class FileStorageManager {
         ensureDirectoryExists(path.getParent());
         log.debug("Creating file {}", path);
 
-        try (FileChannel fileChannel = FileChannel.open(path, StandardOpenOption.CREATE_NEW, StandardOpenOption.WRITE);
-             BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(Channels.newOutputStream(fileChannel));
-             FileLock fileLock = fileChannel.lock()) {
+        try (OutputStream outputStream = Files.newOutputStream(path, StandardOpenOption.CREATE_NEW, StandardOpenOption.WRITE);
+             BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(outputStream)) {
             supplier.accept(bufferedOutputStream);
         } catch (IOException e) {
             throw new IllegalStateException(e);
@@ -91,9 +87,8 @@ public class FileStorageManager {
             return defaultValue;
         }
 
-        try (FileChannel fileChannel = FileChannel.open(path, StandardOpenOption.READ);
-             BufferedInputStream bufferedInputStream = new BufferedInputStream(Channels.newInputStream(fileChannel));
-             FileLock fileLock = fileChannel.lock()) {
+        try (InputStream inputStream = Files.newInputStream(path, StandardOpenOption.READ);
+             BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream)) {
             return reader.apply(bufferedInputStream);
         } catch (IOException e) {
             throw new IllegalStateException(e);
@@ -218,7 +213,7 @@ public class FileStorageManager {
         }
 
         private boolean isDirEmpty(final Path directory) throws IOException {
-            try(DirectoryStream<Path> dirStream = Files.newDirectoryStream(directory)) {
+            try (DirectoryStream<Path> dirStream = Files.newDirectoryStream(directory)) {
                 return !dirStream.iterator().hasNext();
             }
         }
