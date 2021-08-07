@@ -74,7 +74,7 @@ public class FileStorageManager {
         ensureDirectoryExists(path.getParent());
         log.debug("Creating file {}", path);
 
-        try (OutputStream outputStream = Files.newOutputStream(path, StandardOpenOption.CREATE_NEW, StandardOpenOption.WRITE);
+        try (OutputStream outputStream = Files.newOutputStream(path, StandardOpenOption.CREATE, StandardOpenOption.WRITE);
              BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(outputStream)) {
             supplier.accept(bufferedOutputStream);
         } catch (IOException e) {
