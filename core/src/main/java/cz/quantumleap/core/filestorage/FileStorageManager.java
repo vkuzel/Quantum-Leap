@@ -11,10 +11,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.PostConstruct;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
@@ -26,6 +23,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 @Component
 public class FileStorageManager {
@@ -62,16 +60,20 @@ public class FileStorageManager {
         }
     }
 
-    public String createFileIfNotExistsAndBuildUrl(Path path, Consumer<OutputStream> supplier) {
-        createFileIfNotExists(path, supplier);
+    public String saveFileIfNotExistsAndBuildUrl(Path path, Consumer<OutputStream> supplier) {
+        saveFileIfNotExists(path, supplier);
         return convertPathToUrl(path);
     }
 
-    public synchronized void createFileIfNotExists(Path path, Consumer<OutputStream> supplier) {
+    public synchronized void saveFileIfNotExists(Path path, Consumer<OutputStream> supplier) {
         if (Files.exists(path)) {
             return;
         }
 
+        saveFile(path, supplier);
+    }
+
+    public synchronized void saveFile(Path path, Consumer<OutputStream> supplier) {
         ensureDirectoryExists(path.getParent());
         log.debug("Creating file {}", path);
 
@@ -79,6 +81,20 @@ public class FileStorageManager {
              BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(Channels.newOutputStream(fileChannel));
              FileLock fileLock = fileChannel.lock()) {
             supplier.accept(bufferedOutputStream);
+        } catch (IOException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    public synchronized <T> T readFile(Path path, Function<InputStream, T> reader, T defaultValue) {
+        if (!Files.exists(path)) {
+            return defaultValue;
+        }
+
+        try (FileChannel fileChannel = FileChannel.open(path, StandardOpenOption.READ);
+             BufferedInputStream bufferedInputStream = new BufferedInputStream(Channels.newInputStream(fileChannel));
+             FileLock fileLock = fileChannel.lock()) {
+            return reader.apply(bufferedInputStream);
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }
@@ -126,7 +142,7 @@ public class FileStorageManager {
         return Paths.get(fileStorageDirectory, TEMP_DIRECTORY, fileStoragePath.relativize(path).toString());
     }
 
-    private Path createFilePath(String directory, MultipartFile multipartFile) {
+    private Path createFilePath(String directory, MultipartFile multipartFile) { // TODO Resolve
         String childDirectory = LocalDate.now().format(MONTH_FORMATTER);
         String originalFilename = multipartFile.getOriginalFilename();
 
@@ -140,6 +156,10 @@ public class FileStorageManager {
         }
 
         return filePath.normalize();
+    }
+
+    public Path createFilePath(String directory, String fileName) {
+        return Paths.get(fileStorageDirectory, directory, fileName);
     }
 
     @Scheduled(cron = "0 0 3 * * *")

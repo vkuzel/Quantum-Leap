@@ -82,7 +82,7 @@ public class ResizableImageTagProcessor extends AbstractAttributeTagProcessor {
 
         Path resizedImagePath = getResizedImagePath(imagePath, resizeStrategy, width, height);
 
-        String resizedImageUrl = fileStorageManager.createFileIfNotExistsAndBuildUrl(resizedImagePath, outputStream ->
+        String resizedImageUrl = fileStorageManager.saveFileIfNotExistsAndBuildUrl(resizedImagePath, outputStream ->
                 resizeImage(imagePath, resizeStrategy, width, height, outputStream));
         structureHandler.setAttribute("src", resizedImageUrl);
     }
@@ -109,7 +109,7 @@ public class ResizableImageTagProcessor extends AbstractAttributeTagProcessor {
         String pathWithoutExtension = FilenameUtils.removeExtension(originalImagePath.toString());
         String extension = FilenameUtils.getExtension(originalImagePath.toString());
 
-        return fileStorageManager.convertToTempDirectoryPath(Paths.get(pathWithoutExtension + sizeExtension.toString() + '.' + extension));
+        return fileStorageManager.convertToTempDirectoryPath(Paths.get(pathWithoutExtension + sizeExtension + '.' + extension));
     }
 
     private void resizeImage(Path originalImagePath, ResizeStrategy resizeStrategy, Integer newWidth, Integer newHeight, OutputStream outputStream) {
