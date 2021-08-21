@@ -81,6 +81,10 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
         return sliceFactory.forRequestedResult(params, result, sliceQueries);
     }
 
+    private int resolveNumberOfRows(FetchParams request) {
+        return Math.min(request.getSize() + 1, FetchParams.MAX_ITEMS);
+    }
+
     private FetchParams setParamsDefaultValues(FetchParams fetchParams, List<SliceQuery> sliceQueries) {
         if (fetchParams.getQuery() == null) {
             for (SliceQuery sliceQuery : sliceQueries) {
@@ -131,12 +135,8 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
         return dslContext.selectFrom(entity.getTable())
                 .where(conditions)
                 .orderBy(orderBy)
-                .limit(params.getOffset(), resolveNumberOfRows(params))
+                .limit(params.getOffset(), params.getSize())
                 .fetchInto(type);
-    }
-
-    private int resolveNumberOfRows(FetchParams request) {
-        return Math.min(request.getSize() + 1, FetchParams.MAX_ITEMS);
     }
 
     /**

@@ -78,6 +78,10 @@ public class FetchParams {
         return new FetchParams(filter, query, condition, offset, size, sort);
     }
 
+    public FetchParams withMaxSize() {
+        return withSize(Short.MAX_VALUE);
+    }
+
     public int getSize() {
         return size;
     }
