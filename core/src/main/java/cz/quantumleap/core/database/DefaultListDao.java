@@ -107,18 +107,6 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
         return fetchParams;
     }
 
-    private FetchParams setDefaultOrder(FetchParams fetchParams) {
-        if (fetchParams.getSort() == null || fetchParams.getSort().isUnsorted()) {
-            List<Field<?>> primaryKeyFields = entity.getPrimaryKeyFields();
-            List<Sort.Order> orders = primaryKeyFields.stream()
-                    .map(field -> Sort.Order.desc(field.getName()))
-                    .collect(Collectors.toList());
-            return fetchParams.withSort(Sort.by(orders));
-        } else {
-            return fetchParams;
-        }
-    }
-
     @Override
     public <T> List<T> fetchList(FetchParams params, Class<T> type) {
         initFactories();
