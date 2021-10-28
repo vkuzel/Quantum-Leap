@@ -272,7 +272,6 @@ class LookupControl {
 
     _dataInput = null
     _labelInput = null
-    _resetButtonWrapper = null
     _resetButton = null
 
     _dropDownLabelsUrl = null
@@ -289,8 +288,7 @@ class LookupControl {
 
         this._dataInput = this._lookupField.querySelector('input[type="hidden"]')
         this._labelInput = this._lookupField.querySelector('input[type="text"]')
-        this._resetButtonWrapper = this._lookupField.querySelector('.reset-wrapper')
-        this._resetButton = this._lookupField.querySelector('.reset-wrapper > button')
+        this._resetButton = this._lookupField.querySelector('button.reset')
 
         this._dropDownLabelsUrl = this._labelInput.getAttribute('data-lookup-labels-url')
         this._dropDown = this._lookupField.querySelector('div.dropdown-menu')
@@ -311,9 +309,9 @@ class LookupControl {
         this._dataInput.value = id
         this._labelInput.value = label
         if (id) {
-            this._resetButtonWrapper.removeAttribute('hidden')
+            this._resetButton.removeAttribute('hidden')
         } else {
-            this._resetButtonWrapper.setAttribute('hidden', 'hidden')
+            this._resetButton.setAttribute('hidden', 'hidden')
         }
         const event = new Event('change')
         this._dataInput.dispatchEvent(event)
@@ -527,7 +525,7 @@ class TagsControl {
             label.appendChild(document.createTextNode(` ${tag}`))
 
             const div = document.createElement('div')
-            div.className = 'form-group w-25'
+            div.className = 'mb-3 w-25'
             div.appendChild(label)
 
             this._tagsContainer.appendChild(div)

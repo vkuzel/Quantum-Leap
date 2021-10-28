@@ -19,18 +19,14 @@
                th:classappend="${#fields.hasErrors('__${fieldName ?: fieldId}__')}? 'is-invalid'"
                th:data-lookup-labels-url="@{${lookupController.getLookupLabelsUrl()}}"
                th:data-query-prefix="${queryPrefix}" autocomplete="off">
-        <div th:hidden="${#strings.isEmpty(value)}" class="input-group-prepend input-group-append reset-wrapper">
-            <button class="btn btn-outline-danger" type="button">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-        <div class="input-group-append">
-            <button class="btn btn-outline-secondary" type="button"
-                    th:data-lookup-list-url="@{${lookupController.getLookupListUrl()}}"
-                    th:data-lookup-label-url="@{${lookupController.getLookupLabelUrl()}}">
-                <i class="fas fa-search"></i>
-            </button>
-        </div>
+        <button th:hidden="${#strings.isEmpty(value)}" class="btn btn-outline-danger reset" type="button">
+            <i class="fas fa-times"></i>
+        </button>
+        <button class="btn btn-outline-secondary" type="button"
+                th:data-lookup-list-url="@{${lookupController.getLookupListUrl()}}"
+                th:data-lookup-label-url="@{${lookupController.getLookupLabelUrl()}}">
+            <i class="fas fa-search"></i>
+        </button>
         <div class="invalid-feedback" th:each="err : ${#fields.errors('__${fieldName ?: fieldId}__')}" th:text="${err}">Error</div>
     </div>
 

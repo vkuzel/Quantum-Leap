@@ -29,7 +29,7 @@
                 <div class="modal-body">
                     <div class="container-fluid">
                         <div class="form-inline tags-container">
-                            <div class="form-group w-25" th:each="tag: ${allTags}">
+                            <div class="mb-3 w-25" th:each="tag: ${allTags}">
                                 <label class="form-check-label">
                                     <input class="form-check-input" type="checkbox" th:value="${tag}" th:checked="${#lists.contains(tags, tag)}">
                                     <span th:text="${tag}">tag</span>
