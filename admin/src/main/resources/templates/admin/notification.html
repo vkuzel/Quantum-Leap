@@ -30,7 +30,7 @@
                     </div>
                 </div>
 
-                <div class="text-right">
+                <div class="text-end">
                     <a th:href="@{/notifications}" class="btn btn-secondary" th:text="#{admin.cancel}">Cancel</a>
                     <input th:if="*{resolvedAt == null}" type="submit" class="btn btn-success" name="resolve" th:value="#{admin.notification.resolve}">
                 </div>
