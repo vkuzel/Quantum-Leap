@@ -22,14 +22,14 @@
                     This is a danger alert—check it out!
                 </div>
 
-                <div class="form-group row">
+                <div class="mb-3 row">
                     <label th:for="name" class="col-form-label col-md-4" th:text="#{admin.role.name}">Name</label>
                     <div class="col-md-6">
                         <input th:field="*{name}" class="form-control">
                     </div>
                 </div>
 
-                <div class="text-right">
+                <div class="text-end">
                     <a th:href="@{/roles}" class="btn btn-secondary" th:text="#{admin.cancel}">Cancel</a>
                     <input type="submit" class="btn btn-success" value="Save" th:value="#{admin.save}">
                 </div>

@@ -10,7 +10,7 @@
         <div class="card-header">
             <i class="fas fa-id-card"></i>
             <span th:text="#{admin.table.title.core.role}">Table</span>
-            <a th:href="@{|/role|}" class="btn btn-success btn-sm float-right" th:text="#{admin.table.title.new-record}"></a>
+            <a th:href="@{|/role|}" class="btn btn-success btn-sm float-end" th:text="#{admin.table.title.new-record}"></a>
         </div>
         <div class="card-body table-container">
             <div class="table-responsive" th:insert="admin/components/slice::table">

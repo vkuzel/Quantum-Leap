@@ -9,21 +9,17 @@
         slice ... Slice object.
 */-->
 <div th:fragment="query" th:assert="slice" th:with="qualifier=${qualifier?:''}" class="input-group input-group-sm">
-    <div th:if="${#lists.isEmpty(slice.sliceQueries)}" class="input-group-prepend">
-        <div class="input-group-text" id="search-label">
-            <i class="fas fa-search"></i>
-        </div>
+    <div th:if="${#lists.isEmpty(slice.sliceQueries)}" class="input-group-text" id="search-label">
+        <i class="fas fa-search"></i>
     </div>
-    <div th:if="${!#lists.isEmpty(slice.sliceQueries)}" class="input-group-prepend">
-        <button class="btn btn-secondary dropdown-toggle" type="button" id="queryButton"
-                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <i class="fas fa-search"></i>
-        </button>
-        <div class="dropdown-menu" aria-labelledby="queryButton">
-            <a th:each="sliceQuery : ${slice.sliceQueries}" class="dropdown-item"
-               th:classappend="|${qualifier}query|" href="#" th:data-query="${sliceQuery.query}"
-               th:text="${sliceQuery.query}">Query</a>
-        </div>
+    <button th:if="${!#lists.isEmpty(slice.sliceQueries)}" class="btn btn-secondary dropdown-toggle" type="button" id="queryButton"
+            data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <i class="fas fa-search"></i>
+    </button>
+    <div th:if="${!#lists.isEmpty(slice.sliceQueries)}" class="dropdown-menu" aria-labelledby="queryButton">
+        <a th:each="sliceQuery : ${slice.sliceQueries}" class="dropdown-item"
+           th:classappend="|${qualifier}query|" href="#" th:data-query="${sliceQuery.query}"
+           th:text="${sliceQuery.query}">Query</a>
     </div>
     <input type="text" th:id="|${qualifier}search|" class="form-control"
            th:placeholder="#{admin.table.search}" th:aria-label="#{admin.table.search}"

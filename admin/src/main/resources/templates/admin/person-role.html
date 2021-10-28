@@ -22,21 +22,21 @@
                     This is a danger alert—check it out!
                 </div>
 
-                <div class="form-group row">
+                <div class="mb-3 row">
                     <label for="personId" class="col-md-4 col-form-label"
                            th:text="#{admin.person-role.person}">Person</label>
                     <div class="col-md-6"
                          th:insert="admin/components/lookup-field::lookup(entityIdentifier='core.person',fieldId='personId',value=*{personId},modalTitle=#{admin.lookup.modal.title.people})">
                     </div>
                 </div>
-                <div class="form-group row">
+                <div class="mb-3 row">
                     <label for="roleId" class="col-md-4 col-form-label" th:text="#{admin.person-role.role}">Role</label>
                     <div class="col-md-6"
                          th:insert="admin/components/lookup-field::lookup(entityIdentifier='core.role',fieldId='roleId',value=*{roleId},modalTitle=#{admin.lookup.modal.title.roles})">
                     </div>
                 </div>
 
-                <div class="text-right">
+                <div class="text-end">
                     <a th:href="@{|/person/${personId}|}" class="btn btn-secondary" th:text="#{admin.cancel}">Cancel</a>
                     <input type="submit" class="btn btn-success" value="Save" th:value="#{admin.save}">
                 </div>
