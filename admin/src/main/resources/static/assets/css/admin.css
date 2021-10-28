@@ -27,7 +27,12 @@
 }
 
 .table th a {
+    text-decoration-line: none;
     color: black;
+}
+
+.table td.primary-key a {
+    text-decoration-line: none;
 }
 
 .table-container {
