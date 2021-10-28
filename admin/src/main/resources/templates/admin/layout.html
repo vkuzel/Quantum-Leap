@@ -58,7 +58,10 @@
                 <li class="nav-item notifications dropdown">
                     <a class="nav-link dropdown-toggle me-lg-2" id="notificationsDropdown" href="#" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <i class="fas fa-bell" th:classappend="${!unresolvedNotifications.empty}? 'text-warning'"></i>
-                        <span class="d-lg-none"><span th:text="#{admin.notifications.title}">Notifications</span> <span th:unless="${unresolvedNotifications.empty}" class="badge badge-pill badge-warning" th:text="#{admin.notifications.badge(${#lists.size(unresolvedNotifications)})}">6 New</span></span>
+                        <span th:unless="${unresolvedNotifications.empty}" class="badge bg-secondary">
+                            <span th:text="#{admin.notifications.badge(${#lists.size(unresolvedNotifications)})}">4</span>
+                            <span class="visually-hidden" th:text="#{admin.notifications.title}">Notifications</span>
+                        </span>
                     </a>
                     <div class="dropdown-menu dropdown-menu-end" aria-labelledby="notificationsDropdown">
                         <a th:each="notification : ${unresolvedNotifications}" class="dropdown-item" th:href="@{|/notification/${notification.id}|}">
