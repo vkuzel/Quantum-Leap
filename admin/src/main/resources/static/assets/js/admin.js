@@ -280,7 +280,7 @@ class LookupControl {
     _openModalButton = null
     _listUrl = null
     _labelUrl = null
-    _modal = null
+    _bootstrapModal = null
     _modalBody = null
 
     constructor(lookupField) {
@@ -296,8 +296,9 @@ class LookupControl {
         this._openModalButton = this._lookupField.querySelector('button[data-lookup-list-url]')
         this._listUrl = this._openModalButton.getAttribute('data-lookup-list-url')
         this._labelUrl = this._openModalButton.getAttribute('data-lookup-label-url')
-        this._modal = this._lookupField.querySelector('div.modal')
-        this._modalBody = this._modal.querySelector('.modal-body')
+        const modal = this._lookupField.querySelector('div.modal')
+        this._bootstrapModal = new bootstrap.Modal(modal)
+        this._modalBody = modal.querySelector('.modal-body')
 
         const id = this._labelInput.getAttribute('id')
         LookupControl._registry[id] = this
@@ -392,7 +393,7 @@ class LookupControl {
             )
         }
 
-        $(this._modal).modal('hide')
+        this._bootstrapModal.hide()
     }
 
     _replaceModalContent(html) {
@@ -411,7 +412,7 @@ class LookupControl {
 
         new TableControl(table, bindSelectRowListener)
 
-        $(this._modal).modal()
+        this._bootstrapModal.show()
     }
 
     _fetchList() {
@@ -440,7 +441,7 @@ class TagsControl {
 
     _tagsInput = null
     _tagsButton = null
-    _modal = null
+    _bootstrapModal = null
     _tagsContainer = null
     _tagsCheckboxes = null
     _newTagInput = null
@@ -451,7 +452,8 @@ class TagsControl {
 
         this._tagsInput = this._tagsField.querySelector('input[name="tags"]')
         this._tagsButton = this._tagsField.querySelector('button[name="select-tags"]')
-        this._modal = this._tagsField.querySelector('div.modal')
+        const modal = this._tagsField.querySelector('div.modal')
+        this._bootstrapModal = new bootstrap.Modal(modal)
         this._tagsContainer = this._tagsField.querySelector('.tags-container')
         this._tagsCheckboxes = [...this._tagsField.querySelectorAll('input[type="checkbox"]')]
         this._newTagInput = this._tagsField.querySelector('input[name="new-tag"]')
@@ -463,7 +465,7 @@ class TagsControl {
     _bindListeners() {
         this._tagsButton.addEventListener('click', (event) => {
             event.preventDefault()
-            $(this._modal).modal()
+            this._bootstrapModal.show()
         })
         for (const checkbox of this._tagsCheckboxes) {
             this._bindCheckboxListener(checkbox)
