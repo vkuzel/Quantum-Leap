@@ -60,7 +60,7 @@
                         <i class="fas fa-bell" th:classappend="${!unresolvedNotifications.empty}? 'text-warning'"></i>
                         <span class="d-lg-none"><span th:text="#{admin.notifications.title}">Notifications</span> <span th:unless="${unresolvedNotifications.empty}" class="badge badge-pill badge-warning" th:text="#{admin.notifications.badge(${#lists.size(unresolvedNotifications)})}">6 New</span></span>
                     </a>
-                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="notificationsDropdown">
+                    <div class="dropdown-menu dropdown-menu-end" aria-labelledby="notificationsDropdown">
                         <a th:each="notification : ${unresolvedNotifications}" class="dropdown-item" th:href="@{|/notification/${notification.id}|}">
                             <span class="small" th:with="pattern=${notification.createdAt.toLocalDate().isEqual(#temporals.createToday())} ? 'HH:mm' : 'yyyy-MM-dd HH:mm'" th:text="${#temporals.format(notification.createdAt, pattern)}">11:21 AM</span>
                             <span th:utext="${#messages.msgWithParams(notification.definition.messageCode, notification.messageArguments)}">Notification message!</span>
