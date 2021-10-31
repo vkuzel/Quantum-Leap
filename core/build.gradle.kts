@@ -16,11 +16,11 @@ dependencies {
     api("org.thymeleaf.extras:thymeleaf-extras-springsecurity5")
     api("org.thymeleaf.extras:thymeleaf-extras-java8time")
 
-    api("com.google.guava:guava:29.0-jre")
-    api("org.apache.commons:commons-lang3:3.11")
+    api("com.google.guava:guava:31.0.1-jre")
+    api("org.apache.commons:commons-lang3:3.12.0")
     api("commons-io:commons-io:2.8.0")
-    api("com.ibm.icu:icu4j:67.1")
-    api("org.jetbrains:annotations:20.1.0")
+    api("com.ibm.icu:icu4j:69.1")
+    api("org.jetbrains:annotations:22.0.0")
     api("eu.bitwalker:UserAgentUtils:1.21")
 
     runtimeOnly("org.postgresql:postgresql")
