@@ -68,3 +68,5 @@ CREATE OR REPLACE FUNCTION core.generate_intervals(intervals_start DATE, interva
 SELECT DATE_TRUNC(step, interval_start), DATE_TRUNC(step, interval_start) + ('1 ' || step) :: INTERVAL - '00:00:00.000001' :: INTERVAL
 FROM generate_series(intervals_start :: TIMESTAMP, intervals_end, ('1 ' || step) :: INTERVAL) intervals (interval_start);
 $$ IMMUTABLE LANGUAGE SQL;
+
+CREATE EXTENSION IF NOT EXISTS unaccent;

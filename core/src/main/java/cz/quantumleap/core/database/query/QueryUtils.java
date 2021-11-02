@@ -76,7 +76,7 @@ public final class QueryUtils {
         String pattern = "(^|[^a-z0-9])" + escapeSqlRegexpBinding(word);
 
         for (Field<String> field : fields) {
-            condition = joinConditions(ConditionOperator.OR, condition, DSL.condition("{0} ~* {1}", field, pattern));
+            condition = joinConditions(ConditionOperator.OR, condition, DSL.condition("unaccent({0}) ~* unaccent({1})", field, pattern));
         }
 
         return condition;
