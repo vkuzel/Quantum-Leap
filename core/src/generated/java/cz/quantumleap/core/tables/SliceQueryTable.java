@@ -7,13 +7,24 @@ package cz.quantumleap.core.tables;
 import cz.quantumleap.core.Core;
 import cz.quantumleap.core.Keys;
 import cz.quantumleap.core.tables.records.SliceQueryRecord;
-import org.jooq.*;
-import org.jooq.impl.DSL;
-import org.jooq.impl.SQLDataType;
-import org.jooq.impl.TableImpl;
 
 import java.util.Arrays;
 import java.util.List;
+
+import org.jooq.Field;
+import org.jooq.ForeignKey;
+import org.jooq.Identity;
+import org.jooq.Name;
+import org.jooq.Record;
+import org.jooq.Row6;
+import org.jooq.Schema;
+import org.jooq.Table;
+import org.jooq.TableField;
+import org.jooq.TableOptions;
+import org.jooq.UniqueKey;
+import org.jooq.impl.DSL;
+import org.jooq.impl.SQLDataType;
+import org.jooq.impl.TableImpl;
 
 
 /**
@@ -125,8 +136,13 @@ public class SliceQueryTable extends TableImpl<SliceQueryRecord> {
         return Arrays.<ForeignKey<SliceQueryRecord, ?>>asList(Keys.SLICE_QUERY__SLICE_QUERY_PERSON_ID_FKEY);
     }
 
+    private transient PersonTable _person;
+
     public PersonTable person() {
-        return new PersonTable(this, Keys.SLICE_QUERY__SLICE_QUERY_PERSON_ID_FKEY);
+        if (_person == null)
+            _person = new PersonTable(this, Keys.SLICE_QUERY__SLICE_QUERY_PERSON_ID_FKEY);
+
+        return _person;
     }
 
     @Override

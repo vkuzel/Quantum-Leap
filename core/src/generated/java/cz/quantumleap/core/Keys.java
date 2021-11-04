@@ -4,8 +4,23 @@
 package cz.quantumleap.core;
 
 
-import cz.quantumleap.core.tables.*;
-import cz.quantumleap.core.tables.records.*;
+import cz.quantumleap.core.tables.EnumTable;
+import cz.quantumleap.core.tables.EnumValueTable;
+import cz.quantumleap.core.tables.IncrementTable;
+import cz.quantumleap.core.tables.NotificationTable;
+import cz.quantumleap.core.tables.PersonRoleTable;
+import cz.quantumleap.core.tables.PersonTable;
+import cz.quantumleap.core.tables.RoleTable;
+import cz.quantumleap.core.tables.SliceQueryTable;
+import cz.quantumleap.core.tables.records.EnumRecord;
+import cz.quantumleap.core.tables.records.EnumValueRecord;
+import cz.quantumleap.core.tables.records.IncrementRecord;
+import cz.quantumleap.core.tables.records.NotificationRecord;
+import cz.quantumleap.core.tables.records.PersonRecord;
+import cz.quantumleap.core.tables.records.PersonRoleRecord;
+import cz.quantumleap.core.tables.records.RoleRecord;
+import cz.quantumleap.core.tables.records.SliceQueryRecord;
+
 import org.jooq.ForeignKey;
 import org.jooq.TableField;
 import org.jooq.UniqueKey;

@@ -121,12 +121,21 @@ public class PersonRoleTable extends TableImpl<PersonRoleRecord> {
         return Arrays.<ForeignKey<PersonRoleRecord, ?>>asList(Keys.PERSON_ROLE__PERSON_ROLE_PERSON_ID_FKEY, Keys.PERSON_ROLE__PERSON_ROLE_ROLE_ID_FKEY);
     }
 
+    private transient PersonTable _person;
+    private transient RoleTable _role;
+
     public PersonTable person() {
-        return new PersonTable(this, Keys.PERSON_ROLE__PERSON_ROLE_PERSON_ID_FKEY);
+        if (_person == null)
+            _person = new PersonTable(this, Keys.PERSON_ROLE__PERSON_ROLE_PERSON_ID_FKEY);
+
+        return _person;
     }
 
     public RoleTable role() {
-        return new RoleTable(this, Keys.PERSON_ROLE__PERSON_ROLE_ROLE_ID_FKEY);
+        if (_role == null)
+            _role = new RoleTable(this, Keys.PERSON_ROLE__PERSON_ROLE_ROLE_ID_FKEY);
+
+        return _role;
     }
 
     @Override

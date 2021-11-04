@@ -147,16 +147,29 @@ public class NotificationTable extends TableImpl<NotificationRecord> {
         return Arrays.<ForeignKey<NotificationRecord, ?>>asList(Keys.NOTIFICATION__NOTIFICATION_PERSON_ID_FKEY, Keys.NOTIFICATION__NOTIFICATION_ROLE_ID_FKEY, Keys.NOTIFICATION__NOTIFICATION_RESOLVED_BY_FKEY);
     }
 
+    private transient PersonTable _notificationPersonIdFkey;
+    private transient RoleTable _role;
+    private transient PersonTable _notificationResolvedByFkey;
+
     public PersonTable notificationPersonIdFkey() {
-        return new PersonTable(this, Keys.NOTIFICATION__NOTIFICATION_PERSON_ID_FKEY);
+        if (_notificationPersonIdFkey == null)
+            _notificationPersonIdFkey = new PersonTable(this, Keys.NOTIFICATION__NOTIFICATION_PERSON_ID_FKEY);
+
+        return _notificationPersonIdFkey;
     }
 
     public RoleTable role() {
-        return new RoleTable(this, Keys.NOTIFICATION__NOTIFICATION_ROLE_ID_FKEY);
+        if (_role == null)
+            _role = new RoleTable(this, Keys.NOTIFICATION__NOTIFICATION_ROLE_ID_FKEY);
+
+        return _role;
     }
 
     public PersonTable notificationResolvedByFkey() {
-        return new PersonTable(this, Keys.NOTIFICATION__NOTIFICATION_RESOLVED_BY_FKEY);
+        if (_notificationResolvedByFkey == null)
+            _notificationResolvedByFkey = new PersonTable(this, Keys.NOTIFICATION__NOTIFICATION_RESOLVED_BY_FKEY);
+
+        return _notificationResolvedByFkey;
     }
 
     @Override
