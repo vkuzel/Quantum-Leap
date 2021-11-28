@@ -57,7 +57,7 @@ public class MultiResourceMessageSource extends ResourceBundleMessageSource {
     private InputStream getResourcesInputStream(String resourceName) {
         List<ResourceWithModule> resources = resourceManager.findInClasspath(resourceName);
         Iterator<ResourceWithModule> iterator = resources.iterator();
-        return new SequenceInputStream(new Enumeration<InputStream>() {
+        return new SequenceInputStream(new Enumeration<>() {
             @Override
             public boolean hasMoreElements() {
                 return iterator.hasNext();

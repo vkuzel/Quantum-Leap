@@ -8,7 +8,7 @@ import org.jooq.Table;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.Errors;
 
-public final class DefaultDetailService<T> implements DetailService<T> {
+public class DefaultDetailService<T> implements DetailService<T> {
 
     private final Class<T> transportType;
     private final DetailDao<?> detailDao;

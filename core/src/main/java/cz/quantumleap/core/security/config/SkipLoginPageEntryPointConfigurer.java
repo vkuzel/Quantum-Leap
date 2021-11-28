@@ -10,11 +10,13 @@ import org.springframework.security.config.annotation.web.configurers.oauth2.cli
 import org.springframework.security.config.annotation.web.configurers.oauth2.client.OAuth2LoginConfigurer.AuthorizationEndpointConfig;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
-import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestRedirectFilter;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static java.util.Objects.requireNonNullElse;
+import static org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestRedirectFilter.DEFAULT_AUTHORIZATION_REQUEST_BASE_URI;
 
 public class SkipLoginPageEntryPointConfigurer<H extends HttpSecurityBuilder<H>> extends AbstractHttpConfigurer<SkipLoginPageEntryPointConfigurer<H>, H> {
 
@@ -63,10 +65,6 @@ public class SkipLoginPageEntryPointConfigurer<H extends HttpSecurityBuilder<H>>
                 authorizationEndpointConfig,
                 fieldsName
         );
-        if (authorizationUri != null) {
-            return authorizationUri;
-        } else {
-            return OAuth2AuthorizationRequestRedirectFilter.DEFAULT_AUTHORIZATION_REQUEST_BASE_URI;
-        }
+        return requireNonNullElse(authorizationUri, DEFAULT_AUTHORIZATION_REQUEST_BASE_URI);
     }
 }

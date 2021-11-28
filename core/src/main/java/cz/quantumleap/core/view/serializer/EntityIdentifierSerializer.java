@@ -7,7 +7,7 @@ import cz.quantumleap.core.database.entity.EntityIdentifier;
 
 import java.io.IOException;
 
-public class EntityIdentifierSerializer extends JsonSerializer<EntityIdentifier> {
+public class EntityIdentifierSerializer extends JsonSerializer<EntityIdentifier<?>> {
 
     @Override
     public void serialize(EntityIdentifier entityIdentifier, JsonGenerator gen, SerializerProvider serializers) throws IOException {
