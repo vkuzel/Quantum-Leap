@@ -47,7 +47,7 @@ class DefaultListDaoTest {
 
         assertEquals(2, slice.getColumns().size());
         assertTrue(slice.getColumnByName("id").isPrimaryKey());
-        assertTrue(slice.getColumnByName("entity_id").isLookup());
+        assertTrue(slice.getColumnByName("entity").isLookup());
     }
 
     @Test
@@ -65,7 +65,7 @@ class DefaultListDaoTest {
 
         DefaultListDao<TestTable> defaultListDao = createDefaultListDao(referencingEntity);
 
-        FetchParams fetchParams = FetchParams.empty().withSort(Sort.by(ASC, "entity_id"));
+        FetchParams fetchParams = FetchParams.empty().withSort(Sort.by(ASC, "entity"));
         Slice slice = defaultListDao.fetchSlice(fetchParams);
 
         assertEquals(3, slice.getRows().size());
@@ -87,7 +87,7 @@ class DefaultListDaoTest {
 
         DefaultListDao<TestTable> defaultListDao = createDefaultListDao(referencingEntity);
 
-        FetchParams fetchParams = FetchParams.empty().addFilter("entity_id", "Aaa");
+        FetchParams fetchParams = FetchParams.empty().addFilter("entity", "Aaa");
         Slice slice = defaultListDao.fetchSlice(fetchParams);
 
         assertEquals(1, slice.getRows().size());
