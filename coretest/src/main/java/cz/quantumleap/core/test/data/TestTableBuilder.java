@@ -28,7 +28,9 @@ public class TestTableBuilder {
     }
 
     public TestTableBuilder addPrimaryKeyIdField() {
-        this.fieldDescriptors.add(new FieldDescriptor(DSL.name("id"), SQLDataType.BIGINT.nullable(false).identity(true), true));
+        Name fieldName = DSL.name("id");
+        DataType<Long> fieldType = SQLDataType.BIGINT.nullable(false).identity(true);
+        this.fieldDescriptors.add(new FieldDescriptor(fieldName, fieldType, true));
         return this;
     }
 
