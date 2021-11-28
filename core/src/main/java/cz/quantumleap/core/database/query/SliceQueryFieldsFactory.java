@@ -3,6 +3,7 @@ package cz.quantumleap.core.database.query;
 import cz.quantumleap.core.database.EntityRegistry;
 import cz.quantumleap.core.database.entity.*;
 import org.jooq.*;
+import org.jooq.Record;
 import org.jooq.impl.DSL;
 
 import java.util.ArrayList;

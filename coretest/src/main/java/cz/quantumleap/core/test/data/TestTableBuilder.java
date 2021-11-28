@@ -1,5 +1,6 @@
 package cz.quantumleap.core.test.data;
 
+import org.jooq.Record;
 import org.jooq.*;
 import org.jooq.impl.DSL;
 import org.jooq.impl.Internal;

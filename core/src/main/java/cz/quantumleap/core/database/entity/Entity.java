@@ -2,6 +2,7 @@ package cz.quantumleap.core.database.entity;
 
 import org.apache.commons.lang3.Validate;
 import org.jooq.*;
+import org.jooq.Record;
 
 import java.util.Collections;
 import java.util.HashMap;

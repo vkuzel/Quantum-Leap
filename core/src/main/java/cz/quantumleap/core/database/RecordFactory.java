@@ -1,6 +1,7 @@
 package cz.quantumleap.core.database;
 
 import cz.quantumleap.core.common.ReflectionUtils;
+import org.jooq.Record;
 import org.jooq.*;
 import org.jooq.types.YearToSecond;
 

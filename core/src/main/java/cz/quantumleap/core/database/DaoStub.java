@@ -5,6 +5,7 @@ import cz.quantumleap.core.database.domain.Slice;
 import cz.quantumleap.core.database.entity.Entity;
 import cz.quantumleap.core.slicequery.SliceQueryDao;
 import org.jooq.*;
+import org.jooq.Record;
 
 import java.util.Collection;
 import java.util.List;

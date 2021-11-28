@@ -8,6 +8,7 @@ import cz.quantumleap.core.database.query.SliceQueryFieldsFactory.QueryFields;
 import cz.quantumleap.core.slicequery.SliceQueryDao;
 import cz.quantumleap.core.slicequery.domain.SliceQuery;
 import org.jooq.*;
+import org.jooq.Record;
 import org.springframework.data.domain.Sort;
 
 import java.util.List;

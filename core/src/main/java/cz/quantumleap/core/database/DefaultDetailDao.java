@@ -3,6 +3,7 @@ package cz.quantumleap.core.database;
 import cz.quantumleap.core.database.entity.Entity;
 import org.apache.commons.lang3.Validate;
 import org.jooq.*;
+import org.jooq.Record;
 
 import java.util.*;
 

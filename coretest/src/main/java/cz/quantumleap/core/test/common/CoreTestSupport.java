@@ -6,6 +6,7 @@ import cz.quantumleap.core.role.RoleDao;
 import cz.quantumleap.core.role.domain.Role;
 import org.apache.commons.lang3.Validate;
 import org.intellij.lang.annotations.Language;
+import org.jooq.Record;
 import org.jooq.*;
 import org.jooq.impl.DSL;
 import org.springframework.stereotype.Component;

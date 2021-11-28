@@ -1,6 +1,7 @@
 package cz.quantumleap.core.database;
 
 import cz.quantumleap.core.security.AuthenticationEmailResolver;
+import org.jooq.Record;
 import org.jooq.*;
 import org.jooq.impl.DefaultRecordListener;
 import org.springframework.security.core.Authentication;

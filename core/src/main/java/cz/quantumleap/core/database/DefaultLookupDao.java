@@ -6,6 +6,7 @@ import cz.quantumleap.core.database.entity.Entity;
 import cz.quantumleap.core.database.query.QueryConditionFactory;
 import cz.quantumleap.core.database.query.QueryUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jooq.Record;
 import org.jooq.*;
 
 import java.util.Collections;
