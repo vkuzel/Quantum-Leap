@@ -15,6 +15,8 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
+import org.springframework.web.util.ServletRequestPathUtils;
+import org.springframework.web.util.UrlPathHelper;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -39,9 +41,8 @@ public class AdminControllerTest {
     @Test
     public void onlyAccessibleMenuItemsAreReturned() {
         HttpServletRequest httpServletRequest = mock(HttpServletRequest.class);
-        doReturn("/").when(httpServletRequest).getContextPath();
-        doReturn("/").when(httpServletRequest).getServletPath();
-        doReturn("/path").when(httpServletRequest).getRequestURI();
+        doReturn("/any-path").when(httpServletRequest).getAttribute(ServletRequestPathUtils.PATH_ATTRIBUTE);
+        doReturn("/any-path").when(httpServletRequest).getAttribute(UrlPathHelper.PATH_ATTRIBUTE);
         HttpServletResponse httpServletResponse = mock(HttpServletResponse.class);
 
         doReturn(true).when(webSecurityExpressionEvaluator).evaluate("authorized", httpServletRequest, httpServletResponse);
