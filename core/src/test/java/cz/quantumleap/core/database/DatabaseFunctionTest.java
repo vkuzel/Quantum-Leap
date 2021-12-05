@@ -14,16 +14,18 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.params.ParameterizedTest.INDEX_PLACEHOLDER;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 @CoreSpringBootTest
-public class FunctionTest {
+public class DatabaseFunctionTest {
 
     @Autowired
     private DSLContext dslContext;
 
-    @ParameterizedTest
-    @MethodSource("cz.quantumleap.core.database.FunctionTest#generateIntervalsArguments")
+    @ParameterizedTest(name = "generateIntervals[" + INDEX_PLACEHOLDER + "] for [{0}, {1}], step={2}) " +
+            "expected (number of intervals={3}, first interval [{4}, {5}], last interval [{6}, {7}]")
+    @MethodSource("generateIntervalsArguments")
     void generateIntervals(
             LocalDate start,
             LocalDate end,
