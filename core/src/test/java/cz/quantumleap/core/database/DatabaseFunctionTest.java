@@ -83,6 +83,16 @@ public class DatabaseFunctionTest {
                 ),
                 createGenerateIntervalsArguments(
                         "2000-01-01",
+                        "2000-07-01",
+                        "QUARTER",
+                        3,
+                        "2000-01-01 00:00:00",
+                        "2000-03-31 23:59:59.999999",
+                        "2000-07-01 00:00:00",
+                        "2000-09-30 23:59:59.999999"
+                ),
+                createGenerateIntervalsArguments(
+                        "2000-01-01",
                         "2003-01-01",
                         "YEAR",
                         4,
