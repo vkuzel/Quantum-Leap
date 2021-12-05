@@ -23,8 +23,8 @@ public class DatabaseFunctionTest {
     @Autowired
     private DSLContext dslContext;
 
-    @ParameterizedTest(name = "generateIntervals[" + INDEX_PLACEHOLDER + "] for [{0}, {1}], step={2}) " +
-            "expected (number of intervals={3}, first interval [{4}, {5}], last interval [{6}, {7}]")
+    @ParameterizedTest(name = "generateIntervals[" + INDEX_PLACEHOLDER + "] for: [{0}, {1}], step={2} " +
+            "expected: number of intervals={3}, first interval [{4}, {5}], last interval [{6}, {7}]")
     @MethodSource("generateIntervalsArguments")
     void generateIntervals(
             LocalDate start,
