@@ -555,19 +555,20 @@ class AsyncFormPartControl {
         this._actionElementsSelector = Validate.ensureString(actionElementsSelector)
         this._formPartChangeListener = Validate.ensureInstanceOfOrEmpty(formPartChangeListener, Function)
 
-        this._form = AsyncFormPartControl._findParentForm(this._formPart)
+        this._form = AsyncFormPartControl._findForm(this._formPart)
 
         const actionElements = document.querySelectorAll(actionElementsSelector)
         this._bindActionElementsListeners(actionElements)
         this._publishFormPartChange()
     }
 
-    static _findParentForm(element) {
-        for (let parent = element.parentElement; parent; parent = parent.parentElement) {
-            if (parent.tagName.toLowerCase() === 'form') {
-                return parent
+    static _findForm(element) {
+        do {
+            if (element.tagName.toLowerCase() === 'form') {
+                return element
             }
-        }
+            element = element.parentElement
+        } while (element)
     }
 
     _bindActionElementsListeners(actionElements) {
