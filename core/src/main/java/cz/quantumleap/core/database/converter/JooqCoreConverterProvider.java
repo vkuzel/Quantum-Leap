@@ -8,16 +8,16 @@ import org.jooq.Converter;
 import org.jooq.ConverterProvider;
 import org.jooq.JSON;
 import org.jooq.types.YearToSecond;
+import org.springframework.stereotype.Component;
 
 import java.time.Duration;
 
-public class JooqConverterProvider implements ConverterProvider {
+@Component
+public class JooqCoreConverterProvider implements ConverterProvider {
 
-    private final ConverterProvider delegate;
     private final ObjectMapper objectMapper;
 
-    public JooqConverterProvider(ConverterProvider delegate, ObjectMapper objectMapper) {
-        this.delegate = delegate;
+    public JooqCoreConverterProvider(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
     }
 
@@ -43,7 +43,7 @@ public class JooqConverterProvider implements ConverterProvider {
                     u -> (T) u.toString()
             );
         } else {
-            return delegate.provide(tType, uType);
+            return null;
         }
     }
 
