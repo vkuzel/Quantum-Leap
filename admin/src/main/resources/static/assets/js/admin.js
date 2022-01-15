@@ -557,7 +557,7 @@ class AsyncFormPartControl {
 
         this._form = AsyncFormPartControl._findForm(this._formPart)
 
-        const actionElements = document.querySelectorAll(actionElementsSelector)
+        const actionElements = this._formPart.querySelectorAll(actionElementsSelector)
         this._bindActionElementsListeners(actionElements)
         this._publishFormPartChange()
     }
