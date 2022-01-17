@@ -1,6 +1,6 @@
 package cz.quantumleap.core.session;
 
-import cz.quantumleap.core.security.AuthenticationEmailResolver;
+import cz.quantumleap.core.security.Authenticator;
 import cz.quantumleap.core.session.domain.SessionDetail;
 import org.apache.commons.lang3.Validate;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
@@ -27,7 +27,7 @@ public class SessionDao implements SessionRepository<MapSession> {
 
     private final Map<String, Session> sessionMap;
     private final MapSessionRepository repository;
-    private final AuthenticationEmailResolver authenticationEmailResolver = new AuthenticationEmailResolver();
+    private final Authenticator authenticator = new Authenticator();
 
     public SessionDao(ServerProperties serverProperties) {
         this.sessionMap = new HashMap<>();
@@ -94,7 +94,7 @@ public class SessionDao implements SessionRepository<MapSession> {
         }
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authenticationEmailResolver.resolve(authentication);
+        String email = authenticator.getAuthenticationEmail(authentication);
         session.setAttribute(EMAIL_ATTRIBUTE, email);
     }
 }

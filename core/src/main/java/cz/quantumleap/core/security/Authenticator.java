@@ -9,25 +9,28 @@ import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class AuthenticationEmailResolver {
+public class Authenticator {
 
     private final AuthenticationTrustResolver trustResolver = new AuthenticationTrustResolverImpl();
 
-    public String resolve(Authentication authentication) {
+    public boolean isUserAuthenticated(Authentication authentication) {
+        return authentication != null
+                && authentication.isAuthenticated()
+                && !trustResolver.isAnonymous(authentication);
+    }
+
+    public String getAuthenticationEmail(Authentication authentication) {
         if (authentication == null) {
             return null;
-        }
-
-        if (!authentication.isAuthenticated() || trustResolver.isAnonymous(authentication)) {
+        } else if (!authentication.isAuthenticated() || trustResolver.isAnonymous(authentication)) {
             return null;
         }
 
         Object principal = authentication.getPrincipal();
-        if (!(principal instanceof DefaultOidcUser)) {
+        if (!(principal instanceof DefaultOidcUser oidcUser)) {
             throw new IllegalArgumentException("Unknown principal type " + principal.getClass().getName());
         }
 
-        DefaultOidcUser oidcUser = (DefaultOidcUser) principal;
         Map<String, Object> attributes = oidcUser.getAttributes();
         String email = (String) attributes.get(DatabaseAuthoritiesLoader.OAUTH_DETAILS_EMAIL);
         Validate.notNull(email, "Email was not found in OidcUser details! " + formatDetails(attributes));

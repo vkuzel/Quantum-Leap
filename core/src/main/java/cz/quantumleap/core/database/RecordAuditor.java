@@ -1,6 +1,6 @@
 package cz.quantumleap.core.database;
 
-import cz.quantumleap.core.security.AuthenticationEmailResolver;
+import cz.quantumleap.core.security.Authenticator;
 import org.jooq.Record;
 import org.jooq.*;
 import org.jooq.impl.DefaultRecordListener;
@@ -20,7 +20,7 @@ public class RecordAuditor implements RecordListenerProvider {
     private static final String NOT_AUTHORIZED_EMAIL = "<no-authentication>";
 
     private static final RecordAuditor instance = new RecordAuditor();
-    private final AuthenticationEmailResolver authenticationEmailResolver = new AuthenticationEmailResolver();
+    private final Authenticator authenticator = new Authenticator();
 
     private RecordAuditor() {
     }
@@ -84,7 +84,7 @@ public class RecordAuditor implements RecordListenerProvider {
 
     private String getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authenticationEmailResolver.resolve(authentication);
+        String email = authenticator.getAuthenticationEmail(authentication);
         return email != null ? email : NOT_AUTHORIZED_EMAIL;
     }
 

@@ -1,7 +1,7 @@
 package cz.quantumleap.core.slicequery;
 
 import cz.quantumleap.core.database.entity.EntityIdentifier;
-import cz.quantumleap.core.security.AuthenticationEmailResolver;
+import cz.quantumleap.core.security.Authenticator;
 import cz.quantumleap.core.slicequery.domain.SliceQuery;
 import org.jooq.DSLContext;
 import org.springframework.security.core.Authentication;
@@ -17,7 +17,7 @@ import static cz.quantumleap.core.tables.SliceQueryTable.SLICE_QUERY;
 public class SliceQueryDao {
 
     private final DSLContext dslContext;
-    private final AuthenticationEmailResolver authenticationEmailResolver = new AuthenticationEmailResolver();
+    private final Authenticator authenticator = new Authenticator();
 
     public SliceQueryDao(DSLContext dslContext) {
         this.dslContext = dslContext;
@@ -25,7 +25,7 @@ public class SliceQueryDao {
 
     public List<SliceQuery> fetchByIdentifierForCurrentUser(EntityIdentifier<?> entityIdentifier) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authenticationEmailResolver.resolve(authentication);
+        String email = authenticator.getAuthenticationEmail(authentication);
 
         return dslContext.select(SLICE_QUERY.fields())
                 .from(SLICE_QUERY)

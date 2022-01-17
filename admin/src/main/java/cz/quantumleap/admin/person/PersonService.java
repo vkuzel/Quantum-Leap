@@ -3,7 +3,7 @@ package cz.quantumleap.admin.person;
 import cz.quantumleap.core.business.ServiceStub;
 import cz.quantumleap.core.person.PersonDao;
 import cz.quantumleap.core.person.domain.Person;
-import cz.quantumleap.core.security.AuthenticationEmailResolver;
+import cz.quantumleap.core.security.Authenticator;
 import org.apache.commons.lang3.Validate;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.core.Authentication;
@@ -16,7 +16,7 @@ import java.util.Objects;
 public class PersonService extends ServiceStub<Person> {
 
     private final PersonDao personDao;
-    private final AuthenticationEmailResolver authenticationEmailResolver = new AuthenticationEmailResolver();
+    private final Authenticator authenticator = new Authenticator();
 
     public PersonService(PersonDao personDao) {
         super(Person.class, personDao, personDao, personDao);
@@ -26,7 +26,7 @@ public class PersonService extends ServiceStub<Person> {
     @Cacheable("personByAuthentication")
     public Person fetchByAuthentication(Authentication authentication) {
         Validate.notNull(authentication);
-        String email = authenticationEmailResolver.resolve(authentication);
+        String email = authenticator.getAuthenticationEmail(authentication);
         return personDao.fetchByEmail(email);
     }
 
