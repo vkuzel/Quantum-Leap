@@ -7,11 +7,10 @@ import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.SequenceInputStream;
+import java.io.*;
 import java.util.*;
+
+import static java.util.Collections.enumeration;
 
 @Component(AbstractApplicationContext.MESSAGE_SOURCE_BEAN_NAME)
 public class MultiResourceMessageSource extends ResourceBundleMessageSource {
@@ -51,22 +50,26 @@ public class MultiResourceMessageSource extends ResourceBundleMessageSource {
         }
     }
 
-    // Quantum Leap supports multiple modules this means that messages can be
-    // distributed between those modules. Spring's ResourceBundleMessageSource
-    // can't handle multiple messages files of the same name on classpath.
-    private InputStream getResourcesInputStream(String resourceName) {
-        List<ResourceWithModule> resources = resourceManager.findInClasspath(resourceName);
-        Iterator<ResourceWithModule> iterator = resources.iterator();
-        return new SequenceInputStream(new Enumeration<>() {
-            @Override
-            public boolean hasMoreElements() {
-                return iterator.hasNext();
-            }
+    private static final InputStream EMPTY_LINE_INPUT_STREAM = new ByteArrayInputStream("\n".getBytes());
 
-            @Override
-            public InputStream nextElement() {
-                return iterator.next().getInputStream();
-            }
-        });
+    // ResourceBundleMessageSource does not support multiple messages
+    // properties files with a same name on the classpath,
+    // e.g. message.properties
+    //
+    // Quantum Leap does support multiple modules => there are multiple
+    // messages files with the same name on the classpath. This custom
+    // input stream will bypass that limitation.
+    private InputStream getResourcesInputStream(String resourceName) {
+        List<InputStream> inputStreams = new ArrayList<>();
+        for (ResourceWithModule resource : resourceManager.findInClasspath(resourceName)) {
+            inputStreams.add(resource.getInputStream());
+            // Handle messages file with missing newline at the end of the file
+            inputStreams.add(createEmptyLineInputStream());
+        }
+        return new SequenceInputStream(enumeration(inputStreams));
+    }
+
+    private InputStream createEmptyLineInputStream() {
+        return new ByteArrayInputStream("\n".getBytes());
     }
 }
