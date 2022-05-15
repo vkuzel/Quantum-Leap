@@ -11,6 +11,7 @@ import java.io.*;
 import java.util.*;
 
 import static java.util.Collections.enumeration;
+import static java.util.Objects.requireNonNull;
 
 @Component(AbstractApplicationContext.MESSAGE_SOURCE_BEAN_NAME)
 public class MultiResourceMessageSource extends ResourceBundleMessageSource {
@@ -26,7 +27,8 @@ public class MultiResourceMessageSource extends ResourceBundleMessageSource {
 
     @Override
     protected ResourceBundle doGetBundle(String basename, Locale locale) throws MissingResourceException {
-        return ResourceBundle.getBundle(basename, locale, getBundleClassLoader(), new MessageSourceControl());
+        ClassLoader bundleClassLoader = requireNonNull(getBundleClassLoader());
+        return ResourceBundle.getBundle(basename, locale, bundleClassLoader, new MessageSourceControl());
     }
 
     private class MessageSourceControl extends ResourceBundle.Control {
@@ -40,7 +42,7 @@ public class MultiResourceMessageSource extends ResourceBundleMessageSource {
                 String bundleName = toBundleName(baseName, locale);
                 final String resourceName = toResourceName(bundleName, "properties");
                 try (InputStream stream = getResourcesInputStream(resourceName)) {
-                    String encoding = getDefaultEncoding();
+                    String encoding = requireNonNull(getDefaultEncoding());
                     return loadBundle(new InputStreamReader(stream, encoding));
                 }
             } else {
@@ -49,8 +51,6 @@ public class MultiResourceMessageSource extends ResourceBundleMessageSource {
             }
         }
     }
-
-    private static final InputStream EMPTY_LINE_INPUT_STREAM = new ByteArrayInputStream("\n".getBytes());
 
     // ResourceBundleMessageSource does not support multiple messages
     // properties files with a same name on the classpath,
