@@ -129,12 +129,16 @@ public class SecurityUtils {
         }
     }
 
-    public static boolean verifySignatureByKey(PublicKey publicKey, String message, byte[] signedMessage) {
+    public static boolean verifySignatureByKey(PublicKey publicKey, String message, byte[] signature) {
+        return verifySignatureByKey(publicKey, message.getBytes(), signature);
+    }
+
+    public static boolean verifySignatureByKey(PublicKey publicKey, byte[] message, byte[] signature) {
         try {
-            Signature signature = Signature.getInstance("SHA256withRSA");
-            signature.initVerify(publicKey);
-            signature.update(message.getBytes());
-            return signature.verify(signedMessage);
+            Signature signatureVerifier = Signature.getInstance("SHA256withRSA");
+            signatureVerifier.initVerify(publicKey);
+            signatureVerifier.update(message);
+            return signatureVerifier.verify(signature);
         } catch (InvalidKeyException | NoSuchAlgorithmException | SignatureException e) {
             throw new IllegalStateException(e);
         }
