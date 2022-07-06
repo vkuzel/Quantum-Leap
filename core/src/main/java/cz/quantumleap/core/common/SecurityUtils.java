@@ -43,7 +43,8 @@ public class SecurityUtils {
             Cipher cipher = createAesCipher(Cipher.ENCRYPT_MODE, salt, iv, password);
             byte[] encrypted = cipher.doFinal(message.getBytes());
             return EncodingUtils.concatenate(salt, iv, encrypted);
-        } catch (NoSuchAlgorithmException | InvalidKeyException | InvalidAlgorithmParameterException | NoSuchPaddingException | BadPaddingException | InvalidKeySpecException | IllegalBlockSizeException e) {
+        } catch (NoSuchAlgorithmException | InvalidKeyException | InvalidAlgorithmParameterException |
+                 NoSuchPaddingException | BadPaddingException | InvalidKeySpecException | IllegalBlockSizeException e) {
             throw new IllegalStateException(e);
         }
     }
@@ -58,7 +59,8 @@ public class SecurityUtils {
             Cipher cipher = createAesCipher(Cipher.DECRYPT_MODE, salt, iv, password);
             byte[] decrypted = cipher.doFinal(encrypted);
             return new String(decrypted, StandardCharsets.UTF_8);
-        } catch (NoSuchAlgorithmException | InvalidKeyException | InvalidAlgorithmParameterException | NoSuchPaddingException | BadPaddingException | InvalidKeySpecException | IllegalBlockSizeException e) {
+        } catch (NoSuchAlgorithmException | InvalidKeyException | InvalidAlgorithmParameterException |
+                 NoSuchPaddingException | BadPaddingException | InvalidKeySpecException | IllegalBlockSizeException e) {
             throw new IllegalStateException(e);
         }
     }
@@ -102,7 +104,8 @@ public class SecurityUtils {
             Cipher cipher = Cipher.getInstance("RSA/ECB/OAEPWithSHA-256AndMGF1Padding");
             cipher.init(Cipher.ENCRYPT_MODE, publicKey);
             return cipher.doFinal(message.getBytes());
-        } catch (NoSuchPaddingException | NoSuchAlgorithmException | IllegalBlockSizeException | BadPaddingException | InvalidKeyException e) {
+        } catch (NoSuchPaddingException | NoSuchAlgorithmException | IllegalBlockSizeException | BadPaddingException |
+                 InvalidKeyException e) {
             throw new IllegalStateException(e);
         }
     }
@@ -113,16 +116,21 @@ public class SecurityUtils {
             cipher.init(Cipher.DECRYPT_MODE, privateKey);
             byte[] decrypted = cipher.doFinal(encryptedMessage);
             return new String(decrypted, StandardCharsets.UTF_8);
-        } catch (NoSuchPaddingException | NoSuchAlgorithmException | IllegalBlockSizeException | BadPaddingException | InvalidKeyException e) {
+        } catch (NoSuchPaddingException | NoSuchAlgorithmException | IllegalBlockSizeException | BadPaddingException |
+                 InvalidKeyException e) {
             throw new IllegalStateException(e);
         }
     }
 
     public static byte[] signMessageByKey(PrivateKey privateKey, String message) {
+        return signMessageByKey(privateKey, message.getBytes());
+    }
+
+    public static byte[] signMessageByKey(PrivateKey privateKey, byte[] message) {
         try {
             Signature signature = Signature.getInstance("SHA256withRSA");
             signature.initSign(privateKey);
-            signature.update(message.getBytes());
+            signature.update(message);
             return signature.sign();
         } catch (InvalidKeyException | NoSuchAlgorithmException | SignatureException e) {
             throw new IllegalStateException(e);
