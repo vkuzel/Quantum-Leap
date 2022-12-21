@@ -3,6 +3,7 @@ ext {
 }
 
 dependencies {
+    api(":gradle-project-dependency")
     api("org.springframework.boot:spring-boot-starter-jooq")
     api("org.springframework.data:spring-data-commons")
     api("org.springframework.boot:spring-boot-starter-web")
