@@ -6,7 +6,7 @@ import org.gradle.api.plugins.JavaPlugin;
 
 public class ModuleDependenciesConfigurer {
 
-    private static final String MODULE_DEPENDENCIES_DEPENDENCY = "com.github.vkuzel:Gradle-Project-Dependencies:3.0.0";
+    private static final String MODULE_DEPENDENCIES_DEPENDENCY = ":gradle-project-dependency";
     static final String GENERATE_MODULE_DEPENDENCIES_TASK_NAME = "generateModuleDependencies";
 
     public void configure(SpringBootProject springBootProject) {

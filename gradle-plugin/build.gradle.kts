@@ -6,12 +6,10 @@ plugins {
 repositories {
     gradlePluginPortal()
     mavenCentral()
-    maven(url = "https://jitpack.io")
 }
 
 val springBootVersion = "2.5.6"
 val dependencyManagementVersion = "1.0.11.RELEASE"
-val gradleProjectDependenciesVersion = "3.0.0"
 val jooqVersion = "3.14.15"
 val postgreSqlVersion = "42.2.24"
 val junitVersion = "5.7.2"
@@ -21,7 +19,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion")
     implementation("org.springframework.boot:spring-boot-loader-tools:$springBootVersion")
     implementation("io.spring.gradle:dependency-management-plugin:$dependencyManagementVersion")
-    implementation("com.github.vkuzel:Gradle-Project-Dependencies:$gradleProjectDependenciesVersion")
+    implementation(":gradle-project-dependency")
     implementation("org.jooq:jooq:$jooqVersion")
     implementation("org.jooq:jooq-meta:$jooqVersion")
     implementation("org.jooq:jooq-codegen:$jooqVersion")
