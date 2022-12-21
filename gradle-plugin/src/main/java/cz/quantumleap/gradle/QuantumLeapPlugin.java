@@ -11,7 +11,7 @@ import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
 import org.gradle.api.plugins.JavaLibraryPlugin;
-import org.gradle.api.plugins.JavaPluginConvention;
+import org.gradle.api.plugins.JavaPluginExtension;
 import org.gradle.api.tasks.testing.Test;
 import org.springframework.boot.gradle.plugin.SpringBootPlugin;
 
@@ -44,9 +44,9 @@ public class QuantumLeapPlugin implements Plugin<Project> {
         project.getRepositories().maven(mavenArtifactRepository -> mavenArtifactRepository.setUrl(JITPACK_REPOSITORY));
 
         project.getPlugins().apply(JavaLibraryPlugin.class);
-        JavaPluginConvention javaPlugin = project.getConvention().getPlugin(JavaPluginConvention.class);
-        javaPlugin.setSourceCompatibility(JavaVersion.VERSION_17);
-        javaPlugin.setTargetCompatibility(JavaVersion.VERSION_17);
+        JavaPluginExtension javaPluginExtension = project.getExtensions().getByType(JavaPluginExtension.class);
+        javaPluginExtension.setSourceCompatibility(JavaVersion.VERSION_17);
+        javaPluginExtension.setTargetCompatibility(JavaVersion.VERSION_17);
         project.getPlugins().apply(DependencyManagementPlugin.class);
         project.getExtensions().getByType(DependencyManagementExtension.class)
                 .imports(importsHandler -> importsHandler.mavenBom(SPRING_BOOT_BOM));
