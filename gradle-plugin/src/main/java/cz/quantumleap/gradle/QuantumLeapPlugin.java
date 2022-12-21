@@ -19,7 +19,6 @@ import org.springframework.boot.gradle.plugin.SpringBootPlugin;
 public class QuantumLeapPlugin implements Plugin<Project> {
 
     private static final String SPRING_BOOT_BOM = "org.springframework.boot:spring-boot-dependencies:" + SpringBootPlugin.class.getPackage().getImplementationVersion();
-    private static final String JITPACK_REPOSITORY = "https://jitpack.io";
     private static final String TEST_TASK_NAME = "test";
 
     private final ModuleDependenciesConfigurer moduleDependenciesConfigurer = new ModuleDependenciesConfigurer();
@@ -41,7 +40,6 @@ public class QuantumLeapPlugin implements Plugin<Project> {
 
     private void configureStandardRepositoriesAndPlugins(Project project) {
         project.getRepositories().mavenCentral();
-        project.getRepositories().maven(mavenArtifactRepository -> mavenArtifactRepository.setUrl(JITPACK_REPOSITORY));
 
         project.getPlugins().apply(JavaLibraryPlugin.class);
         JavaPluginExtension javaPluginExtension = project.getExtensions().getByType(JavaPluginExtension.class);
