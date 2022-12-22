@@ -10,6 +10,7 @@ import org.gradle.api.JavaVersion;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
+import org.gradle.api.artifacts.repositories.MavenArtifactRepository;
 import org.gradle.api.plugins.JavaLibraryPlugin;
 import org.gradle.api.plugins.JavaPluginExtension;
 import org.gradle.api.tasks.testing.Test;
@@ -20,6 +21,7 @@ public class QuantumLeapPlugin implements Plugin<Project> {
 
     private static final String SPRING_BOOT_BOM = "org.springframework.boot:spring-boot-dependencies:" + SpringBootPlugin.class.getPackage().getImplementationVersion();
     private static final String JITPACK_REPOSITORY = "https://jitpack.io";
+    private static final String JITPACK_REPOSITORY_NAME = "JitPack";
     private static final String TEST_TASK_NAME = "test";
 
     private final ModuleDependenciesConfigurer moduleDependenciesConfigurer = new ModuleDependenciesConfigurer();
@@ -41,7 +43,7 @@ public class QuantumLeapPlugin implements Plugin<Project> {
 
     private void configureStandardRepositoriesAndPlugins(Project project) {
         project.getRepositories().mavenCentral();
-        project.getRepositories().maven(mavenArtifactRepository -> mavenArtifactRepository.setUrl(JITPACK_REPOSITORY));
+        project.getRepositories().maven(this::jitPack);
 
         project.getPlugins().apply(JavaLibraryPlugin.class);
         JavaPluginExtension javaPluginExtension = project.getExtensions().getByType(JavaPluginExtension.class);
@@ -51,6 +53,11 @@ public class QuantumLeapPlugin implements Plugin<Project> {
         project.getExtensions().getByType(DependencyManagementExtension.class)
                 .imports(importsHandler -> importsHandler.mavenBom(SPRING_BOOT_BOM));
         project.getTasksByName("test", false).forEach(this::applyJUnitPlatform);
+    }
+
+    private void jitPack(MavenArtifactRepository repository) {
+        repository.setUrl(JITPACK_REPOSITORY);
+        repository.setName(JITPACK_REPOSITORY_NAME);
     }
 
     private void applyJUnitPlatform(Task task) {
