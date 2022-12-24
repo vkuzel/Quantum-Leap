@@ -2,6 +2,10 @@ ext {
     set("mainClass", "cz.quantumleap.QuantumLeapApplication")
 }
 
+repositories {
+    mavenCentral()
+}
+
 dependencies {
     api(":gradle-project-dependency")
     api("org.springframework.boot:spring-boot-starter-jooq")
