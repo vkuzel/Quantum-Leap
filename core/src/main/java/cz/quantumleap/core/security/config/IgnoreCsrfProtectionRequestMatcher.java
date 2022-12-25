@@ -24,6 +24,10 @@ public class IgnoreCsrfProtectionRequestMatcher implements RequestMatcher {
 
     @Override
     public boolean matches(HttpServletRequest request) {
+        if (WebUtils.isDummyRequest(request)) {
+            return false;
+        }
+
         WebUtils.cacheRequestPath(request);
         for (RequestMappingInfo requestMappingInfo : mappingInfo) {
             if (requestMappingInfo.getMatchingCondition(request) != null) {

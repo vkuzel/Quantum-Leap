@@ -1,11 +1,19 @@
 package cz.quantumleap.core.view;
 
+import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
+import org.springframework.web.servlet.mvc.method.RequestMappingInfo.BuilderConfiguration;
 import org.springframework.web.util.ServletRequestPathUtils;
 import org.springframework.web.util.UrlPathHelper;
+import org.springframework.web.util.pattern.PathPatternParser;
 
 import javax.servlet.http.HttpServletRequest;
 
 public class WebUtils {
+
+    public static boolean isDummyRequest(HttpServletRequest request) {
+        String name = request.getClass().getName();
+        return "org.springframework.security.web.FilterInvocation$DummyRequest".equals(name);
+    }
 
     public static void cacheRequestPath(HttpServletRequest request) {
         // In https://github.com/spring-projects/spring-framework/issues/24945
@@ -36,5 +44,14 @@ public class WebUtils {
             remoteAddr = remoteAddr.split(",")[0];
         }
         return remoteAddr;
+    }
+
+    /**
+     * Request mapping info builder with PathPatternMatcher.
+     */
+    public static RequestMappingInfo.Builder requestMappingInfoBuilder(String path) {
+        BuilderConfiguration options = new BuilderConfiguration();
+        options.setPatternParser(new PathPatternParser());
+        return RequestMappingInfo.paths(path).options(options);
     }
 }

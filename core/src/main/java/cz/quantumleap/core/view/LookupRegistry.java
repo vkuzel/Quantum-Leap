@@ -21,6 +21,8 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
+import static cz.quantumleap.core.view.WebUtils.requestMappingInfoBuilder;
+
 @Component
 @ConditionalOnWebApplication
 public class LookupRegistry {
@@ -80,7 +82,9 @@ public class LookupRegistry {
 
     public void registerController(EntityIdentifier<?> entityIdentifier, LookupController lookupController) {
         if (!lookupControllerMap.containsValue(lookupController)) {
-            RequestMappingInfo labelMapping = RequestMappingInfo.paths(lookupController.getLookupLabelUrl()).methods(RequestMethod.GET).build();
+            RequestMappingInfo labelMapping = requestMappingInfoBuilder(lookupController.getLookupLabelUrl())
+                    .methods(RequestMethod.GET)
+                    .build();
             Method resolveLookupLabelMethod = getLookupControllerMethod(
                     lookupController.getClass(),
                     "resolveLookupLabel",
@@ -90,7 +94,9 @@ public class LookupRegistry {
             );
             requestMappingHandlerMapping.registerMapping(labelMapping, lookupController, resolveLookupLabelMethod);
 
-            RequestMappingInfo labelsMapping = RequestMappingInfo.paths(lookupController.getLookupLabelsUrl()).methods(RequestMethod.GET).build();
+            RequestMappingInfo labelsMapping = requestMappingInfoBuilder(lookupController.getLookupLabelsUrl())
+                    .methods(RequestMethod.GET)
+                    .build();
             Method findLookupLabelsMethod = getLookupControllerMethod(
                     lookupController.getClass(),
                     "findLookupLabels",
@@ -101,7 +107,9 @@ public class LookupRegistry {
             );
             requestMappingHandlerMapping.registerMapping(labelsMapping, lookupController, findLookupLabelsMethod);
 
-            RequestMappingInfo listMapping = RequestMappingInfo.paths(lookupController.getLookupListUrl()).methods(RequestMethod.GET).build();
+            RequestMappingInfo listMapping = requestMappingInfoBuilder(lookupController.getLookupListUrl())
+                    .methods(RequestMethod.GET)
+                    .build();
             Method lookupListMethod = getLookupControllerMethod(
                     lookupController.getClass(),
                     "lookupList",

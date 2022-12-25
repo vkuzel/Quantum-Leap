@@ -2,6 +2,7 @@ package cz.quantumleap.admin.menu;
 
 import cz.quantumleap.core.view.WebUtils;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.servlet.mvc.condition.PathPatternsRequestCondition;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 
 import javax.servlet.http.HttpServletRequest;
@@ -35,15 +36,22 @@ public class AdminMenuItem {
     }
 
     public String getPath() {
-        for (RequestMappingInfo requestMappingInfo : requestMappingInfoList) {
-            for (String pattern : requestMappingInfo.getPatternsCondition().getPatterns()) {
-                return pattern;
+        for (RequestMappingInfo info : requestMappingInfoList) {
+            PathPatternsRequestCondition pathPatternsCondition = info.getPathPatternsCondition();
+            if (pathPatternsCondition == null) continue;
+
+            for (String path : pathPatternsCondition.getDirectPaths()) {
+                return path;
             }
         }
         return "/";
     }
 
     public boolean matchesRequest(HttpServletRequest request) {
+        if (WebUtils.isDummyRequest(request)) {
+            return false;
+        }
+
         WebUtils.cacheRequestPath(request);
         for (RequestMappingInfo requestMappingInfo : requestMappingInfoList) {
             if (requestMappingInfo.getMatchingCondition(request) != null) {
