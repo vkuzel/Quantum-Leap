@@ -109,7 +109,7 @@ class TableControl {
     }
 
     _qualifyParamName(paramName) {
-        return this._qualifier ? `${this._qualifier}_paramName` : paramName
+        return this._qualifier ? `${this._qualifier}_${paramName}` : paramName
     }
 
     _bindListeners() {
