@@ -3,7 +3,6 @@ package cz.quantumleap.core.database;
 import cz.quantumleap.core.security.Authenticator;
 import org.jooq.Record;
 import org.jooq.*;
-import org.jooq.impl.DefaultRecordListener;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -89,7 +88,7 @@ public class RecordAuditor implements RecordListenerProvider {
         return new AuditingRecordListener();
     }
 
-    public class AuditingRecordListener extends DefaultRecordListener {
+    private class AuditingRecordListener implements RecordListener {
 
         @Override
         public void insertStart(RecordContext ctx) {
