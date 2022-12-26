@@ -1,13 +1,13 @@
 package cz.quantumleap.core.module;
 
 import com.github.vkuzel.gradle_project_dependencies.ProjectDependencies;
+import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;

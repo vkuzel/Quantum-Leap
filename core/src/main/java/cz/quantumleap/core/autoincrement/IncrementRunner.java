@@ -3,6 +3,7 @@ package cz.quantumleap.core.autoincrement;
 import cz.quantumleap.core.autoincrement.domain.Increment;
 import cz.quantumleap.core.common.Utils;
 import cz.quantumleap.core.database.TransactionExecutor;
+import jakarta.annotation.PostConstruct;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,7 +12,6 @@ import org.springframework.core.env.Profiles;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import java.util.*;
 
 @Component

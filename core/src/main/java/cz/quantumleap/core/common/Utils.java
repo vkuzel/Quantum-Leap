@@ -2,12 +2,12 @@ package cz.quantumleap.core.common;
 
 import com.google.common.io.CharStreams;
 import cz.quantumleap.core.database.entity.EntityIdentifier;
+import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.Validate;
 import org.jooq.Record;
 import org.jooq.Table;
 import org.springframework.core.io.Resource;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.time.LocalDate;

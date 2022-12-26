@@ -12,7 +12,7 @@
             <span th:text="#{admin.title.role}">Role</span>
         </div>
         <div class="card-body">
-            <form th:action="${#httpServletRequest.requestURI}" th:object="${role}" method="post">
+            <form th:action="${#ctx.springRequestContext.requestUri}" th:object="${role}" method="post">
                 <input type="hidden" th:if="*{id}" th:field="*{id}">
 
                 <div th:if="${saved}" th:text="#{admin.saved-msg}" class="alert alert-success" role="alert">

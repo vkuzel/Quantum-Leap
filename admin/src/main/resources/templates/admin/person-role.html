@@ -26,13 +26,13 @@
                     <label for="personId" class="col-md-4 col-form-label"
                            th:text="#{admin.person-role.person}">Person</label>
                     <div class="col-md-6"
-                         th:insert="admin/components/lookup-field::lookup(entityIdentifier='core.person',fieldId='personId',value=*{personId},modalTitle=#{admin.lookup.modal.title.people})">
+                         th:insert="~{admin/components/lookup-field::lookup(entityIdentifier='core.person',fieldId='personId',value=*{personId},modalTitle=#{admin.lookup.modal.title.people})}">
                     </div>
                 </div>
                 <div class="mb-3 row">
                     <label for="roleId" class="col-md-4 col-form-label" th:text="#{admin.person-role.role}">Role</label>
                     <div class="col-md-6"
-                         th:insert="admin/components/lookup-field::lookup(entityIdentifier='core.role',fieldId='roleId',value=*{roleId},modalTitle=#{admin.lookup.modal.title.roles})">
+                         th:insert="~{admin/components/lookup-field::lookup(entityIdentifier='core.role',fieldId='roleId',value=*{roleId},modalTitle=#{admin.lookup.modal.title.roles})}">
                     </div>
                 </div>
 

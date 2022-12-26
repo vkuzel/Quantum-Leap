@@ -2,10 +2,9 @@ package cz.quantumleap.core.view;
 
 import cz.quantumleap.core.database.domain.FetchParams;
 import cz.quantumleap.core.database.entity.EntityIdentifier;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.ui.Model;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 public interface LookupController {
 

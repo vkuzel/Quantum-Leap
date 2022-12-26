@@ -5,13 +5,13 @@ import cz.quantumleap.core.database.domain.FetchParams;
 import cz.quantumleap.core.database.domain.Slice;
 import cz.quantumleap.core.database.entity.EntityIdentifier;
 import cz.quantumleap.core.security.WebSecurityExpressionEvaluator;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.server.ResponseStatusException;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 
 public final class DefaultLookupController implements LookupController {

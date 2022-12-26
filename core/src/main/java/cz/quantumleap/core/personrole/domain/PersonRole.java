@@ -1,6 +1,6 @@
 package cz.quantumleap.core.personrole.domain;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 public class PersonRole {
 

@@ -34,7 +34,7 @@ public class SessionDao implements SessionRepository<MapSession> {
         this.repository = new MapSessionRepository(sessionMap);
         Duration sessionTimeout = serverProperties.getServlet().getSession().getTimeout();
         if (sessionTimeout != null) {
-            this.repository.setDefaultMaxInactiveInterval((int) sessionTimeout.getSeconds());
+            this.repository.setDefaultMaxInactiveInterval(sessionTimeout);
         }
     }
 

@@ -13,7 +13,7 @@
                     <i class="fas fa-users"></i>
                     <span th:text="#{admin.table.title.core.people}">Table</span>
                 </div>
-                <div class="col-sm-4 mb-3 mb-sm-0" th:insert="admin/components/slice-query-field::query"></div>
+                <div class="col-sm-4 mb-3 mb-sm-0" th:insert="~{admin/components/slice-query-field::query}"></div>
                 <div class="col-sm-4">
                     <a th:href="@{|/person|}" class="btn btn-success btn-sm float-end"
                        th:text="#{admin.table.title.new-record}">New record</a>
@@ -21,7 +21,7 @@
             </div>
         </div>
         <div class="card-body table-container">
-            <div class="table-responsive" th:insert="admin/components/slice::table">
+            <div class="table-responsive" th:insert="~{admin/components/slice::table}">
             </div>
         </div>
     </div>

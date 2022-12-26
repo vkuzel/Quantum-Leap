@@ -13,7 +13,7 @@
             <a th:href="@{|/role|}" class="btn btn-success btn-sm float-end" th:text="#{admin.table.title.new-record}"></a>
         </div>
         <div class="card-body table-container">
-            <div class="table-responsive" th:insert="admin/components/slice::table">
+            <div class="table-responsive" th:insert="~{admin/components/slice::table}">
             </div>
         </div>
     </div>
