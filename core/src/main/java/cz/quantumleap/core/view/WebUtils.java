@@ -1,12 +1,11 @@
 package cz.quantumleap.core.view;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo.BuilderConfiguration;
 import org.springframework.web.util.ServletRequestPathUtils;
 import org.springframework.web.util.UrlPathHelper;
 import org.springframework.web.util.pattern.PathPatternParser;
-
-import javax.servlet.http.HttpServletRequest;
 
 public class WebUtils {
 

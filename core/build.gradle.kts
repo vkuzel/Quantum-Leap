@@ -18,8 +18,7 @@ dependencies {
     api("org.springframework.security:spring-security-oauth2-client")
     api("org.springframework.security:spring-security-oauth2-jose")
     api("org.springframework.session:spring-session-core")
-    api("org.thymeleaf.extras:thymeleaf-extras-springsecurity5")
-    api("org.thymeleaf.extras:thymeleaf-extras-java8time")
+    api("org.thymeleaf.extras:thymeleaf-extras-springsecurity6")
 
     api("com.google.guava:guava:31.0.1-jre")
     api("org.apache.commons:commons-lang3:3.12.0")

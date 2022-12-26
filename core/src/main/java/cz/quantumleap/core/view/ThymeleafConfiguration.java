@@ -18,10 +18,9 @@ import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.thymeleaf.exceptions.TemplateProcessingException;
-import org.thymeleaf.extras.java8time.dialect.Java8TimeDialect;
-import org.thymeleaf.extras.springsecurity5.dialect.SpringSecurityDialect;
-import org.thymeleaf.spring5.SpringTemplateEngine;
-import org.thymeleaf.spring5.dialect.SpringStandardDialect;
+import org.thymeleaf.extras.springsecurity6.dialect.SpringSecurityDialect;
+import org.thymeleaf.spring6.SpringTemplateEngine;
+import org.thymeleaf.spring6.dialect.SpringStandardDialect;
 import org.thymeleaf.standard.serializer.IStandardJavaScriptSerializer;
 
 import java.io.IOException;
@@ -54,7 +53,6 @@ public class ThymeleafConfiguration {
         engine.setTemplateResolver(new ThemeTemplateResolver(thymeleafProperties, resourceManager));
         engine.addDialect(new SpringSecurityDialect());
         engine.addDialect(new LayoutDialect());
-        engine.addDialect(new Java8TimeDialect());
         engine.addDialect(new QuantumLeapDialect(fileStorageManager));
         return engine;
     }

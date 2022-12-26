@@ -13,7 +13,7 @@
 <body>
 
 <main layout:fragment="content">
-    <form th:action="${#httpServletRequest.requestURI}" th:object="${person}" method="post">
+    <form th:action="${#ctx.springRequestContext.requestUri}" th:object="${person}" method="post">
         <div class="card mb-3">
             <div class="card-header">
                 <i class="fas fa-user"></i>
@@ -62,7 +62,7 @@
             </div>
             <div class="card-body table-container">
                 <div class="table-responsive"
-                     th:insert="admin/components/slice::table(qualifier='personRole',entityIdentifier=${personRoleEntityIdentifier},slice=${personRoleSlice},detailUrl=${personRoleDetailUrl})">
+                     th:insert="~{admin/components/slice::table(qualifier='personRole',entityIdentifier=${personRoleEntityIdentifier},slice=${personRoleSlice},detailUrl=${personRoleDetailUrl})}">
                 </div>
             </div>
         </div>
@@ -98,7 +98,7 @@
                             <td th:text="${sessionDetail.userAgentBrowser}"></td>
                             <td th:text="${sessionDetail.userAgentOperatingSystem}"></td>
                             <td th:text="${sessionDetail.userAgentDevice}"></td>
-                            <td><button th:if="${#session.id != sessionDetail.id}" type="submit" class="btn btn-outline-danger" name="invalidateSession" th:value="${sessionDetail.id}" th:title="#{admin.delete}"><i class="fas fa-trash-alt"></i></button></td>
+                            <td><button th:if="${currentSessionId != sessionDetail.id}" type="submit" class="btn btn-outline-danger" name="invalidateSession" th:value="${sessionDetail.id}" th:title="#{admin.delete}"><i class="fas fa-trash-alt"></i></button></td>
                         </tr>
                         </tbody>
                     </table>

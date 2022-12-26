@@ -1,6 +1,6 @@
 package cz.quantumleap.core.person.domain;
 
-import javax.validation.constraints.Pattern;
+import jakarta.validation.constraints.Pattern;
 
 public class Person {
 

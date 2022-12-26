@@ -2,7 +2,7 @@
 
 * Security is based on Spring Security 5.
 * Spring Security `@Pre*` and `@Post*` annotations works. Do not use @Secure or JSR-250 annotations.
-* By default all `RequestMapping` endpoints are protected and user has to be authenticated to access any of those. Static content paths like `/assets/**`, `/webjars/**` or `/storage/*` are left unprotected.
+* By default all `RequestMapping` endpoints are protected and user has to be authenticated to access any of those. Static content paths (`/assets/**`, `/webjars/**` or `/storage/**`) are unprotected.
 * To make an endpoint accessible for everyone, use `@PreAuthorize("permitAll()")` annotation.
 * CSRF protection can be disabled on a method or a type basis by `@IgnoreCsrfProtection` annotation. 
 * Authentication was tested against Google OAuth2 but it should work with any OAuth2 service. Quantum Leap does not store any passwords.

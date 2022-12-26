@@ -1,9 +1,8 @@
 package cz.quantumleap.core.view;
 
 import cz.quantumleap.core.database.domain.FetchParams;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.ui.Model;
-
-import javax.servlet.http.HttpServletRequest;
 
 public interface ListController {
 

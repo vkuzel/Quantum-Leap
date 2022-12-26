@@ -12,7 +12,7 @@
             <span th:text="#{admin.title.notification}">Notification</span>
         </div>
         <div class="card-body">
-            <form th:action="${#httpServletRequest.requestURI}" th:object="${notification}" method="post">
+            <form th:action="${#ctx.springRequestContext.requestUri}" th:object="${notification}" method="post">
                 <input type="hidden" th:if="*{id}" th:field="*{id}">
                 <div class="mb-3 row">
                     <label th:for="email" class="col-form-label col-md-2"

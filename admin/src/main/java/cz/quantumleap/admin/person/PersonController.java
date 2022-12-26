@@ -17,6 +17,9 @@ import cz.quantumleap.core.session.SessionService;
 import cz.quantumleap.core.session.domain.SessionDetail;
 import cz.quantumleap.core.tables.PersonRoleTable;
 import cz.quantumleap.core.view.*;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -28,8 +31,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 import java.util.List;
 
 @Controller
@@ -65,8 +66,14 @@ public class PersonController extends AdminController {
 
     @AdminMenuItemActive("admin.menu.people")
     @GetMapping(path = {DETAIL_URL, DETAIL_URL + "/{id}"})
-    public String showPerson(@PathVariable(required = false) Long id, @Qualifier("personRole") FetchParams personRoleFetchParams, Model model) {
+    public String showPerson(
+            @PathVariable(required = false) Long id,
+            @Qualifier("personRole") FetchParams personRoleFetchParams,
+            HttpSession httpSession,
+            Model model
+    ) {
         return detailController.show(id, model, (p) -> {
+            model.addAttribute("currentSessionId", httpSession.getId());
             addPersonRoleTableAttributes(p, personRoleFetchParams, model);
             return DETAIL_VIEW;
         });
@@ -82,7 +89,17 @@ public class PersonController extends AdminController {
     }
 
     @PostMapping(params = "invalidateSession", path = {DETAIL_URL, DETAIL_URL + "/{id}"})
-    public String invalidateSession(Person person, @Qualifier("personRole") FetchParams personRoleFetchParams, HttpServletRequest request, Model model, @RequestParam("invalidateSession") String sessionId) {
+    public String invalidateSession(
+            Person person,
+            @Qualifier("personRole") FetchParams personRoleFetchParams,
+            HttpServletRequest request,
+            HttpSession httpSession,
+            Model model,
+            @RequestParam("invalidateSession") String sessionId
+    ) {
+        if (httpSession.getId().equals(sessionId)) {
+            throw new IllegalArgumentException("Cannot invalidate current session!");
+        }
         sessionService.invalidate(sessionId);
         model.addAttribute(person);
         addPersonRoleTableAttributes(person, personRoleFetchParams, model);

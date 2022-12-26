@@ -9,6 +9,7 @@ import cz.quantumleap.core.personrole.domain.PersonRole;
 import cz.quantumleap.core.security.WebSecurityExpressionEvaluator;
 import cz.quantumleap.core.view.DefaultDetailController;
 import cz.quantumleap.core.view.DetailController;
+import jakarta.validation.Valid;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,8 +18,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import javax.validation.Valid;
 
 @Controller
 @PreAuthorize("hasRole('ADMIN')")

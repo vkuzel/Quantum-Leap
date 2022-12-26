@@ -8,13 +8,11 @@ import cz.quantumleap.admin.person.PersonService;
 import cz.quantumleap.core.notification.domain.Notification;
 import cz.quantumleap.core.person.domain.Person;
 import cz.quantumleap.core.security.WebSecurityExpressionEvaluator;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.core.Authentication;
-import org.springframework.util.AntPathMatcher;
-import org.springframework.util.PathMatcher;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,7 +22,6 @@ public abstract class AdminController {
     private final PersonService personService;
     private final NotificationService notificationService;
     private final WebSecurityExpressionEvaluator webSecurityExpressionEvaluator;
-    private final PathMatcher pathMatcher = new AntPathMatcher();
 
     public AdminController(AdminMenuManager adminMenuManager, PersonService personService, NotificationService notificationService, WebSecurityExpressionEvaluator webSecurityExpressionEvaluator) {
         this.adminMenuManager = adminMenuManager;

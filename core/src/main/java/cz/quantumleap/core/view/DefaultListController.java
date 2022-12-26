@@ -5,9 +5,8 @@ import cz.quantumleap.core.common.Utils;
 import cz.quantumleap.core.database.domain.FetchParams;
 import cz.quantumleap.core.database.domain.Slice;
 import cz.quantumleap.core.database.entity.EntityIdentifier;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.ui.Model;
-
-import javax.servlet.http.HttpServletRequest;
 
 public final class DefaultListController implements ListController {
 

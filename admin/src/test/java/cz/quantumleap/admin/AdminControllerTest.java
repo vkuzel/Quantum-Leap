@@ -7,6 +7,8 @@ import cz.quantumleap.admin.menu.AdminMenuManager;
 import cz.quantumleap.admin.notification.NotificationService;
 import cz.quantumleap.admin.person.PersonService;
 import cz.quantumleap.core.security.WebSecurityExpressionEvaluator;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,8 +21,6 @@ import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.util.ServletRequestPathUtils;
 import org.springframework.web.util.UrlPathHelper;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.Collections;
 import java.util.List;
 

@@ -28,7 +28,7 @@ class NotificationManagerTest {
     private NotificationDao notificationDao;
 
     @BeforeEach
-    private void clearDatabase() {
+    void clearDatabase() {
         testSupport.deleteFromTable("core.notification");
         testSupport.clearDatabase();
     }
