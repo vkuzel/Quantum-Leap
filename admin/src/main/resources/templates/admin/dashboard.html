@@ -8,7 +8,7 @@
 
 <main layout:fragment="content" th:with="position=${T(cz.quantumleap.admin.dashboard.DashboardWidget.Position)}">
     <div th:each="widget : ${dashboardWidgets.get(position.TOP)}" class="card mb-3">
-        <div th:replace="__${widget.thymeleafFragmentExpression}__">
+        <div th:replace="~{__${widget.thymeleafFragmentExpression}__}">
             <div class="card-header">
                 <i class="fas fa-chart-area"></i> Area Chart Example
             </div>
@@ -22,7 +22,7 @@
     <div th:unless="${#lists.isEmpty(dashboardWidgets.get(position.LEFT)) && #lists.isEmpty(dashboardWidgets.get(position.RIGHT))}" class="row">
         <div class="col-md-6 mb-3">
             <div th:each="widget : ${dashboardWidgets.get(position.LEFT)}" class="card mb-3">
-                <div th:replace="__${widget.thymeleafFragmentExpression}__">
+                <div th:replace="~{__${widget.thymeleafFragmentExpression}__}">
                     <div class="card-header">
                         <i class="fas fa-bell"></i> Feed Example
                     </div>
@@ -77,7 +77,7 @@
 
         <div class="col-md-6 mb-3">
             <div th:each="widget : ${dashboardWidgets.get(position.RIGHT)}" class="card mb-3">
-                <div th:replace="__${widget.thymeleafFragmentExpression}__">
+                <div th:replace="~{__${widget.thymeleafFragmentExpression}__}">
                     <div class="card-header">
                         <i class="fas fa-chart-pie"></i> Pie Chart Example
                     </div>
@@ -91,7 +91,7 @@
     </div>
 
     <div th:each="widget : ${dashboardWidgets.get(position.BOTTOM)}" class="card mb-3">
-        <div th:replace="__${widget.thymeleafFragmentExpression}__">
+        <div th:replace="~{__${widget.thymeleafFragmentExpression}__}">
             <div class="card-header">
                 <i class="fas fa-chart-bar"></i> Bar Chart Example
             </div>
