@@ -1,6 +1,6 @@
 package cz.quantumleap.gradle.moduledependencies;
 
-import com.github.vkuzel.gradle_project_dependencies.ProjectDependencies;
+import com.github.vkuzel.gradleprojectdependencies.ModuleDependencies;
 import cz.quantumleap.gradle.project.SpringBootProject;
 import org.gradle.api.Project;
 import org.gradle.api.plugins.JavaLibraryPlugin;
@@ -23,24 +23,23 @@ public class GenerateModuleDependenciesTaskTest {
         GenerateModuleDependenciesTask task = getTask(project);
 
         // when
-        Map<Project, ProjectDependencies> dependenciesMap = new HashMap<>();
+        Map<Project, ModuleDependencies> dependenciesMap = new HashMap<>();
         task.findAllDependencies(project, dependenciesMap);
 
         // then
-        ProjectDependencies testProject = getDependencies("testProject", dependenciesMap);
-        assertEquals("subproject1", testProject.getDependencies().get(0));
+        ModuleDependencies testProject = getDependencies("testProject", dependenciesMap);
+        assertEquals("subproject1", testProject.dependencies().get(0));
 
-        ProjectDependencies subproject1 = getDependencies("subproject1", dependenciesMap);
-        assertEquals("subproject2", subproject1.getDependencies().get(0));
+        ModuleDependencies subproject1 = getDependencies("subproject1", dependenciesMap);
+        assertEquals("subproject2", subproject1.dependencies().get(0));
 
-        ProjectDependencies subproject2 = getDependencies("subproject2", dependenciesMap);
-        assertTrue(subproject2.getDependencies().isEmpty());
+        ModuleDependencies subproject2 = getDependencies("subproject2", dependenciesMap);
+        assertTrue(subproject2.dependencies().isEmpty());
     }
 
     private GenerateModuleDependenciesTask getTask(Project project) {
         return (GenerateModuleDependenciesTask) project.getTasksByName(ModuleDependenciesConfigurer.GENERATE_MODULE_DEPENDENCIES_TASK_NAME, false)
                 .stream().findAny().get();
-
     }
 
     private Project setUpProject() {
@@ -60,7 +59,7 @@ public class GenerateModuleDependenciesTaskTest {
         return project;
     }
 
-    private ProjectDependencies getDependencies(String projectName, Map<Project, ProjectDependencies> dependenciesMap) {
+    private ModuleDependencies getDependencies(String projectName, Map<Project, ModuleDependencies> dependenciesMap) {
         for (Project project : dependenciesMap.keySet()) {
             if (project.getName().equals(projectName)) {
                 return dependenciesMap.get(project);

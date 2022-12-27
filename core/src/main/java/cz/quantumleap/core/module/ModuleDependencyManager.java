@@ -1,6 +1,6 @@
 package cz.quantumleap.core.module;
 
-import com.github.vkuzel.gradle_project_dependencies.ProjectDependencies;
+import com.github.vkuzel.gradleprojectdependencies.ModuleDependencies;
 import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,18 +25,18 @@ public class ModuleDependencyManager {
     private static final String PROJECT_DEPENDENCIES_FILE = "/projectDependencies.ser";
     private final PathMatchingResourcePatternResolver resourceResolver = new PathMatchingResourcePatternResolver();
 
-    private final List<ModuleDependencies> independentModulesFirst = new ArrayList<>();
+    private final List<cz.quantumleap.core.module.ModuleDependencies> independentModulesFirst = new ArrayList<>();
 
-    public List<ModuleDependencies> getIndependentModulesFirst() {
+    public List<cz.quantumleap.core.module.ModuleDependencies> getIndependentModulesFirst() {
         return independentModulesFirst;
     }
 
     public List<String> getModuleNames() {
         return independentModulesFirst.stream()
-                .map(ModuleDependencies::getModuleName).collect(Collectors.toList());
+                .map(cz.quantumleap.core.module.ModuleDependencies::getModuleName).collect(Collectors.toList());
     }
 
-    public Comparator<ModuleDependencies> independentModuleFirst() {
+    public Comparator<cz.quantumleap.core.module.ModuleDependencies> independentModuleFirst() {
         return Comparator.comparingInt(independentModulesFirst::indexOf);
     }
 
@@ -50,7 +50,7 @@ public class ModuleDependencyManager {
         }
 
         for (Resource dependenciesFile : dependenciesFiles) {
-            ModuleDependencies moduleDependencies = deserializeDependencies(dependenciesFile);
+            cz.quantumleap.core.module.ModuleDependencies moduleDependencies = deserializeDependencies(dependenciesFile);
             log.info("Registering project module: {}", moduleDependencies.getModuleName());
 
             independentModulesFirst.remove(moduleDependencies);
@@ -63,7 +63,7 @@ public class ModuleDependencyManager {
     }
 
     private int getProjectIndex(String projectName) {
-        for (ModuleDependencies moduleDependencies : independentModulesFirst) {
+        for (cz.quantumleap.core.module.ModuleDependencies moduleDependencies : independentModulesFirst) {
             if (Objects.equals(moduleDependencies.getModuleName(), projectName)) {
                 return independentModulesFirst.indexOf(moduleDependencies);
             }
@@ -71,12 +71,12 @@ public class ModuleDependencyManager {
         return -1;
     }
 
-    private ModuleDependencies deserializeDependencies(Resource dependenciesFile) {
+    private cz.quantumleap.core.module.ModuleDependencies deserializeDependencies(Resource dependenciesFile) {
         try (
                 InputStream inputStream = dependenciesFile.getInputStream();
                 ObjectInputStream objectInputStream = new ObjectInputStream(inputStream)
         ) {
-            return new ModuleDependencies(dependenciesFile, (ProjectDependencies) objectInputStream.readObject());
+            return new cz.quantumleap.core.module.ModuleDependencies(dependenciesFile, (ModuleDependencies) objectInputStream.readObject());
         } catch (IOException | ClassNotFoundException e) {
             throw new IllegalStateException(e);
         }

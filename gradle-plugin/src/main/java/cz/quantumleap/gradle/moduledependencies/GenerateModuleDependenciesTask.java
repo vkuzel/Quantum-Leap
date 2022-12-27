@@ -1,6 +1,6 @@
 package cz.quantumleap.gradle.moduledependencies;
 
-import com.github.vkuzel.gradle_project_dependencies.ProjectDependencies;
+import com.github.vkuzel.gradleprojectdependencies.ModuleDependencies;
 import cz.quantumleap.gradle.utils.PluginUtils;
 import cz.quantumleap.gradle.utils.ProjectUtils;
 import org.gradle.api.DefaultTask;
@@ -34,13 +34,13 @@ public class GenerateModuleDependenciesTask extends DefaultTask {
     @TaskAction
     public void generate() {
         Project rootProject = getProject().getRootProject();
-        Map<Project, ProjectDependencies> dependenciesMap = new HashMap<>();
+        Map<Project, ModuleDependencies> dependenciesMap = new HashMap<>();
         findAllDependencies(rootProject, dependenciesMap);
 
         dependenciesMap.forEach(this::save);
     }
 
-    void findAllDependencies(Project project, Map<Project, ProjectDependencies> dependenciesMap) {
+    void findAllDependencies(Project project, Map<Project, ModuleDependencies> dependenciesMap) {
         Configuration compileConfiguration = project.getConfigurations().getByName(JavaPlugin.COMPILE_CLASSPATH_CONFIGURATION_NAME);
         ResolutionResult result = compileConfiguration.getIncoming().getResolutionResult();
         ResolvedComponentResult componentResult = result.getRoot();
@@ -55,7 +55,7 @@ public class GenerateModuleDependenciesTask extends DefaultTask {
                 })
                 .collect(Collectors.toList());
 
-        ProjectDependencies moduleDependencies = createModuleDependencies(project, children);
+        ModuleDependencies moduleDependencies = createModuleDependencies(project, children);
         dependenciesMap.put(project, moduleDependencies);
         project.getLogger().debug("Discovered module dependencies: {}", moduleDependencies);
 
@@ -66,8 +66,8 @@ public class GenerateModuleDependenciesTask extends DefaultTask {
         }
     }
 
-    private ProjectDependencies createModuleDependencies(Project project, List<Project> children) {
-        return new ProjectDependencies(
+    private ModuleDependencies createModuleDependencies(Project project, List<Project> children) {
+        return new ModuleDependencies(
                 project.getName(),
                 project.getProjectDir().getName(),
                 project.getDepth() == 0,
@@ -75,7 +75,7 @@ public class GenerateModuleDependenciesTask extends DefaultTask {
         );
     }
 
-    private void save(Project project, ProjectDependencies moduleDependencies) {
+    private void save(Project project, ModuleDependencies moduleDependencies) {
         Path path = getResourcesDir(project).resolve(PROJECT_DEPENDENCIES_PATH);
         PluginUtils.ensureDirectoryExists(path.getParent());
         project.getLogger().info("Serialized module dependencies will be stored in {}", path);

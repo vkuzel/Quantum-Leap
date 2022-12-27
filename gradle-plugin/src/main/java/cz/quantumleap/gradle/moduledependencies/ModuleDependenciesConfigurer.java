@@ -1,6 +1,6 @@
 package cz.quantumleap.gradle.moduledependencies;
 
-import com.github.vkuzel.gradle_project_dependencies.ProjectDependencies;
+import com.github.vkuzel.gradleprojectdependencies.ModuleDependencies;
 import cz.quantumleap.gradle.project.SpringBootProject;
 
 public class ModuleDependenciesConfigurer {
@@ -15,7 +15,7 @@ public class ModuleDependenciesConfigurer {
     private void describeTask(GenerateModuleDependenciesTask task) {
         String description = "Discovers dependencies between project modules and serializes them into a file.";
         description += " Location of the file is project's resource dir/moduleDependencies.ser.";
-        description += " Serialized file is of type " + ProjectDependencies.class.getCanonicalName() + ".";
+        description += " Serialized file is of type " + ModuleDependencies.class.getCanonicalName() + ".";
         description += " The type class can be found in project https://github.com/vkuzel/Gradle-Project-Dependencies";
         task.setDescription(description);
         task.setGroup("build");

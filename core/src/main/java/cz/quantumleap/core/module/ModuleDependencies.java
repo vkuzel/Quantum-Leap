@@ -1,6 +1,5 @@
 package cz.quantumleap.core.module;
 
-import com.github.vkuzel.gradle_project_dependencies.ProjectDependencies;
 import org.apache.commons.lang3.Validate;
 import org.springframework.core.io.Resource;
 import org.springframework.util.ResourceUtils;
@@ -12,10 +11,10 @@ import java.util.List;
 
 public class ModuleDependencies {
     private final String projectPath;
-    private final ProjectDependencies projectDependencies;
+    private final com.github.vkuzel.gradleprojectdependencies.ModuleDependencies moduleDependencies;
 
-    ModuleDependencies(Resource dependenciesFile, ProjectDependencies projectDependencies) {
-        this.projectDependencies = projectDependencies;
+    ModuleDependencies(Resource dependenciesFile, com.github.vkuzel.gradleprojectdependencies.ModuleDependencies moduleDependencies) {
+        this.moduleDependencies = moduleDependencies;
         String dependenciesFileName = dependenciesFile.getFilename();
         String dependenciesFilePath = resourceToStringPath(dependenciesFile);
         Validate.notNull(dependenciesFileName);
@@ -23,7 +22,7 @@ public class ModuleDependencies {
     }
 
     public String getModuleName() {
-        return projectDependencies.getName();
+        return moduleDependencies.name();
     }
 
     public boolean containsResource(Resource resource) {
@@ -36,7 +35,7 @@ public class ModuleDependencies {
     }
 
     List<String> getDependencies() {
-        return projectDependencies.getDependencies();
+        return moduleDependencies.dependencies();
     }
 
     private String resourceToStringPath(Resource resource) {
