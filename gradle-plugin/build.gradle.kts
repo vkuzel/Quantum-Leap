@@ -24,9 +24,9 @@ dependencies {
     implementation("org.jooq:jooq-meta:$jooqVersion")
     implementation("org.jooq:jooq-codegen:$jooqVersion")
     implementation("org.postgresql:postgresql:$postgreSqlVersion")
-    implementation("javax.xml.bind:jaxb-api:2.2.12")
-    implementation("com.sun.xml.bind:jaxb-core:2.2.11")
-    implementation("com.sun.xml.bind:jaxb-impl:2.2.11")
+    implementation("javax.xml.bind:jaxb-api:2.3.1")
+    implementation("com.sun.xml.bind:jaxb-core:4.0.1")
+    implementation("com.sun.xml.bind:jaxb-impl:4.0.1")
     implementation("javax.activation:javax.activation-api:1.2.0")
 
     testImplementation("org.junit.jupiter:junit-jupiter:$junitVersion")
