@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 
 public class ProjectManager {
 
-    private static final String SPRING_BOOT_PROJECT_NAME = "core";
+    private static final String SPRING_BOOT_PROJECT_NAME = ":quantumleap:core";
 
     private final Project rootProject;
 
