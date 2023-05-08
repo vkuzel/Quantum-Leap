@@ -1,5 +1,5 @@
-.navbar .active {
-    font-weight: bold;
+.navbar {
+    background-color: #3a2372;
 }
 
 #loader {
@@ -11,9 +11,9 @@
     right: 0;
 
     z-index: 1000;
-    border: 16px solid #f3f3f3;
+    border: 16px solid var(--bs-primary);
     border-radius: 50%;
-    border-top: 16px solid #3498db;
+    border-top: 16px solid var(--bs-body-bg);
     width: 120px;
     height: 120px;
     -webkit-animation: spin 1s linear infinite;
@@ -28,7 +28,7 @@
 
 .table th a {
     text-decoration-line: none;
-    color: black;
+    color: var(--bs-emphasis-color);
 }
 
 .table td.primary-key a {
@@ -54,19 +54,19 @@
     right: 0.4em;
     top: 50%;
     transform: translateY(-50%);
-    color: #ccc;
+    color: var(--bs-secondary);
     font-family: "Font Awesome 5 Free";
     content: "\f0dc";
 }
 
 .table th.sorting.asc:after {
     content: "\f0de";
-    color: #000;
+    color: var(--bs-emphasis-color);
 }
 
 .table th.sorting.desc:after {
     content: "\f0dd";
-    color: #000;
+    color: var(--bs-emphasis-color);
 }
 
 .wrap {

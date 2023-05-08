@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" data-bs-theme="dark">
 
 <head>
     <meta charset="utf-8">
@@ -24,7 +24,7 @@
 
 <body>
 <div id="loader"></div>
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<nav class="navbar navbar-expand-lg">
     <div class="container-fluid">
         <a class="navbar-brand" th:href="@{/}">
             <img th:src="@{/assets/img/slava-ukraini-32x32.png}" width="32" height="32" alt="Quantum Leap">
@@ -36,16 +36,16 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <div class="me-auto" th:with="ItemState=${T(cz.quantumleap.admin.menu.AdminMenuItem.State)}">
                 <ul class="navbar-nav">
-                    <li th:each="menuItem : ${adminMenuItems}" class="nav-item" th:classappend="${menuItem.state == ItemState.ACTIVE}? 'active'">
-                        <a th:href="@{${menuItem.path}}" class="nav-link" th:classappend="${!menuItem.children.empty}? 'dropdown-toggle'">
+                    <li th:each="menuItem : ${adminMenuItems}" class="nav-item">
+                        <a th:href="@{${menuItem.path}}" class="nav-link" th:classappend="|${menuItem.children.empty ? '' : 'dropdown-toggle'} ${menuItem.state == ItemState.ACTIVE ? 'active' : ''}|">
                             <i class="d-lg-none" th:classappend="${menuItem.fontAwesomeIcon}"></i>
                             <span class="nav-link-text" th:text="#{${menuItem.title}}">Menu Item</span>
                         </a>
                     </li>
                 </ul>
                 <ul th:each="menuItem : ${adminMenuItems}" th:if="${menuItem.state == ItemState.ACTIVE || menuItem.state == ItemState.OPEN}" class="navbar-nav">
-                    <li th:each="secondLevelMenuItem : ${menuItem.children}" class="nav-item" th:classappend="${secondLevelMenuItem.state == ItemState.ACTIVE}? 'active'">
-                        <a th:href="@{${secondLevelMenuItem.path}}" class="nav-link">
+                    <li th:each="secondLevelMenuItem : ${menuItem.children}" class="nav-item">
+                        <a th:href="@{${secondLevelMenuItem.path}}" class="nav-link" th:classappend="${secondLevelMenuItem.state == ItemState.ACTIVE}? 'active'">
                             <i class="d-lg-none" th:classappend="${secondLevelMenuItem.fontAwesomeIcon}"></i>
                             <span class="nav-link-text d-lg-none" th:text="#{${secondLevelMenuItem.title}}">Menu Item</span>
                             <span class="nav-link-text small d-none d-lg-inline" th:text="#{${secondLevelMenuItem.title}}">Menu Item</span>
