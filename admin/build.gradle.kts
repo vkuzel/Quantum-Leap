@@ -5,7 +5,7 @@ repositories {
 dependencies {
     implementation(project(":quantumleap:core"))
 
-    implementation("org.webjars:bootstrap:5.1.3")
+    implementation(files("lib/bootstrap-5.3.0-alpha3.jar"))
     implementation("org.webjars:font-awesome:5.8.1")
     implementation("org.webjars.bower:chart.js:2.7.3")
 
