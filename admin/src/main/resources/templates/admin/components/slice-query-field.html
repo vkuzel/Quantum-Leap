@@ -21,7 +21,7 @@
            th:classappend="|${qualifier}query|" href="#" th:data-query="${sliceQuery.query}"
            th:text="${sliceQuery.query}">Query</a>
     </div>
-    <input type="text" th:id="|${qualifier}search|" class="form-control"
+    <input type="search" th:id="|${qualifier}search|" class="form-control"
            th:placeholder="#{admin.table.search}" th:aria-label="#{admin.table.search}"
            aria-describedby="search-label" th:value="${slice.fetchParams.query}">
 </div>

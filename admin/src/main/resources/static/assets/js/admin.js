@@ -1,10 +1,35 @@
-function cancellableDebounce(func, wait = 500) {
+function cancellableDebounceFactory(func, wait = 500) {
     let timeout;
+    let previousArgs = null
+
+    const equalArgs = (args) => {
+        if (previousArgs != null && args.length > 0 && previousArgs.length === args.length) {
+            let equals = true
+            for (let i = 0; i < args.length; i++) {
+                if (previousArgs[i] !== args[i]) {
+                    equals = false
+                    break
+                }
+            }
+            if (equals) return true
+        }
+        previousArgs = args
+        return false
+    }
 
     return {
+        /**
+         * Ignores subsequent calls with same arguments. E.g.
+         * 1. call("something") <-- will execute
+         * 2. call("something") <-- will be ignored
+         * If no argument is provided all calls will be executed.
+         */
         call: function () {
             const context = this;
             const args = arguments;
+            if (args.length > 0 && equalArgs(args)) {
+                return
+            }
 
             if (timeout) {
                 clearTimeout(timeout);
@@ -24,7 +49,7 @@ function cancellableDebounce(func, wait = 500) {
 }
 
 function debounce(func, wait = 500) {
-    return cancellableDebounce(func, wait).call
+    return cancellableDebounceFactory(func, wait).call
 }
 
 class Validate {
@@ -155,9 +180,13 @@ class TableControl {
     }
 
     _bindSearchInputListener(searchInput) {
+        searchInput.addEventListener('search', (event) => {
+            event.preventDefault()
+            this._fetchSearchResults.call(event.currentTarget.value)
+        })
         searchInput.addEventListener('keyup', (event) => {
             event.preventDefault()
-            this._fetchSearchResults.call()
+            this._fetchSearchResults.call(event.currentTarget.value)
         })
         searchInput.addEventListener('blur', (event) => {
             event.preventDefault()
@@ -221,11 +250,10 @@ class TableControl {
         this._get(url, (responseText) => this._appendContent(responseText))
     }
 
-    _fetchSearchResults = cancellableDebounce(() => {
-        const query = this._searchInput.value
+    _fetchSearchResults = cancellableDebounceFactory((query) => {
         const sizeParamName = this._qualifyParamName('size')
         const offsetParamName = this._qualifyParamName('offset')
-
+1
         const url = new URL(location.href)
         url.searchParams.delete(sizeParamName)
         url.searchParams.delete(offsetParamName)
@@ -236,7 +264,7 @@ class TableControl {
 
     _selectQuery(a) {
         this._searchInput.value = a.getAttribute('data-query')
-        this._fetchSearchResults.call()
+        this._fetchSearchResults.call(this._searchInput.value)
     }
 
     _sort(sortButton) {
@@ -364,7 +392,7 @@ class LookupControl {
         }
     }
 
-    _fetchLabels = cancellableDebounce(() => {
+    _fetchLabels = cancellableDebounceFactory(() => {
         let query = this._labelInput.value
         if (!query) {
             return
