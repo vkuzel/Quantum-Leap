@@ -3,8 +3,6 @@ package cz.quantumleap.core.enums;
 import org.jooq.DSLContext;
 import org.springframework.stereotype.Repository;
 
-import static cz.quantumleap.core.tables.EnumValueTable.ENUM_VALUE;
-
 @Repository
 public class EnumDao {
 
@@ -15,12 +13,15 @@ public class EnumDao {
     }
 
     public String fetchDefaultEnumValue(String enumId) {
-        return dslContext.select(ENUM_VALUE.ID)
-                .from(ENUM_VALUE)
-                .where(ENUM_VALUE.ENUM_ID.eq(enumId))
-                // natural order / random value
-                .limit(1)
-                .fetchOne(ENUM_VALUE.ID);
+        return dslContext.fetchOptional("""
+                        SELECT id
+                        FROM core.enum_value
+                        WHERE enum_id = {0}
+                        -- natural order / random value
+                        LIMIT 1
+                        """, enumId)
+                .map(r -> r.into(String.class))
+                .orElse(null);
     }
 
 }

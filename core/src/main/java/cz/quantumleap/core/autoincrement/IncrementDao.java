@@ -6,9 +6,7 @@ import cz.quantumleap.core.database.entity.Entity;
 import cz.quantumleap.core.tables.IncrementTable;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
-import org.jooq.Record2;
 import org.jooq.TableField;
-import org.jooq.impl.DSL;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,11 +39,15 @@ public class IncrementDao implements DetailDao<IncrementTable> {
     }
 
     public Map<String, Integer> loadLastIncrementVersionForModules() {
-        return dslContext
-                .select(INCREMENT.MODULE, DSL.max(INCREMENT.VERSION))
-                .from(INCREMENT)
-                .groupBy(INCREMENT.MODULE)
-                .fetchMap(Record2::value1, Record2::value2);
+        return dslContext.fetch("""
+                        SELECT module, max(version) AS version
+                        FROM core.increment
+                        GROUP BY module
+                        """)
+                .intoMap(
+                        record -> record.get(0, String.class),
+                        record -> record.get(1, Integer.class)
+                );
     }
 
     @Override
