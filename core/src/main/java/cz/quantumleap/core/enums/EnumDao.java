@@ -3,6 +3,8 @@ package cz.quantumleap.core.enums;
 import org.jooq.DSLContext;
 import org.springframework.stereotype.Repository;
 
+import static cz.quantumleap.core.database.query.QueryUtils.stringFieldMapper;
+
 @Repository
 public class EnumDao {
 
@@ -20,7 +22,7 @@ public class EnumDao {
                         -- natural order / random value
                         LIMIT 1
                         """, enumId)
-                .map(r -> r.into(String.class))
+                .map(stringFieldMapper(0))
                 .orElse(null);
     }
 

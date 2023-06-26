@@ -1,9 +1,8 @@
 package cz.quantumleap.core.database.query;
 
 import org.apache.commons.lang3.StringUtils;
-import org.jooq.Condition;
-import org.jooq.Field;
-import org.jooq.Table;
+import org.jooq.Record;
+import org.jooq.*;
 import org.jooq.impl.DSL;
 
 import java.util.*;
@@ -141,5 +140,13 @@ public final class QueryUtils {
             }
         }
         return bindings.toArray();
+    }
+
+    public static RecordMapper<Record, String> stringFieldMapper(int index) {
+        return record -> record.get(index, String.class);
+    }
+
+    public static RecordMapper<Record, Integer> integerFieldMapper(int index) {
+        return record -> record.get(index, Integer.class);
     }
 }

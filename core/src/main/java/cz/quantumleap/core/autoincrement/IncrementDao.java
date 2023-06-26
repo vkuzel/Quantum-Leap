@@ -14,6 +14,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import static cz.quantumleap.core.database.query.QueryUtils.integerFieldMapper;
+import static cz.quantumleap.core.database.query.QueryUtils.stringFieldMapper;
 import static cz.quantumleap.core.tables.IncrementTable.INCREMENT;
 
 @Repository
@@ -44,10 +46,7 @@ public class IncrementDao implements DetailDao<IncrementTable> {
                         FROM core.increment
                         GROUP BY module
                         """)
-                .intoMap(
-                        record -> record.get(0, String.class),
-                        record -> record.get(1, Integer.class)
-                );
+                .intoMap(stringFieldMapper(0), integerFieldMapper(1));
     }
 
     @Override
