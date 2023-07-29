@@ -34,22 +34,16 @@ public class WebSecurityConfiguration {
             HttpSecurity httpSecurity
     ) throws Exception {
         Map<RequestMappingInfo, HandlerMethod> handlerMethods = requestMappingHandlerMapping.getHandlerMethods();
-        return httpSecurity.authorizeHttpRequests(registry -> registry
+        httpSecurity.authorizeHttpRequests(registry -> registry
                         .requestMatchers(resourcesRequestMatchers()).permitAll()
                         .requestMatchers(permitAllMappingInfoMatcher(handlerMethods)).permitAll()
                         .anyRequest().authenticated())
                 .csrf(configurer -> configurer.ignoringRequestMatchers(ignoreCsrfMappingInfoMatcher(handlerMethods)))
                 .oauth2Login(configurer -> configurer.loginPage(loginPageUrl))
-                .authorizeHttpRequests(registry -> {
-                    // This prevents configuring default login page in DefaultLoginPageConfigurer.configure()
-                    try {
-                        registry.and().apply(new SkipLoginPageEntryPointConfigurer<>());
-                    } catch (Throwable e) {
-                        throw new RuntimeException(e);
-                    }
-                })
                 .logout(configurer -> configurer.logoutSuccessUrl("/"))
-                .build();
+                // This prevents configuring default login page in DefaultLoginPageConfigurer.configure()
+                .apply(new SkipLoginPageEntryPointConfigurer<>());
+        return httpSecurity.build();
     }
 
     private RequestMatcher[] resourcesRequestMatchers() {
