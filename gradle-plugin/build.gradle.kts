@@ -8,12 +8,12 @@ repositories {
     mavenCentral()
 }
 
-val springBootVersion = "3.0.1"
-val dependencyManagementVersion = "1.1.0"
-val jooqVersion = "3.17.6"
-val postgreSqlVersion = "42.5.1"
-val junitVersion = "5.9.1"
-val mockitoVersion = "4.8.1"
+val springBootVersion = "3.1.2"
+val dependencyManagementVersion = "1.1.2"
+val jooqVersion = "3.18.5"
+val postgreSqlVersion = "42.6.0"
+val junitVersion = "5.9.3"
+val mockitoVersion = "5.3.1"
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion")
