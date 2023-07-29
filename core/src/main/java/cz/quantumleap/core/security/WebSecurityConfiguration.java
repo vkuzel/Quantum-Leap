@@ -34,17 +34,22 @@ public class WebSecurityConfiguration {
             HttpSecurity httpSecurity
     ) throws Exception {
         Map<RequestMappingInfo, HandlerMethod> handlerMethods = requestMappingHandlerMapping.getHandlerMethods();
-        httpSecurity
-                .authorizeHttpRequests()
-                .requestMatchers(resourcesRequestMatchers()).permitAll()
-                .requestMatchers(permitAllMappingInfoMatcher(handlerMethods)).permitAll()
-                .anyRequest().authenticated()
-                .and().csrf().ignoringRequestMatchers(ignoreCsrfMappingInfoMatcher(handlerMethods))
-                .and().oauth2Login().loginPage(loginPageUrl)
-                // This prevents configuring default login page in DefaultLoginPageConfigurer.configure()
-                .and().apply(new SkipLoginPageEntryPointConfigurer<>())
-                .and().logout().logoutSuccessUrl("/");
-        return httpSecurity.build();
+        return httpSecurity.authorizeHttpRequests(registry -> registry
+                        .requestMatchers(resourcesRequestMatchers()).permitAll()
+                        .requestMatchers(permitAllMappingInfoMatcher(handlerMethods)).permitAll()
+                        .anyRequest().authenticated())
+                .csrf(configurer -> configurer.ignoringRequestMatchers(ignoreCsrfMappingInfoMatcher(handlerMethods)))
+                .oauth2Login(configurer -> configurer.loginPage(loginPageUrl))
+                .authorizeHttpRequests(registry -> {
+                    // This prevents configuring default login page in DefaultLoginPageConfigurer.configure()
+                    try {
+                        registry.and().apply(new SkipLoginPageEntryPointConfigurer<>());
+                    } catch (Throwable e) {
+                        throw new RuntimeException(e);
+                    }
+                })
+                .logout(configurer -> configurer.logoutSuccessUrl("/"))
+                .build();
     }
 
     private RequestMatcher[] resourcesRequestMatchers() {
