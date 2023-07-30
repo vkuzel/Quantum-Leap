@@ -2,7 +2,7 @@ package cz.quantumleap.core.security;
 
 import cz.quantumleap.core.security.config.RequestMappingInfoFilters;
 import cz.quantumleap.core.security.config.RequestMappingInfoRequestMatcher;
-import cz.quantumleap.core.security.config.SkipLoginPageEntryPointConfigurer;
+import cz.quantumleap.core.security.config.SkipSelectOauth2MethodPageConfigurer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.context.annotation.Bean;
@@ -42,7 +42,8 @@ public class WebSecurityConfiguration {
                 .oauth2Login(configurer -> configurer.loginPage(loginPageUrl))
                 .logout(configurer -> configurer.logoutSuccessUrl("/"))
                 // This prevents configuring default login page in DefaultLoginPageConfigurer.configure()
-                .apply(new SkipLoginPageEntryPointConfigurer<>());
+                // This configurer has to be applied last.
+                .apply(new SkipSelectOauth2MethodPageConfigurer<>());
         return httpSecurity.build();
     }
 
