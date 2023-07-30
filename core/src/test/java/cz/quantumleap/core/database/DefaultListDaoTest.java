@@ -12,8 +12,11 @@ import cz.quantumleap.core.test.data.TestTableBuilder;
 import cz.quantumleap.core.test.data.TestTableBuilder.TestTable;
 import org.jooq.DSLContext;
 import org.jooq.Field;
+import org.jooq.Schema;
 import org.jooq.Table;
+import org.jooq.impl.DSL;
 import org.jooq.impl.SQLDataType;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -27,6 +30,8 @@ import static org.springframework.data.domain.Sort.Direction.ASC;
 @CoreSpringBootTest
 class DefaultListDaoTest {
 
+    private static final Schema TEST_SCHEMA = DSL.schema("test_schema");
+
     @Autowired
     private CoreTestSupport coreTestSupport;
     @Autowired
@@ -35,6 +40,12 @@ class DefaultListDaoTest {
     private EntityRegistry entityRegistry;
     @Autowired
     private SliceQueryDao sliceQueryDao;
+
+    @BeforeEach
+    void createSchema() {
+        coreTestSupport.dropSchema(TEST_SCHEMA);
+        coreTestSupport.createSchema(TEST_SCHEMA);
+    }
 
     @Test
     void fetchSliceGeneratesCorrectColumnTypes() {
@@ -96,6 +107,7 @@ class DefaultListDaoTest {
 
     private Entity<TestTable> createEntity() {
         TestTable testTable = new TestTableBuilder()
+                .setSchema(TEST_SCHEMA)
                 .setName("entity")
                 .addPrimaryKeyIdField()
                 .addField("name", SQLDataType.VARCHAR)
@@ -115,6 +127,7 @@ class DefaultListDaoTest {
 
     private Entity<TestTable> createReferencingEntity(Table<?> referencedTable) {
         TestTable testTable = new TestTableBuilder()
+                .setSchema(TEST_SCHEMA)
                 .setName("referencing_entity")
                 .addPrimaryKeyIdField()
                 .addForeignKey("entity_id", SQLDataType.BIGINT, referencedTable)
