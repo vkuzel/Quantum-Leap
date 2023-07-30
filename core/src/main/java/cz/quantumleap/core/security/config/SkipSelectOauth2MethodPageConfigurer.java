@@ -39,7 +39,8 @@ public class SkipSelectOauth2MethodPageConfigurer<H extends HttpSecurityBuilder<
     private String getSingleAuthenticationUrl(H builder) {
         List<ClientRegistration> clientRegistrations = getClientRegistrations(builder);
         if (clientRegistrations.isEmpty()) {
-            throw new RuntimeException("Client registration not found! Is Oauth2 configured?");
+            // No client registration found, for example in integration test
+            return null;
         } else if (clientRegistrations.size() > 1) {
             // Multiple client registration, we need "select auth method" page.
             return null;
