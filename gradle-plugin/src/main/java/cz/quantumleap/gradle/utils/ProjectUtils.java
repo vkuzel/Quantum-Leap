@@ -2,7 +2,7 @@ package cz.quantumleap.gradle.utils;
 
 import org.gradle.api.Project;
 import org.gradle.api.plugins.ExtraPropertiesExtension;
-import org.gradle.api.plugins.JavaPluginConvention;
+import org.gradle.api.plugins.JavaPluginExtension;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.SourceSetContainer;
 
@@ -14,7 +14,7 @@ import java.util.stream.Stream;
 public class ProjectUtils {
 
     public static SourceSetContainer getSourceSets(Project project) {
-        return project.getConvention().getPlugin(JavaPluginConvention.class).getSourceSets();
+        return project.getExtensions().getByType(JavaPluginExtension.class).getSourceSets();
     }
 
     public static String getExtraProperty(Project project, String propertyName, String defaultValue) {

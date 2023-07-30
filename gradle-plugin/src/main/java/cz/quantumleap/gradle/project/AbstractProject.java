@@ -3,7 +3,6 @@ package cz.quantumleap.gradle.project;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
 import org.gradle.api.artifacts.dsl.DependencyHandler;
-import org.gradle.api.plugins.Convention;
 import org.gradle.api.plugins.PluginContainer;
 import org.gradle.api.tasks.TaskContainer;
 
@@ -35,9 +34,5 @@ public abstract class AbstractProject {
 
     public PluginContainer getPlugins() {
         return project.getPlugins();
-    }
-
-    public Convention getConvention() {
-        return project.getConvention();
     }
 }
