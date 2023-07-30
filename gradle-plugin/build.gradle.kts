@@ -31,6 +31,8 @@ dependencies {
 
     testImplementation("org.junit.jupiter:junit-jupiter:$junitVersion")
     testImplementation("org.mockito:mockito-core:$mockitoVersion")
+
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
 gradlePlugin {
