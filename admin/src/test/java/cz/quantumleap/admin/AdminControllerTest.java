@@ -1,6 +1,5 @@
 package cz.quantumleap.admin;
 
-import com.google.common.collect.ImmutableList;
 import cz.quantumleap.admin.menu.AdminMenuItem;
 import cz.quantumleap.admin.menu.AdminMenuItemDefinition;
 import cz.quantumleap.admin.menu.AdminMenuManager;
@@ -56,11 +55,11 @@ public class AdminControllerTest {
 
         AdminMenuItem accessibleMenuItem = createMenuItem("authorized", Collections.emptyList());
         AdminMenuItem inaccessibleMenuItem = createMenuItem("unauthorized", Collections.emptyList());
-        AdminMenuItem accessibleMenuItemWithChildren = createMenuItem("authorized", ImmutableList.of(
+        AdminMenuItem accessibleMenuItemWithChildren = createMenuItem("authorized", List.of(
                 accessibleMenuItem,
                 inaccessibleMenuItem
         ));
-        List<AdminMenuItem> adminMenuItems = ImmutableList.of(
+        List<AdminMenuItem> adminMenuItems = List.of(
                 inaccessibleMenuItem,
                 accessibleMenuItemWithChildren
         );

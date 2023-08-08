@@ -1,6 +1,5 @@
 package cz.quantumleap.core.view.template;
 
-import com.google.common.collect.ImmutableSet;
 import cz.quantumleap.core.filestorage.FileStorageManager;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -35,7 +34,7 @@ public class ResizableImageTagProcessor extends AbstractAttributeTagProcessor {
     private static final String ATTR_NAME = "resize";
     private static final int PRECEDENCE = 10000;
 
-    private static final Set<String> SUPPORTED_FORMATS = ImmutableSet.of("JPG", "JPEG", "PNG", "GIF", "BMP", "WBMP");
+    private static final Set<String> SUPPORTED_FORMATS = Set.of("JPG", "JPEG", "PNG", "GIF", "BMP", "WBMP");
     private static final int MAX_IMAGE_SIZE = 3000;
 
     private final FileStorageManager fileStorageManager;

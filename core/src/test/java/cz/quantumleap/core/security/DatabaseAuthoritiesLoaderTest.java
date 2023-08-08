@@ -1,6 +1,5 @@
 package cz.quantumleap.core.security;
 
-import com.google.common.collect.ImmutableMap;
 import cz.quantumleap.core.person.PersonDao;
 import cz.quantumleap.core.person.domain.Person;
 import cz.quantumleap.core.role.RoleDao;
@@ -42,7 +41,7 @@ public class DatabaseAuthoritiesLoaderTest {
 
     @Test
     public void grantedAuthorityIsMappedForUser() {
-        Map<String, Object> oauthAttributes = ImmutableMap.of("email", USER_EMAIL, "name", "John Doe");
+        Map<String, Object> oauthAttributes = Map.of("email", USER_EMAIL, "name", "John Doe");
         GrantedAuthority oauthAuthority = new OAuth2UserAuthority(oauthAttributes);
         Collection<GrantedAuthority> oauthAuthorities = Collections.singleton(oauthAuthority);
         DatabaseAuthoritiesLoader loader = new DatabaseAuthoritiesLoader(personDao, roleDao);

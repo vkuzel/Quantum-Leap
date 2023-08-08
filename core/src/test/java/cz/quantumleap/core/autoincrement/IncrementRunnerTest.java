@@ -1,7 +1,5 @@
 package cz.quantumleap.core.autoincrement;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import cz.quantumleap.core.database.TransactionExecutor;
 import cz.quantumleap.core.module.ModuleDependencies;
 import cz.quantumleap.core.resource.ResourceWithModule;
@@ -44,7 +42,7 @@ public class IncrementRunnerTest {
 
     @Test
     public void newIncrementsAreExecuted() {
-        List<IncrementService.IncrementScript> incrementScripts = ImmutableList.of(
+        List<IncrementService.IncrementScript> incrementScripts = List.of(
                 createIncrementScript("classpath:/test_db/inc/v01/01_testEntity.sql", 1),
                 createIncrementScript("classpath:/test_db/inc/v02/01_testFunction.sql", 2),
                 createIncrementScript("classpath:/test_db/inc/v03/01_validScript.sql", 3),
@@ -52,7 +50,7 @@ public class IncrementRunnerTest {
         );
 
         testSupport.deleteFromTable("core.increment");
-        Map<String, Integer> lastIncrements = ImmutableMap.of("core", 0);
+        Map<String, Integer> lastIncrements = Map.of("core", 0);
         IncrementRunner incrementRunner = new IncrementRunner(environment, incrementService, transactionExecutor, incrementDao);
 
         try {
