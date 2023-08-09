@@ -5,8 +5,11 @@ import java.util.function.Function;
 
 public final class MultiMaps {
 
+    /**
+     * Preserves collection order.
+     */
     public static <K, V> Map<K, List<V>> groupBy(Collection<V> collection, Function<V, K> groupBy) {
-        Map<K, List<V>> mapOfLists = new HashMap<>();
+        Map<K, List<V>> mapOfLists = new LinkedHashMap<>();
         for (V value : collection) {
             K key = groupBy.apply(value);
             List<V> values = mapOfLists.computeIfAbsent(key, k -> new ArrayList<>());
