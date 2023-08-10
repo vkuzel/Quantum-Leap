@@ -1,6 +1,5 @@
 package cz.quantumleap.core.common;
 
-import com.google.common.io.CharStreams;
 import cz.quantumleap.core.database.entity.EntityIdentifier;
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.Validate;
@@ -8,12 +7,14 @@ import org.jooq.Record;
 import org.jooq.Table;
 import org.springframework.core.io.Resource;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 final public class Utils {
 
@@ -21,8 +22,8 @@ final public class Utils {
     private static final String AJAX_HEADER_VALUE = "XMLHttpRequest";
 
     public static String readResourceToString(Resource resource) {
-        try (InputStreamReader reader = new InputStreamReader(resource.getInputStream())) {
-            return CharStreams.toString(reader);
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(resource.getInputStream()))) {
+            return reader.lines().collect(Collectors.joining("\n"));
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }
