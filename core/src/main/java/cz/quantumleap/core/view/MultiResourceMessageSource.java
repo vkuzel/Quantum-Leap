@@ -1,6 +1,5 @@
 package cz.quantumleap.core.view;
 
-import com.google.common.base.Charsets;
 import cz.quantumleap.core.resource.ResourceManager;
 import cz.quantumleap.core.resource.ResourceWithModule;
 import org.springframework.context.support.AbstractApplicationContext;
@@ -10,6 +9,7 @@ import org.springframework.stereotype.Component;
 import java.io.*;
 import java.util.*;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Collections.enumeration;
 import static java.util.Objects.requireNonNull;
 
@@ -21,7 +21,7 @@ public class MultiResourceMessageSource extends ResourceBundleMessageSource {
     public MultiResourceMessageSource(ResourceManager resourceManager) {
         this.resourceManager = resourceManager;
         this.setBasename("messages");
-        this.setDefaultEncoding(Charsets.UTF_8.name());
+        this.setDefaultEncoding(UTF_8.name());
         this.setFallbackToSystemLocale(true);
     }
 
