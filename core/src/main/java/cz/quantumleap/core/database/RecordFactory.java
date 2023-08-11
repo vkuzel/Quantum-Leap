@@ -8,8 +8,7 @@ import org.jooq.types.YearToSecond;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.google.common.base.CaseFormat.LOWER_CAMEL;
-import static com.google.common.base.CaseFormat.LOWER_UNDERSCORE;
+import static cz.quantumleap.core.common.Strings.lowerUnderscoreToLowerCamel;
 
 public class RecordFactory<T> {
 
@@ -45,7 +44,7 @@ public class RecordFactory<T> {
     }
 
     private void setValueToRecordField(T transport, Field<?> field, Record record) {
-        String transportFieldName = LOWER_UNDERSCORE.to(LOWER_CAMEL, field.getName().toLowerCase());
+        String transportFieldName = lowerUnderscoreToLowerCamel(field.getName().toLowerCase());
         if (transportFieldNames.contains(transportFieldName)) {
             DataType<?> databaseType = field.getDataType();
             Object value = ReflectionUtils.getClassFieldValue(transportType, transport, transportFieldName);
