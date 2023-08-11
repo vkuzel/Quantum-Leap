@@ -1,6 +1,5 @@
 package cz.quantumleap.core.common;
 
-import com.google.common.io.ByteStreams;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
@@ -60,9 +59,8 @@ public class SecurityUtilsTest {
     }
 
     private byte[] loadResource(String location) {
-        try {
-            InputStream inputStream = resourceResolver.getResource(location).getInputStream();
-            return ByteStreams.toByteArray(inputStream);
+        try (InputStream inputStream = resourceResolver.getResource(location).getInputStream()) {
+            return inputStream.readAllBytes();
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }
