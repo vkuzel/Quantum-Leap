@@ -1,6 +1,5 @@
 package cz.quantumleap.admin.menu;
 
-import com.google.common.collect.ComparisonChain;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.annotation.AnnotationUtils;
@@ -17,10 +16,9 @@ import java.util.stream.Collectors;
 @Component
 public class AdminMenuManager {
 
-    private static final Comparator<MappingDefinitionAuthorize> MENU_ITEM_COMPARATOR = (o1, o2) -> ComparisonChain.start()
-            .compare(o2.getPriority(), o1.getPriority())
-            .compare(o1.getTitle(), o2.getTitle())
-            .result();
+    private static final Comparator<MappingDefinitionAuthorize> MENU_ITEM_COMPARATOR = Comparator
+            .comparingInt(MappingDefinitionAuthorize::getPriority).reversed()
+            .thenComparing(MappingDefinitionAuthorize::getTitle);
 
     private final RequestMappingHandlerMapping requestMappingHandlerMapping;
 
