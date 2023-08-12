@@ -20,7 +20,6 @@ dependencies {
     api("org.springframework.session:spring-session-core")
     api("org.thymeleaf.extras:thymeleaf-extras-springsecurity6")
 
-    api("com.google.guava:guava:31.1-jre")
     api("org.apache.commons:commons-lang3:3.12.0")
     api("commons-io:commons-io:2.11.0")
     api("com.ibm.icu:icu4j:72.1")
