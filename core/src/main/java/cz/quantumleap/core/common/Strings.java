@@ -1,5 +1,9 @@
 package cz.quantumleap.core.common;
 
+import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.Set;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -35,5 +39,17 @@ public final class Strings {
         if (text == null || text.isEmpty()) return text;
         Matcher matcher = LOWER_UNDERSCORE_PATTERN.matcher(text.toLowerCase());
         return matcher.replaceAll(matchResult -> matchResult.group(1).toUpperCase());
+    }
+
+    public static <T> String createAbbreviation(Collection<T> items, int maxSize, Function<T, String> mapToText) {
+        Set<String> textItems = new LinkedHashSet<>(maxSize);
+        for (T item : items) {
+            textItems.add(mapToText.apply(item));
+            if (textItems.size() >= maxSize) {
+                textItems.add("...");
+                break;
+            }
+        }
+        return String.join(", ", textItems);
     }
 }

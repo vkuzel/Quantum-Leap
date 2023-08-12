@@ -1,8 +1,12 @@
 package cz.quantumleap.core.common;
 
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
+import java.util.List;
+
+import static java.util.function.Function.identity;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class StringsTest {
@@ -71,5 +75,14 @@ class StringsTest {
         String result = Strings.lowerUnderscoreToLowerCamel(text);
 
         assertEquals(expected, result);
+    }
+
+    @Test
+    void createAbbreviation() {
+        List<String> items = List.of("first", "second", "third");
+
+        String abbreviation = Strings.createAbbreviation(items, 2, identity());
+
+        assertEquals("first, second, ...", abbreviation);
     }
 }
