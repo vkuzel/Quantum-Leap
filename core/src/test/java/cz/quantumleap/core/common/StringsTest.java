@@ -1,53 +1,75 @@
 package cz.quantumleap.core.common;
 
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class StringsTest {
 
-    @Test
-    void upperUnderscoreToLowerHyphen() {
-        String text = "HELLO_WORLD";
-
+    @ParameterizedTest
+    @CsvSource(value = {
+            "BRAVE_NEW_WORLD, brave-new-world",
+            "H, h",
+            "'', ''",
+            "null, null"
+    }, nullValues = "null")
+    void upperUnderscoreToLowerHyphen(String text, String expected) {
         String result = Strings.upperUnderscoreToLowerHyphen(text);
 
-        assertEquals("hello-world", result);
+        assertEquals(expected, result);
     }
 
-    @Test
-    void upperCamelToLowerHyphen() {
-        String text = "HelloWorld";
-
+    @ParameterizedTest
+    @CsvSource(value = {
+//            "BraveNewWorld, brave-new-world",
+            "HHH, h-h-h",
+//            "H, h",
+//            "'', ''",
+//            "null, null"
+    }, nullValues = "null")
+    void upperCamelToLowerHyphen(String text, String expected) {
         String result = Strings.upperCamelToLowerHyphen(text);
 
-        assertEquals("hello-world", result);
+        assertEquals(expected, result);
     }
 
-    @Test
-    void lowerCamelToUpperCamel() {
-        String text = "helloWorld";
-
+    @ParameterizedTest
+    @CsvSource(value = {
+            "braveNewWorld, BraveNewWorld",
+            "h, H",
+            "'', ''",
+            "null, null"
+    }, nullValues = "null")
+    void lowerCamelToUpperCamel(String text, String expected) {
         String result = Strings.lowerCamelToUpperCamel(text);
 
-        assertEquals("HelloWorld", result);
+        assertEquals(expected, result);
     }
 
-    @Test
-    void lowerCamelToLowerHyphen() {
-        String text = "helloWorld";
-
+    @ParameterizedTest
+    @CsvSource(value = {
+            "braveNewWorld, brave-new-world",
+            "h, h",
+            "'', ''",
+            "null, null"
+    }, nullValues = "null")
+    void lowerCamelToLowerHyphen(String text, String expected) {
         String result = Strings.lowerCamelToLowerHyphen(text);
 
-        assertEquals("hello-world", result);
+        assertEquals(expected, result);
     }
 
-    @Test
-    void lowerUnderscoreToLowerCamel() {
-        String text = "hello_world";
-
+    @ParameterizedTest
+    @CsvSource(value = {
+            "brave_new_world, braveNewWorld",
+            "h, h",
+            "'', ''",
+            "null, null"
+    }, nullValues = "null")
+    void lowerUnderscoreToLowerCamel(String text, String expected) {
         String result = Strings.lowerUnderscoreToLowerCamel(text);
 
-        assertEquals("helloWorld", result);
+        assertEquals(expected, result);
     }
 }
