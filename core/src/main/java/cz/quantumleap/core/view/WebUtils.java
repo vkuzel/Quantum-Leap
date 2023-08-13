@@ -10,7 +10,7 @@ import org.springframework.web.util.pattern.PathPatternParser;
 public class WebUtils {
 
     public static boolean isDummyRequest(HttpServletRequest request) {
-        String name = request.getClass().getName();
+        var name = request.getClass().getName();
         return "org.springframework.security.web.FilterInvocation$DummyRequest".equals(name);
     }
 
@@ -36,7 +36,7 @@ public class WebUtils {
         // In future there should be a support for RFC 7239 Forwarded header.
         // Unfortunately at the moment nginx does not have built-in support
         // fot the new header so legacy X-Forwarded-For is used.
-        String remoteAddr = request.getHeader("X-FORWARDED-FOR");
+        var remoteAddr = request.getHeader("X-FORWARDED-FOR");
         if (remoteAddr == null) {
             remoteAddr = request.getRemoteAddr();
         } else if (remoteAddr.contains(",")) {
@@ -49,7 +49,7 @@ public class WebUtils {
      * Request mapping info builder with PathPatternMatcher.
      */
     public static RequestMappingInfo.Builder requestMappingInfoBuilder(String path) {
-        BuilderConfiguration options = new BuilderConfiguration();
+        var options = new BuilderConfiguration();
         options.setPatternParser(new PathPatternParser());
         return RequestMappingInfo.paths(path).options(options);
     }

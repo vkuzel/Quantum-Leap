@@ -16,9 +16,9 @@ public class ProjectManagerTest {
     @Test
     public void singleProjectIsRootProject() {
         // when
-        Project project = Mockito.mock(Project.class);
-        ProjectManager manager = new ProjectManager(project);
-        RootProject rootProject = manager.getRootProject();
+        var project = Mockito.mock(Project.class);
+        var manager = new ProjectManager(project);
+        var rootProject = manager.getRootProject();
 
         // then
         assertEquals(project, rootProject.getProject());
@@ -27,14 +27,14 @@ public class ProjectManagerTest {
     @Test
     public void springBootProjectIsFound() {
         // given
-        Project project = Mockito.mock(Project.class);
-        ProjectManager manager = new ProjectManager(project);
-        Project coreProject = mock(Project.class);
+        var project = Mockito.mock(Project.class);
+        var manager = new ProjectManager(project);
+        var coreProject = mock(Project.class);
         doReturn("core").when(coreProject).getName();
         doReturn(coreProject).when(project).findProject("core");
 
         // when
-        SpringBootProject springBootProject = manager.getSpringBootProject();
+        var springBootProject = manager.getSpringBootProject();
 
         // then
         assertEquals(coreProject, springBootProject.getProject());
@@ -43,13 +43,13 @@ public class ProjectManagerTest {
     @Test
     public void allProjectsAreReturned() {
         // given
-        Project project = Mockito.mock(Project.class);
-        ProjectManager manager = new ProjectManager(project);
+        var project = Mockito.mock(Project.class);
+        var manager = new ProjectManager(project);
         Set<Project> projects = Collections.emptySet();
         doReturn(projects).when(project).getAllprojects();
 
         // when
-        Set<Project> allProjects = manager.getAllProjects();
+        var allProjects = manager.getAllProjects();
 
         // then
         assertEquals(projects, allProjects);
@@ -58,13 +58,13 @@ public class ProjectManagerTest {
     @Test
     public void subProjectsAreReturned() {
         // given
-        Project project = Mockito.mock(Project.class);
-        ProjectManager manager = new ProjectManager(project);
+        var project = Mockito.mock(Project.class);
+        var manager = new ProjectManager(project);
         Set<SubProject> projects = Collections.emptySet();
         doReturn(projects).when(project).getSubprojects();
 
         // when
-        Set<SubProject> subProjects = manager.getSubProjects();
+        var subProjects = manager.getSubProjects();
 
         // then
         assertEquals(projects, subProjects);

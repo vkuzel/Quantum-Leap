@@ -13,7 +13,6 @@ import org.springframework.security.oauth2.core.user.OAuth2UserAuthority;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 
 import static org.mockito.Mockito.*;
@@ -31,7 +30,7 @@ public class DatabaseAuthoritiesLoaderTest {
         personDao = mock(PersonDao.class);
 
         roleDao = mock(RoleDao.class);
-        List<String> roles = Collections.singletonList("USER");
+        var roles = Collections.singletonList("USER");
         doReturn(roles).when(roleDao).fetchRolesByPersonId(1L);
 
         person = mock(Person.class);
@@ -44,9 +43,9 @@ public class DatabaseAuthoritiesLoaderTest {
         Map<String, Object> oauthAttributes = Map.of("email", USER_EMAIL, "name", "John Doe");
         GrantedAuthority oauthAuthority = new OAuth2UserAuthority(oauthAttributes);
         Collection<GrantedAuthority> oauthAuthorities = Collections.singleton(oauthAuthority);
-        DatabaseAuthoritiesLoader loader = new DatabaseAuthoritiesLoader(personDao, roleDao);
+        var loader = new DatabaseAuthoritiesLoader(personDao, roleDao);
 
-        Collection<? extends GrantedAuthority> authorities = loader.mapAuthorities(oauthAuthorities);
+        var authorities = loader.mapAuthorities(oauthAuthorities);
 
         verify(personDao, times(1)).fetchByEmail(USER_EMAIL);
         verify(personDao, times(1)).save(person);
@@ -58,7 +57,7 @@ public class DatabaseAuthoritiesLoaderTest {
     public void unsupportedAuthorityMappingFails() {
         GrantedAuthority oauthAuthority = new SimpleGrantedAuthority("ASD");
         Collection<GrantedAuthority> oauthAuthorities = Collections.singleton(oauthAuthority);
-        DatabaseAuthoritiesLoader loader = new DatabaseAuthoritiesLoader(personDao, roleDao);
+        var loader = new DatabaseAuthoritiesLoader(personDao, roleDao);
 
         Assertions.assertThrows(DatabaseAuthoritiesLoadingException.class, () ->
                 loader.mapAuthorities(oauthAuthorities));
@@ -66,7 +65,7 @@ public class DatabaseAuthoritiesLoaderTest {
 
     @Test
     public void missingAuthorityMappingFails() {
-        DatabaseAuthoritiesLoader loader = new DatabaseAuthoritiesLoader(personDao, roleDao);
+        var loader = new DatabaseAuthoritiesLoader(personDao, roleDao);
 
         Assertions.assertThrows(DatabaseAuthoritiesLoadingException.class, () ->
                 loader.mapAuthorities(Collections.emptySet()));

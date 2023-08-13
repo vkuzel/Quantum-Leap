@@ -1,6 +1,5 @@
 package cz.quantumleap.core.database.entity;
 
-import org.jooq.Name;
 import org.jooq.Record;
 import org.jooq.Table;
 import org.jooq.impl.DSL;
@@ -18,14 +17,14 @@ class EntityIdentifierTest {
     @ParameterizedTest
     @MethodSource("provideArgumentsForSuccessfulParseTest")
     void parseParsesTextToEntityIdentifier(String text, EntityIdentifier<?> expected) {
-        EntityIdentifier<?> identifier = EntityIdentifier.parse(text);
+        var identifier = EntityIdentifier.parse(text);
 
         assertEquals(expected, identifier);
     }
 
     private static Stream<Arguments> provideArgumentsForSuccessfulParseTest() {
-        Table<?> table1 = createTable("schema", "table");
-        Table<?> table2 = createTable("sch\\\"ema", "tab\\\"le");
+        var table1 = createTable("schema", "table");
+        var table2 = createTable("sch\\\"ema", "tab\\\"le");
         return Stream.of(
                 Arguments.of("schema.table", EntityIdentifier.forTable(table1)),
                 Arguments.of("\"schema\".\"table\"", EntityIdentifier.forTable(table1)),
@@ -48,7 +47,7 @@ class EntityIdentifierTest {
     }
 
     private static Table<? extends Record> createTable(String schemaName, String tableName) {
-        Name name = DSL.name(schemaName, tableName);
+        var name = DSL.name(schemaName, tableName);
         return DSL.table(name);
     }
 }

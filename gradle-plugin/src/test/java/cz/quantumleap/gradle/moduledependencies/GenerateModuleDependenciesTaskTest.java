@@ -19,21 +19,21 @@ public class GenerateModuleDependenciesTaskTest {
     @Test
     public void allDependenciesAreFound() {
         // given
-        Project project = setUpProject();
-        GenerateModuleDependenciesTask task = getTask(project);
+        var project = setUpProject();
+        var task = getTask(project);
 
         // when
         Map<Project, ModuleDependencies> dependenciesMap = new HashMap<>();
         task.findAllDependencies(project, dependenciesMap);
 
         // then
-        ModuleDependencies testProject = getDependencies("testProject", dependenciesMap);
+        var testProject = getDependencies("testProject", dependenciesMap);
         assertEquals("subproject1", testProject.dependencies().get(0));
 
-        ModuleDependencies subproject1 = getDependencies("subproject1", dependenciesMap);
+        var subproject1 = getDependencies("subproject1", dependenciesMap);
         assertEquals("subproject2", subproject1.dependencies().get(0));
 
-        ModuleDependencies subproject2 = getDependencies("subproject2", dependenciesMap);
+        var subproject2 = getDependencies("subproject2", dependenciesMap);
         assertTrue(subproject2.dependencies().isEmpty());
     }
 
@@ -43,9 +43,9 @@ public class GenerateModuleDependenciesTaskTest {
     }
 
     private Project setUpProject() {
-        Project project = ProjectBuilder.builder().withName("testProject").build();
-        Project subproject1 = ProjectBuilder.builder().withName("subproject1").withParent(project).build();
-        Project subproject2 = ProjectBuilder.builder().withName("subproject2").withParent(project).build();
+        var project = ProjectBuilder.builder().withName("testProject").build();
+        var subproject1 = ProjectBuilder.builder().withName("subproject1").withParent(project).build();
+        var subproject2 = ProjectBuilder.builder().withName("subproject2").withParent(project).build();
 
         project.getPluginManager().apply(JavaLibraryPlugin.class);
         subproject1.getPluginManager().apply(JavaLibraryPlugin.class);
@@ -60,7 +60,7 @@ public class GenerateModuleDependenciesTaskTest {
     }
 
     private ModuleDependencies getDependencies(String projectName, Map<Project, ModuleDependencies> dependenciesMap) {
-        for (Project project : dependenciesMap.keySet()) {
+        for (var project : dependenciesMap.keySet()) {
             if (project.getName().equals(projectName)) {
                 return dependenciesMap.get(project);
             }

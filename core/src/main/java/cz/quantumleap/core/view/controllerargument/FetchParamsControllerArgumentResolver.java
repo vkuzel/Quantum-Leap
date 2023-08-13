@@ -3,7 +3,6 @@ package cz.quantumleap.core.view.controllerargument;
 import cz.quantumleap.core.database.domain.FetchParams;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.MethodParameter;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.web.SortHandlerMethodArgumentResolver;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
@@ -36,10 +35,10 @@ public class FetchParamsControllerArgumentResolver implements HandlerMethodArgum
 
     @Override
     public FetchParams resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) {
-        String qualifier = parameter.hasParameterAnnotation(Qualifier.class) ? parameter.getParameterAnnotation(Qualifier.class).value() : null;
-        String query = getWebRequestStringParameter(webRequest, qualifier, QUERY_PARAM_NAME, null);
-        int offset = getWebRequestIntParameter(webRequest, qualifier, OFFSET_PARAM_NAME, DEFAULT_OFFSET);
-        int size = getWebRequestIntParameter(webRequest, qualifier, SIZE_PARAM_NAME, FetchParams.CHUNK_SIZE);
+        var qualifier = parameter.hasParameterAnnotation(Qualifier.class) ? parameter.getParameterAnnotation(Qualifier.class).value() : null;
+        var query = getWebRequestStringParameter(webRequest, qualifier, QUERY_PARAM_NAME, null);
+        var offset = getWebRequestIntParameter(webRequest, qualifier, OFFSET_PARAM_NAME, DEFAULT_OFFSET);
+        var size = getWebRequestIntParameter(webRequest, qualifier, SIZE_PARAM_NAME, FetchParams.CHUNK_SIZE);
 
         if (offset >= MAX_ITEMS) {
             offset = MAX_ITEMS - 1;
@@ -48,20 +47,20 @@ public class FetchParamsControllerArgumentResolver implements HandlerMethodArgum
             size = MAX_ITEMS - offset;
         }
 
-        Sort sort = sortHandlerMethodArgumentResolver.resolveArgument(parameter, mavContainer, webRequest, binderFactory);
+        var sort = sortHandlerMethodArgumentResolver.resolveArgument(parameter, mavContainer, webRequest, binderFactory);
 
         return new FetchParams(emptyMap(), query, null, offset, size, sort);
     }
 
     private int getWebRequestIntParameter(NativeWebRequest webRequest, String qualifier, String paramName, int defaultValue) {
-        String qualifiedParamName = qualifyParamName(qualifier, paramName);
-        String value = webRequest.getParameter(qualifiedParamName);
+        var qualifiedParamName = qualifyParamName(qualifier, paramName);
+        var value = webRequest.getParameter(qualifiedParamName);
         return value != null ? Integer.parseInt(value) : defaultValue;
     }
 
     private String getWebRequestStringParameter(NativeWebRequest webRequest, String qualifier, String paramName, String defaultValue) {
-        String qualifiedParamName = qualifyParamName(qualifier, paramName);
-        String value = webRequest.getParameter(qualifiedParamName);
+        var qualifiedParamName = qualifyParamName(qualifier, paramName);
+        var value = webRequest.getParameter(qualifiedParamName);
         return value != null ? value : defaultValue;
     }
 

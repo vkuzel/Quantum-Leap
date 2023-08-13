@@ -1,6 +1,5 @@
 package cz.quantumleap.core.resource;
 
-import cz.quantumleap.core.module.ModuleDependencies;
 import cz.quantumleap.core.module.ModuleDependencyManager;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
@@ -45,7 +44,7 @@ public class ResourceManager {
     public Optional<Resource> findMostSpecificInClasspathOrWorkingDir(String locationPattern) {
         Resource resource = null;
         try {
-            Resource[] fileResources = resourceResolver.getResources("file:" + locationPattern);
+            var fileResources = resourceResolver.getResources("file:" + locationPattern);
             if (fileResources.length > 0 && fileResources[0].exists()) {
                 resource = fileResources[0];
             }
@@ -53,7 +52,7 @@ public class ResourceManager {
             throw new IllegalStateException(e);
         }
         if (resource == null) {
-            List<ResourceWithModule> classpathResourceWithModules = findInClasspath(locationPattern);
+            var classpathResourceWithModules = findInClasspath(locationPattern);
             if (classpathResourceWithModules.size() > 0) {
                 resource = classpathResourceWithModules.get(classpathResourceWithModules.size() - 1).getResource();
             }
@@ -63,7 +62,7 @@ public class ResourceManager {
 
     private ResourceWithModule createResourceWithModule(Resource resource) {
         ResourceWithModule resourceWithModule = null;
-        for (ModuleDependencies module : moduleDependencyManager.getIndependentModulesFirst()) {
+        for (var module : moduleDependencyManager.getIndependentModulesFirst()) {
             if (module.containsResource(resource)) {
                 if (resourceWithModule != null) {
                     throw new IllegalStateException("Two modules (" + resourceWithModule.getModuleName() + " and " + module.getModuleName() +

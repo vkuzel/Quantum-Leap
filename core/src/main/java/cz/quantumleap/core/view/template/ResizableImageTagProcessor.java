@@ -46,10 +46,10 @@ public class ResizableImageTagProcessor extends AbstractAttributeTagProcessor {
 
     @Override
     protected void doProcess(ITemplateContext context, IProcessableElementTag tag, AttributeName attributeName, String attributeValue, IElementTagStructureHandler structureHandler) {
-        ResizeStrategy resizeStrategy = StringUtils.isBlank(attributeValue) ? ResizeStrategy.LIMIT : ResizeStrategy.valueOf(attributeValue.toUpperCase());
-        String url = tag.getAttributeValue("src");
-        Integer width = tag.hasAttribute("width") ? Integer.parseInt(tag.getAttributeValue("width")) : null;
-        Integer height = tag.hasAttribute("height") ? Integer.parseInt(tag.getAttributeValue("height")) : null;
+        var resizeStrategy = StringUtils.isBlank(attributeValue) ? ResizeStrategy.LIMIT : ResizeStrategy.valueOf(attributeValue.toUpperCase());
+        var url = tag.getAttributeValue("src");
+        var width = tag.hasAttribute("width") ? Integer.parseInt(tag.getAttributeValue("width")) : null;
+        var height = tag.hasAttribute("height") ? Integer.parseInt(tag.getAttributeValue("height")) : null;
 
         if (StringUtils.isBlank(url) || !SUPPORTED_FORMATS.contains(FilenameUtils.getExtension(url).toUpperCase())) {
             return;
@@ -74,20 +74,20 @@ public class ResizableImageTagProcessor extends AbstractAttributeTagProcessor {
             Validate.inclusiveBetween(1, MAX_IMAGE_SIZE, height, "Height can be between 1 and " + MAX_IMAGE_SIZE);
         }
 
-        Path imagePath = fileStorageManager.convertUrlToPath(url);
+        var imagePath = fileStorageManager.convertUrlToPath(url);
         if (!Files.exists(imagePath)) {
             return;
         }
 
-        Path resizedImagePath = getResizedImagePath(imagePath, resizeStrategy, width, height);
+        var resizedImagePath = getResizedImagePath(imagePath, resizeStrategy, width, height);
 
-        String resizedImageUrl = fileStorageManager.saveFileIfNotExistsAndBuildUrl(resizedImagePath, outputStream ->
+        var resizedImageUrl = fileStorageManager.saveFileIfNotExistsAndBuildUrl(resizedImagePath, outputStream ->
                 resizeImage(imagePath, resizeStrategy, width, height, outputStream));
         structureHandler.setAttribute("src", resizedImageUrl);
     }
 
     private Path getResizedImagePath(Path originalImagePath, ResizeStrategy resizeStrategy, Integer width, Integer height) {
-        StringBuilder sizeExtension = new StringBuilder("-");
+        var sizeExtension = new StringBuilder("-");
         sizeExtension.append(resizeStrategy.name());
         sizeExtension.append('-');
         if (width != null) {
@@ -105,21 +105,21 @@ public class ResizableImageTagProcessor extends AbstractAttributeTagProcessor {
             sizeExtension.append(height);
         }
 
-        String pathWithoutExtension = FilenameUtils.removeExtension(originalImagePath.toString());
-        String extension = FilenameUtils.getExtension(originalImagePath.toString());
+        var pathWithoutExtension = FilenameUtils.removeExtension(originalImagePath.toString());
+        var extension = FilenameUtils.getExtension(originalImagePath.toString());
 
         return fileStorageManager.convertToTempDirectoryPath(Paths.get(pathWithoutExtension + sizeExtension + '.' + extension));
     }
 
     private void resizeImage(Path originalImagePath, ResizeStrategy resizeStrategy, Integer newWidth, Integer newHeight, OutputStream outputStream) {
         try {
-            BufferedImage originalImage = ImageIO.read(originalImagePath.toFile());
-            int originalWidth = originalImage.getWidth(null);
-            int originalHeight = originalImage.getHeight(null);
+            var originalImage = ImageIO.read(originalImagePath.toFile());
+            var originalWidth = originalImage.getWidth(null);
+            var originalHeight = originalImage.getHeight(null);
 
             Image image;
-            int width = newWidth != null ? newWidth : MAX_IMAGE_SIZE;
-            int height = newHeight != null ? newHeight : MAX_IMAGE_SIZE;
+            var width = newWidth != null ? newWidth : MAX_IMAGE_SIZE;
+            var height = newHeight != null ? newHeight : MAX_IMAGE_SIZE;
 
             switch (resizeStrategy) {
                 case LIMIT:
@@ -134,8 +134,8 @@ public class ResizableImageTagProcessor extends AbstractAttributeTagProcessor {
 
             log.debug("Resizing image {} from {}x{} to {}x{}", originalImagePath, originalWidth, originalHeight, width, height);
 
-            BufferedImage bufferedImage = new BufferedImage(image.getWidth(null), image.getHeight(null), BufferedImage.TYPE_INT_RGB);
-            Graphics2D graphics2D = bufferedImage.createGraphics();
+            var bufferedImage = new BufferedImage(image.getWidth(null), image.getHeight(null), BufferedImage.TYPE_INT_RGB);
+            var graphics2D = bufferedImage.createGraphics();
             graphics2D.drawImage(image, 0, 0, null);
             graphics2D.dispose();
             ImageIO.write(bufferedImage, FilenameUtils.getExtension(originalImagePath.toString()), outputStream);

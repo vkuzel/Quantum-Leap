@@ -5,9 +5,6 @@ import cz.quantumleap.admin.menu.AdminMenuManager;
 import cz.quantumleap.admin.person.PersonService;
 import cz.quantumleap.core.common.Utils;
 import cz.quantumleap.core.database.domain.FetchParams;
-import cz.quantumleap.core.database.domain.Slice;
-import cz.quantumleap.core.notification.domain.Notification;
-import cz.quantumleap.core.person.domain.Person;
 import cz.quantumleap.core.security.WebSecurityExpressionEvaluator;
 import cz.quantumleap.core.view.DefaultListController;
 import jakarta.servlet.http.HttpServletRequest;
@@ -39,23 +36,23 @@ public class NotificationController extends AdminController {
 
     @GetMapping(path = DETAIL_URL + "/{id}")
     public String showNotification(@PathVariable long id, Model model, Authentication authentication) {
-        Person person = personService.fetchByAuthentication(authentication);
-        Notification notification = notificationService.get(person.getId(), id);
+        var person = personService.fetchByAuthentication(authentication);
+        var notification = notificationService.get(person.getId(), id);
         model.addAttribute(notification);
         return DETAIL_VIEW;
     }
 
     @PostMapping(params = "resolve", path = DETAIL_URL + "/{id}")
     public String resolveNotification(@PathVariable long id, Authentication authentication) {
-        Person person = personService.fetchByAuthentication(authentication);
+        var person = personService.fetchByAuthentication(authentication);
         notificationService.resolve(person.getId(), id);
         return "redirect:" + DETAIL_URL + "/" + id;
     }
 
     @GetMapping(LIST_URL)
     public String showNotifications(FetchParams fetchParams, Model model, HttpServletRequest request, Authentication authentication) {
-        Person person = personService.fetchByAuthentication(authentication);
-        Slice slice = notificationService.findSlice(person.getId(), fetchParams);
+        var person = personService.fetchByAuthentication(authentication);
+        var slice = notificationService.findSlice(person.getId(), fetchParams);
         model.addAttribute(DefaultListController.SLICE_MODEL_ATTRIBUTE_NAME, slice);
         model.addAttribute(DefaultListController.ENTITY_IDENTIFIER_MODEL_ATTRIBUTE_NAME, notificationService.getListEntityIdentifier().toString());
         model.addAttribute(DefaultListController.DETAIL_URL_MODEL_ATTRIBUTE_NAME, DETAIL_URL);

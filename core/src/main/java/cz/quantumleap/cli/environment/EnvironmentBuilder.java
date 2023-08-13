@@ -6,14 +6,11 @@ import cz.quantumleap.core.autoincrement.domain.Increment;
 import cz.quantumleap.core.common.Utils;
 import cz.quantumleap.core.module.ModuleDependencyManager;
 import cz.quantumleap.core.resource.ResourceManager;
-import cz.quantumleap.core.resource.ResourceWithModule;
 import org.jooq.DSLContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 public class EnvironmentBuilder {
@@ -49,10 +46,10 @@ public class EnvironmentBuilder {
     public void buildEnvironment() {
         log.info("Building new environment.");
 
-        List<ResourceWithModule> scripts = resourceManager.findInClasspath(SCRIPTS_LOCATION_PATTERN);
+        var scripts = resourceManager.findInClasspath(SCRIPTS_LOCATION_PATTERN);
         scripts.forEach(script -> {
             log.info("Executing script {}", script.getResourcePath());
-            String sql = Utils.readResourceToString(script.getResource());
+            var sql = Utils.readResourceToString(script.getResource());
             dslContext.execute(sql);
         });
 
@@ -62,7 +59,7 @@ public class EnvironmentBuilder {
     }
 
     private Increment createIncrement(String module, int version) {
-        Increment increment = new Increment();
+        var increment = new Increment();
         increment.setModule(module);
         increment.setVersion(version);
         increment.setFileName("<initial_increment>");
@@ -73,8 +70,8 @@ public class EnvironmentBuilder {
     public void dropEnvironment() {
         log.info("Dropping existing environment.");
 
-        for (String moduleName : moduleDependencyManager.getModuleNames()) {
-            String schemaName = moduleName.replace('-', '_');
+        for (var moduleName : moduleDependencyManager.getModuleNames()) {
+            var schemaName = moduleName.replace('-', '_');
             log.info("Dropping schema {}", schemaName);
             environmentDao.dropSchema(schemaName);
         }

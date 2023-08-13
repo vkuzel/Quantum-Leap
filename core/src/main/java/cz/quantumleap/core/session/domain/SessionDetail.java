@@ -4,7 +4,6 @@ import cz.quantumleap.core.session.SessionDao;
 import eu.bitwalker.useragentutils.UserAgent;
 import org.springframework.session.Session;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 
@@ -31,7 +30,7 @@ public class SessionDetail {
     }
 
     public LocalDateTime getExpireAt() {
-        Instant expirationTime = session.getLastAccessedTime().plus(session.getMaxInactiveInterval());
+        var expirationTime = session.getLastAccessedTime().plus(session.getMaxInactiveInterval());
         return LocalDateTime.ofInstant(expirationTime, ZoneId.systemDefault());
     }
 

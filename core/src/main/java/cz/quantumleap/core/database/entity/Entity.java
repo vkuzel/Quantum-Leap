@@ -1,8 +1,8 @@
 package cz.quantumleap.core.database.entity;
 
 import org.apache.commons.lang3.Validate;
-import org.jooq.*;
 import org.jooq.Record;
+import org.jooq.*;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -181,32 +181,32 @@ public final class Entity<TABLE extends Table<? extends Record>> {
         }
 
         public Builder<TABLE> addEnumMetaType(Field<?> field) {
-            EnumMetaType enumMetaType = new EnumMetaType(field);
+            var enumMetaType = new EnumMetaType(field);
             return addFieldMetaType(field, enumMetaType);
         }
 
         public Builder<TABLE> addEnumMetaType(Field<?> field, String enumId) {
-            EnumMetaType enumMetaType = new EnumMetaType(enumId);
+            var enumMetaType = new EnumMetaType(enumId);
             return addFieldMetaType(field, enumMetaType);
         }
 
         public Builder<TABLE> addSetMetaType(Field<?> field) {
-            SetMetaType setMetaType = new SetMetaType(field);
+            var setMetaType = new SetMetaType(field);
             return addFieldMetaType(field, setMetaType);
         }
 
         public Builder<TABLE> addSetMetaType(Field<?> field, String enumId) {
-            SetMetaType setMetaType = new SetMetaType(enumId);
+            var setMetaType = new SetMetaType(enumId);
             return addFieldMetaType(field, setMetaType);
         }
 
         public Builder<TABLE> addLookupMetaType(Field<?> field, EntityIdentifier<?> entityIdentifier) {
-            LookupMetaType lookupMetaType = new LookupMetaType(entityIdentifier);
+            var lookupMetaType = new LookupMetaType(entityIdentifier);
             return addFieldMetaType(field, lookupMetaType);
         }
 
         public Builder<TABLE> addFieldMetaType(Field<?> field, FieldMetaType fieldMetaType) {
-            FieldMetaType originalMetaType = this.fieldMetaTypeMap.put(field, fieldMetaType);
+            var originalMetaType = this.fieldMetaTypeMap.put(field, fieldMetaType);
             if (originalMetaType != null) {
                 throw new IllegalArgumentException("Field " + field + " already has meta type!");
             }
@@ -279,7 +279,7 @@ public final class Entity<TABLE extends Table<? extends Record>> {
         }
 
         private List<Field<?>> getPrimaryKeyFields(Table<? extends Record> table) {
-            UniqueKey<? extends Record> primaryKey = table.getPrimaryKey();
+            var primaryKey = table.getPrimaryKey();
             if (primaryKey != null) {
                 return Collections.unmodifiableList(primaryKey.getFields());
             } else {

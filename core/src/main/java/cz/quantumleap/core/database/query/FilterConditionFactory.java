@@ -19,12 +19,12 @@ public class FilterConditionFactory {
     public Condition forFilter(Map<String, Object> filter) {
         Condition resultCondition = null;
 
-        for (Map.Entry<String, Object> fieldNameValue : filter.entrySet()) {
-            String fieldName = normalizeFieldName(fieldNameValue.getKey());
-            Field<Object> field = getFieldSafely(fieldMap, fieldName);
-            Object value = fieldNameValue.getValue();
+        for (var fieldNameValue : filter.entrySet()) {
+            var fieldName = normalizeFieldName(fieldNameValue.getKey());
+            var field = getFieldSafely(fieldMap, fieldName);
+            var value = fieldNameValue.getValue();
 
-            Condition condition = field.eq(value);
+            var condition = field.eq(value);
             if (resultCondition == null) {
                 resultCondition = condition;
             } else {

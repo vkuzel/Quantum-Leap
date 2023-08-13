@@ -3,8 +3,6 @@ package cz.quantumleap.core.view;
 import cz.quantumleap.core.business.ListService;
 import cz.quantumleap.core.common.Utils;
 import cz.quantumleap.core.database.domain.FetchParams;
-import cz.quantumleap.core.database.domain.Slice;
-import cz.quantumleap.core.database.entity.EntityIdentifier;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.ui.Model;
 
@@ -28,8 +26,8 @@ public final class DefaultListController implements ListController {
 
     @Override
     public String list(FetchParams fetchParams, Model model, HttpServletRequest request) {
-        EntityIdentifier<?> identifier = listService.getListEntityIdentifier(null);
-        Slice slice = listService.findSlice(fetchParams);
+        var identifier = listService.getListEntityIdentifier(null);
+        var slice = listService.findSlice(fetchParams);
 
         model.addAttribute(SLICE_MODEL_ATTRIBUTE_NAME, slice);
         model.addAttribute(ENTITY_IDENTIFIER_MODEL_ATTRIBUTE_NAME, identifier.toString());

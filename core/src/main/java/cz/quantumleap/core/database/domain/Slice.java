@@ -51,12 +51,12 @@ public class Slice implements Iterable<List<Object>> {
     }
 
     public Column getColumnByName(String name) {
-        for (Column column : columns) {
+        for (var column : columns) {
             if (column.getName().equals(name)) {
                 return column;
             }
         }
-        String cols = columns.stream().map(Column::getName).collect(Collectors.joining(", "));
+        var cols = columns.stream().map(Column::getName).collect(Collectors.joining(", "));
         throw new IllegalArgumentException("Column " + name + " not found! Columns: " + cols);
     }
 
@@ -65,7 +65,7 @@ public class Slice implements Iterable<List<Object>> {
     }
 
     public Object getValue(Column column, List<Object> row) {
-        int columnIndex = columns.indexOf(column);
+        var columnIndex = columns.indexOf(column);
         return row.get(columnIndex);
     }
 
@@ -206,17 +206,17 @@ public class Slice implements Iterable<List<Object>> {
 
         public Builder addColumn(Column column, List<Object> values, BiFunction<List<Object>, Object, List<Object>> mergeRow) {
             columns.add(column);
-            for (int i = 0; i < rows.size(); i++) {
+            for (var i = 0; i < rows.size(); i++) {
                 rows.set(i, mergeRow.apply(rows.get(i), values.get(i)));
             }
             return this;
         }
 
         public Builder removeColumn(Column column) {
-            int index = columns.indexOf(column);
+            var index = columns.indexOf(column);
             Validate.isTrue(index != -1);
             columns.remove(index);
-            for (List<Object> row : rows) {
+            for (var row : rows) {
                 row.remove(index);
             }
             return this;

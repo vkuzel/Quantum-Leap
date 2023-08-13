@@ -26,13 +26,13 @@ public class PersonService extends ServiceStub<Person> {
     @Cacheable("personByAuthentication")
     public Person fetchByAuthentication(Authentication authentication) {
         Validate.notNull(authentication);
-        String email = authenticator.getAuthenticationEmail(authentication);
+        var email = authenticator.getAuthenticationEmail(authentication);
         return personDao.fetchByEmail(email);
     }
 
     @Override
     public Person save(Person person, Errors errors) {
-        Person existingPerson = personDao.fetchByEmail(person.getEmail());
+        var existingPerson = personDao.fetchByEmail(person.getEmail());
         if (existingPerson != null && !Objects.equals(existingPerson.getId(), person.getId())) {
             errors.rejectValue("email", "admin.table.core.person.email.unique");
         }

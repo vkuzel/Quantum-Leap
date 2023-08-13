@@ -28,7 +28,7 @@ public class ExceptionErrors extends AbstractErrors {
 
     @Override
     public void addAllErrors(Errors errors) {
-        for (ObjectError error : errors.getAllErrors()) {
+        for (var error : errors.getAllErrors()) {
             throw new IllegalArgumentException(error.getCode());
         }
     }

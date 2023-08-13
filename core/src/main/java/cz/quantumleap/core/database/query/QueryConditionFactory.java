@@ -50,7 +50,7 @@ public class QueryConditionFactory {
      */
     public Condition forQuery(String query) {
         if (StringUtils.isNotBlank(query)) {
-            List<String> tokens = tokenize(query);
+            var tokens = tokenize(query);
             return createCondition(fieldMap, tokens);
         } else {
             return null;
@@ -62,18 +62,18 @@ public class QueryConditionFactory {
     }
 
     private List<String> tokenize(String query) {
-        boolean wordContext = false;
-        boolean doubleQuotesContext = false;
+        var wordContext = false;
+        var doubleQuotesContext = false;
 
-        int tokenBegin = 0;
-        int length = query.length();
+        var tokenBegin = 0;
+        var length = query.length();
 
         List<String> tokens = new ArrayList<>();
 
-        for (int i = 0; i <= length; i++) {
-            char previous = i > 0 ? query.charAt(i - 1) : 0;
-            char current = i < length ? query.charAt(i) : 0;
-            char next = i < length - 1 ? query.charAt(i + 1) : 0;
+        for (var i = 0; i <= length; i++) {
+            var previous = i > 0 ? query.charAt(i - 1) : 0;
+            var current = i < length ? query.charAt(i) : 0;
+            var next = i < length - 1 ? query.charAt(i + 1) : 0;
 
             if (doubleQuotesContext && (current == '"' || current == 0)) {
                 doubleQuotesContext = false;
@@ -158,16 +158,16 @@ public class QueryConditionFactory {
         }
 
         private Condition createCondition() {
-            int size = tokens.size();
+            var size = tokens.size();
 
             Condition condition = null;
 
             for (currentTokenIndex = startAtToken; currentTokenIndex < size; currentTokenIndex++) {
-                String previous = currentTokenIndex > startAtToken ? tokens.get(currentTokenIndex - 1) : null;
-                String current = tokens.get(currentTokenIndex);
-                String next = currentTokenIndex < size - 1 ? tokens.get(currentTokenIndex + 1) : null;
-                String next2 = currentTokenIndex < size - 2 ? tokens.get(currentTokenIndex + 2) : null;
-                QueryUtils.ConditionOperator conditionOperator = resolveConditionOperator(previous);
+                var previous = currentTokenIndex > startAtToken ? tokens.get(currentTokenIndex - 1) : null;
+                var current = tokens.get(currentTokenIndex);
+                var next = currentTokenIndex < size - 1 ? tokens.get(currentTokenIndex + 1) : null;
+                var next2 = currentTokenIndex < size - 2 ? tokens.get(currentTokenIndex + 2) : null;
+                var conditionOperator = resolveConditionOperator(previous);
 
                 if (resolveConditionOperator(current) != null) {
                     continue;
@@ -179,9 +179,9 @@ public class QueryConditionFactory {
                     continue;
                 }
 
-                Field<?> field = fieldMap.get(normalizeFieldName(current));
+                var field = fieldMap.get(normalizeFieldName(current));
                 if (field != null) {
-                    ComparisonOperator comparisonOperator = resolveComparisonOperator(next);
+                    var comparisonOperator = resolveComparisonOperator(next);
                     if (comparisonOperator != null && next2 != null) {
                         condition = joinConditions(conditionOperator, condition, createCondition(field, comparisonOperator, next2));
                         currentTokenIndex += 2;
@@ -200,7 +200,7 @@ public class QueryConditionFactory {
         }
 
         private Condition createCondition(Field<?> field, ComparisonOperator comparisonOperator, String word) {
-            Class<?> type = field.getType();
+            var type = field.getType();
 
             if (Number.class.isAssignableFrom(type) && NumberUtils.isCreatable(word)) {
                 if (type == Integer.class) {
@@ -214,7 +214,7 @@ public class QueryConditionFactory {
                 }
             } else if (type == Boolean.class) {
                 if (comparisonOperator == ComparisonOperator.EQ) {
-                    boolean bool = BooleanUtils.toBoolean(word);
+                    var bool = BooleanUtils.toBoolean(word);
                     return field.cast(Boolean.class).eq(bool);
                 }
             } else if (type == String.class) {

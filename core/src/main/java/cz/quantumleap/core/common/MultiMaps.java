@@ -10,9 +10,9 @@ public final class MultiMaps {
      */
     public static <K, V> Map<K, List<V>> groupBy(Collection<V> collection, Function<V, K> groupBy) {
         Map<K, List<V>> mapOfLists = new LinkedHashMap<>();
-        for (V value : collection) {
-            K key = groupBy.apply(value);
-            List<V> values = mapOfLists.computeIfAbsent(key, k -> new ArrayList<>());
+        for (var value : collection) {
+            var key = groupBy.apply(value);
+            var values = mapOfLists.computeIfAbsent(key, k -> new ArrayList<>());
             values.add(value);
         }
         return mapOfLists;
@@ -27,7 +27,7 @@ public final class MultiMaps {
     public static <V, T> List<T> mapValues(Map<?, List<V>> mapOfLists, Function<V, T> valueMap) {
         List<T> values = new ArrayList<>();
         mapOfLists.forEach((o, vs) -> {
-            for (V v : vs) {
+            for (var v : vs) {
                 values.add(valueMap.apply(v));
             }
         });

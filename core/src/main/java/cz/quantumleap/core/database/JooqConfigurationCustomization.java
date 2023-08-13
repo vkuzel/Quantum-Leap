@@ -19,7 +19,7 @@ public class JooqConfigurationCustomization {
     public DefaultConfigurationCustomizer jooqConverterProviderConfigurationCustomizer(
             ObjectProvider<ConverterProvider> converterProviders
     ) {
-        List<ConverterProvider> sortedProviders = converterProviders.orderedStream().toList();
+        var sortedProviders = converterProviders.orderedStream().toList();
         ConverterProvider delegatingProvider = new DelegatingConverterProvider(sortedProviders);
         return (configuration) -> configuration.set(delegatingProvider);
     }
@@ -37,8 +37,8 @@ public class JooqConfigurationCustomization {
 
         @Override
         public @Nullable <T, U> Converter<T, U> provide(Class<T> tType, Class<U> uType) {
-            for (ConverterProvider converterProvider : converterProviders) {
-                Converter<T, U> converter = converterProvider.provide(tType, uType);
+            for (var converterProvider : converterProviders) {
+                var converter = converterProvider.provide(tType, uType);
                 if (converter != null) {
                     return converter;
                 }

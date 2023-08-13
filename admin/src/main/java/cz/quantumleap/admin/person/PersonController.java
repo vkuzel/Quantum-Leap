@@ -9,12 +9,9 @@ import cz.quantumleap.admin.personrole.PersonRoleController;
 import cz.quantumleap.admin.personrole.PersonRoleService;
 import cz.quantumleap.core.common.Utils;
 import cz.quantumleap.core.database.domain.FetchParams;
-import cz.quantumleap.core.database.domain.Slice;
-import cz.quantumleap.core.database.entity.EntityIdentifier;
 import cz.quantumleap.core.person.domain.Person;
 import cz.quantumleap.core.security.WebSecurityExpressionEvaluator;
 import cz.quantumleap.core.session.SessionService;
-import cz.quantumleap.core.session.domain.SessionDetail;
 import cz.quantumleap.core.tables.PersonRoleTable;
 import cz.quantumleap.core.view.*;
 import jakarta.servlet.http.HttpServletRequest;
@@ -30,8 +27,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import java.util.List;
 
 @Controller
 @PreAuthorize("hasRole('ADMIN')")
@@ -81,7 +76,7 @@ public class PersonController extends AdminController {
 
     @PostMapping(params = "save", path = {DETAIL_URL, DETAIL_URL + "/{id}"})
     public String savePerson(@Valid Person person, Errors errors, @Qualifier("personRole") FetchParams personRoleFetchParams, Model model, RedirectAttributes redirectAttributes) {
-        String view = detailController.save(person, errors, model, redirectAttributes);
+        var view = detailController.save(person, errors, model, redirectAttributes);
         if (errors.hasErrors() && person.getId() != null) {
             addPersonRoleTableAttributes(person, personRoleFetchParams, model);
         }
@@ -112,9 +107,9 @@ public class PersonController extends AdminController {
         }
 
         personRoleFetchParams = personRoleFetchParams.addFilter("person_id", person.getId());
-        Slice slice = personRoleService.findSlice(personRoleFetchParams);
-        EntityIdentifier<PersonRoleTable> identifier = personRoleService.getDetailEntityIdentifier(PersonRoleTable.class);
-        List<SessionDetail> sessions = sessionService.fetchListByEmail(person.getEmail());
+        var slice = personRoleService.findSlice(personRoleFetchParams);
+        var identifier = personRoleService.getDetailEntityIdentifier(PersonRoleTable.class);
+        var sessions = sessionService.fetchListByEmail(person.getEmail());
 
         model.addAttribute("personRoleSlice", slice);
         model.addAttribute("personRoleEntityIdentifier", identifier.toString());

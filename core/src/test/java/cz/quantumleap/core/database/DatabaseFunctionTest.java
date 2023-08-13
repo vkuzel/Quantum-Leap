@@ -9,8 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.sql.Timestamp;
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Map;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -36,15 +34,15 @@ public class DatabaseFunctionTest {
             Timestamp expectedLastIntervalStart,
             Timestamp expectedLastIntervalEnd
     ) {
-        String sql = "SELECT * FROM core.generate_intervals(? :: DATE, ? :: DATE, ?)";
+        var sql = "SELECT * FROM core.generate_intervals(? :: DATE, ? :: DATE, ?)";
 
-        List<Map<String, Object>> rows = dslContext.fetch(sql, start, end, step).intoMaps();
+        var rows = dslContext.fetch(sql, start, end, step).intoMaps();
 
         assertEquals(expectedNumberOfIntervals, rows.size());
-        Map<String, Object> firstInterval = rows.get(0);
+        var firstInterval = rows.get(0);
         assertEquals(expectedFirstIntervalStart, firstInterval.get("interval_start"));
         assertEquals(expectedFirstIntervalEnd, firstInterval.get("interval_end"));
-        Map<String, Object> lastInterval = rows.get(rows.size() - 1);
+        var lastInterval = rows.get(rows.size() - 1);
         assertEquals(expectedLastIntervalStart, lastInterval.get("interval_start"));
         assertEquals(expectedLastIntervalEnd, lastInterval.get("interval_end"));
     }

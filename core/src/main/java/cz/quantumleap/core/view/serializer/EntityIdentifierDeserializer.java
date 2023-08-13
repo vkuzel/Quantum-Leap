@@ -11,7 +11,7 @@ public class EntityIdentifierDeserializer extends JsonDeserializer<EntityIdentif
 
     @Override
     public EntityIdentifier<?> deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
-        String valueAsString = p.getValueAsString();
+        var valueAsString = p.getValueAsString();
         return EntityIdentifier.parse(valueAsString);
     }
 }

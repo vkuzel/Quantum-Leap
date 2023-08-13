@@ -32,9 +32,9 @@ public class RecordFactory<T> {
     }
 
     public Record createRecord(T transport) {
-        Record record = dslContext.newRecord(table);
+        var record = dslContext.newRecord(table);
         if (customConvertibleTypes) {
-            for (Field<?> field : record.fields()) {
+            for (var field : record.fields()) {
                 setValueToRecordField(transport, field, record);
             }
         } else {
@@ -44,13 +44,13 @@ public class RecordFactory<T> {
     }
 
     private void setValueToRecordField(T transport, Field<?> field, Record record) {
-        String transportFieldName = lowerUnderscoreToLowerCamel(field.getName().toLowerCase());
+        var transportFieldName = lowerUnderscoreToLowerCamel(field.getName().toLowerCase());
         if (transportFieldNames.contains(transportFieldName)) {
-            DataType<?> databaseType = field.getDataType();
-            Object value = ReflectionUtils.getClassFieldValue(transportType, transport, transportFieldName);
+            var databaseType = field.getDataType();
+            var value = ReflectionUtils.getClassFieldValue(transportType, transport, transportFieldName);
             if (value != null) {
-                Class<?> userType = value.getClass();
-                Converter<Object, Object> converter = resolveConverter(databaseType, userType);
+                var userType = value.getClass();
+                var converter = resolveConverter(databaseType, userType);
                 record.setValue(castField(field), value, converter);
             } else if (databaseType.nullable()) {
                 record.setValue(castField(field), null);
@@ -60,7 +60,7 @@ public class RecordFactory<T> {
 
     @SuppressWarnings("unchecked")
     private Converter<Object, Object> resolveConverter(DataType<?> dataType, Class<?> userType) {
-        Class<?> databaseType = dataType.getType();
+        var databaseType = dataType.getType();
         return (Converter<Object, Object>) converterProvider.provide(databaseType, userType);
     }
 
@@ -73,8 +73,8 @@ public class RecordFactory<T> {
         // jOOQ currently does not use converters in the DefaultRecordUnmapper
         // for unmapping, provided by a custom ConverterProvider. In that case,
         // the converter has to be invoked manually.
-        for (Field<?> field : table.fields()) {
-            Class<?> type = field.getDataType().getType();
+        for (var field : table.fields()) {
+            var type = field.getDataType().getType();
             if (type == JSON.class || type == YearToSecond.class) {
                 return true;
             }

@@ -14,7 +14,7 @@ public class EnvironmentDao {
 
     public void dropSchema(String schemaName) {
         // language=SQL
-        String sql = "DROP SCHEMA IF EXISTS " + schemaName + " CASCADE";
+        var sql = "DROP SCHEMA IF EXISTS " + schemaName + " CASCADE";
         dslContext.execute(sql);
     }
 }

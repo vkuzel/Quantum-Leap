@@ -1,8 +1,6 @@
 package cz.quantumleap.core.notification;
 
 import cz.quantumleap.core.notification.domain.Notification;
-import cz.quantumleap.core.person.domain.Person;
-import cz.quantumleap.core.role.domain.Role;
 import cz.quantumleap.core.test.CoreSpringBootTest;
 import cz.quantumleap.core.test.common.CoreTestSupport;
 import org.junit.jupiter.api.Assertions;
@@ -35,13 +33,13 @@ class NotificationManagerTest {
 
     @Test
     void createNotificationForPersonCreatesNotificationInDatabase() {
-        List<NotificationDefinition> definitions = createNotificationDefinition(NOTIFICATION_CODE1);
-        NotificationManager notificationManager = new NotificationManager(notificationDao, definitions);
-        Person person = testSupport.createPerson();
+        var definitions = createNotificationDefinition(NOTIFICATION_CODE1);
+        var notificationManager = new NotificationManager(notificationDao, definitions);
+        var person = testSupport.createPerson();
 
         long id = notificationManager.createNotificationForPerson(person.getId(), NOTIFICATION_CODE1).getId();
 
-        Notification notification = notificationDao.fetchById(id, Notification.class);
+        var notification = notificationDao.fetchById(id, Notification.class);
         assertEquals(NOTIFICATION_CODE1, notification.getCode());
         assertEquals(person.getId(), notification.getPersonId());
         assertNull(notification.getRoleId());
@@ -49,9 +47,9 @@ class NotificationManagerTest {
 
     @Test
     void createNotificationForPersonThrowsExceptionForNonExistingCode() {
-        List<NotificationDefinition> definitions = createNotificationDefinition(NOTIFICATION_CODE1);
-        NotificationManager notificationManager = new NotificationManager(notificationDao, definitions);
-        Person person = testSupport.createPerson();
+        var definitions = createNotificationDefinition(NOTIFICATION_CODE1);
+        var notificationManager = new NotificationManager(notificationDao, definitions);
+        var person = testSupport.createPerson();
 
         Assertions.assertThrows(IllegalArgumentException.class, () ->
                 notificationManager.createNotificationForPerson(person.getId(), NOTIFICATION_CODE2));
@@ -59,13 +57,13 @@ class NotificationManagerTest {
 
     @Test
     void createNotificationForRoleCreatesNotificationInDatabase() {
-        List<NotificationDefinition> definitions = createNotificationDefinition(NOTIFICATION_CODE1);
-        NotificationManager notificationManager = new NotificationManager(notificationDao, definitions);
-        Role role = testSupport.createRole();
+        var definitions = createNotificationDefinition(NOTIFICATION_CODE1);
+        var notificationManager = new NotificationManager(notificationDao, definitions);
+        var role = testSupport.createRole();
 
         long id = notificationManager.createNotificationForRole(role.getId(), NOTIFICATION_CODE1).getId();
 
-        Notification notification = notificationDao.fetchById(id, Notification.class);
+        var notification = notificationDao.fetchById(id, Notification.class);
         assertEquals(NOTIFICATION_CODE1, notification.getCode());
         assertEquals(role.getId(), notification.getRoleId());
         assertNull(notification.getPersonId());
@@ -73,12 +71,12 @@ class NotificationManagerTest {
 
     @Test
     void createNotificationForAllCreatesNotificationInDatabase() {
-        List<NotificationDefinition> definitions = createNotificationDefinition(NOTIFICATION_CODE1);
-        NotificationManager notificationManager = new NotificationManager(notificationDao, definitions);
+        var definitions = createNotificationDefinition(NOTIFICATION_CODE1);
+        var notificationManager = new NotificationManager(notificationDao, definitions);
 
         long id = notificationManager.createNotificationForAll(NOTIFICATION_CODE1).getId();
 
-        Notification notification = notificationDao.fetchById(id, Notification.class);
+        var notification = notificationDao.fetchById(id, Notification.class);
         assertEquals(NOTIFICATION_CODE1, notification.getCode());
         assertNull(notification.getPersonId());
         assertNull(notification.getRoleId());

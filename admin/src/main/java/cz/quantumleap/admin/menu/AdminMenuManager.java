@@ -9,7 +9,6 @@ import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
-import java.lang.reflect.Method;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -34,34 +33,34 @@ public class AdminMenuManager {
 
     @EventListener(ContextRefreshedEvent.class)
     public void buildMenu() {
-        Map<RequestMappingInfo, HandlerMethod> handlerMethodMap = requestMappingHandlerMapping.getHandlerMethods();
+        var handlerMethodMap = requestMappingHandlerMapping.getHandlerMethods();
         Map<String, MappingDefinitionAuthorize> map = new HashMap<>();
 
         handlerMethodMap.forEach((requestMappingInfo, handlerMethod) -> {
-            Method method = handlerMethod.getMethod();
-            AdminMenuItemDefinition adminMenuItemDefinition = AnnotationUtils.findAnnotation(method, AdminMenuItemDefinition.class);
+            var method = handlerMethod.getMethod();
+            var adminMenuItemDefinition = AnnotationUtils.findAnnotation(method, AdminMenuItemDefinition.class);
             if (adminMenuItemDefinition == null) {
                 return;
             }
-            PreAuthorize preAuthorize = findPreAuthorize(handlerMethod);
+            var preAuthorize = findPreAuthorize(handlerMethod);
             map.put(adminMenuItemDefinition.title(), new MappingDefinitionAuthorize(requestMappingInfo, adminMenuItemDefinition, preAuthorize));
         });
 
         handlerMethodMap.forEach((requestMappingInfo, handlerMethod) -> {
-            Method method = handlerMethod.getMethod();
-            AdminMenuItemActive adminMenuItemActive = AnnotationUtils.findAnnotation(method, AdminMenuItemActive.class);
+            var method = handlerMethod.getMethod();
+            var adminMenuItemActive = AnnotationUtils.findAnnotation(method, AdminMenuItemActive.class);
             if (adminMenuItemActive == null) {
                 return;
             }
-            MappingDefinitionAuthorize mappingDefinitionAuthorize = map.get(adminMenuItemActive.value());
+            var mappingDefinitionAuthorize = map.get(adminMenuItemActive.value());
             if (mappingDefinitionAuthorize != null) {
                 mappingDefinitionAuthorize.addRequestMappingInfo(requestMappingInfo);
             }
         });
 
-        for (MappingDefinitionAuthorize mappingDefinitionAuthorize : map.values()) {
-            String parentByTitle = mappingDefinitionAuthorize.getParentByTitle();
-            MappingDefinitionAuthorize parent = map.get(parentByTitle);
+        for (var mappingDefinitionAuthorize : map.values()) {
+            var parentByTitle = mappingDefinitionAuthorize.getParentByTitle();
+            var parent = map.get(parentByTitle);
             if (parent != null) {
                 mappingDefinitionAuthorize.isChild = true;
                 parent.children.add(mappingDefinitionAuthorize);
@@ -76,11 +75,11 @@ public class AdminMenuManager {
     }
 
     private PreAuthorize findPreAuthorize(HandlerMethod handlerMethod) {
-        Class<?> beanType = handlerMethod.getBeanType();
-        Method method = handlerMethod.getMethod();
+        var beanType = handlerMethod.getBeanType();
+        var method = handlerMethod.getMethod();
 
-        PreAuthorize methodPreAuthorize = AnnotationUtils.findAnnotation(method, PreAuthorize.class);
-        PreAuthorize typePreAuthorize = AnnotationUtils.findAnnotation(beanType, PreAuthorize.class);
+        var methodPreAuthorize = AnnotationUtils.findAnnotation(method, PreAuthorize.class);
+        var typePreAuthorize = AnnotationUtils.findAnnotation(beanType, PreAuthorize.class);
 
         return methodPreAuthorize != null ? methodPreAuthorize : typePreAuthorize;
     }
@@ -116,7 +115,7 @@ public class AdminMenuManager {
         }
 
         private AdminMenuItem toAdminMenuItem() {
-            List<AdminMenuItem> childrenItems = children.stream().sorted(MENU_ITEM_COMPARATOR).map(MappingDefinitionAuthorize::toAdminMenuItem).collect(Collectors.toList());
+            var childrenItems = children.stream().sorted(MENU_ITEM_COMPARATOR).map(MappingDefinitionAuthorize::toAdminMenuItem).collect(Collectors.toList());
             return new AdminMenuItem(requestMappingInfoList, adminMenuItemDefinition, preAuthorize, AdminMenuItem.State.NONE, childrenItems);
         }
     }

@@ -2,7 +2,6 @@ package cz.quantumleap.core.database.entity;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
-import org.jooq.Name;
 import org.jooq.Record;
 import org.jooq.Table;
 import org.jooq.impl.DSL;
@@ -44,7 +43,7 @@ public class EntityIdentifier<TABLE extends Table<? extends Record>> {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        EntityIdentifier<?> that = (EntityIdentifier<?>) o;
+        var that = (EntityIdentifier<?>) o;
         // Generated table does not have fully qualified name even though the
         // Table object holds a schema name. So we will compare schema name and
         // unqualified table name separately.
@@ -55,7 +54,7 @@ public class EntityIdentifier<TABLE extends Table<? extends Record>> {
 
     @Override
     public int hashCode() {
-        String schemaName = table.getSchema() != null ? table.getSchema().getName() : null;
+        var schemaName = table.getSchema() != null ? table.getSchema().getName() : null;
         return Objects.hash(schemaName, table.getUnqualifiedName(), qualifier);
     }
 
@@ -65,7 +64,7 @@ public class EntityIdentifier<TABLE extends Table<? extends Record>> {
      */
     @Override
     public String toString() {
-        String value = resolveDatabaseTableNameWithSchema(table);
+        var value = resolveDatabaseTableNameWithSchema(table);
         if (StringUtils.isNotBlank(qualifier)) {
             value += '#' + qualifier;
         }
@@ -78,12 +77,12 @@ public class EntityIdentifier<TABLE extends Table<? extends Record>> {
      */
     public static EntityIdentifier<?> parse(String code) {
         List<String> fragments = new ArrayList<>(3);
-        int len = code.length();
-        int fragmentStart = -1;
-        boolean escaped = false;
+        var len = code.length();
+        var fragmentStart = -1;
+        var escaped = false;
 
-        for (int i = 0; i < code.length(); i++) {
-            char chr = code.charAt(i);
+        for (var i = 0; i < code.length(); i++) {
+            var chr = code.charAt(i);
             if ((chr == '.' || chr == '#' || chr == '"') && !escaped && fragmentStart > -1) {
                 fragments.add(code.substring(fragmentStart, i));
                 fragmentStart = -1;
@@ -104,11 +103,11 @@ public class EntityIdentifier<TABLE extends Table<? extends Record>> {
             throw new IllegalArgumentException("Cannot parse " + code + " to EntityIdentifier!");
         }
 
-        String schemaName = fragments.get(0);
-        String tableName = fragments.get(1);
-        String qualifier = fragments.size() > 2 ? fragments.get(2) : null;
+        var schemaName = fragments.get(0);
+        var tableName = fragments.get(1);
+        var qualifier = fragments.size() > 2 ? fragments.get(2) : null;
 
-        Name name = DSL.name(schemaName, tableName);
+        var name = DSL.name(schemaName, tableName);
         Table<?> table = DSL.table(name);
         return EntityIdentifier.forTableWithQualifier(table, qualifier);
     }

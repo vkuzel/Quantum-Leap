@@ -1,7 +1,6 @@
 package cz.quantumleap.admin.dashboard;
 
 import cz.quantumleap.admin.AdminController;
-import cz.quantumleap.admin.dashboard.DashboardWidget.Position;
 import cz.quantumleap.admin.menu.AdminMenuItemDefinition;
 import cz.quantumleap.admin.menu.AdminMenuManager;
 import cz.quantumleap.admin.notification.NotificationService;
@@ -14,7 +13,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import static java.util.Objects.requireNonNullElseGet;
@@ -39,10 +37,10 @@ public class DashboardController extends AdminController {
     @AdminMenuItemDefinition(title = "admin.menu.dashboard", fontAwesomeIcon = "fas fa-tachometer-alt", priority = Integer.MAX_VALUE)
     @GetMapping("/dashboard")
     public String dashboard(Model model) {
-        Map<Position, List<DashboardWidget>> dashboardWidgetsMap = dashboardWidgets.stream()
+        var dashboardWidgetsMap = dashboardWidgets.stream()
                 .collect(Collectors.groupingBy(DashboardWidget::getPosition));
         model.addAttribute("dashboardWidgets", dashboardWidgetsMap);
-        for (DashboardWidget widget : dashboardWidgets) {
+        for (var widget : dashboardWidgets) {
             widget.getModelAttributes().forEach((attributeName, attributeValue) -> {
                 if (model.containsAttribute(attributeName)) {
                     throw new IllegalStateException("Dashboard widget model attribute " + attributeName + " is specified twice!");

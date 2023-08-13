@@ -6,7 +6,6 @@ import com.fasterxml.jackson.core.io.CharacterEscapes;
 import com.fasterxml.jackson.core.io.SerializedString;
 import com.fasterxml.jackson.core.json.JsonWriteFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationConfig;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import cz.quantumleap.core.filestorage.FileStorageManager;
 import cz.quantumleap.core.resource.ResourceManager;
@@ -37,16 +36,16 @@ public class ThymeleafConfiguration {
             FileStorageManager fileStorageManager,
             ObjectMapper objectMapper
     ) {
-        ObjectMapper mapper = objectMapper.copy();
+        var mapper = objectMapper.copy();
         mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         mapper.disable(JsonGenerator.Feature.AUTO_CLOSE_TARGET);
-        SerializationConfig serializationConfig = mapper.getSerializationConfig()
+        var serializationConfig = mapper.getSerializationConfig()
                 .with(JsonWriteFeature.ESCAPE_NON_ASCII);
         mapper.setConfig(serializationConfig);
         mapper.getFactory().setCharacterEscapes(new JacksonThymeleafCharacterEscapes());
 
-        SpringTemplateEngine engine = new SpringTemplateEngine();
-        SpringStandardDialect dialect = new SpringStandardDialect();
+        var engine = new SpringTemplateEngine();
+        var dialect = new SpringStandardDialect();
         dialect.setJavaScriptSerializer(new JavaScriptSerializer(mapper));
         engine.setDialect(dialect);
 
@@ -105,7 +104,7 @@ public class ThymeleafConfiguration {
             try {
                 mapper.writeValue(writer, object);
             } catch (IOException e) {
-                String msg = "An exception was raised while trying to serialize object to JavaScript using Jackson";
+                var msg = "An exception was raised while trying to serialize object to JavaScript using Jackson";
                 throw new TemplateProcessingException(msg, e);
             }
         }

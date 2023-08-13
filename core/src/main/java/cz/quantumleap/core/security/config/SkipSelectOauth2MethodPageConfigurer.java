@@ -22,14 +22,14 @@ public class SkipSelectOauth2MethodPageConfigurer<H extends HttpSecurityBuilder<
     @SuppressWarnings("unchecked")
     @Override
     public void init(H builder) throws Exception {
-        String singleAuthenticationUrl = getSingleAuthenticationUrl(builder);
+        var singleAuthenticationUrl = getSingleAuthenticationUrl(builder);
         if (singleAuthenticationUrl != null) {
             ExceptionHandlingConfigurer<H> exceptionHandlingConfigurer = builder.getConfigurer(ExceptionHandlingConfigurer.class);
             Validate.notNull(exceptionHandlingConfigurer);
 
             // There is only one authentication method (authentication url) so skip the login page and redirect user
             // directly to authentication URL.
-            LoginUrlAuthenticationEntryPoint authenticationEntryPoint = new LoginUrlAuthenticationEntryPoint(singleAuthenticationUrl);
+            var authenticationEntryPoint = new LoginUrlAuthenticationEntryPoint(singleAuthenticationUrl);
             exceptionHandlingConfigurer.authenticationEntryPoint(authenticationEntryPoint);
         }
 
@@ -37,7 +37,7 @@ public class SkipSelectOauth2MethodPageConfigurer<H extends HttpSecurityBuilder<
     }
 
     private String getSingleAuthenticationUrl(H builder) {
-        List<ClientRegistration> clientRegistrations = getClientRegistrations(builder);
+        var clientRegistrations = getClientRegistrations(builder);
         if (clientRegistrations.isEmpty()) {
             // No client registration found, for example in integration test
             return null;
@@ -50,7 +50,7 @@ public class SkipSelectOauth2MethodPageConfigurer<H extends HttpSecurityBuilder<
     }
 
     private List<ClientRegistration> getClientRegistrations(H builder) {
-        ClientRegistrationRepository repository = builder.getSharedObject(ClientRegistrationRepository.class);
+        var repository = builder.getSharedObject(ClientRegistrationRepository.class);
         if (repository == null) {
             throw new IllegalStateException("Client registration repository not found!");
         }
@@ -70,10 +70,10 @@ public class SkipSelectOauth2MethodPageConfigurer<H extends HttpSecurityBuilder<
     @SuppressWarnings("unchecked")
     private String getAuthorizationRequestBaseUri(H builder) {
         OAuth2LoginConfigurer<H> loginConfigurer = builder.getConfigurer(OAuth2LoginConfigurer.class);
-        String[] baseUriHolder = {DEFAULT_AUTHORIZATION_REQUEST_BASE_URI};
+        var baseUriHolder = new String[]{DEFAULT_AUTHORIZATION_REQUEST_BASE_URI};
         loginConfigurer.authorizationEndpoint(config -> {
-            String fieldName = "authorizationRequestBaseUri";
-            Object fieldValue = getClassFieldValue(AuthorizationEndpointConfig.class, config, fieldName);
+            var fieldName = "authorizationRequestBaseUri";
+            var fieldValue = getClassFieldValue(AuthorizationEndpointConfig.class, config, fieldName);
             if (fieldValue instanceof String baseUri) {
                 baseUriHolder[0] = baseUri;
             }

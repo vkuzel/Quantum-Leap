@@ -96,7 +96,7 @@ public class FetchParams {
 
     public FetchParams extend() {
         if (offset + size < MAX_ITEMS) {
-            int nextSize = Math.min(MAX_ITEMS - offset, offset + size + CHUNK_SIZE);
+            var nextSize = Math.min(MAX_ITEMS - offset, offset + size + CHUNK_SIZE);
             return new FetchParams(filter, query, condition, offset, nextSize, sort);
         }
         return null;

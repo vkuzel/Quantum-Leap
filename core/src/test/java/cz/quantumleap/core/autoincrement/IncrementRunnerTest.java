@@ -11,7 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
-import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.jdbc.BadSqlGrammarException;
 
@@ -42,7 +41,7 @@ public class IncrementRunnerTest {
 
     @Test
     public void newIncrementsAreExecuted() {
-        List<IncrementService.IncrementScript> incrementScripts = List.of(
+        var incrementScripts = List.of(
                 createIncrementScript("classpath:/test_db/inc/v01/01_testEntity.sql", 1),
                 createIncrementScript("classpath:/test_db/inc/v02/01_testFunction.sql", 2),
                 createIncrementScript("classpath:/test_db/inc/v03/01_validScript.sql", 3),
@@ -50,8 +49,8 @@ public class IncrementRunnerTest {
         );
 
         testSupport.deleteFromTable("core.increment");
-        Map<String, Integer> lastIncrements = Map.of("core", 0);
-        IncrementRunner incrementRunner = new IncrementRunner(environment, incrementService, transactionExecutor, incrementDao);
+        var lastIncrements = Map.of("core", 0);
+        var incrementRunner = new IncrementRunner(environment, incrementService, transactionExecutor, incrementDao);
 
         try {
             incrementRunner.runIncrements(lastIncrements, incrementScripts);
@@ -66,9 +65,9 @@ public class IncrementRunnerTest {
     }
 
     private IncrementService.IncrementScript createIncrementScript(String locationPattern, int incrementVersion) {
-        ModuleDependencies module = mock(ModuleDependencies.class);
+        var module = mock(ModuleDependencies.class);
         when(module.getModuleName()).thenReturn("core");
-        Resource resource = resourceResolver.getResource(locationPattern);
+        var resource = resourceResolver.getResource(locationPattern);
         return new IncrementService.IncrementScript(
                 new ResourceWithModule(module, resource),
                 incrementVersion

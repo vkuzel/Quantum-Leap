@@ -54,12 +54,12 @@ public class DatabaseAuthoritiesLoader implements GrantedAuthoritiesMapper {
                 continue;
             }
 
-            OAuth2UserAuthority oAuth2UserAuthority = (OAuth2UserAuthority) authority;
-            Person person = loadAndUpdatePerson(oAuth2UserAuthority.getAttributes());
+            var oAuth2UserAuthority = (OAuth2UserAuthority) authority;
+            var person = loadAndUpdatePerson(oAuth2UserAuthority.getAttributes());
             return loadGrantedAuthorities(person);
         }
 
-        String retrievedAuthorities = authorities.stream().map(Object::getClass).map(Class::getName).collect(Collectors.joining(", "));
+        var retrievedAuthorities = authorities.stream().map(Object::getClass).map(Class::getName).collect(Collectors.joining(", "));
         throw new DatabaseAuthoritiesLoadingException("No known granted authority in authorities [" + retrievedAuthorities + "]");
     }
 
@@ -67,7 +67,7 @@ public class DatabaseAuthoritiesLoader implements GrantedAuthoritiesMapper {
         String email = getAttribute(authorityAttributes, OAUTH_DETAILS_EMAIL);
         Validate.notNull(email, "Email was not found in OAuth details! " + formatDetails(authorityAttributes));
 
-        Person person = personDao.fetchByEmail(email);
+        var person = personDao.fetchByEmail(email);
         if (person == null) {
             throw new DatabaseAuthoritiesLoadingException("Email " + email + " was not found in database!");
         }

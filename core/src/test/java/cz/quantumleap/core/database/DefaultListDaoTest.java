@@ -2,7 +2,6 @@ package cz.quantumleap.core.database;
 
 import cz.quantumleap.core.database.domain.FetchParams;
 import cz.quantumleap.core.database.domain.Slice;
-import cz.quantumleap.core.database.domain.Slice.Column;
 import cz.quantumleap.core.database.entity.Entity;
 import cz.quantumleap.core.database.entity.EntityIdentifier;
 import cz.quantumleap.core.slicequery.SliceQueryDao;
@@ -11,7 +10,6 @@ import cz.quantumleap.core.test.common.CoreTestSupport;
 import cz.quantumleap.core.test.data.TestTableBuilder;
 import cz.quantumleap.core.test.data.TestTableBuilder.TestTable;
 import org.jooq.DSLContext;
-import org.jooq.Field;
 import org.jooq.Schema;
 import org.jooq.Table;
 import org.jooq.impl.DSL;
@@ -20,8 +18,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
-
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -49,12 +45,12 @@ class DefaultListDaoTest {
 
     @Test
     void fetchSliceGeneratesCorrectColumnTypes() {
-        Entity<TestTable> entity = createEntity();
-        Entity<TestTable> referencingEntity = createReferencingEntity(entity.getTable());
-        DefaultListDao<TestTable> defaultListDao = createDefaultListDao(referencingEntity);
+        var entity = createEntity();
+        var referencingEntity = createReferencingEntity(entity.getTable());
+        var defaultListDao = createDefaultListDao(referencingEntity);
 
-        FetchParams fetchParams = FetchParams.empty();
-        Slice slice = defaultListDao.fetchSlice(fetchParams);
+        var fetchParams = FetchParams.empty();
+        var slice = defaultListDao.fetchSlice(fetchParams);
 
         assertEquals(2, slice.getColumns().size());
         assertTrue(slice.getColumnByName("id").isPrimaryKey());
@@ -63,8 +59,8 @@ class DefaultListDaoTest {
 
     @Test
     void fetchSliceCorrectlySortsLookupColumn() {
-        Entity<TestTable> entity = createEntity();
-        Entity<TestTable> referencingEntity = createReferencingEntity(entity.getTable());
+        var entity = createEntity();
+        var referencingEntity = createReferencingEntity(entity.getTable());
 
         coreTestSupport.insertIntoTable(entity.getTable(), 1, "Aaa");
         coreTestSupport.insertIntoTable(entity.getTable(), 2, "Bbb");
@@ -74,10 +70,10 @@ class DefaultListDaoTest {
         coreTestSupport.insertIntoTable(referencingEntity.getTable(), 2, 2);
         coreTestSupport.insertIntoTable(referencingEntity.getTable(), 3, 1);
 
-        DefaultListDao<TestTable> defaultListDao = createDefaultListDao(referencingEntity);
+        var defaultListDao = createDefaultListDao(referencingEntity);
 
-        FetchParams fetchParams = FetchParams.empty().withSort(Sort.by(ASC, "entity"));
-        Slice slice = defaultListDao.fetchSlice(fetchParams);
+        var fetchParams = FetchParams.empty().withSort(Sort.by(ASC, "entity"));
+        var slice = defaultListDao.fetchSlice(fetchParams);
 
         assertEquals(3, slice.getRows().size());
         assertEquals(3L, getValue(slice, "id", 0));
@@ -87,8 +83,8 @@ class DefaultListDaoTest {
 
     @Test
     void fetchSliceFiltersLookupColumnByLabelValue() {
-        Entity<TestTable> entity = createEntity();
-        Entity<TestTable> referencingEntity = createReferencingEntity(entity.getTable());
+        var entity = createEntity();
+        var referencingEntity = createReferencingEntity(entity.getTable());
 
         coreTestSupport.insertIntoTable(entity.getTable(), 1, "Aaa");
         coreTestSupport.insertIntoTable(entity.getTable(), 2, "Bbb");
@@ -96,17 +92,17 @@ class DefaultListDaoTest {
         coreTestSupport.insertIntoTable(referencingEntity.getTable(), 1, 1);
         coreTestSupport.insertIntoTable(referencingEntity.getTable(), 2, 2);
 
-        DefaultListDao<TestTable> defaultListDao = createDefaultListDao(referencingEntity);
+        var defaultListDao = createDefaultListDao(referencingEntity);
 
-        FetchParams fetchParams = FetchParams.empty().addFilter("entity", "Aaa");
-        Slice slice = defaultListDao.fetchSlice(fetchParams);
+        var fetchParams = FetchParams.empty().addFilter("entity", "Aaa");
+        var slice = defaultListDao.fetchSlice(fetchParams);
 
         assertEquals(1, slice.getRows().size());
         assertEquals(1L, getValue(slice, "id", 0));
     }
 
     private Entity<TestTable> createEntity() {
-        TestTable testTable = new TestTableBuilder()
+        var testTable = new TestTableBuilder()
                 .setSchema(TEST_SCHEMA)
                 .setName("entity")
                 .addPrimaryKeyIdField()
@@ -116,7 +112,7 @@ class DefaultListDaoTest {
         coreTestSupport.dropTable(testTable);
         coreTestSupport.createTable(testTable);
 
-        Entity<TestTable> entity = Entity.builder(testTable)
+        var entity = Entity.builder(testTable)
                 .setLookupLabelFieldBuilder(table -> table.field("name", String.class))
                 .build();
 
@@ -126,7 +122,7 @@ class DefaultListDaoTest {
     }
 
     private Entity<TestTable> createReferencingEntity(Table<?> referencedTable) {
-        TestTable testTable = new TestTableBuilder()
+        var testTable = new TestTableBuilder()
                 .setSchema(TEST_SCHEMA)
                 .setName("referencing_entity")
                 .addPrimaryKeyIdField()
@@ -136,7 +132,7 @@ class DefaultListDaoTest {
         coreTestSupport.dropTable(testTable);
         coreTestSupport.createTable(testTable);
 
-        Field<?> lookupField = testTable.field("entity_id");
+        var lookupField = testTable.field("entity_id");
         return Entity.builder(testTable)
                 .addLookupMetaType(lookupField, EntityIdentifier.forTable(referencedTable))
                 .build();
@@ -147,8 +143,8 @@ class DefaultListDaoTest {
     }
 
     private Object getValue(Slice slice, String columnName, int rowIndex) {
-        Column column = slice.getColumnByName(columnName);
-        List<Object> row = slice.getRows().get(rowIndex);
+        var column = slice.getColumnByName(columnName);
+        var row = slice.getRows().get(rowIndex);
         return slice.getValue(column, row);
     }
 }

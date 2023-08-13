@@ -2,7 +2,6 @@ package cz.quantumleap.core.common;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -16,10 +15,10 @@ final public class ReflectionUtils {
     public static List<Field> getClassFields(Class<?> type) {
         List<Field> fields = new ArrayList<>();
         try {
-            Field[] fieldArray = type.getDeclaredFields();
+            var fieldArray = type.getDeclaredFields();
             fields.addAll(Arrays.asList(fieldArray));
             if (type.getSuperclass() != null) {
-                List<Field> superClassFields = getClassFields(type.getSuperclass());
+                var superClassFields = getClassFields(type.getSuperclass());
                 fields.addAll(superClassFields);
             }
         } catch (SecurityException e) {
@@ -34,8 +33,8 @@ final public class ReflectionUtils {
      */
     public static Object getClassFieldValue(Class<?> type, Object instance, String fieldName) {
         try {
-            Field field = type.getDeclaredField(fieldName);
-            boolean accessible = field.canAccess(instance);
+            var field = type.getDeclaredField(fieldName);
+            var accessible = field.canAccess(instance);
             try {
                 if (!accessible) {
                     field.setAccessible(true);
@@ -61,8 +60,8 @@ final public class ReflectionUtils {
      */
     public static Object invokeClassMethod(Class<?> type, Object instance, String methodName) {
         try {
-            Method method = type.getDeclaredMethod(methodName);
-            boolean accessible = method.canAccess(instance);
+            var method = type.getDeclaredMethod(methodName);
+            var accessible = method.canAccess(instance);
             try {
                 if (!accessible) {
                     method.setAccessible(true);
@@ -89,8 +88,8 @@ final public class ReflectionUtils {
             String memberName,
             Throwable e
     ) throws IllegalStateException {
-        String format = "Cannot get class %s value from %s.%s";
-        String msg = String.format(format, type.getName(), memberType, memberName);
+        var format = "Cannot get class %s value from %s.%s";
+        var msg = String.format(format, type.getName(), memberType, memberName);
         return new IllegalStateException(msg, e);
     }
 }

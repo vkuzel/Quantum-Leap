@@ -6,7 +6,6 @@ import org.apache.commons.lang3.Validate;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.session.MapSession;
 import org.springframework.session.MapSessionRepository;
@@ -32,7 +31,7 @@ public class SessionDao implements SessionRepository<MapSession> {
     public SessionDao(ServerProperties serverProperties) {
         this.sessionMap = new HashMap<>();
         this.repository = new MapSessionRepository(sessionMap);
-        Duration sessionTimeout = serverProperties.getServlet().getSession().getTimeout();
+        var sessionTimeout = serverProperties.getServlet().getSession().getTimeout();
         if (sessionTimeout != null) {
             this.repository.setDefaultMaxInactiveInterval(sessionTimeout);
         }
@@ -40,7 +39,7 @@ public class SessionDao implements SessionRepository<MapSession> {
 
     @Override
     public MapSession createSession() {
-        MapSession mapSession = repository.createSession();
+        var mapSession = repository.createSession();
         addEmailToSession(mapSession);
         return mapSession;
     }
@@ -62,14 +61,14 @@ public class SessionDao implements SessionRepository<MapSession> {
     }
 
     public void invalidateById(String id) {
-        Session session = sessionMap.get(id);
+        var session = sessionMap.get(id);
         session.setMaxInactiveInterval(Duration.ZERO);
     }
 
     @Scheduled(initialDelay = 60_000, fixedRate = 10_000)
     protected void deleteExpiredSessions() {
         List<Session> sessions = new ArrayList<>(sessionMap.values());
-        for (Session session : sessions) {
+        for (var session : sessions) {
             if (session.isExpired()) {
                 repository.deleteById(session.getId());
             }
@@ -79,7 +78,7 @@ public class SessionDao implements SessionRepository<MapSession> {
     public List<SessionDetail> fetchListByEmail(String email) {
         Validate.notNull(email);
         List<SessionDetail> sessions = new ArrayList<>();
-        for (Session session : sessionMap.values()) {
+        for (var session : sessionMap.values()) {
             if (email.equals(session.getAttribute(EMAIL_ATTRIBUTE))) {
                 sessions.add(new SessionDetail(session));
             }
@@ -93,8 +92,8 @@ public class SessionDao implements SessionRepository<MapSession> {
             return;
         }
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authenticator.getAuthenticationEmail(authentication);
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+        var email = authenticator.getAuthenticationEmail(authentication);
         session.setAttribute(EMAIL_ATTRIBUTE, email);
     }
 }

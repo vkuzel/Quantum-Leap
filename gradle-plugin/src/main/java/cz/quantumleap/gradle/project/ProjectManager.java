@@ -23,7 +23,7 @@ public class ProjectManager {
     }
 
     public SpringBootProject getSpringBootProject() {
-        Project project = rootProject.findProject(SPRING_BOOT_PROJECT_NAME);
+        var project = rootProject.findProject(SPRING_BOOT_PROJECT_NAME);
         if (project == null) {
             throw new IllegalStateException("Spring Boot project 'core' was not found!");
         } else if (project.getName().equals(rootProject.getName())) {

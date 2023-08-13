@@ -22,7 +22,7 @@ final public class Utils {
     private static final String AJAX_HEADER_VALUE = "XMLHttpRequest";
 
     public static String readResourceToString(Resource resource) {
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(resource.getInputStream()))) {
+        try (var reader = new BufferedReader(new InputStreamReader(resource.getInputStream()))) {
             return reader.lines().collect(Collectors.joining("\n"));
         } catch (IOException e) {
             throw new IllegalStateException(e);
@@ -39,7 +39,7 @@ final public class Utils {
     @SafeVarargs
     public static <T extends Comparable<? super T>> T min(T... items) {
         T min = null;
-        for (T item : items) {
+        for (var item : items) {
             if (item != null) {
                 if (min == null) {
                     min = item;
@@ -57,7 +57,7 @@ final public class Utils {
     @SafeVarargs
     public static <T extends Comparable<? super T>> T max(T... items) {
         T max = null;
-        for (T item : items) {
+        for (var item : items) {
             if (item != null) {
                 if (max == null) {
                     max = item;
@@ -74,10 +74,10 @@ final public class Utils {
             end = start;
         }
 
-        int daysCount = Period.between(start, end).getDays();
+        var daysCount = Period.between(start, end).getDays();
         Validate.isTrue(daysCount < 1000);
 
-        LocalDate date = start;
+        var date = start;
         List<LocalDate> daysBetween = new ArrayList<>(daysCount);
         while (date.isBefore(end) || date.isEqual(end)) {
             daysBetween.add(date);
@@ -90,12 +90,12 @@ final public class Utils {
     public static <TABLE extends Table<? extends Record>> EntityIdentifier<TABLE> checkTableType(
             EntityIdentifier<?> entityIdentifier, Class<TABLE> tableType
     ) {
-        Table<? extends Record> table = entityIdentifier.getTable();
+        var table = entityIdentifier.getTable();
         if (tableType == null || tableType.isInstance(table)) {
             return (EntityIdentifier<TABLE>) entityIdentifier;
         }
 
-        String msg = "Entity identifier " + entityIdentifier + " is not compatible with " + tableType;
+        var msg = "Entity identifier " + entityIdentifier + " is not compatible with " + tableType;
         throw new IllegalStateException(msg);
     }
 }

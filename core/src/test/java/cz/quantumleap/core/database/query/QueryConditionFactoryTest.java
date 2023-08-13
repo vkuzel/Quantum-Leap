@@ -1,6 +1,5 @@
 package cz.quantumleap.core.database.query;
 
-import org.jooq.Condition;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -11,10 +10,10 @@ class QueryConditionFactoryTest {
 
     @Test
     public void validConditionIsCreatedForQuery() {
-        QueryConditionFactory queryConditionFactory = createQueryConditionFactory();
-        String query = "id > 1 (name = \"Forename Surname\" or email = Surname@company.cx) Title";
+        var queryConditionFactory = createQueryConditionFactory();
+        var query = "id > 1 (name = \"Forename Surname\" or email = Surname@company.cx) Title";
 
-        Condition condition = queryConditionFactory.forQuery(query);
+        var condition = queryConditionFactory.forQuery(query);
 
         Assertions.assertEquals("(\n" +
                 "  cast(\"core\".\"person\".\"id\" as bigint) > 1\n" +
@@ -28,10 +27,10 @@ class QueryConditionFactoryTest {
 
     @Test
     public void validConditionIsCreatedForQueryWithMissingBrackets() {
-        QueryConditionFactory queryConditionFactory = createQueryConditionFactory();
-        String query = "id > 1 (name = \"Forename Surname\" or Title";
+        var queryConditionFactory = createQueryConditionFactory();
+        var query = "id > 1 (name = \"Forename Surname\" or Title";
 
-        Condition condition = queryConditionFactory.forQuery(query);
+        var condition = queryConditionFactory.forQuery(query);
 
         Assertions.assertEquals("(\n" +
                 "  cast(\"core\".\"person\".\"id\" as bigint) > 1\n" +

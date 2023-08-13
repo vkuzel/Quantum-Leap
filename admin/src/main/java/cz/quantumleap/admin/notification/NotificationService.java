@@ -18,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 @Service
 public class NotificationService {
@@ -41,28 +40,28 @@ public class NotificationService {
 
     @Transactional
     public List<Notification> fetchUnresolvedByPersonId(long personId) {
-        List<Notification> notifications = notificationDao.fetchUnresolvedByPersonId(personId, MAX_UNRESOLVED_NOTIFICATIONS_TO_SHOW);
+        var notifications = notificationDao.fetchUnresolvedByPersonId(personId, MAX_UNRESOLVED_NOTIFICATIONS_TO_SHOW);
         notifications.forEach(notification -> notification.setDefinition(getDefinitionForNotification(notification)));
         return notifications;
     }
 
     @Transactional
     public Slice findSlice(long personId, FetchParams fetchParams) {
-        Locale locale = LocaleContextHolder.getLocale();
-        Slice slice = notificationDao.fetchSlice(personId, fetchParams);
+        var locale = LocaleContextHolder.getLocale();
+        var slice = notificationDao.fetchSlice(personId, fetchParams);
 
-        Column codeColumn = slice.getColumnByName("code");
-        Column messageArgumentsColumn = slice.getColumnByName("message_arguments");
-        Column messageColumn = new Column(String.class, "message", false, null);
+        var codeColumn = slice.getColumnByName("code");
+        var messageArgumentsColumn = slice.getColumnByName("message_arguments");
+        var messageColumn = new Column(String.class, "message", false, null);
 
         List<Object> messages = new ArrayList<>();
-        for (List<Object> row : slice) {
-            String code = (String) slice.getValue(codeColumn, row);
-            Object[] messageArguments = (Object[]) slice.getValue(messageArgumentsColumn, row);
+        for (var row : slice) {
+            var code = (String) slice.getValue(codeColumn, row);
+            var messageArguments = (Object[]) slice.getValue(messageArgumentsColumn, row);
 
-            NotificationDefinition definition = notificationManager.getNotificationDefinitionByCode(code);
+            var definition = notificationManager.getNotificationDefinitionByCode(code);
             Validate.notNull(definition, "Notification definition not found for notification code " + code);
-            String message = messageSource.getMessage(definition.getMessageCode(), messageArguments, locale);
+            var message = messageSource.getMessage(definition.getMessageCode(), messageArguments, locale);
             messages.add(message);
         }
 
@@ -78,14 +77,14 @@ public class NotificationService {
 
     @Transactional
     public Notification get(long personId, long id) {
-        Notification notification = notificationDao.fetch(personId, id);
+        var notification = notificationDao.fetch(personId, id);
         notification.setDefinition(getDefinitionForNotification(notification));
         return notification;
     }
 
     @Transactional
     public void resolve(long personId, long id) {
-        Notification notification = get(personId, id);
+        var notification = get(personId, id);
         Validate.isTrue(notification.getResolvedAt() == null);
         notification.setResolvedBy(personId);
         notification.setResolvedAt(LocalDateTime.now());
@@ -93,7 +92,7 @@ public class NotificationService {
     }
 
     private NotificationDefinition getDefinitionForNotification(Notification notification) {
-        String notificationCode = notification.getCode();
+        var notificationCode = notification.getCode();
         return notificationManager.getNotificationDefinitionByCode(notificationCode);
     }
 }

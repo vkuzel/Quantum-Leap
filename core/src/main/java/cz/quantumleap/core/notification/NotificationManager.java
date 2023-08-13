@@ -24,8 +24,8 @@ public class NotificationManager {
         }
 
         Map<String, NotificationDefinition> definitionMap = new HashMap<>(definitions.size());
-        for (NotificationDefinition definition : definitions) {
-            String notificationCode = definition.getNotificationCode();
+        for (var definition : definitions) {
+            var notificationCode = definition.getNotificationCode();
             if (definitionMap.put(notificationCode, definition) != null) {
                 throw new IllegalStateException("Two notification definitions with same code " + notificationCode);
             }
@@ -34,7 +34,7 @@ public class NotificationManager {
     }
 
     public NotificationDefinition getNotificationDefinitionByCode(String notificationCode) {
-        NotificationDefinition notificationDefinition = notificationDefinitionMap.get(notificationCode);
+        var notificationDefinition = notificationDefinitionMap.get(notificationCode);
         if (notificationDefinition == null) {
             throw new IllegalArgumentException("Unknown notification code " + notificationCode);
         }
@@ -44,14 +44,14 @@ public class NotificationManager {
     @Transactional
     @SuppressWarnings("unused")
     public Notification createNotificationForPerson(long personId, String notificationCode, String... messageArguments) {
-        List<String> arguments = Arrays.asList(messageArguments);
+        var arguments = Arrays.asList(messageArguments);
         return createNotificationForPerson(personId, notificationCode, arguments);
     }
 
     @Transactional
     public Notification createNotificationForPerson(long personId, String notificationCode, List<String> messageArguments) {
         getNotificationDefinitionByCode(notificationCode);
-        Notification notification = new Notification();
+        var notification = new Notification();
         notification.setCode(notificationCode);
         notification.setMessageArguments(messageArguments);
         notification.setPersonId(personId);
@@ -61,14 +61,14 @@ public class NotificationManager {
     @Transactional
     @SuppressWarnings("unused")
     public Notification createNotificationForRole(long roleId, String notificationCode, String... messageArguments) {
-        List<String> arguments = Arrays.asList(messageArguments);
+        var arguments = Arrays.asList(messageArguments);
         return createNotificationForRole(roleId, notificationCode, arguments);
     }
 
     @Transactional
     public Notification createNotificationForRole(long roleId, String notificationCode, List<String> messageArguments) {
         getNotificationDefinitionByCode(notificationCode);
-        Notification notification = new Notification();
+        var notification = new Notification();
         notification.setCode(notificationCode);
         notification.setMessageArguments(messageArguments);
         notification.setRoleId(roleId);
@@ -78,21 +78,21 @@ public class NotificationManager {
     @Transactional
     @SuppressWarnings("unused")
     public Notification createNotificationForAll(String notificationCode, String... messageArguments) {
-        List<String> arguments = Arrays.asList(messageArguments);
+        var arguments = Arrays.asList(messageArguments);
         return createNotificationForAll(notificationCode, arguments);
     }
 
     @Transactional
     public Notification createNotificationForAll(String notificationCode, List<String> messageArguments) {
         getNotificationDefinitionByCode(notificationCode);
-        Notification notification = new Notification();
+        var notification = new Notification();
         notification.setCode(notificationCode);
         notification.setMessageArguments(messageArguments);
         return findOrSave(notification);
     }
 
     private Notification findOrSave(Notification notification) {
-        Notification existing = notificationDao.fetchUnresolvedByDefinition(notification);
+        var existing = notificationDao.fetchUnresolvedByDefinition(notification);
         if (existing != null) {
             return existing;
         } else {

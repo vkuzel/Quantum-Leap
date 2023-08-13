@@ -27,7 +27,7 @@ public class CliApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        String firstArg = args.length > 0 ? args[0] : "";
+        var firstArg = args.length > 0 ? args[0] : "";
         switch (firstArg) {
             case "rebuild":
                 environmentBuilder.dropEnvironment();
@@ -36,7 +36,7 @@ public class CliApplication implements CommandLineRunner {
                 break;
             default:
                 if (StringUtils.isBlank(firstArg)) {
-                    String msg = "No argument has been specified!\n" +
+                    var msg = "No argument has been specified!\n" +
                             "\n" +
                             "    build - for creating new environment (database).\n" +
                             "    rebuild - for removing existing environment and creating a new one.\n";

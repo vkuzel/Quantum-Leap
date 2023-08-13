@@ -38,16 +38,16 @@ public class EntityRegistry {
     @SuppressWarnings("rawtypes")
     @EventListener(ContextRefreshedEvent.class)
     public void initializeEntityMap() {
-        Map<String, DetailDao> detailDaoMap = applicationContext.getBeansOfType(DetailDao.class);
-        for (DetailDao detailDao : detailDaoMap.values()) {
+        var detailDaoMap = applicationContext.getBeansOfType(DetailDao.class);
+        for (var detailDao : detailDaoMap.values()) {
             addFromDaoToMap(detailDao, DetailDao::getDetailEntity, detailEntityMap);
         }
-        Map<String, ListDao> listDaoMap = applicationContext.getBeansOfType(ListDao.class);
-        for (ListDao listDao : listDaoMap.values()) {
+        var listDaoMap = applicationContext.getBeansOfType(ListDao.class);
+        for (var listDao : listDaoMap.values()) {
             addFromDaoToMap(listDao, ListDao::getListEntity, listEntityMap);
         }
-        Map<String, LookupDao> lookupDaoMap = applicationContext.getBeansOfType(LookupDao.class);
-        for (LookupDao lookupDao : lookupDaoMap.values()) {
+        var lookupDaoMap = applicationContext.getBeansOfType(LookupDao.class);
+        for (var lookupDao : lookupDaoMap.values()) {
             addFromDaoToMap(lookupDao, LookupDao::getLookupEntity, lookupEntityMap);
         }
     }
@@ -61,7 +61,7 @@ public class EntityRegistry {
             Function<DAO, Entity<?>> entityGetter,
             Map<EntityIdentifier<?>, Entity<?>> entityMap
     ) {
-        Entity<?> entity = entityGetter.apply(dao);
+        var entity = entityGetter.apply(dao);
         if (entity != null) {
             addToMap(entity, entityMap);
         }
@@ -73,12 +73,12 @@ public class EntityRegistry {
     ) {
         Validate.notNull(entity, "Entity not specified!");
 
-        EntityIdentifier<?> entityIdentifier = entity.getIdentifier();
-        Entity<?> originalEntity = entityMap.get(entityIdentifier);
+        var entityIdentifier = entity.getIdentifier();
+        var originalEntity = entityMap.get(entityIdentifier);
         if (originalEntity == null) {
             entityMap.put(entityIdentifier, entity);
         } else if (originalEntity != entity) {
-            String msg = "Two different entities for entity identifier {}, first: {}, second: {}";
+            var msg = "Two different entities for entity identifier {}, first: {}, second: {}";
             log.error(msg, entityIdentifier, entity, originalEntity);
         }
     }
@@ -88,7 +88,7 @@ public class EntityRegistry {
             EntityIdentifier<T> entityIdentifier,
             Map<EntityIdentifier<?>, Entity<?>> entityMap
     ) {
-        Entity<?> entity = entityMap.get(entityIdentifier);
+        var entity = entityMap.get(entityIdentifier);
         if (entity == null) {
             throw new IllegalArgumentException("Entity not found for identifier: " + entityIdentifier);
         }

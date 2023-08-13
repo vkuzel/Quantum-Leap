@@ -9,7 +9,6 @@ import org.springframework.stereotype.Component;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -31,9 +30,9 @@ public class IncrementService {
         Map<String, Integer> latestIncrementForModules = new HashMap<>();
         findAllIncrementsInClasspath().forEach(increment ->
                 latestIncrementForModules.compute(increment.getModuleName(), (moduleName, version) -> {
-                    Matcher matcher = INCREMENT_VERSION_PATTERN.matcher(increment.getResourcePath());
+                    var matcher = INCREMENT_VERSION_PATTERN.matcher(increment.getResourcePath());
                     if (matcher.find()) {
-                        int incrementVersion = Integer.parseInt(matcher.group(1));
+                        var incrementVersion = Integer.parseInt(matcher.group(1));
                         version = version == null ? incrementVersion : Integer.max(version, incrementVersion);
                     }
                     return version;
@@ -52,9 +51,9 @@ public class IncrementService {
     public List<IncrementScript> findAllIncrementsInClasspath() {
         return resourceManager.findInClasspath(INCREMENTS_LOCATION_PATTERN).stream()
                 .map(resourceWithModule -> {
-                    Matcher matcher = INCREMENT_VERSION_PATTERN.matcher(resourceWithModule.getResourcePath());
+                    var matcher = INCREMENT_VERSION_PATTERN.matcher(resourceWithModule.getResourcePath());
                     if (matcher.find()) {
-                        int incrementVersion = Integer.parseInt(matcher.group(1));
+                        var incrementVersion = Integer.parseInt(matcher.group(1));
                         return new IncrementScript(resourceWithModule, incrementVersion);
                     } else {
                         throw new IllegalStateException("Unknown increment file path " + resourceWithModule.getResourcePath() + "!");

@@ -6,11 +6,12 @@ import cz.quantumleap.core.database.entity.Entity;
 import cz.quantumleap.core.database.query.QueryConditionFactory;
 import cz.quantumleap.core.database.query.QueryUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jooq.DSLContext;
 import org.jooq.Record;
-import org.jooq.*;
+import org.jooq.Record2;
+import org.jooq.Table;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -43,8 +44,8 @@ public final class DefaultLookupDao<TABLE extends Table<? extends Record>> imple
     }
 
     public String fetchLabelById(Object id) {
-        Condition condition = entity.getPrimaryKeyConditionBuilder().buildFromId(id);
-        List<SortField<?>> sortFields = entity.getLookupOrderBy();
+        var condition = entity.getPrimaryKeyConditionBuilder().buildFromId(id);
+        var sortFields = entity.getLookupOrderBy();
 
         return dslContext.select(entity.getLookupLabelField())
                 .from(entity.getTable())
@@ -54,9 +55,9 @@ public final class DefaultLookupDao<TABLE extends Table<? extends Record>> imple
     }
 
     public Map<Object, String> fetchLabelsById(Set<Object> ids) {
-        Field<?> primaryKey = entity.getPrimaryKeyField();
-        Condition condition = entity.getPrimaryKeyConditionBuilder().buildFromIds(ids);
-        List<SortField<?>> sortFields = entity.getLookupOrderBy();
+        var primaryKey = entity.getPrimaryKeyField();
+        var condition = entity.getPrimaryKeyConditionBuilder().buildFromIds(ids);
+        var sortFields = entity.getLookupOrderBy();
 
         return dslContext.select(primaryKey, entity.getLookupLabelField())
                 .from(entity.getTable())
@@ -71,13 +72,13 @@ public final class DefaultLookupDao<TABLE extends Table<? extends Record>> imple
             return Collections.emptyMap();
         }
 
-        Field<?> primaryKey = entity.getPrimaryKeyField();
-        Condition condition = QueryUtils.joinConditions(
+        var primaryKey = entity.getPrimaryKeyField();
+        var condition = QueryUtils.joinConditions(
                 AND,
                 entity.getCondition(),
                 queryConditionFactory.forQuery(query)
         );
-        List<SortField<?>> sortFields = entity.getLookupOrderBy();
+        var sortFields = entity.getLookupOrderBy();
 
         return dslContext.select(primaryKey, entity.getLookupLabelField())
                 .from(entity.getTable())

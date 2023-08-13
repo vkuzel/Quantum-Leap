@@ -35,7 +35,7 @@ public class NotificationDao extends DaoStub<NotificationTable> {
     }
 
     public Notification fetch(long personId, long id) {
-        Condition condition = NOTIFICATION.ID.eq(id).and(createPersonNotificationsCondition(personId));
+        var condition = NOTIFICATION.ID.eq(id).and(createPersonNotificationsCondition(personId));
         return super.fetchByCondition(condition, Notification.class);
     }
 
@@ -44,20 +44,20 @@ public class NotificationDao extends DaoStub<NotificationTable> {
     }
 
     Notification fetchUnresolvedByDefinition(Notification notification) {
-        String code = notification.getCode();
-        List<String> arguments = notification.getMessageArguments();
-        Long personId = notification.getPersonId();
-        Long roleId = notification.getRoleId();
+        var code = notification.getCode();
+        var arguments = notification.getMessageArguments();
+        var personId = notification.getPersonId();
+        var roleId = notification.getRoleId();
 
-        Condition condition = NOTIFICATION.CODE.eq(code)
+        var condition = NOTIFICATION.CODE.eq(code)
                 .and(NOTIFICATION.RESOLVED_AT.isNull());
         if (!arguments.isEmpty()) {
             if (arguments.size() > 100) {
-                String msg = format("Notification %d has too many arguments: %d!", code, arguments.size());
+                var msg = format("Notification %d has too many arguments: %d!", code, arguments.size());
                 throw new IllegalStateException(msg);
             }
 
-            String params = arguments.stream().map(a -> "?").collect(Collectors.joining(","));
+            var params = arguments.stream().map(a -> "?").collect(Collectors.joining(","));
             condition = condition.and("message_arguments = ARRAY[" + params + "] :: VARCHAR[]", arguments.toArray());
         } else {
             condition = condition.and("message_arguments = ARRAY[] :: VARCHAR[]", arguments.toArray());
@@ -77,9 +77,9 @@ public class NotificationDao extends DaoStub<NotificationTable> {
     }
 
     public List<Notification> fetchUnresolvedByPersonId(long personId, int limit) {
-        Condition condition = NOTIFICATION.RESOLVED_AT.isNull().and(createPersonNotificationsCondition(personId));
-        Sort sort = Sort.by(ASC, "id");
-        FetchParams params = FetchParams.empty().addCondition(condition).withSort(sort).withSize(limit);
+        var condition = NOTIFICATION.RESOLVED_AT.isNull().and(createPersonNotificationsCondition(personId));
+        var sort = Sort.by(ASC, "id");
+        var params = FetchParams.empty().addCondition(condition).withSort(sort).withSize(limit);
         return super.fetchList(params, Notification.class);
     }
 

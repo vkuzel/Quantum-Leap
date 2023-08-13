@@ -1,9 +1,12 @@
 package cz.quantumleap.core.database.query;
 
 import cz.quantumleap.core.database.EntityRegistry;
-import cz.quantumleap.core.database.entity.*;
-import org.jooq.*;
+import cz.quantumleap.core.database.entity.Entity;
+import cz.quantumleap.core.database.entity.EnumMetaType;
+import cz.quantumleap.core.database.entity.LookupMetaType;
+import cz.quantumleap.core.database.entity.SetMetaType;
 import org.jooq.Record;
+import org.jooq.*;
 import org.jooq.impl.DSL;
 
 import java.util.ArrayList;
@@ -27,20 +30,20 @@ public class SliceQueryFieldsFactory {
     }
 
     public QueryFields createQueryFields() {
-        List<Field<?>> entityFields = entity.getFields();
+        var entityFields = entity.getFields();
 
         List<Function<SelectJoinStep<Record>, SelectJoinStep<Record>>> joinTables = new ArrayList<>();
         Map<String, Field<?>> queryFieldMap = new HashMap<>(entityFields.size());
         Map<String, Field<?>> filterFieldMap = new HashMap<>(entityFields.size());
         Map<String, Field<?>> orderFieldMap = new HashMap<>(entityFields.size());
 
-        for (Field<?> field : entityFields) {
-            FieldMetaType fieldMetaType = entity.getFieldMetaType(field);
+        for (var field : entityFields) {
+            var fieldMetaType = entity.getFieldMetaType(field);
             if (fieldMetaType instanceof EnumMetaType) {
-                Table<?> enumTable = resolveTableAlias(ENUM_VALUE, field);
-                String enumId = fieldMetaType.asEnum().getEnumId();
+                var enumTable = resolveTableAlias(ENUM_VALUE, field);
+                var enumId = fieldMetaType.asEnum().getEnumId();
 
-                Field<String> enumField = getTypedField(field, String.class);
+                var enumField = getTypedField(field, String.class);
                 Field<?> labelField = getFieldSafely(enumTable, ENUM_VALUE.LABEL).as(field);
 
                 putFieldToMap(labelField, queryFieldMap);
@@ -53,7 +56,7 @@ public class SliceQueryFieldsFactory {
                         joinTables
                 );
             } else if (fieldMetaType instanceof SetMetaType) {
-                String enumId = fieldMetaType.asSet().getEnumId();
+                var enumId = fieldMetaType.asSet().getEnumId();
 
                 Field<?> setField = DSL.coalesce(
                         DSL
@@ -68,14 +71,14 @@ public class SliceQueryFieldsFactory {
                 putFieldToMap(setField, filterFieldMap);
                 putFieldToMap(setField, orderFieldMap);
             } else if (fieldMetaType instanceof LookupMetaType) {
-                EntityIdentifier<?> lookupEntityIdentifier = fieldMetaType.asLookup().getEntityIdentifier();
-                Entity<?> lookupEntity = entityRegistry.getLookupEntity(lookupEntityIdentifier);
-                Table<?> lookupTable = resolveTableAlias(lookupEntity.getTable(), field);
+                var lookupEntityIdentifier = fieldMetaType.asLookup().getEntityIdentifier();
+                var lookupEntity = entityRegistry.getLookupEntity(lookupEntityIdentifier);
+                var lookupTable = resolveTableAlias(lookupEntity.getTable(), field);
 
-                String lookupFieldName = resolveLookupFieldName(field);
+                var lookupFieldName = resolveLookupFieldName(field);
                 Field<?> lookupField = lookupEntity.buildLookupLabelFieldForTable(lookupTable);
-                Field<Object> lookupPrimaryKey = getTypedField(lookupEntity.getPrimaryKeyField(), Object.class);
-                Field<Object> aliasedLookupPrimaryKey = getFieldSafely(lookupTable, lookupPrimaryKey);
+                var lookupPrimaryKey = getTypedField(lookupEntity.getPrimaryKeyField(), Object.class);
+                var aliasedLookupPrimaryKey = getFieldSafely(lookupTable, lookupPrimaryKey);
 
                 putFieldToMap(field, queryFieldMap);
                 putFieldToMap(lookupField.as(lookupFieldName), queryFieldMap);
@@ -119,7 +122,7 @@ public class SliceQueryFieldsFactory {
     }
 
     private <T> Field<T> getFieldSafely(Table<?> table, Field<T> field) {
-        Field<T> safeField = table.field(field);
+        var safeField = table.field(field);
         if (safeField != null) {
             return safeField;
         } else {
@@ -132,7 +135,7 @@ public class SliceQueryFieldsFactory {
         if (type.isAssignableFrom(field.getType())) {
             return (Field<T>) field;
         } else {
-            String msg = "Field " + field + " of type " + field.getType() + " cannot be cast to type " + type;
+            var msg = "Field " + field + " of type " + field.getType() + " cannot be cast to type " + type;
             throw new IllegalArgumentException(msg);
         }
     }

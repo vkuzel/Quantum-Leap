@@ -3,7 +3,6 @@ package cz.quantumleap.admin.menu;
 import cz.quantumleap.core.view.WebUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.servlet.mvc.condition.PathPatternsRequestCondition;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 
 import java.util.ArrayList;
@@ -36,11 +35,11 @@ public class AdminMenuItem {
     }
 
     public String getPath() {
-        for (RequestMappingInfo info : requestMappingInfoList) {
-            PathPatternsRequestCondition pathPatternsCondition = info.getPathPatternsCondition();
+        for (var info : requestMappingInfoList) {
+            var pathPatternsCondition = info.getPathPatternsCondition();
             if (pathPatternsCondition == null) continue;
 
-            for (String path : pathPatternsCondition.getDirectPaths()) {
+            for (var path : pathPatternsCondition.getDirectPaths()) {
                 return path;
             }
         }
@@ -53,7 +52,7 @@ public class AdminMenuItem {
         }
 
         WebUtils.cacheRequestPath(request);
-        for (RequestMappingInfo requestMappingInfo : requestMappingInfoList) {
+        for (var requestMappingInfo : requestMappingInfoList) {
             if (requestMappingInfo.getMatchingCondition(request) != null) {
                 return true;
             }
@@ -82,7 +81,7 @@ public class AdminMenuItem {
     }
 
     public static Builder fromMenuItem(AdminMenuItem adminMenuItem) {
-        Builder builder = new Builder();
+        var builder = new Builder();
         builder.requestMappingInfoList = adminMenuItem.requestMappingInfoList;
         builder.adminMenuItemDefinition = adminMenuItem.adminMenuItemDefinition;
         builder.preAuthorize = adminMenuItem.preAuthorize;

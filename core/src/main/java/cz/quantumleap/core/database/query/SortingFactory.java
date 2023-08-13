@@ -3,8 +3,6 @@ package cz.quantumleap.core.database.query;
 import cz.quantumleap.core.database.domain.FetchParams;
 import org.jooq.Field;
 import org.jooq.SortField;
-import org.jooq.SortOrder;
-import org.springframework.data.domain.Sort;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -24,15 +22,15 @@ public final class SortingFactory {
     }
 
     public List<SortField<?>> forFetchParams(FetchParams params) {
-        Sort sort = params.getSort();
+        var sort = params.getSort();
         if (sort == null || sort.isUnsorted()) {
             return Collections.emptyList();
         }
 
         List<SortField<?>> sortFields = new ArrayList<>();
-        for (Sort.Order order : sort) {
+        for (var order : sort) {
             Field<?> field = getFieldSafely(fieldMap, order.getProperty());
-            SortOrder sortOrder = order.isAscending() ? ASC : DESC;
+            var sortOrder = order.isAscending() ? ASC : DESC;
             sortFields.add(field.sort(sortOrder));
         }
 

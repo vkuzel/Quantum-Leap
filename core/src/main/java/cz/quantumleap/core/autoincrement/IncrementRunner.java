@@ -39,8 +39,8 @@ public class IncrementRunner {
     @PostConstruct
     public void runIncrements() {
         if (!environment.acceptsProfiles(Profiles.of("test"))) {
-            Map<String, Integer> lastIncrements = incrementDao.loadLastIncrementVersionForModules();
-            List<IncrementService.IncrementScript> incrementScripts = incrementService.findAllIncrementsInClasspath();
+            var lastIncrements = incrementDao.loadLastIncrementVersionForModules();
+            var incrementScripts = incrementService.findAllIncrementsInClasspath();
 
             runIncrements(lastIncrements, incrementScripts);
         }
@@ -49,13 +49,13 @@ public class IncrementRunner {
     void runIncrements(Map<String, Integer> lastIncrements, List<IncrementService.IncrementScript> incrementScripts) {
         Map<Pair<String, Integer>, List<Resource>> moduleVersionScripts = new LinkedHashMap<>();
 
-        for (IncrementService.IncrementScript incrementScript : incrementScripts) {
+        for (var incrementScript : incrementScripts) {
             int lastIncrementVersion = lastIncrements.getOrDefault(incrementScript.getModuleName(), 0);
             if (incrementScript.getIncrementVersion() <= lastIncrementVersion) {
                 continue;
             }
 
-            Pair<String, Integer> moduleVersion = Pair.of(incrementScript.getModuleName(), incrementScript.getIncrementVersion());
+            var moduleVersion = Pair.of(incrementScript.getModuleName(), incrementScript.getIncrementVersion());
             moduleVersionScripts.compute(moduleVersion, (mv, scripts) -> {
                 if (scripts == null) {
                     scripts = new ArrayList<>();
@@ -79,7 +79,7 @@ public class IncrementRunner {
                     .sorted(Comparator.comparing(Resource::getFilename))
                     .forEach(script -> {
                         log.info("Running {}", script.getFilename());
-                        String sql = Utils.readResourceToString(script);
+                        var sql = Utils.readResourceToString(script);
                         dslContext.execute(sql);
                         incrementDao.save(createIncrement(moduleName, version, script.getFilename()));
                     });
@@ -87,7 +87,7 @@ public class IncrementRunner {
     }
 
     private Increment createIncrement(String module, int version, String fileName) {
-        Increment increment = new Increment();
+        var increment = new Increment();
         increment.setModule(module);
         increment.setVersion(version);
         increment.setFileName(fileName);

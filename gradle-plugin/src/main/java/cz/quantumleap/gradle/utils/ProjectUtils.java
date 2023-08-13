@@ -1,7 +1,6 @@
 package cz.quantumleap.gradle.utils;
 
 import org.gradle.api.Project;
-import org.gradle.api.plugins.ExtraPropertiesExtension;
 import org.gradle.api.plugins.JavaPluginExtension;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.SourceSetContainer;
@@ -19,9 +18,9 @@ public class ProjectUtils {
 
     public static String getExtraProperty(Project project, String propertyName, String defaultValue) {
         project.getLogger().debug("Getting extra property " + propertyName + " from project " + project.getName());
-        ExtraPropertiesExtension ext = project.getExtensions().getExtraProperties();
+        var ext = project.getExtensions().getExtraProperties();
         if (ext.has(propertyName)) {
-            Object property = ext.get(propertyName);
+            var property = ext.get(propertyName);
             if (property != null) {
                 if (property instanceof String) {
                     return (String) property;
@@ -39,7 +38,7 @@ public class ProjectUtils {
 
     public static void setExtraProperty(Project project, String propertyName, String propertyValue) {
         project.getLogger().debug("Setting extra property " + propertyName + "=" + propertyValue + " to project " + project.getName());
-        ExtraPropertiesExtension ext = project.getExtensions().getExtraProperties();
+        var ext = project.getExtensions().getExtraProperties();
         if (ext.has(propertyName)) {
             project.getLogger().warn("Extra property " + propertyName + " is already set and it will be overwritten.");
         }
@@ -56,7 +55,7 @@ public class ProjectUtils {
     }
 
     private static IllegalArgumentException createResourceFileNotFoundException(Project project, String path) {
-        String resourceDirs = getResourceDirsStream(project).map(File::getAbsolutePath).collect(Collectors.joining(", "));
+        var resourceDirs = getResourceDirsStream(project).map(File::getAbsolutePath).collect(Collectors.joining(", "));
         return new IllegalArgumentException("File " + path + " not found in project resources! Searched dirs " + resourceDirs);
     }
 
@@ -66,7 +65,7 @@ public class ProjectUtils {
     }
 
     private static Set<File> getMainSourceSetResourceDirs(Project project) {
-        SourceSet mainSourceSet = getSourceSets(project).getByName(SourceSet.MAIN_SOURCE_SET_NAME);
+        var mainSourceSet = getSourceSets(project).getByName(SourceSet.MAIN_SOURCE_SET_NAME);
         return mainSourceSet.getResources().getSrcDirs();
     }
 }

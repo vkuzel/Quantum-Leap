@@ -15,8 +15,8 @@ public class ModuleDependencies {
 
     ModuleDependencies(Resource dependenciesFile, com.github.vkuzel.gradleprojectdependencies.ModuleDependencies moduleDependencies) {
         this.moduleDependencies = moduleDependencies;
-        String dependenciesFileName = dependenciesFile.getFilename();
-        String dependenciesFilePath = resourceToStringPath(dependenciesFile);
+        var dependenciesFileName = dependenciesFile.getFilename();
+        var dependenciesFilePath = resourceToStringPath(dependenciesFile);
         Validate.notNull(dependenciesFileName);
         projectPath = dependenciesFilePath.substring(0, dependenciesFilePath.lastIndexOf(dependenciesFileName));
     }
@@ -26,9 +26,9 @@ public class ModuleDependencies {
     }
 
     public boolean containsResource(Resource resource) {
-        String resourcePath = resourceToStringPath(resource);
+        var resourcePath = resourceToStringPath(resource);
         if (resourcePath.startsWith(projectPath)) {
-            String withoutProjectPath = resourcePath.substring(projectPath.length());
+            var withoutProjectPath = resourcePath.substring(projectPath.length());
             return !withoutProjectPath.contains(ResourceUtils.JAR_URL_SEPARATOR);
         }
         return false;
@@ -40,8 +40,8 @@ public class ModuleDependencies {
 
     private String resourceToStringPath(Resource resource) {
         try {
-            String path = resource.getURL().getPath();
-            Charset charset = Charset.defaultCharset();
+            var path = resource.getURL().getPath();
+            var charset = Charset.defaultCharset();
             return URLDecoder.decode(path, charset);
         } catch (IOException e) {
             throw new IllegalStateException(e);

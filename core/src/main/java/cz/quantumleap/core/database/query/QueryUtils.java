@@ -6,7 +6,6 @@ import org.jooq.*;
 import org.jooq.impl.DSL;
 
 import java.util.*;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public final class QueryUtils {
@@ -16,7 +15,7 @@ public final class QueryUtils {
     private static final Pattern SQL_REGEXP_SPECIAL_CHARACTERS_PATTERN = Pattern.compile("[!$()*+.:<=>?\\\\\\[\\]^{|}\\-]");
 
     public static String resolveDatabaseTableNameWithSchema(Table<?> table) {
-        String name = table.getName();
+        var name = table.getName();
         if (table.getSchema() != null) {
             name = table.getSchema().getName() + "." + name;
         }
@@ -24,12 +23,12 @@ public final class QueryUtils {
     }
 
     public static Table<?> resolveTableAlias(Table<?> table, Field<?> field) {
-        String alias = "t_" + field.getName();
+        var alias = "t_" + field.getName();
         return table.as(alias);
     }
 
     public static String resolveLookupFieldName(Field<?> field) {
-        String fieldName = field.getName();
+        var fieldName = field.getName();
         if (fieldName.endsWith("_id")) {
             return StringUtils.removeEnd(fieldName, "_id");
         } else {
@@ -43,8 +42,8 @@ public final class QueryUtils {
 
     public static Map<String, Field<?>> createFieldMap(List<Field<?>> fields) {
         Map<String, Field<?>> fieldMap = new HashMap<>(fields.size());
-        for (Field<?> field : fields) {
-            String name = normalizeFieldName(field.getName());
+        for (var field : fields) {
+            var name = normalizeFieldName(field.getName());
             fieldMap.put(name, field);
         }
         return fieldMap;
@@ -56,10 +55,10 @@ public final class QueryUtils {
 
     @SuppressWarnings("unchecked")
     public static Field<Object> getFieldSafely(Map<String, Field<?>> fieldMap, String fieldName) {
-        String normalized = normalizeFieldName(fieldName);
-        Field<?> field = fieldMap.get(normalized);
+        var normalized = normalizeFieldName(fieldName);
+        var field = fieldMap.get(normalized);
         if (field == null) {
-            String names = String.join(", ", fieldMap.keySet());
+            var names = String.join(", ", fieldMap.keySet());
             throw new IllegalArgumentException("Field" + normalized + " not found in " + names);
         }
         return (Field<Object>) field;
@@ -72,9 +71,9 @@ public final class QueryUtils {
         }
 
         Condition condition = null;
-        String pattern = "(^|[^a-z0-9])" + escapeSqlRegexpBinding(word);
+        var pattern = "(^|[^a-z0-9])" + escapeSqlRegexpBinding(word);
 
-        for (Field<String> field : fields) {
+        for (var field : fields) {
             condition = joinConditions(ConditionOperator.OR, condition, DSL.condition("unaccent({0}) ~* unaccent({1})", field, pattern));
         }
 
@@ -83,7 +82,7 @@ public final class QueryUtils {
 
     public static Condition joinConditions(ConditionOperator operator, Condition... conditions) {
         Condition condition = null;
-        for (Condition cond : conditions) {
+        for (var cond : conditions) {
             if (cond == null) {
             } else if (condition == null) {
                 condition = cond;
@@ -101,7 +100,7 @@ public final class QueryUtils {
             return DSL.falseCondition();
         }
 
-        String binding = escapeSqlLikeBinding(value, '!');
+        var binding = escapeSqlLikeBinding(value, '!');
         return field.likeIgnoreCase(binding + "%");
     }
 
@@ -110,7 +109,7 @@ public final class QueryUtils {
             return binding;
         }
 
-        String escapeString = String.valueOf(escapeChar);
+        var escapeString = String.valueOf(escapeChar);
         return binding
                 .replace(escapeString, escapeString + escapeString)
                 .replace("%", escapeChar + "%")
@@ -122,7 +121,7 @@ public final class QueryUtils {
             return binding;
         }
 
-        Matcher matcher = SQL_REGEXP_SPECIAL_CHARACTERS_PATTERN.matcher(binding);
+        var matcher = SQL_REGEXP_SPECIAL_CHARACTERS_PATTERN.matcher(binding);
         return matcher.replaceAll("\\\\$0");
     }
 
@@ -132,7 +131,7 @@ public final class QueryUtils {
 
     public static Object[] createSqlBindings(Object... params) {
         List<Object> bindings = new ArrayList<>(params.length);
-        for (Object param : params) {
+        for (var param : params) {
             if (param instanceof Collection) {
                 bindings.addAll((Collection<?>) param);
             } else {

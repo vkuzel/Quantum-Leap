@@ -3,13 +3,11 @@ package cz.quantumleap.core.view.template;
 import cz.quantumleap.core.resource.ResourceManager;
 import org.apache.commons.lang3.Validate;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafProperties;
-import org.springframework.core.io.Resource;
 import org.thymeleaf.IEngineConfiguration;
 import org.thymeleaf.templateresolver.AbstractConfigurableTemplateResolver;
 import org.thymeleaf.templateresource.ITemplateResource;
 
 import java.util.Map;
-import java.util.Optional;
 
 public class ThemeTemplateResolver extends AbstractConfigurableTemplateResolver {
 
@@ -41,7 +39,7 @@ public class ThemeTemplateResolver extends AbstractConfigurableTemplateResolver 
 
     @Override
     protected ITemplateResource computeTemplateResource(IEngineConfiguration configuration, String ownerTemplate, String template, String resourceName, String characterEncoding, Map<String, Object> templateResolutionAttributes) {
-        Optional<Resource> optional = resourceManager.findMostSpecificInClasspathOrWorkingDir(resourceName);
+        var optional = resourceManager.findMostSpecificInClasspathOrWorkingDir(resourceName);
         return optional
                 .map(resource -> new ThemeTemplateResource(resource, getCharacterEncoding()))
                 .orElseThrow(() -> new IllegalStateException("No template found for " + resourceName));

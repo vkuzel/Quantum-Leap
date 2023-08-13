@@ -18,7 +18,7 @@ public final class DefaultListService implements ListService {
 
     @Override
     public <TABLE extends Table<? extends Record>> EntityIdentifier<?> getListEntityIdentifier(Class<TABLE> type) {
-        EntityIdentifier<?> entityIdentifier = listDao.getListEntity().getIdentifier();
+        var entityIdentifier = listDao.getListEntity().getIdentifier();
         return Utils.checkTableType(entityIdentifier, type);
     }
 

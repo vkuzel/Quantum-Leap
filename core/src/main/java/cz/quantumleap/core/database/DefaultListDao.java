@@ -7,12 +7,13 @@ import cz.quantumleap.core.database.query.*;
 import cz.quantumleap.core.database.query.SliceQueryFieldsFactory.QueryFields;
 import cz.quantumleap.core.slicequery.SliceQueryDao;
 import cz.quantumleap.core.slicequery.domain.SliceQuery;
-import org.jooq.*;
+import org.jooq.DSLContext;
 import org.jooq.Record;
+import org.jooq.Result;
+import org.jooq.Table;
 import org.springframework.data.domain.Sort;
 
 import java.util.List;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static cz.quantumleap.core.database.query.QueryUtils.ConditionOperator.AND;
@@ -55,22 +56,22 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
     @Override
     public Slice fetchSlice(FetchParams params) {
         initFactories();
-        List<SliceQuery> sliceQueries = sliceQueryDao.fetchByIdentifierForCurrentUser(entity.getIdentifier());
+        var sliceQueries = sliceQueryDao.fetchByIdentifierForCurrentUser(entity.getIdentifier());
         params = setParamsDefaultValues(params, sliceQueries);
 
-        Condition condition = QueryUtils.joinConditions(
+        var condition = QueryUtils.joinConditions(
                 AND,
                 entity.getCondition(),
                 params.getCondition(),
                 sliceFilterConditionFactory.forFilter(params.getFilter()),
                 sliceQueryConditionFactory.forQuery(params.getQuery())
         );
-        List<SortField<?>> orderBy = sliceSortingFactory.forFetchParams(params);
+        var orderBy = sliceSortingFactory.forFetchParams(params);
 
-        SelectJoinStep<Record> selectJoinStep = dslContext
+        var selectJoinStep = dslContext
                 .select(sliceQueryFields.getQueryFieldMap().values())
                 .from(entity.getTable());
-        for (Function<SelectJoinStep<Record>, SelectJoinStep<Record>> joinTable : sliceQueryFields.getJoinTables()) {
+        for (var joinTable : sliceQueryFields.getJoinTables()) {
             selectJoinStep = joinTable.apply(selectJoinStep);
         }
         Result<?> result = selectJoinStep
@@ -88,9 +89,9 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
 
     private FetchParams setParamsDefaultValues(FetchParams fetchParams, List<SliceQuery> sliceQueries) {
         if (fetchParams.getQuery() == null) {
-            for (SliceQuery sliceQuery : sliceQueries) {
+            for (var sliceQuery : sliceQueries) {
                 if (sliceQuery.isDefault()) {
-                    String query = sliceQuery.getQuery();
+                    var query = sliceQuery.getQuery();
                     fetchParams = fetchParams.withQuery(query);
                     break;
                 }
@@ -98,8 +99,8 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
         }
 
         if (fetchParams.getSort() == null || fetchParams.getSort().isUnsorted()) {
-            List<Field<?>> primaryKeyFields = entity.getPrimaryKeyFields();
-            List<Sort.Order> orders = primaryKeyFields.stream()
+            var primaryKeyFields = entity.getPrimaryKeyFields();
+            var orders = primaryKeyFields.stream()
                     .map(field -> Sort.Order.desc(field.getName()))
                     .collect(Collectors.toList());
             fetchParams = fetchParams.withSort(Sort.by(orders));
@@ -112,14 +113,14 @@ public final class DefaultListDao<TABLE extends Table<? extends Record>> impleme
     public <T> List<T> fetchList(FetchParams params, Class<T> type) {
         initFactories();
 
-        Condition conditions = joinConditions(
+        var conditions = joinConditions(
                 AND,
                 entity.getCondition(),
                 params.getCondition(),
                 listFilterConditionFactory.forFilter(params.getFilter()),
                 listQueryConditionFactory.forQuery(params.getQuery())
         );
-        List<SortField<?>> orderBy = listSortingFactory.forFetchParams(params);
+        var orderBy = listSortingFactory.forFetchParams(params);
 
         return dslContext.selectFrom(entity.getTable())
                 .where(conditions)

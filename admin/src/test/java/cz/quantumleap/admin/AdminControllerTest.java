@@ -16,7 +16,6 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.server.RequestPath;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.util.ServletRequestPathUtils;
 import org.springframework.web.util.UrlPathHelper;
 
@@ -45,40 +44,40 @@ public class AdminControllerTest {
 
     @Test
     public void onlyAccessibleMenuItemsAreReturned() {
-        HttpServletRequest httpServletRequest = mock(HttpServletRequest.class);
+        var httpServletRequest = mock(HttpServletRequest.class);
         doReturn(ANY_REQUEST_PATH).when(httpServletRequest).getAttribute(ServletRequestPathUtils.PATH_ATTRIBUTE);
         doReturn(ANY_PATH).when(httpServletRequest).getAttribute(UrlPathHelper.PATH_ATTRIBUTE);
-        HttpServletResponse httpServletResponse = mock(HttpServletResponse.class);
+        var httpServletResponse = mock(HttpServletResponse.class);
 
         doReturn(true).when(webSecurityExpressionEvaluator).evaluate("authorized", httpServletRequest, httpServletResponse);
         doReturn(false).when(webSecurityExpressionEvaluator).evaluate("unauthorized", httpServletRequest, httpServletResponse);
 
-        AdminMenuItem accessibleMenuItem = createMenuItem("authorized", Collections.emptyList());
-        AdminMenuItem inaccessibleMenuItem = createMenuItem("unauthorized", Collections.emptyList());
-        AdminMenuItem accessibleMenuItemWithChildren = createMenuItem("authorized", List.of(
+        var accessibleMenuItem = createMenuItem("authorized", Collections.emptyList());
+        var inaccessibleMenuItem = createMenuItem("unauthorized", Collections.emptyList());
+        var accessibleMenuItemWithChildren = createMenuItem("authorized", List.of(
                 accessibleMenuItem,
                 inaccessibleMenuItem
         ));
-        List<AdminMenuItem> adminMenuItems = List.of(
+        var adminMenuItems = List.of(
                 inaccessibleMenuItem,
                 accessibleMenuItemWithChildren
         );
         Mockito.doReturn(adminMenuItems).when(adminMenuManager).getMenuItems();
-        AdminController controller = new AdminController(adminMenuManager, personService, notificationService, webSecurityExpressionEvaluator) {
+        var controller = new AdminController(adminMenuManager, personService, notificationService, webSecurityExpressionEvaluator) {
         };
 
-        List<AdminMenuItem> menuItems = controller.getMenuItems(httpServletRequest, httpServletResponse);
+        var menuItems = controller.getMenuItems(httpServletRequest, httpServletResponse);
 
         Assertions.assertEquals(1, menuItems.size());
-        AdminMenuItem menuItem = menuItems.get(0);
+        var menuItem = menuItems.get(0);
         Assertions.assertEquals(1, menuItem.getChildren().size());
         Assertions.assertEquals(accessibleMenuItem.getPath(), menuItem.getChildren().get(0).getPath());
     }
 
     private AdminMenuItem createMenuItem(String securityExpression, List<AdminMenuItem> children) {
-        List<RequestMappingInfo> requestMappingInfoList = singletonList(requestMappingInfoBuilder("path").build());
-        AdminMenuItemDefinition adminMenuItemDefinition = mock(AdminMenuItemDefinition.class);
-        PreAuthorize preAuthorize = mock(PreAuthorize.class);
+        var requestMappingInfoList = singletonList(requestMappingInfoBuilder("path").build());
+        var adminMenuItemDefinition = mock(AdminMenuItemDefinition.class);
+        var preAuthorize = mock(PreAuthorize.class);
         doReturn(securityExpression).when(preAuthorize).value();
 
         return new AdminMenuItem(requestMappingInfoList, adminMenuItemDefinition, preAuthorize, AdminMenuItem.State.NONE, children);

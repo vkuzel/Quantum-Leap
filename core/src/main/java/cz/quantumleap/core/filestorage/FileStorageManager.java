@@ -44,11 +44,11 @@ public class FileStorageManager {
         Validate.isTrue(StringUtils.isNotBlank(directory));
         Validate.isTrue(!multipartFile.isEmpty());
 
-        Path filePath = createFilePath(directory, multipartFile);
+        var filePath = createFilePath(directory, multipartFile);
         ensureDirectoryExists(filePath.getParent());
 
         try {
-            File file = filePath.toAbsolutePath().toFile();
+            var file = filePath.toAbsolutePath().toFile();
             log.debug("Saving multipart file {} as {}", multipartFile.getName(), file);
             multipartFile.transferTo(file);
             return convertPathToUrl(filePath);
@@ -74,8 +74,8 @@ public class FileStorageManager {
         ensureDirectoryExists(path.getParent());
         log.debug("Creating file {}", path);
 
-        try (OutputStream outputStream = Files.newOutputStream(path, StandardOpenOption.CREATE, StandardOpenOption.WRITE);
-             BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(outputStream)) {
+        try (var outputStream = Files.newOutputStream(path, StandardOpenOption.CREATE, StandardOpenOption.WRITE);
+             var bufferedOutputStream = new BufferedOutputStream(outputStream)) {
             supplier.accept(bufferedOutputStream);
         } catch (IOException e) {
             throw new IllegalStateException(e);
@@ -87,8 +87,8 @@ public class FileStorageManager {
             return defaultValue;
         }
 
-        try (InputStream inputStream = Files.newInputStream(path, StandardOpenOption.READ);
-             BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream)) {
+        try (var inputStream = Files.newInputStream(path, StandardOpenOption.READ);
+             var bufferedInputStream = new BufferedInputStream(inputStream)) {
             return reader.apply(bufferedInputStream);
         } catch (IOException e) {
             throw new IllegalStateException(e);
@@ -97,7 +97,7 @@ public class FileStorageManager {
 
     public void deleteFileByUrl(String url) {
         Validate.isTrue(StringUtils.isNotBlank(url));
-        Path path = convertUrlToPath(url);
+        var path = convertUrlToPath(url);
         deleteFile(path);
     }
 
@@ -115,13 +115,13 @@ public class FileStorageManager {
 
     public String convertPathToUrl(Path path) {
         Validate.isTrue(path.startsWith(fileStorageDirectory), "Path " + path + " is not storage path!");
-        String pathSuffix = path.toString().substring(fileStorageDirectory.length());
+        var pathSuffix = path.toString().substring(fileStorageDirectory.length());
         return STORAGE_URL_PREFIX + pathSuffix;
     }
 
     public Path convertUrlToPath(String url) {
         Validate.isTrue(url.startsWith(STORAGE_URL_PREFIX), "URL " + url + " is not storage URL!");
-        String urlSuffix = url.substring(STORAGE_URL_PREFIX.length());
+        var urlSuffix = url.substring(STORAGE_URL_PREFIX.length());
         return Paths.get(fileStorageDirectory, urlSuffix);
     }
 
@@ -133,20 +133,20 @@ public class FileStorageManager {
      */
     public Path convertToTempDirectoryPath(Path path) {
         Validate.isTrue(path.startsWith(fileStorageDirectory), "Path " + path + " is not storage path!");
-        Path fileStoragePath = Paths.get(fileStorageDirectory);
+        var fileStoragePath = Paths.get(fileStorageDirectory);
         return Paths.get(fileStorageDirectory, TEMP_DIRECTORY, fileStoragePath.relativize(path).toString());
     }
 
     private Path createFilePath(String directory, MultipartFile multipartFile) { // TODO Resolve
-        String childDirectory = LocalDate.now().format(MONTH_FORMATTER);
-        String originalFilename = multipartFile.getOriginalFilename();
+        var childDirectory = LocalDate.now().format(MONTH_FORMATTER);
+        var originalFilename = multipartFile.getOriginalFilename();
 
-        Path filePath = Paths.get(fileStorageDirectory, directory, childDirectory, originalFilename);
-        int index = 1;
+        var filePath = Paths.get(fileStorageDirectory, directory, childDirectory, originalFilename);
+        var index = 1;
 
         while (Files.exists(filePath)) {
-            String baseName = FilenameUtils.getBaseName(originalFilename);
-            String extension = FilenameUtils.getExtension(originalFilename);
+            var baseName = FilenameUtils.getBaseName(originalFilename);
+            var extension = FilenameUtils.getExtension(originalFilename);
             filePath = filePath.resolveSibling(baseName + index++ + '.' + extension);
         }
 
@@ -159,14 +159,14 @@ public class FileStorageManager {
 
     @Scheduled(cron = "0 0 3 * * *")
     protected void deleteExpiredTempFiles() {
-        Path tempDirectoryPath = Paths.get(fileStorageDirectory, TEMP_DIRECTORY);
+        var tempDirectoryPath = Paths.get(fileStorageDirectory, TEMP_DIRECTORY);
 
         if (!Files.exists(tempDirectoryPath)) {
             return;
         }
 
-        long startTime = System.currentTimeMillis();
-        LocalDateTime monthAgo = LocalDateTime.now().minusMonths(TEMP_FILE_LIFESPAN_MONTHS);
+        var startTime = System.currentTimeMillis();
+        var monthAgo = LocalDateTime.now().minusMonths(TEMP_FILE_LIFESPAN_MONTHS);
 
         try {
             Files.walkFileTree(tempDirectoryPath, new ExpiredTempFilesDeletor(monthAgo));
@@ -177,7 +177,7 @@ public class FileStorageManager {
     }
 
     private void ensureDirectoryExists(Path directory) {
-        File directoryFile = directory.toFile();
+        var directoryFile = directory.toFile();
         if (!directoryFile.exists()) {
             Validate.isTrue(directoryFile.mkdirs(), "Directory " + directory + " cannot be created!");
         }
@@ -213,7 +213,7 @@ public class FileStorageManager {
         }
 
         private boolean isDirEmpty(final Path directory) throws IOException {
-            try (DirectoryStream<Path> dirStream = Files.newDirectoryStream(directory)) {
+            try (var dirStream = Files.newDirectoryStream(directory)) {
                 return !dirStream.iterator().hasNext();
             }
         }

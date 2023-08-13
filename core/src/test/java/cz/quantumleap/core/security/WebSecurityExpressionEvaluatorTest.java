@@ -30,15 +30,15 @@ public class WebSecurityExpressionEvaluatorTest {
 
     @Test
     public void filterInvocationSecrityHandlerEvaluatesExpression() {
-        Expression expression = Mockito.mock(Expression.class);
-        EvaluationContext evaluationContext = Mockito.mock(EvaluationContext.class);
+        var expression = Mockito.mock(Expression.class);
+        var evaluationContext = Mockito.mock(EvaluationContext.class);
         doReturn(true).when(expression).getValue(evaluationContext, Boolean.class);
-        ExpressionParser expressionParser = Mockito.mock(ExpressionParser.class);
+        var expressionParser = Mockito.mock(ExpressionParser.class);
         doReturn(expression).when(expressionParser).parseExpression("expression");
-        TestSecurityExpressionHandler testSecurityExpressionHandler = new TestSecurityExpressionHandler(expressionParser, evaluationContext);
-        WebSecurityExpressionEvaluator evaluator = new WebSecurityExpressionEvaluator(Collections.singletonList(testSecurityExpressionHandler));
+        var testSecurityExpressionHandler = new TestSecurityExpressionHandler(expressionParser, evaluationContext);
+        var evaluator = new WebSecurityExpressionEvaluator(Collections.singletonList(testSecurityExpressionHandler));
 
-        boolean result = evaluator.evaluate("expression", httpServletRequest, httpServletResponse);
+        var result = evaluator.evaluate("expression", httpServletRequest, httpServletResponse);
 
         Assertions.assertTrue(result);
     }

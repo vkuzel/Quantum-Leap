@@ -50,7 +50,7 @@ public class SpringBootPluginConfigurer {
     }
 
     private String findMainClass(RootProject rootProject, SpringBootProject springBootProject) {
-        String mainClass = ProjectUtils.getExtraProperty(rootProject.getProject(), MAIN_CLASS_PROPERTY_NAME, null);
+        var mainClass = ProjectUtils.getExtraProperty(rootProject.getProject(), MAIN_CLASS_PROPERTY_NAME, null);
         if (mainClass != null) {
             return mainClass;
         }
@@ -61,7 +61,7 @@ public class SpringBootPluginConfigurer {
         }
 
         try {
-            SourceSet mainSourceSet = ProjectUtils.getSourceSets(springBootProject.getProject()).getByName(SourceSet.MAIN_SOURCE_SET_NAME);
+            var mainSourceSet = ProjectUtils.getSourceSets(springBootProject.getProject()).getByName(SourceSet.MAIN_SOURCE_SET_NAME);
             return MainClassFinder.findMainClass(mainSourceSet.getOutput().getSingleFile());
         } catch (IOException e) {
             throw new IllegalStateException(e);

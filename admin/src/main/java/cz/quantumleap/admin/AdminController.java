@@ -6,7 +6,6 @@ import cz.quantumleap.admin.menu.AdminMenuManager;
 import cz.quantumleap.admin.notification.NotificationService;
 import cz.quantumleap.admin.person.PersonService;
 import cz.quantumleap.core.notification.domain.Notification;
-import cz.quantumleap.core.person.domain.Person;
 import cz.quantumleap.core.security.WebSecurityExpressionEvaluator;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -32,30 +31,30 @@ public abstract class AdminController {
 
     @ModelAttribute("adminMenuItems")
     public List<AdminMenuItem> getMenuItems(HttpServletRequest request, HttpServletResponse response) {
-        List<AdminMenuItem> menuItems = adminMenuManager.getMenuItems();
+        var menuItems = adminMenuManager.getMenuItems();
         return filterInaccessibleMenuItemsAndSetState(menuItems, request, response);
     }
 
     @ModelAttribute("unresolvedNotifications")
     public List<Notification> getUnresolvedNotifications(Authentication authentication) {
-        Person person = personService.fetchByAuthentication(authentication);
+        var person = personService.fetchByAuthentication(authentication);
         return notificationService.fetchUnresolvedByPersonId(person.getId());
     }
 
     private List<AdminMenuItem> filterInaccessibleMenuItemsAndSetState(List<AdminMenuItem> adminMenuItems, HttpServletRequest request, HttpServletResponse response) {
         List<AdminMenuItem> items = new ArrayList<>(adminMenuItems.size());
-        for (AdminMenuItem adminMenuItem : adminMenuItems) {
+        for (var adminMenuItem : adminMenuItems) {
             if (!canAccessMenuItem(adminMenuItem, request, response)) {
                 continue;
             }
 
-            AdminMenuItem.Builder builder = AdminMenuItem.fromMenuItem(adminMenuItem);
+            var builder = AdminMenuItem.fromMenuItem(adminMenuItem);
             if (adminMenuItem.matchesRequest(request)) {
                 builder.setState(State.ACTIVE);
             }
             if (!adminMenuItem.getChildren().isEmpty()) {
-                List<AdminMenuItem> children = filterInaccessibleMenuItemsAndSetState(adminMenuItem.getChildren(), request, response);
-                for (AdminMenuItem child : children) {
+                var children = filterInaccessibleMenuItemsAndSetState(adminMenuItem.getChildren(), request, response);
+                for (var child : children) {
                     if (child.getState() == State.ACTIVE) {
                         builder.setState(State.OPEN);
                         break;
@@ -70,7 +69,7 @@ public abstract class AdminController {
     }
 
     private boolean canAccessMenuItem(AdminMenuItem adminMenuItem, HttpServletRequest request, HttpServletResponse response) {
-        String securityExpression = adminMenuItem.getSecurityExpression();
+        var securityExpression = adminMenuItem.getSecurityExpression();
         return securityExpression == null || webSecurityExpressionEvaluator.evaluate(securityExpression, request, response);
     }
 }

@@ -1,7 +1,6 @@
 package cz.quantumleap.core.view;
 
 import cz.quantumleap.core.resource.ResourceManager;
-import cz.quantumleap.core.resource.ResourceWithModule;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Component;
@@ -27,7 +26,7 @@ public class MultiResourceMessageSource extends ResourceBundleMessageSource {
 
     @Override
     protected ResourceBundle doGetBundle(String basename, Locale locale) throws MissingResourceException {
-        ClassLoader bundleClassLoader = requireNonNull(getBundleClassLoader());
+        var bundleClassLoader = requireNonNull(getBundleClassLoader());
         return ResourceBundle.getBundle(basename, locale, bundleClassLoader, new MessageSourceControl());
     }
 
@@ -39,10 +38,10 @@ public class MultiResourceMessageSource extends ResourceBundleMessageSource {
 
             // Special handling of default encoding
             if (format.equals("java.properties")) {
-                String bundleName = toBundleName(baseName, locale);
-                final String resourceName = toResourceName(bundleName, "properties");
-                try (InputStream stream = getResourcesInputStream(resourceName)) {
-                    String encoding = requireNonNull(getDefaultEncoding());
+                var bundleName = toBundleName(baseName, locale);
+                final var resourceName = toResourceName(bundleName, "properties");
+                try (var stream = getResourcesInputStream(resourceName)) {
+                    var encoding = requireNonNull(getDefaultEncoding());
                     return loadBundle(new InputStreamReader(stream, encoding));
                 }
             } else {
@@ -61,7 +60,7 @@ public class MultiResourceMessageSource extends ResourceBundleMessageSource {
     // input stream will bypass that limitation.
     private InputStream getResourcesInputStream(String resourceName) {
         List<InputStream> inputStreams = new ArrayList<>();
-        for (ResourceWithModule resource : resourceManager.findInClasspath(resourceName)) {
+        for (var resource : resourceManager.findInClasspath(resourceName)) {
             inputStreams.add(resource.getInputStream());
             // Handle messages file with missing newline at the end of the file
             inputStreams.add(createEmptyLineInputStream());

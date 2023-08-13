@@ -6,7 +6,6 @@ import cz.quantumleap.core.role.RoleDao;
 import cz.quantumleap.core.role.domain.Role;
 import org.apache.commons.lang3.Validate;
 import org.intellij.lang.annotations.Language;
-import org.jooq.Record;
 import org.jooq.*;
 import org.jooq.impl.DSL;
 import org.springframework.stereotype.Component;
@@ -36,14 +35,14 @@ public class CoreTestSupport {
 
     @Transactional
     public Person createPerson() {
-        Person person = new Person();
+        var person = new Person();
         person.setEmail("test@email.cx");
         return personDao.save(person);
     }
 
     @Transactional
     public Role createRole() {
-        Role role = new Role();
+        var role = new Role();
         role.setName("Test role");
         return roleDao.save(role);
     }
@@ -74,7 +73,7 @@ public class CoreTestSupport {
     @Transactional
     public void createTable(Table<?> table) {
         List<Constraint> constraints = new ArrayList<>();
-        UniqueKey<?> primaryKey = table.getPrimaryKey();
+        var primaryKey = table.getPrimaryKey();
         if (primaryKey != null) {
             constraints.add(DSL.primaryKey(primaryKey.getFieldsArray()));
         }
@@ -106,7 +105,7 @@ public class CoreTestSupport {
     }
 
     public <T> T fetchFirst(@Language("SQL") String sql, Class<T> type) {
-        Record record = dslContext.fetchOne(sql);
+        var record = dslContext.fetchOne(sql);
         Validate.notNull(record);
         return record.get(0, type);
     }

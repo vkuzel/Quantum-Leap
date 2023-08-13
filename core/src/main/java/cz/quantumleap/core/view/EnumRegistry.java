@@ -46,7 +46,7 @@ public class EnumRegistry {
                 .map(record -> new EnumIdLabel(record.value1(), record.value2(), record.value3()))
                 .sorted(Comparator.comparing(EnumIdLabel::label, CASE_INSENSITIVE_ORDER))
                 .forEach(enumIdLabel -> {
-                    Map<String, String> idLabel = enumValueLabels
+                    var idLabel = enumValueLabels
                             .computeIfAbsent(enumIdLabel.enumId, s -> new LinkedHashMap<>());
                     idLabel.put(enumIdLabel.id(), enumIdLabel.label());
                 });

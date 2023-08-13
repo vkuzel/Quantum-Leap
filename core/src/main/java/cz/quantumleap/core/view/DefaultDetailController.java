@@ -62,7 +62,7 @@ public final class DefaultDetailController<T> implements DetailController<T> {
             model.addAttribute(transport);
             return detailView;
         }
-        T saved = detailService.save(transport, errors);
+        var saved = detailService.save(transport, errors);
         if (errors.hasErrors()) {
             model.addAttribute(transport);
             return detailView;
@@ -72,7 +72,7 @@ public final class DefaultDetailController<T> implements DetailController<T> {
     }
 
     private Object getDetailId(T transport) {
-        Class<?> type = transport.getClass();
+        var type = transport.getClass();
         return invokeClassMethod(type, transport, "getId");
     }
 }

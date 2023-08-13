@@ -3,7 +3,6 @@ package cz.quantumleap.gradle.jooq;
 import cz.quantumleap.gradle.utils.ProjectUtils;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.Project;
-import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.TaskAction;
 import org.jooq.codegen.GenerationTool;
 import org.jooq.meta.jaxb.Configuration;
@@ -12,12 +11,10 @@ import org.jooq.meta.jaxb.SchemaMappingType;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Properties;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -43,22 +40,22 @@ public class GenerateJooqDomainObjectsTask extends DefaultTask {
 
     @TaskAction
     public void generate() throws Exception {
-        Project project = getProject();
-        List<SchemaMappingType> schemata = findSchemata(project);
+        var project = getProject();
+        var schemata = findSchemata(project);
         if (schemata.isEmpty()) {
             return;
         }
 
-        Configuration configuration = initJooqGeneratorConfiguration(project, schemata);
+        var configuration = initJooqGeneratorConfiguration(project, schemata);
         GenerationTool.generate(configuration);
     }
 
     private Configuration initJooqGeneratorConfiguration(Project project, List<SchemaMappingType> schemata) throws IOException {
-        Configuration configuration = loadJooqConfiguration(project);
+        var configuration = loadJooqConfiguration(project);
 
         configuration.getGenerator().getDatabase().withSchemata(schemata);
 
-        Properties properties = loadJdbcProperties(project);
+        var properties = loadJdbcProperties(project);
         applyJdbcProperties(properties, configuration.getJdbc());
 
         configuration.getGenerator().getTarget().setDirectory(getGeneratedSrcPath(project).getAbsolutePath());
@@ -76,18 +73,18 @@ public class GenerateJooqDomainObjectsTask extends DefaultTask {
     }
 
     private Configuration loadJooqConfiguration(Project project) throws IOException {
-        File file = ProjectUtils.findFileInProjectResources(project.getRootProject(), JOOQ_GENERATOR_CONFIGURATION_PATH);
+        var file = ProjectUtils.findFileInProjectResources(project.getRootProject(), JOOQ_GENERATOR_CONFIGURATION_PATH);
 
-        try (InputStream inputStream = Files.newInputStream(file.toPath())) {
+        try (var inputStream = Files.newInputStream(file.toPath())) {
             return GenerationTool.load(inputStream);
         }
     }
 
     private Properties loadJdbcProperties(Project project) throws IOException {
-        File file = ProjectUtils.findFileInProjectResources(project.getRootProject(), APPLICATION_CONFIGURATION_PATH);
+        var file = ProjectUtils.findFileInProjectResources(project.getRootProject(), APPLICATION_CONFIGURATION_PATH);
 
-        Properties properties = new Properties();
-        try (InputStream inputStream = Files.newInputStream(file.toPath())) {
+        var properties = new Properties();
+        try (var inputStream = Files.newInputStream(file.toPath())) {
             properties.load(inputStream);
         }
         return properties;
@@ -110,9 +107,9 @@ public class GenerateJooqDomainObjectsTask extends DefaultTask {
     }
 
     private Stream<Path> findResourcesPaths(Project project) {
-        SourceSet mainSourceSet = ProjectUtils.getSourceSets(project).getByName(MAIN_SOURCE_SET_NAME);
+        var mainSourceSet = ProjectUtils.getSourceSets(project).getByName(MAIN_SOURCE_SET_NAME);
         Stream.Builder<Path> builder = Stream.builder();
-        for (File resource : mainSourceSet.getResources().getSrcDirs()) {
+        for (var resource : mainSourceSet.getResources().getSrcDirs()) {
             builder.accept(resource.toPath());
         }
         return builder.build();
@@ -131,7 +128,7 @@ public class GenerateJooqDomainObjectsTask extends DefaultTask {
     }
 
     private boolean isScriptFile(Path path) {
-        Matcher matcher = SCRIPT_FILE_NAME_PATTERN.matcher(path.toString());
+        var matcher = SCRIPT_FILE_NAME_PATTERN.matcher(path.toString());
         return matcher.matches();
     }
 
@@ -141,7 +138,7 @@ public class GenerateJooqDomainObjectsTask extends DefaultTask {
         }
 
         try {
-            byte[] bytes = Files.readAllBytes(filePath);
+            var bytes = Files.readAllBytes(filePath);
             return new String(bytes);
         } catch (IOException e) {
             throw new IllegalStateException(e);
@@ -149,7 +146,7 @@ public class GenerateJooqDomainObjectsTask extends DefaultTask {
     }
 
     private Stream<String> parseSchemaNames(String content) {
-        Matcher matcher = CREATE_SCHEMA_QUERY_PATTERN.matcher(content);
+        var matcher = CREATE_SCHEMA_QUERY_PATTERN.matcher(content);
         Stream.Builder<String> builder = Stream.builder();
         while (matcher.find()) {
             builder.accept(matcher.group(1));
@@ -158,7 +155,7 @@ public class GenerateJooqDomainObjectsTask extends DefaultTask {
     }
 
     private SchemaMappingType createSchemaMappingType(String schemaName) {
-        SchemaMappingType schemaMappingType =  new SchemaMappingType();
+        var schemaMappingType =  new SchemaMappingType();
         schemaMappingType.setInputSchema(schemaName);
         return schemaMappingType;
     }

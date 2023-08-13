@@ -2,8 +2,8 @@ package cz.quantumleap.core.database;
 
 import cz.quantumleap.core.database.entity.Entity;
 import org.apache.commons.lang3.Validate;
-import org.jooq.*;
 import org.jooq.Record;
+import org.jooq.*;
 
 import java.util.*;
 
@@ -24,13 +24,13 @@ public final class DefaultDetailDao<TABLE extends Table<? extends Record>> imple
 
     @Override
     public <T> T fetchById(Object id, Class<T> type) {
-        Condition condition = entity.getPrimaryKeyConditionBuilder().buildFromId(id);
+        var condition = entity.getPrimaryKeyConditionBuilder().buildFromId(id);
         return fetchByCondition(condition, type);
     }
 
     @Override
     public <T> T fetchByCondition(Condition condition, Class<T> type) {
-        Table<? extends Record> table = entity.getTable();
+        var table = entity.getTable();
         return dslContext.selectFrom(table)
                 .where(condition)
                 .fetchOneInto(type);
@@ -48,12 +48,12 @@ public final class DefaultDetailDao<TABLE extends Table<? extends Record>> imple
             return Collections.emptyList();
         }
 
-        Class<T> detailType = getDetailClass(details.get(0));
+        var detailType = getDetailClass(details.get(0));
         List<Record> records = new ArrayList<>(details.size());
-        RecordFactory<T> recordFactory = new RecordFactory<>(dslContext, detailType, entity.getTable());
+        var recordFactory = new RecordFactory<T>(dslContext, detailType, entity.getTable());
 
-        for (T detail : details) {
-            Record record = recordFactory.createRecord(detail);
+        for (var detail : details) {
+            var record = recordFactory.createRecord(detail);
             records.add(record);
         }
 
@@ -70,8 +70,8 @@ public final class DefaultDetailDao<TABLE extends Table<? extends Record>> imple
 
         // TODO Implement bulk insert using https://www.jooq.org/doc/3.12/manual/sql-building/sql-statements/insert-statement/insert-values/
         // TODO Preserve order.
-        for (Record record : records) {
-            Condition condition = entity.getPrimaryKeyConditionBuilder().buildFromRecord(record);
+        for (var record : records) {
+            var condition = entity.getPrimaryKeyConditionBuilder().buildFromRecord(record);
             if (condition != null) {
                 results.add(update(record, condition, detailType));
             } else {
@@ -87,7 +87,7 @@ public final class DefaultDetailDao<TABLE extends Table<? extends Record>> imple
 
         Map<? extends Field<?>, ?> changedValues = getChangedValues(record);
 
-        Table<? extends Record> table = entity.getTable();
+        var table = entity.getTable();
         return dslContext.insertInto(table)
                 .set(changedValues)
                 .returning(table.fields())
@@ -99,9 +99,9 @@ public final class DefaultDetailDao<TABLE extends Table<? extends Record>> imple
     private <T> T update(Record record, Condition condition, Class<T> resultType) {
         RecordAuditor.getInstance().onUpdate(record);
 
-        Map<Field<?>, Object> changedValues = getChangedValues(record);
+        var changedValues = getChangedValues(record);
 
-        Table<? extends Record> table = entity.getTable();
+        var table = entity.getTable();
         return dslContext.update(table)
                 .set(changedValues)
                 .where(condition)
@@ -113,7 +113,7 @@ public final class DefaultDetailDao<TABLE extends Table<? extends Record>> imple
 
     private Map<Field<?>, Object> getChangedValues(Record record) {
         Map<Field<?>, Object> changedValues = new HashMap<>(record.size());
-        for (Field<?> field : record.fields()) {
+        for (var field : record.fields()) {
             if (record.changed(field)) {
                 changedValues.put(field, record.getValue(field));
             }
@@ -123,13 +123,13 @@ public final class DefaultDetailDao<TABLE extends Table<? extends Record>> imple
 
     @Override
     public int deleteById(Object id) {
-        Condition condition = entity.getPrimaryKeyConditionBuilder().buildFromId(id);
+        var condition = entity.getPrimaryKeyConditionBuilder().buildFromId(id);
         return deleteByCondition(condition);
     }
 
     @Override
     public int deleteByCondition(Condition condition) {
-        Table<? extends Record> table = entity.getTable();
+        var table = entity.getTable();
         return dslContext.delete(table)
                 .where(condition)
                 .execute();
@@ -137,15 +137,15 @@ public final class DefaultDetailDao<TABLE extends Table<? extends Record>> imple
 
     @Override
     public <T, F> List<T> saveDetailsAssociatedBy(TableField<?, F> foreignKey, F foreignId, Collection<T> details, Class<T> detailType) {
-        Table<? extends Record> table = entity.getTable();
-        Field<?> primaryKeyField = entity.getPrimaryKeyField();
-        RecordFactory<T> recordFactory = new RecordFactory<>(dslContext, detailType, table);
+        var table = entity.getTable();
+        var primaryKeyField = entity.getPrimaryKeyField();
+        var recordFactory = new RecordFactory<T>(dslContext, detailType, table);
 
         List<Record> records = new ArrayList<>(details.size());
         Set<Object> ids = new HashSet<>(details.size());
 
-        for (T detail : details) {
-            Record record = recordFactory.createRecord(detail);
+        for (var detail : details) {
+            var record = recordFactory.createRecord(detail);
             record.set(foreignKey, foreignId);
             records.add(record);
             ids.add(record.get(primaryKeyField));

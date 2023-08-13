@@ -29,8 +29,8 @@ public class TestTableBuilder {
     }
 
     public TestTableBuilder addPrimaryKeyIdField() {
-        Name fieldName = DSL.name("id");
-        DataType<Long> fieldType = SQLDataType.BIGINT.nullable(false).identity(true);
+        var fieldName = DSL.name("id");
+        var fieldType = SQLDataType.BIGINT.nullable(false).identity(true);
         this.fieldDescriptors.add(new FieldDescriptor(fieldName, fieldType, true));
         return this;
     }
@@ -63,22 +63,22 @@ public class TestTableBuilder {
         ) {
             super(name, schema);
 
-            for (FieldDescriptor fieldDescriptor : fieldDescriptors) {
-                TableField<Record, ?> field = createField(fieldDescriptor.name, fieldDescriptor.dataType);
+            for (var fieldDescriptor : fieldDescriptors) {
+                var field = createField(fieldDescriptor.name, fieldDescriptor.dataType);
                 if (fieldDescriptor.primaryKey) {
                     if (primaryKey != null) {
-                        String msg = String.format("Primary key for table %s already exists!", this);
+                        var msg = String.format("Primary key for table %s already exists!", this);
                         throw new IllegalStateException(msg);
                     }
                     primaryKey = createPrimaryKey(field);
                 }
             }
 
-            for (ForeignKeyDescriptor descriptor : foreignKeyDescriptors) {
-                Field<?> field = field(descriptor.fieldName);
-                UniqueKey<?> referencedPrimaryKey = descriptor.referencedTable.getPrimaryKey();
+            for (var descriptor : foreignKeyDescriptors) {
+                var field = field(descriptor.fieldName);
+                var referencedPrimaryKey = descriptor.referencedTable.getPrimaryKey();
                 if (referencedPrimaryKey == null) {
-                    String msgPattern = "Referenced table %s does not have primary key!";
+                    var msgPattern = "Referenced table %s does not have primary key!";
                     throw new IllegalStateException(String.format(msgPattern, descriptor.referencedTable));
                 }
                 references.add(createForeignKey(field, referencedPrimaryKey));
@@ -91,7 +91,7 @@ public class TestTableBuilder {
 
         @SuppressWarnings({"unchecked", "rawtypes"})
         private ForeignKey<Record, ?> createForeignKey(Field<?> field, UniqueKey<?> referencedPrimaryKey) {
-            TableField[] fields = new TableField[]{(TableField) field};
+            var fields = new TableField[]{(TableField) field};
             return Internal.createForeignKey(this, null, fields, referencedPrimaryKey, null, true);
         }
 

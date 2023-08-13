@@ -17,13 +17,13 @@ public class PrimaryKeyConditionBuilder<TABLE extends Table<? extends Record>> {
 
     public Condition buildFromRecord(Record record) {
         Condition condition = null;
-        for (Field<?> field : entity.getPrimaryKeyFields()) {
-            Object value = record.getValue(field);
+        for (var field : entity.getPrimaryKeyFields()) {
+            var value = record.getValue(field);
             if (value == null) {
                 return null;
             }
 
-            Field<Object> casted = castField(field);
+            var casted = castField(field);
             if (condition == null) {
                 condition = casted.eq(value);
             } else {

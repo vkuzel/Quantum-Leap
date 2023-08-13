@@ -52,7 +52,7 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
     }
 
     private SortHandlerMethodArgumentResolver createSortResolver() {
-        SortHandlerMethodArgumentResolver resolver = new SortHandlerMethodArgumentResolver();
+        var resolver = new SortHandlerMethodArgumentResolver();
         resolver.setPropertyDelimiter(SORT_COLUMN_ORDER_DELIMITER);
         return resolver;
     }
@@ -62,7 +62,7 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
     // ValidationMessages*.properties files.
     @Override
     public Validator getValidator() {
-        LocalValidatorFactoryBean localValidatorFactoryBean = new LocalValidatorFactoryBean();
+        var localValidatorFactoryBean = new LocalValidatorFactoryBean();
         localValidatorFactoryBean.setValidationMessageSource(messageSource);
         return localValidatorFactoryBean;
     }

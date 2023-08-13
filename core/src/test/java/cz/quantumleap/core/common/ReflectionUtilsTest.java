@@ -3,7 +3,6 @@ package cz.quantumleap.core.common;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Field;
-import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -12,9 +11,9 @@ class ReflectionUtilsTest {
 
     @Test
     void getClassFieldsShouldReturnNonStaticFieldsOfClassAndItsSuperclasses() {
-        List<Field> fields = ReflectionUtils.getClassFields(ChildTestClass.class);
+        var fields = ReflectionUtils.getClassFields(ChildTestClass.class);
 
-        List<String> fieldNames = fields.stream().map(Field::getName).collect(Collectors.toList());
+        var fieldNames = fields.stream().map(Field::getName).collect(Collectors.toList());
         assertEquals(2, fieldNames.size());
         assertTrue(fieldNames.contains("value"));
         assertTrue(fieldNames.contains("childValue"));
@@ -22,25 +21,25 @@ class ReflectionUtilsTest {
 
     @Test
     void getClassFieldValueShouldReturnValueOfPrivateField() {
-        TestClass testClass = new TestClass("test-value");
+        var testClass = new TestClass("test-value");
 
-        Object value = ReflectionUtils.getClassFieldValue(TestClass.class, testClass, "value");
+        var value = ReflectionUtils.getClassFieldValue(TestClass.class, testClass, "value");
 
         assertEquals("test-value", value);
     }
 
     @Test
     void getClassFieldShouldReturnValueOfParentClassPrivateField() {
-        ChildTestClass childTestClass = new ChildTestClass("test-value", "child-value");
+        var childTestClass = new ChildTestClass("test-value", "child-value");
 
-        Object value = ReflectionUtils.getClassFieldValue(ChildTestClass.class, childTestClass, "value");
+        var value = ReflectionUtils.getClassFieldValue(ChildTestClass.class, childTestClass, "value");
 
         assertEquals("test-value", value);
     }
 
     @Test
     void getClassFieldShouldTrowExceptionForNotExistingField() {
-        TestClass testClass = new TestClass("test-value");
+        var testClass = new TestClass("test-value");
 
         assertThrows(IllegalStateException.class, () ->
                 ReflectionUtils.getClassFieldValue(TestClass.class, testClass, "nonExisting"));
@@ -48,25 +47,25 @@ class ReflectionUtilsTest {
 
     @Test
     void invokeClassMethodShouldInvokePrivateMethod() {
-        TestClass testClass = new TestClass("test-value");
+        var testClass = new TestClass("test-value");
 
-        Object value = ReflectionUtils.invokeClassMethod(TestClass.class, testClass, "getValue");
+        var value = ReflectionUtils.invokeClassMethod(TestClass.class, testClass, "getValue");
 
         assertEquals("test-value", value);
     }
 
     @Test
     void invokeClassMethodShouldInvokeParentClassPrivateMethod() {
-        ChildTestClass childTestClass = new ChildTestClass("test-value", "child-value");
+        var childTestClass = new ChildTestClass("test-value", "child-value");
 
-        Object value = ReflectionUtils.invokeClassMethod(ChildTestClass.class, childTestClass, "getValue");
+        var value = ReflectionUtils.invokeClassMethod(ChildTestClass.class, childTestClass, "getValue");
 
         assertEquals("test-value", value);
     }
 
     @Test
     void invokeClassMethodShouldThrowExceptionForNonExistingMethod() {
-        TestClass testClass = new TestClass("test-value");
+        var testClass = new TestClass("test-value");
 
         assertThrows(IllegalStateException.class, () ->
                 ReflectionUtils.invokeClassMethod(TestClass.class, testClass, "nonExisting"));

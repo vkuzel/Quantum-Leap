@@ -19,7 +19,7 @@ class StringsTest {
             "null, null"
     }, nullValues = "null")
     void upperUnderscoreToLowerHyphen(String text, String expected) {
-        String result = Strings.upperUnderscoreToLowerHyphen(text);
+        var result = Strings.upperUnderscoreToLowerHyphen(text);
 
         assertEquals(expected, result);
     }
@@ -33,7 +33,7 @@ class StringsTest {
 //            "null, null"
     }, nullValues = "null")
     void upperCamelToLowerHyphen(String text, String expected) {
-        String result = Strings.upperCamelToLowerHyphen(text);
+        var result = Strings.upperCamelToLowerHyphen(text);
 
         assertEquals(expected, result);
     }
@@ -46,7 +46,7 @@ class StringsTest {
             "null, null"
     }, nullValues = "null")
     void lowerCamelToUpperCamel(String text, String expected) {
-        String result = Strings.lowerCamelToUpperCamel(text);
+        var result = Strings.lowerCamelToUpperCamel(text);
 
         assertEquals(expected, result);
     }
@@ -59,7 +59,7 @@ class StringsTest {
             "null, null"
     }, nullValues = "null")
     void lowerCamelToLowerHyphen(String text, String expected) {
-        String result = Strings.lowerCamelToLowerHyphen(text);
+        var result = Strings.lowerCamelToLowerHyphen(text);
 
         assertEquals(expected, result);
     }
@@ -72,16 +72,16 @@ class StringsTest {
             "null, null"
     }, nullValues = "null")
     void lowerUnderscoreToLowerCamel(String text, String expected) {
-        String result = Strings.lowerUnderscoreToLowerCamel(text);
+        var result = Strings.lowerUnderscoreToLowerCamel(text);
 
         assertEquals(expected, result);
     }
 
     @Test
     void createAbbreviation() {
-        List<String> items = List.of("first", "second", "third");
+        var items = List.of("first", "second", "third");
 
-        String abbreviation = Strings.createAbbreviation(items, 2, identity());
+        var abbreviation = Strings.createAbbreviation(items, 2, identity());
 
         assertEquals("first, second, ...", abbreviation);
     }

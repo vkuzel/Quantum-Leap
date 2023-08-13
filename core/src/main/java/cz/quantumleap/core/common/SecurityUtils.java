@@ -34,14 +34,14 @@ public class SecurityUtils {
             // SecureRandom.getInstanceStrong() hangs on a machines with too
             // little entropy as generator waits for entropy to initialize.
             // This can lead (and often leads) to request timeouts, etc.
-            SecureRandom secureRandom = new SecureRandom();
-            byte[] salt = new byte[PASSWORD_SALT_LENGTH_BYTES];
+            var secureRandom = new SecureRandom();
+            var salt = new byte[PASSWORD_SALT_LENGTH_BYTES];
             secureRandom.nextBytes(salt);
-            byte[] iv = new byte[IV_LENGTH_BYTES];
+            var iv = new byte[IV_LENGTH_BYTES];
             secureRandom.nextBytes(iv);
 
-            Cipher cipher = createAesCipher(Cipher.ENCRYPT_MODE, salt, iv, password);
-            byte[] encrypted = cipher.doFinal(message.getBytes());
+            var cipher = createAesCipher(Cipher.ENCRYPT_MODE, salt, iv, password);
+            var encrypted = cipher.doFinal(message.getBytes());
             return EncodingUtils.concatenate(salt, iv, encrypted);
         } catch (NoSuchAlgorithmException | InvalidKeyException | InvalidAlgorithmParameterException |
                  NoSuchPaddingException | BadPaddingException | InvalidKeySpecException | IllegalBlockSizeException e) {
@@ -52,12 +52,12 @@ public class SecurityUtils {
     public static String decryptMessageByPassword(String password, byte[] encryptedMessage) {
         try {
             Validate.isTrue(encryptedMessage.length > PASSWORD_SALT_LENGTH_BYTES);
-            byte[] salt = Arrays.copyOfRange(encryptedMessage, 0, PASSWORD_SALT_LENGTH_BYTES);
-            byte[] iv = Arrays.copyOfRange(encryptedMessage, PASSWORD_SALT_LENGTH_BYTES, PASSWORD_SALT_LENGTH_BYTES + IV_LENGTH_BYTES);
-            byte[] encrypted = Arrays.copyOfRange(encryptedMessage, PASSWORD_SALT_LENGTH_BYTES + IV_LENGTH_BYTES, encryptedMessage.length);
+            var salt = Arrays.copyOfRange(encryptedMessage, 0, PASSWORD_SALT_LENGTH_BYTES);
+            var iv = Arrays.copyOfRange(encryptedMessage, PASSWORD_SALT_LENGTH_BYTES, PASSWORD_SALT_LENGTH_BYTES + IV_LENGTH_BYTES);
+            var encrypted = Arrays.copyOfRange(encryptedMessage, PASSWORD_SALT_LENGTH_BYTES + IV_LENGTH_BYTES, encryptedMessage.length);
 
-            Cipher cipher = createAesCipher(Cipher.DECRYPT_MODE, salt, iv, password);
-            byte[] decrypted = cipher.doFinal(encrypted);
+            var cipher = createAesCipher(Cipher.DECRYPT_MODE, salt, iv, password);
+            var decrypted = cipher.doFinal(encrypted);
             return new String(decrypted, StandardCharsets.UTF_8);
         } catch (NoSuchAlgorithmException | InvalidKeyException | InvalidAlgorithmParameterException |
                  NoSuchPaddingException | BadPaddingException | InvalidKeySpecException | IllegalBlockSizeException e) {
@@ -66,20 +66,20 @@ public class SecurityUtils {
     }
 
     private static Cipher createAesCipher(int mode, byte[] salt, byte[] iv, String password) throws InvalidAlgorithmParameterException, InvalidKeyException, InvalidKeySpecException, NoSuchPaddingException, NoSuchAlgorithmException {
-        PBEKeySpec keySpec = new PBEKeySpec(password.toCharArray(), salt, 1024, 256);
-        SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
-        SecretKey secretKey = factory.generateSecret(keySpec);
-        SecretKeySpec secretKeySpec = new SecretKeySpec(secretKey.getEncoded(), "AES");
+        var keySpec = new PBEKeySpec(password.toCharArray(), salt, 1024, 256);
+        var factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
+        var secretKey = factory.generateSecret(keySpec);
+        var secretKeySpec = new SecretKeySpec(secretKey.getEncoded(), "AES");
 
-        Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
+        var cipher = Cipher.getInstance("AES/GCM/NoPadding");
         cipher.init(mode, secretKeySpec, new GCMParameterSpec(128, iv));
         return cipher;
     }
 
     public static PrivateKey createPrivateKey(byte[] pkcs8EncodedKey) {
         try {
-            PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(pkcs8EncodedKey);
-            KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+            var keySpec = new PKCS8EncodedKeySpec(pkcs8EncodedKey);
+            var keyFactory = KeyFactory.getInstance("RSA");
             return keyFactory.generatePrivate(keySpec);
         } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
             throw new IllegalStateException(e);
@@ -88,8 +88,8 @@ public class SecurityUtils {
 
     public static PublicKey createPublicKey(byte[] x509EncodedKey) {
         try {
-            X509EncodedKeySpec keySpec = new X509EncodedKeySpec(x509EncodedKey);
-            KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+            var keySpec = new X509EncodedKeySpec(x509EncodedKey);
+            var keyFactory = KeyFactory.getInstance("RSA");
             return keyFactory.generatePublic(keySpec);
         } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
             throw new IllegalStateException(e);
@@ -101,7 +101,7 @@ public class SecurityUtils {
      */
     public static byte[] encryptMessageByKey(PublicKey publicKey, String message) {
         try {
-            Cipher cipher = Cipher.getInstance("RSA/ECB/OAEPWithSHA-256AndMGF1Padding");
+            var cipher = Cipher.getInstance("RSA/ECB/OAEPWithSHA-256AndMGF1Padding");
             cipher.init(Cipher.ENCRYPT_MODE, publicKey);
             return cipher.doFinal(message.getBytes());
         } catch (NoSuchPaddingException | NoSuchAlgorithmException | IllegalBlockSizeException | BadPaddingException |
@@ -112,9 +112,9 @@ public class SecurityUtils {
 
     public static String decryptMessageByKey(PrivateKey privateKey, byte[] encryptedMessage) {
         try {
-            Cipher cipher = Cipher.getInstance("RSA/ECB/OAEPWithSHA-256AndMGF1Padding");
+            var cipher = Cipher.getInstance("RSA/ECB/OAEPWithSHA-256AndMGF1Padding");
             cipher.init(Cipher.DECRYPT_MODE, privateKey);
-            byte[] decrypted = cipher.doFinal(encryptedMessage);
+            var decrypted = cipher.doFinal(encryptedMessage);
             return new String(decrypted, StandardCharsets.UTF_8);
         } catch (NoSuchPaddingException | NoSuchAlgorithmException | IllegalBlockSizeException | BadPaddingException |
                  InvalidKeyException e) {
@@ -128,7 +128,7 @@ public class SecurityUtils {
 
     public static byte[] signMessageByKey(PrivateKey privateKey, byte[] message) {
         try {
-            Signature signature = Signature.getInstance("SHA256withRSA");
+            var signature = Signature.getInstance("SHA256withRSA");
             signature.initSign(privateKey);
             signature.update(message);
             return signature.sign();
@@ -143,7 +143,7 @@ public class SecurityUtils {
 
     public static boolean verifySignatureByKey(PublicKey publicKey, byte[] message, byte[] signature) {
         try {
-            Signature signatureVerifier = Signature.getInstance("SHA256withRSA");
+            var signatureVerifier = Signature.getInstance("SHA256withRSA");
             signatureVerifier.initVerify(publicKey);
             signatureVerifier.update(message);
             return signatureVerifier.verify(signature);

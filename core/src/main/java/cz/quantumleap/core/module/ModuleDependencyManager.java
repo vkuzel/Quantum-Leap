@@ -9,7 +9,6 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -49,13 +48,13 @@ public class ModuleDependencyManager {
             throw new IllegalStateException(e);
         }
 
-        for (Resource dependenciesFile : dependenciesFiles) {
-            cz.quantumleap.core.module.ModuleDependencies moduleDependencies = deserializeDependencies(dependenciesFile);
+        for (var dependenciesFile : dependenciesFiles) {
+            var moduleDependencies = deserializeDependencies(dependenciesFile);
             log.info("Registering project module: {}", moduleDependencies.getModuleName());
 
             independentModulesFirst.remove(moduleDependencies);
 
-            int furtherChildPosition = moduleDependencies.getDependencies().stream()
+            var furtherChildPosition = moduleDependencies.getDependencies().stream()
                     .mapToInt(this::getProjectIndex).max().orElse(-1);
 
             independentModulesFirst.add(furtherChildPosition + 1, moduleDependencies);
@@ -63,7 +62,7 @@ public class ModuleDependencyManager {
     }
 
     private int getProjectIndex(String projectName) {
-        for (cz.quantumleap.core.module.ModuleDependencies moduleDependencies : independentModulesFirst) {
+        for (var moduleDependencies : independentModulesFirst) {
             if (Objects.equals(moduleDependencies.getModuleName(), projectName)) {
                 return independentModulesFirst.indexOf(moduleDependencies);
             }
@@ -73,8 +72,8 @@ public class ModuleDependencyManager {
 
     private cz.quantumleap.core.module.ModuleDependencies deserializeDependencies(Resource dependenciesFile) {
         try (
-                InputStream inputStream = dependenciesFile.getInputStream();
-                ObjectInputStream objectInputStream = new ObjectInputStream(inputStream)
+                var inputStream = dependenciesFile.getInputStream();
+                var objectInputStream = new ObjectInputStream(inputStream)
         ) {
             return new cz.quantumleap.core.module.ModuleDependencies(dependenciesFile, (ModuleDependencies) objectInputStream.readObject());
         } catch (IOException | ClassNotFoundException e) {

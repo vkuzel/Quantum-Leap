@@ -26,13 +26,13 @@ public class Authenticator {
             return null;
         }
 
-        Object principal = authentication.getPrincipal();
+        var principal = authentication.getPrincipal();
         if (!(principal instanceof DefaultOidcUser oidcUser)) {
             throw new IllegalArgumentException("Unknown principal type " + principal.getClass().getName());
         }
 
-        Map<String, Object> attributes = oidcUser.getAttributes();
-        String email = (String) attributes.get(DatabaseAuthoritiesLoader.OAUTH_DETAILS_EMAIL);
+        var attributes = oidcUser.getAttributes();
+        var email = (String) attributes.get(DatabaseAuthoritiesLoader.OAUTH_DETAILS_EMAIL);
         Validate.notNull(email, "Email was not found in OidcUser details! " + formatDetails(attributes));
 
         return email;

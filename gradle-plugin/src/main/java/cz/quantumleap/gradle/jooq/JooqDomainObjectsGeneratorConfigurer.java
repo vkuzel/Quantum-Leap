@@ -5,34 +5,32 @@ import cz.quantumleap.gradle.utils.ProjectUtils;
 import org.gradle.api.Project;
 import org.gradle.api.tasks.SourceSet;
 
-import java.util.Set;
-
 public class JooqDomainObjectsGeneratorConfigurer {
 
     private static final String GENERATE_JOOQ_DOMAIN_OBJECTS_TASK_NAME = "generateJooqDomainObjects";
 
     public void configure(SpringBootProject springBootProject) {
-        Set<Project> projects = springBootProject
+        var projects = springBootProject
                 .getProject()
                 .getRootProject()
                 .getAllprojects();
 
-        for (Project project : projects) {
+        for (var project : projects) {
             this.addGeneratedSrcDirToMainSourceSet(project);
 
-            GenerateJooqDomainObjectsTask generate = project.getTasks()
+            var generate = project.getTasks()
                     .create(GENERATE_JOOQ_DOMAIN_OBJECTS_TASK_NAME, GenerateJooqDomainObjectsTask.class);
             describeTask(generate);
         }
     }
 
     private void addGeneratedSrcDirToMainSourceSet(Project project) {
-        SourceSet mainSourceSet = ProjectUtils.getSourceSets(project).getByName(SourceSet.MAIN_SOURCE_SET_NAME);
+        var mainSourceSet = ProjectUtils.getSourceSets(project).getByName(SourceSet.MAIN_SOURCE_SET_NAME);
         mainSourceSet.getJava().srcDir(GenerateJooqDomainObjectsTask.getGeneratedSrcPath(project));
     }
 
     private void describeTask(GenerateJooqDomainObjectsTask task) {
-        String description = "Generates jOOQ domain objects into src/generated/java directories." +
+        var description = "Generates jOOQ domain objects into src/generated/java directories." +
                 " Generator works only with PostgreSQL." +
                 " It reads jOOQ configuration from `db/jooq-generator-configuration.xml' and connection properties from `config/application-default.properties'. " +
                 " Following connection properties are recognized: " +

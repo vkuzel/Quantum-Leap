@@ -27,7 +27,7 @@ public class QuantumLeapPlugin implements Plugin<Project> {
 
     @Override
     public void apply(Project project) {
-        ProjectManager projectManager = new ProjectManager(project);
+        var projectManager = new ProjectManager(project);
         apply(projectManager);
     }
 
@@ -40,7 +40,7 @@ public class QuantumLeapPlugin implements Plugin<Project> {
 
     private void configureStandardRepositoriesAndPlugins(Project project) {
         project.getPlugins().apply(JavaLibraryPlugin.class);
-        JavaPluginExtension javaPluginExtension = project.getExtensions().getByType(JavaPluginExtension.class);
+        var javaPluginExtension = project.getExtensions().getByType(JavaPluginExtension.class);
         javaPluginExtension.setSourceCompatibility(JavaVersion.VERSION_17);
         javaPluginExtension.setTargetCompatibility(JavaVersion.VERSION_17);
         project.getPlugins().apply(DependencyManagementPlugin.class);

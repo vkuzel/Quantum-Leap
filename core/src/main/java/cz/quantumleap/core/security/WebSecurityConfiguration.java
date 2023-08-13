@@ -17,7 +17,6 @@ import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -33,7 +32,7 @@ public class WebSecurityConfiguration {
             RequestMappingHandlerMapping requestMappingHandlerMapping,
             HttpSecurity httpSecurity
     ) throws Exception {
-        Map<RequestMappingInfo, HandlerMethod> handlerMethods = requestMappingHandlerMapping.getHandlerMethods();
+        var handlerMethods = requestMappingHandlerMapping.getHandlerMethods();
         httpSecurity.authorizeHttpRequests(registry -> registry
                         .requestMatchers(resourcesRequestMatchers()).permitAll()
                         .requestMatchers(permitAllMappingInfoMatcher(handlerMethods)).permitAll()
@@ -56,7 +55,7 @@ public class WebSecurityConfiguration {
     }
 
     private RequestMatcher permitAllMappingInfoMatcher(Map<RequestMappingInfo, HandlerMethod> handlerMethods) {
-        List<RequestMappingInfo> filteredHandlerMethods = handlerMethods.entrySet().stream()
+        var filteredHandlerMethods = handlerMethods.entrySet().stream()
                 .filter(RequestMappingInfoFilters::hasPermitAll)
                 .map(Entry::getKey)
                 .toList();
@@ -64,7 +63,7 @@ public class WebSecurityConfiguration {
     }
 
     private RequestMatcher ignoreCsrfMappingInfoMatcher(Map<RequestMappingInfo, HandlerMethod> handlerMethods) {
-        List<RequestMappingInfo> filteredHandlerMethods = handlerMethods.entrySet().stream()
+        var filteredHandlerMethods = handlerMethods.entrySet().stream()
                 .filter(RequestMappingInfoFilters::hasIgnoreCsrf)
                 .map(Entry::getKey)
                 .toList();

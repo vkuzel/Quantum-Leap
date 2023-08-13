@@ -2,7 +2,6 @@ package cz.quantumleap.core.view;
 
 import cz.quantumleap.core.business.LookupService;
 import cz.quantumleap.core.database.domain.FetchParams;
-import cz.quantumleap.core.database.domain.Slice;
 import cz.quantumleap.core.database.entity.EntityIdentifier;
 import cz.quantumleap.core.security.WebSecurityExpressionEvaluator;
 import jakarta.servlet.http.HttpServletRequest;
@@ -11,8 +10,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.server.ResponseStatusException;
-
-import java.util.Map;
 
 public final class DefaultLookupController implements LookupController {
 
@@ -77,7 +74,7 @@ public final class DefaultLookupController implements LookupController {
         checkPermission(request, response);
 
         model.addAttribute(DETAIL_URL_MODEL_ATTRIBUTE_NAME, detailUrl);
-        Map<Object, String> lookupLabels = lookupService.findLookupLabels(query);
+        var lookupLabels = lookupService.findLookupLabels(query);
         model.addAttribute(LOOKUP_LABELS_ATTRIBUTE_NAME, lookupLabels);
 
         return LOOKUP_LABELS_VIEW;
@@ -87,8 +84,8 @@ public final class DefaultLookupController implements LookupController {
     public String lookupList(FetchParams fetchParams, Model model, HttpServletRequest request, HttpServletResponse response) {
         checkPermission(request, response);
 
-        EntityIdentifier<?> identifier = lookupService.getListEntityIdentifier(null);
-        Slice slice = lookupService.findSlice(fetchParams);
+        var identifier = lookupService.getListEntityIdentifier(null);
+        var slice = lookupService.findSlice(fetchParams);
 
         model.addAttribute(SLICE_MODEL_ATTRIBUTE_NAME, slice);
         model.addAttribute(LIST_ENTITY_IDENTIFIER_MODEL_ATTRIBUTE_NAME, identifier.toString());
@@ -98,7 +95,7 @@ public final class DefaultLookupController implements LookupController {
     }
 
     private void checkPermission(HttpServletRequest request, HttpServletResponse response) {
-        String expression = "hasRole('ADMIN')";
+        var expression = "hasRole('ADMIN')";
         if (!webSecurityExpressionEvaluator.evaluate(expression, request, response)) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
         }

@@ -22,7 +22,7 @@ public class RequestMappingInfoRequestMatcher implements RequestMatcher {
         }
 
         WebUtils.cacheRequestPath(request);
-        for (RequestMappingInfo requestMappingInfo : mappingInfo) {
+        for (var requestMappingInfo : mappingInfo) {
             if (requestMappingInfo.getMatchingCondition(request) != null) {
                 return true;
             }

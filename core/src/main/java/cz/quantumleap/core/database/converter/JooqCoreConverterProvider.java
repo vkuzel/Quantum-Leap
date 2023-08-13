@@ -57,7 +57,7 @@ public class JooqCoreConverterProvider implements ConverterProvider {
 
     private <T> JSON convertValueToJson(T value) {
         try {
-            String jsonString = objectMapper.writeValueAsString(value);
+            var jsonString = objectMapper.writeValueAsString(value);
             return JSON.valueOf(jsonString);
         } catch (JsonProcessingException e) {
             throw new IllegalStateException(e);

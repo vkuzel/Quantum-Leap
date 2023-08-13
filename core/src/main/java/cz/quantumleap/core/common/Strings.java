@@ -4,7 +4,6 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.function.Function;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public final class Strings {
@@ -20,7 +19,7 @@ public final class Strings {
 
     public static String upperCamelToLowerHyphen(String text) {
         if (text == null || text.isEmpty()) return text;
-        Matcher matcher = UPPER_CAMEL_PATTERN.matcher(text);
+        var matcher = UPPER_CAMEL_PATTERN.matcher(text);
         return matcher.replaceAll(matchResult -> (matchResult.start() > 0 ? "-" : "") + matchResult.group(1)).toLowerCase();
     }
 
@@ -31,19 +30,19 @@ public final class Strings {
 
     public static String lowerCamelToLowerHyphen(String text) {
         if (text == null || text.isEmpty()) return text;
-        Matcher matcher = LOWER_CAMEL_PATTERN.matcher(text);
+        var matcher = LOWER_CAMEL_PATTERN.matcher(text);
         return matcher.replaceAll(matchResult -> '-' + matchResult.group(1).toLowerCase());
     }
 
     public static String lowerUnderscoreToLowerCamel(String text) {
         if (text == null || text.isEmpty()) return text;
-        Matcher matcher = LOWER_UNDERSCORE_PATTERN.matcher(text.toLowerCase());
+        var matcher = LOWER_UNDERSCORE_PATTERN.matcher(text.toLowerCase());
         return matcher.replaceAll(matchResult -> matchResult.group(1).toUpperCase());
     }
 
     public static <T> String createAbbreviation(Collection<T> items, int maxSize, Function<T, String> mapToText) {
         Set<String> textItems = new LinkedHashSet<>(maxSize);
-        for (T item : items) {
+        for (var item : items) {
             textItems.add(mapToText.apply(item));
             if (textItems.size() >= maxSize) {
                 textItems.add("...");

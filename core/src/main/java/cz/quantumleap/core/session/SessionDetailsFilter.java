@@ -5,7 +5,6 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -21,7 +20,7 @@ public class SessionDetailsFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         filterChain.doFilter(request, response);
 
-        HttpSession session = request.getSession(false);
+        var session = request.getSession(false);
         if (session != null) {
             session.setAttribute(SessionDao.REMOTE_ADDRESS_ATTRIBUTE, WebUtils.getRemoteAddr(request));
             session.setAttribute(SessionDao.USER_AGENT_ATTRIBUTE, request.getHeader("User-Agent"));
