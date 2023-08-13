@@ -3,13 +3,22 @@ package cz.quantumleap.core.common;
 import java.util.*;
 import java.util.function.Function;
 
+import static java.util.Collections.emptyList;
+
 public final class MultiMaps {
 
     /**
      * Preserves collection order.
+     * Resulting map returns empty list for missing keys.
      */
     public static <K, V> Map<K, List<V>> groupBy(Collection<V> collection, Function<V, K> groupBy) {
-        Map<K, List<V>> mapOfLists = new LinkedHashMap<>();
+        Map<K, List<V>> mapOfLists = new LinkedHashMap<>() {
+            @Override
+            public List<V> get(Object key) {
+                var list = super.get(key);
+                return list != null ? list : emptyList();
+            }
+        };
         for (var value : collection) {
             var key = groupBy.apply(value);
             var values = mapOfLists.computeIfAbsent(key, k -> new ArrayList<>());
