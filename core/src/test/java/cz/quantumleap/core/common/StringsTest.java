@@ -26,11 +26,11 @@ class StringsTest {
 
     @ParameterizedTest
     @CsvSource(value = {
-//            "BraveNewWorld, brave-new-world",
+            "BraveNewWorld, brave-new-world",
             "HHH, h-h-h",
-//            "H, h",
-//            "'', ''",
-//            "null, null"
+            "H, h",
+            "'', ''",
+            "null, null"
     }, nullValues = "null")
     void upperCamelToLowerHyphen(String text, String expected) {
         var result = Strings.upperCamelToLowerHyphen(text);
