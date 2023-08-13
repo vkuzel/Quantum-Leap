@@ -13,9 +13,9 @@ class MultiMapsTest {
     void groupBy() {
         var collection = List.of("first", "second");
 
-        var multiMap = MultiMaps.groupBy(collection, s -> "key");
+        var multimap = MultiMaps.groupBy(collection, s -> "key");
 
-        assertEquals(collection, multiMap.get("key"));
-        assertEquals(emptyList(), multiMap.get("missing"));
+        assertEquals(collection, multimap.get("key"));
+        assertEquals(emptyList(), multimap.get("missing"));
     }
 }

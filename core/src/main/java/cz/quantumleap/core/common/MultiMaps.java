@@ -12,19 +12,13 @@ public final class MultiMaps {
      * Resulting map returns empty list for missing keys.
      */
     public static <K, V> Map<K, List<V>> groupBy(Collection<V> collection, Function<V, K> groupBy) {
-        Map<K, List<V>> mapOfLists = new LinkedHashMap<>() {
-            @Override
-            public List<V> get(Object key) {
-                var list = super.get(key);
-                return list != null ? list : emptyList();
-            }
-        };
+        var multimap = new Multimap<K, V>();
         for (var value : collection) {
             var key = groupBy.apply(value);
-            var values = mapOfLists.computeIfAbsent(key, k -> new ArrayList<>());
+            var values = multimap.computeIfAbsent(key, k -> new ArrayList<>());
             values.add(value);
         }
-        return mapOfLists;
+        return multimap;
     }
 
     public static <V> List<V> toValues(Map<?, List<V>> mapOfLists) {
@@ -41,5 +35,17 @@ public final class MultiMaps {
             }
         });
         return values;
+    }
+
+    private static class Multimap<K, V> extends LinkedHashMap<K, List<V>> {
+
+        public Multimap() {
+        }
+
+        @Override
+        public List<V> get(Object key) {
+            var list = super.get(key);
+            return list != null ? list : emptyList();
+        }
     }
 }
