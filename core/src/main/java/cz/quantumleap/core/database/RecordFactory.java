@@ -1,6 +1,6 @@
 package cz.quantumleap.core.database;
 
-import cz.quantumleap.core.common.ReflectionUtils;
+import cz.quantumleap.core.utils.ReflectionUtils;
 import org.jooq.Record;
 import org.jooq.*;
 import org.jooq.types.YearToSecond;
@@ -8,7 +8,7 @@ import org.jooq.types.YearToSecond;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static cz.quantumleap.core.common.Strings.lowerUnderscoreToLowerCamel;
+import static cz.quantumleap.core.utils.Strings.lowerUnderscoreToLowerCamel;
 
 public class RecordFactory<T> {
 

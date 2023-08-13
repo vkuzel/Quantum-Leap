@@ -1,4 +1,4 @@
-package cz.quantumleap.core.common;
+package cz.quantumleap.core.utils;
 
 import java.util.HashSet;
 import java.util.Set;

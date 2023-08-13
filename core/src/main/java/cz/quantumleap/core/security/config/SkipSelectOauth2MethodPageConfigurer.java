@@ -13,7 +13,7 @@ import org.springframework.security.web.authentication.LoginUrlAuthenticationEnt
 import java.util.ArrayList;
 import java.util.List;
 
-import static cz.quantumleap.core.common.ReflectionUtils.getClassFieldValue;
+import static cz.quantumleap.core.utils.ReflectionUtils.getClassFieldValue;
 import static org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestRedirectFilter.DEFAULT_AUTHORIZATION_REQUEST_BASE_URI;
 
 public class SkipSelectOauth2MethodPageConfigurer<H extends HttpSecurityBuilder<H>>

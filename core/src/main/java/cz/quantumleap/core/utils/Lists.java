@@ -1,4 +1,4 @@
-package cz.quantumleap.core.common;
+package cz.quantumleap.core.utils;
 
 import java.util.ArrayList;
 import java.util.List;

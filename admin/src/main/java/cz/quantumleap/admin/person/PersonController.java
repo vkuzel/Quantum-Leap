@@ -7,7 +7,7 @@ import cz.quantumleap.admin.menu.AdminMenuManager;
 import cz.quantumleap.admin.notification.NotificationService;
 import cz.quantumleap.admin.personrole.PersonRoleController;
 import cz.quantumleap.admin.personrole.PersonRoleService;
-import cz.quantumleap.core.common.Utils;
+import cz.quantumleap.core.utils.Utils;
 import cz.quantumleap.core.database.domain.FetchParams;
 import cz.quantumleap.core.person.domain.Person;
 import cz.quantumleap.core.security.WebSecurityExpressionEvaluator;

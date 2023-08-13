@@ -9,7 +9,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import static cz.quantumleap.core.common.ReflectionUtils.invokeClassMethod;
+import static cz.quantumleap.core.utils.ReflectionUtils.invokeClassMethod;
 
 public final class DefaultDetailController<T> implements DetailController<T> {
 

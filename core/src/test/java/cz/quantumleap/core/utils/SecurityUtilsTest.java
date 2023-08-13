@@ -1,4 +1,4 @@
-package cz.quantumleap.core.common;
+package cz.quantumleap.core.utils;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;

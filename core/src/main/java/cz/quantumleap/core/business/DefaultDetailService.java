@@ -1,6 +1,6 @@
 package cz.quantumleap.core.business;
 
-import cz.quantumleap.core.common.Utils;
+import cz.quantumleap.core.utils.Utils;
 import cz.quantumleap.core.database.DetailDao;
 import cz.quantumleap.core.database.entity.EntityIdentifier;
 import org.jooq.Record;

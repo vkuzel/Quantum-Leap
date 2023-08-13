@@ -1,7 +1,7 @@
 package cz.quantumleap.core.autoincrement;
 
 import cz.quantumleap.core.autoincrement.domain.Increment;
-import cz.quantumleap.core.common.Utils;
+import cz.quantumleap.core.utils.Utils;
 import cz.quantumleap.core.database.TransactionExecutor;
 import jakarta.annotation.PostConstruct;
 import org.apache.commons.lang3.tuple.Pair;

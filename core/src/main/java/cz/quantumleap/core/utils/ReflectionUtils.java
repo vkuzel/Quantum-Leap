@@ -1,4 +1,4 @@
-package cz.quantumleap.core.common;
+package cz.quantumleap.core.utils;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;

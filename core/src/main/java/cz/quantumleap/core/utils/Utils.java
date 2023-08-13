@@ -1,4 +1,4 @@
-package cz.quantumleap.core.common;
+package cz.quantumleap.core.utils;
 
 import cz.quantumleap.core.database.entity.EntityIdentifier;
 import jakarta.servlet.http.HttpServletRequest;

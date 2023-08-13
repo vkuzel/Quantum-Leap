@@ -1,4 +1,4 @@
-package cz.quantumleap.core.common;
+package cz.quantumleap.core.utils;
 
 import org.apache.commons.lang3.Validate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;

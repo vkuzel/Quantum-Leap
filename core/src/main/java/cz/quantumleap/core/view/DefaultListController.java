@@ -1,7 +1,7 @@
 package cz.quantumleap.core.view;
 
 import cz.quantumleap.core.business.ListService;
-import cz.quantumleap.core.common.Utils;
+import cz.quantumleap.core.utils.Utils;
 import cz.quantumleap.core.database.domain.FetchParams;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.ui.Model;

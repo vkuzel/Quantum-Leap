@@ -1,6 +1,6 @@
 package cz.quantumleap.core.business;
 
-import cz.quantumleap.core.common.Utils;
+import cz.quantumleap.core.utils.Utils;
 import cz.quantumleap.core.database.ListDao;
 import cz.quantumleap.core.database.domain.FetchParams;
 import cz.quantumleap.core.database.domain.Slice;
