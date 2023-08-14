@@ -2,12 +2,12 @@ package cz.quantumleap.core.utils;
 
 import cz.quantumleap.core.database.entity.EntityIdentifier;
 import cz.quantumleap.core.tables.RoleTable;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 
 import static cz.quantumleap.core.tables.PersonTable.PERSON;
+import static org.junit.jupiter.api.Assertions.*;
 
 class UtilsTest {
 
@@ -18,16 +18,16 @@ class UtilsTest {
 
         var days = Utils.generateDaysBetween(start, end);
 
-        Assertions.assertEquals(10, days.size());
-        Assertions.assertTrue(days.contains(start));
-        Assertions.assertTrue(days.contains(end));
+        assertEquals(10, days.size());
+        assertTrue(days.contains(start));
+        assertTrue(days.contains(end));
     }
 
     @Test
     void checkTableTypeThrowsExceptionForIdentifierWithDifferentType() {
         var identifier = EntityIdentifier.forTable(PERSON);
 
-        Assertions.assertThrows(IllegalStateException.class, () -> Utils.checkTableType(identifier, RoleTable.class));
+        assertThrows(IllegalStateException.class, () -> Utils.checkTableType(identifier, RoleTable.class));
     }
 
     @Test
@@ -36,6 +36,6 @@ class UtilsTest {
 
         EntityIdentifier<?> checkedIdentifier = Utils.checkTableType(identifier, null);
 
-        Assertions.assertNotNull(checkedIdentifier);
+        assertNotNull(checkedIdentifier);
     }
 }
