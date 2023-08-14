@@ -40,12 +40,11 @@ final public class Utils {
     public static <T extends Comparable<? super T>> T min(T... items) {
         T min = null;
         for (var item : items) {
-            if (item != null) {
-                if (min == null) {
-                    min = item;
-                } else if (item.compareTo(min) < 0) {
-                    min = item;
-                }
+            if (item == null) continue;
+            if (min == null) {
+                min = item;
+            } else if (item.compareTo(min) < 0) {
+                min = item;
             }
         }
         return min;
@@ -58,12 +57,11 @@ final public class Utils {
     public static <T extends Comparable<? super T>> T max(T... items) {
         T max = null;
         for (var item : items) {
-            if (item != null) {
-                if (max == null) {
-                    max = item;
-                } else if (item.compareTo(max) > 0) {
-                    max = item;
-                }
+            if (item == null) continue;
+            if (max == null) {
+                max = item;
+            } else if (item.compareTo(max) > 0) {
+                max = item;
             }
         }
         return max;

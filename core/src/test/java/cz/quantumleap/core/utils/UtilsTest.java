@@ -38,4 +38,26 @@ class UtilsTest {
 
         assertNotNull(checkedIdentifier);
     }
+
+    @Test
+    void min() {
+        var one = Integer.valueOf(1);
+        var two = Integer.valueOf(2);
+        var three = Integer.valueOf(3);
+
+        var min = Utils.min(one, two, three, null);
+
+        assertEquals(one, min);
+    }
+
+    @Test
+    void max() {
+        var one = Integer.valueOf(1);
+        var two = Integer.valueOf(2);
+        var three = Integer.valueOf(3);
+
+        var max = Utils.max(one, two, three, null);
+
+        assertEquals(three, max);
+    }
 }
