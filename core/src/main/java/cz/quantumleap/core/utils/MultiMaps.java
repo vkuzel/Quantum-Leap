@@ -22,16 +22,17 @@ public final class MultiMaps {
     }
 
     public static <V> List<V> toValues(Map<?, List<V>> mapOfLists) {
-        List<V> values = new ArrayList<>();
+        var values = new ArrayList<V>();
         mapOfLists.forEach((o, vs) -> values.addAll(vs));
         return values;
     }
 
     public static <V, T> List<T> mapValues(Map<?, List<V>> mapOfLists, Function<V, T> valueMap) {
-        List<T> values = new ArrayList<>();
+        var values = new ArrayList<T>();
         mapOfLists.forEach((o, vs) -> {
             for (var v : vs) {
-                values.add(valueMap.apply(v));
+                var value = valueMap.apply(v);
+                values.add(value);
             }
         });
         return values;
