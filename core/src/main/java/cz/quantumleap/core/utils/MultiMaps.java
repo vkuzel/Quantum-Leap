@@ -1,6 +1,9 @@
 package cz.quantumleap.core.utils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.function.Function;
 
 import static java.util.Collections.emptyList;
@@ -21,17 +24,6 @@ public final class MultiMaps {
         return multimap;
     }
 
-    public static <V, T> List<T> mapValues(Map<?, List<V>> mapOfLists, Function<V, T> valueMap) {
-        var values = new ArrayList<T>();
-        mapOfLists.forEach((o, vs) -> {
-            for (var v : vs) {
-                var value = valueMap.apply(v);
-                values.add(value);
-            }
-        });
-        return values;
-    }
-
     public static class Multimap<K, V> extends LinkedHashMap<K, List<V>> {
 
         public Multimap() {
@@ -46,6 +38,17 @@ public final class MultiMaps {
         public List<V> allValues() {
             var values = new ArrayList<V>();
             forEach((o, vs) -> values.addAll(vs));
+            return values;
+        }
+
+        public <T> List<T> mapAllValues(Function<V, T> mapper) {
+            var values = new ArrayList<T>();
+            forEach((o, vs) -> {
+                for (var v : vs) {
+                    var value = mapper.apply(v);
+                    values.add(value);
+                }
+            });
             return values;
         }
     }
