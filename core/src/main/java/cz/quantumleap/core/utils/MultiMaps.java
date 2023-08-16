@@ -11,7 +11,7 @@ public final class MultiMaps {
      * Preserves collection order.
      * Resulting map returns empty list for missing keys.
      */
-    public static <K, V> Map<K, List<V>> groupBy(Collection<V> collection, Function<V, K> groupBy) {
+    public static <K, V> Multimap<K, V> groupBy(Collection<V> collection, Function<V, K> groupBy) {
         var multimap = new Multimap<K, V>();
         for (var value : collection) {
             var key = groupBy.apply(value);
@@ -19,12 +19,6 @@ public final class MultiMaps {
             values.add(value);
         }
         return multimap;
-    }
-
-    public static <V> List<V> toValues(Map<?, List<V>> mapOfLists) {
-        var values = new ArrayList<V>();
-        mapOfLists.forEach((o, vs) -> values.addAll(vs));
-        return values;
     }
 
     public static <V, T> List<T> mapValues(Map<?, List<V>> mapOfLists, Function<V, T> valueMap) {
@@ -38,7 +32,7 @@ public final class MultiMaps {
         return values;
     }
 
-    private static class Multimap<K, V> extends LinkedHashMap<K, List<V>> {
+    public static class Multimap<K, V> extends LinkedHashMap<K, List<V>> {
 
         public Multimap() {
         }
@@ -47,6 +41,12 @@ public final class MultiMaps {
         public List<V> get(Object key) {
             var list = super.get(key);
             return list != null ? list : emptyList();
+        }
+
+        public List<V> allValues() {
+            var values = new ArrayList<V>();
+            forEach((o, vs) -> values.addAll(vs));
+            return values;
         }
     }
 }
