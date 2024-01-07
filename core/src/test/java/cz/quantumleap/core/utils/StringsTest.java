@@ -85,4 +85,16 @@ class StringsTest {
 
         assertEquals("first, second, ...", abbreviation);
     }
+
+    @Test
+    void firstNotBlank() {
+        String first = null;
+        var second = "   ";
+        var third = "text";
+        var fourth = "ignored";
+
+        var text = Strings.firstNotBlank(first, second, third, fourth);
+
+        assertEquals("text", text);
+    }
 }
