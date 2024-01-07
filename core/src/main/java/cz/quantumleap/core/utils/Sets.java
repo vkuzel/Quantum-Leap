@@ -14,18 +14,15 @@ public final class Sets {
         }
 
         var product = new HashSet<T>();
+        valueLoop:
         for (var value : sets[0]) {
-            var allContains = true;
             for (var i = 1; i < sets.length; i++) {
                 var otherSet = sets[i];
                 if (!otherSet.contains(value)) {
-                    allContains = false;
-                    break;
+                    continue valueLoop;
                 }
             }
-            if  (allContains) {
-                product.add(value);
-            }
+            product.add(value);
         }
         return product;
     }
