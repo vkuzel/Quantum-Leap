@@ -11,14 +11,18 @@ import cz.quantumleap.core.tables.records.NotificationRecord;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Function;
 
 import org.jooq.Field;
 import org.jooq.ForeignKey;
+import org.jooq.Function8;
 import org.jooq.Identity;
 import org.jooq.Name;
 import org.jooq.Record;
+import org.jooq.Records;
 import org.jooq.Row8;
 import org.jooq.Schema;
+import org.jooq.SelectField;
 import org.jooq.Table;
 import org.jooq.TableField;
 import org.jooq.TableOptions;
@@ -62,7 +66,7 @@ public class NotificationTable extends TableImpl<NotificationRecord> {
     /**
      * The column <code>core.notification.message_arguments</code>.
      */
-    public final TableField<NotificationRecord, String[]> MESSAGE_ARGUMENTS = createField(DSL.name("message_arguments"), SQLDataType.VARCHAR.getArrayDataType(), this, "");
+    public final TableField<NotificationRecord, String[]> MESSAGE_ARGUMENTS = createField(DSL.name("message_arguments"), SQLDataType.VARCHAR.nullable(false).array(), this, "");
 
     /**
      * The column <code>core.notification.person_id</code>.
@@ -124,7 +128,7 @@ public class NotificationTable extends TableImpl<NotificationRecord> {
 
     @Override
     public Schema getSchema() {
-        return Core.CORE;
+        return aliased() ? null : Core.CORE;
     }
 
     @Override
@@ -138,19 +142,18 @@ public class NotificationTable extends TableImpl<NotificationRecord> {
     }
 
     @Override
-    public List<UniqueKey<NotificationRecord>> getKeys() {
-        return Arrays.<UniqueKey<NotificationRecord>>asList(Keys.NOTIFICATION_PKEY);
-    }
-
-    @Override
     public List<ForeignKey<NotificationRecord, ?>> getReferences() {
-        return Arrays.<ForeignKey<NotificationRecord, ?>>asList(Keys.NOTIFICATION__NOTIFICATION_PERSON_ID_FKEY, Keys.NOTIFICATION__NOTIFICATION_ROLE_ID_FKEY, Keys.NOTIFICATION__NOTIFICATION_RESOLVED_BY_FKEY);
+        return Arrays.asList(Keys.NOTIFICATION__NOTIFICATION_PERSON_ID_FKEY, Keys.NOTIFICATION__NOTIFICATION_ROLE_ID_FKEY, Keys.NOTIFICATION__NOTIFICATION_RESOLVED_BY_FKEY);
     }
 
     private transient PersonTable _notificationPersonIdFkey;
     private transient RoleTable _role;
     private transient PersonTable _notificationResolvedByFkey;
 
+    /**
+     * Get the implicit join path to the <code>core.person</code> table, via the
+     * <code>notification_person_id_fkey</code> key.
+     */
     public PersonTable notificationPersonIdFkey() {
         if (_notificationPersonIdFkey == null)
             _notificationPersonIdFkey = new PersonTable(this, Keys.NOTIFICATION__NOTIFICATION_PERSON_ID_FKEY);
@@ -158,6 +161,9 @@ public class NotificationTable extends TableImpl<NotificationRecord> {
         return _notificationPersonIdFkey;
     }
 
+    /**
+     * Get the implicit join path to the <code>core.role</code> table.
+     */
     public RoleTable role() {
         if (_role == null)
             _role = new RoleTable(this, Keys.NOTIFICATION__NOTIFICATION_ROLE_ID_FKEY);
@@ -165,6 +171,10 @@ public class NotificationTable extends TableImpl<NotificationRecord> {
         return _role;
     }
 
+    /**
+     * Get the implicit join path to the <code>core.person</code> table, via the
+     * <code>notification_resolved_by_fkey</code> key.
+     */
     public PersonTable notificationResolvedByFkey() {
         if (_notificationResolvedByFkey == null)
             _notificationResolvedByFkey = new PersonTable(this, Keys.NOTIFICATION__NOTIFICATION_RESOLVED_BY_FKEY);
@@ -180,6 +190,11 @@ public class NotificationTable extends TableImpl<NotificationRecord> {
     @Override
     public NotificationTable as(Name alias) {
         return new NotificationTable(alias, this);
+    }
+
+    @Override
+    public NotificationTable as(Table<?> alias) {
+        return new NotificationTable(alias.getQualifiedName(), this);
     }
 
     /**
@@ -198,6 +213,14 @@ public class NotificationTable extends TableImpl<NotificationRecord> {
         return new NotificationTable(name, null);
     }
 
+    /**
+     * Rename this table
+     */
+    @Override
+    public NotificationTable rename(Table<?> name) {
+        return new NotificationTable(name.getQualifiedName(), null);
+    }
+
     // -------------------------------------------------------------------------
     // Row8 type methods
     // -------------------------------------------------------------------------
@@ -205,5 +228,20 @@ public class NotificationTable extends TableImpl<NotificationRecord> {
     @Override
     public Row8<Long, String, String[], Long, Long, LocalDateTime, LocalDateTime, Long> fieldsRow() {
         return (Row8) super.fieldsRow();
+    }
+
+    /**
+     * Convenience mapping calling {@link SelectField#convertFrom(Function)}.
+     */
+    public <U> SelectField<U> mapping(Function8<? super Long, ? super String, ? super String[], ? super Long, ? super Long, ? super LocalDateTime, ? super LocalDateTime, ? super Long, ? extends U> from) {
+        return convertFrom(Records.mapping(from));
+    }
+
+    /**
+     * Convenience mapping calling {@link SelectField#convertFrom(Class,
+     * Function)}.
+     */
+    public <U> SelectField<U> mapping(Class<U> toType, Function8<? super Long, ? super String, ? super String[], ? super Long, ? super Long, ? super LocalDateTime, ? super LocalDateTime, ? super Long, ? extends U> from) {
+        return convertFrom(toType, Records.mapping(from));
     }
 }

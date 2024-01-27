@@ -10,14 +10,18 @@ import cz.quantumleap.core.tables.records.PersonRoleRecord;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Function;
 
 import org.jooq.Field;
 import org.jooq.ForeignKey;
+import org.jooq.Function3;
 import org.jooq.Identity;
 import org.jooq.Name;
 import org.jooq.Record;
+import org.jooq.Records;
 import org.jooq.Row3;
 import org.jooq.Schema;
+import org.jooq.SelectField;
 import org.jooq.Table;
 import org.jooq.TableField;
 import org.jooq.TableOptions;
@@ -98,7 +102,7 @@ public class PersonRoleTable extends TableImpl<PersonRoleRecord> {
 
     @Override
     public Schema getSchema() {
-        return Core.CORE;
+        return aliased() ? null : Core.CORE;
     }
 
     @Override
@@ -112,18 +116,21 @@ public class PersonRoleTable extends TableImpl<PersonRoleRecord> {
     }
 
     @Override
-    public List<UniqueKey<PersonRoleRecord>> getKeys() {
-        return Arrays.<UniqueKey<PersonRoleRecord>>asList(Keys.PERSON_ROLE_PKEY, Keys.PERSON_ROLE_PERSON_ID_ROLE_ID_KEY);
+    public List<UniqueKey<PersonRoleRecord>> getUniqueKeys() {
+        return Arrays.asList(Keys.PERSON_ROLE_PERSON_ID_ROLE_ID_KEY);
     }
 
     @Override
     public List<ForeignKey<PersonRoleRecord, ?>> getReferences() {
-        return Arrays.<ForeignKey<PersonRoleRecord, ?>>asList(Keys.PERSON_ROLE__PERSON_ROLE_PERSON_ID_FKEY, Keys.PERSON_ROLE__PERSON_ROLE_ROLE_ID_FKEY);
+        return Arrays.asList(Keys.PERSON_ROLE__PERSON_ROLE_PERSON_ID_FKEY, Keys.PERSON_ROLE__PERSON_ROLE_ROLE_ID_FKEY);
     }
 
     private transient PersonTable _person;
     private transient RoleTable _role;
 
+    /**
+     * Get the implicit join path to the <code>core.person</code> table.
+     */
     public PersonTable person() {
         if (_person == null)
             _person = new PersonTable(this, Keys.PERSON_ROLE__PERSON_ROLE_PERSON_ID_FKEY);
@@ -131,6 +138,9 @@ public class PersonRoleTable extends TableImpl<PersonRoleRecord> {
         return _person;
     }
 
+    /**
+     * Get the implicit join path to the <code>core.role</code> table.
+     */
     public RoleTable role() {
         if (_role == null)
             _role = new RoleTable(this, Keys.PERSON_ROLE__PERSON_ROLE_ROLE_ID_FKEY);
@@ -146,6 +156,11 @@ public class PersonRoleTable extends TableImpl<PersonRoleRecord> {
     @Override
     public PersonRoleTable as(Name alias) {
         return new PersonRoleTable(alias, this);
+    }
+
+    @Override
+    public PersonRoleTable as(Table<?> alias) {
+        return new PersonRoleTable(alias.getQualifiedName(), this);
     }
 
     /**
@@ -164,6 +179,14 @@ public class PersonRoleTable extends TableImpl<PersonRoleRecord> {
         return new PersonRoleTable(name, null);
     }
 
+    /**
+     * Rename this table
+     */
+    @Override
+    public PersonRoleTable rename(Table<?> name) {
+        return new PersonRoleTable(name.getQualifiedName(), null);
+    }
+
     // -------------------------------------------------------------------------
     // Row3 type methods
     // -------------------------------------------------------------------------
@@ -171,5 +194,20 @@ public class PersonRoleTable extends TableImpl<PersonRoleRecord> {
     @Override
     public Row3<Long, Long, Long> fieldsRow() {
         return (Row3) super.fieldsRow();
+    }
+
+    /**
+     * Convenience mapping calling {@link SelectField#convertFrom(Function)}.
+     */
+    public <U> SelectField<U> mapping(Function3<? super Long, ? super Long, ? super Long, ? extends U> from) {
+        return convertFrom(Records.mapping(from));
+    }
+
+    /**
+     * Convenience mapping calling {@link SelectField#convertFrom(Class,
+     * Function)}.
+     */
+    public <U> SelectField<U> mapping(Class<U> toType, Function3<? super Long, ? super Long, ? super Long, ? extends U> from) {
+        return convertFrom(toType, Records.mapping(from));
     }
 }

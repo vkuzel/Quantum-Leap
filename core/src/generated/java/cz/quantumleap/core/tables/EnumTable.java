@@ -7,23 +7,13 @@ package cz.quantumleap.core.tables;
 import cz.quantumleap.core.Core;
 import cz.quantumleap.core.Keys;
 import cz.quantumleap.core.tables.records.EnumRecord;
-
-import java.util.Arrays;
-import java.util.List;
-
-import org.jooq.Field;
-import org.jooq.ForeignKey;
-import org.jooq.Name;
 import org.jooq.Record;
-import org.jooq.Row2;
-import org.jooq.Schema;
-import org.jooq.Table;
-import org.jooq.TableField;
-import org.jooq.TableOptions;
-import org.jooq.UniqueKey;
+import org.jooq.*;
 import org.jooq.impl.DSL;
 import org.jooq.impl.SQLDataType;
 import org.jooq.impl.TableImpl;
+
+import java.util.function.Function;
 
 
 /**
@@ -92,17 +82,12 @@ public class EnumTable extends TableImpl<EnumRecord> {
 
     @Override
     public Schema getSchema() {
-        return Core.CORE;
+        return aliased() ? null : Core.CORE;
     }
 
     @Override
     public UniqueKey<EnumRecord> getPrimaryKey() {
         return Keys.ENUM_PKEY;
-    }
-
-    @Override
-    public List<UniqueKey<EnumRecord>> getKeys() {
-        return Arrays.<UniqueKey<EnumRecord>>asList(Keys.ENUM_PKEY);
     }
 
     @Override
@@ -113,6 +98,11 @@ public class EnumTable extends TableImpl<EnumRecord> {
     @Override
     public EnumTable as(Name alias) {
         return new EnumTable(alias, this);
+    }
+
+    @Override
+    public EnumTable as(Table<?> alias) {
+        return new EnumTable(alias.getQualifiedName(), this);
     }
 
     /**
@@ -131,6 +121,14 @@ public class EnumTable extends TableImpl<EnumRecord> {
         return new EnumTable(name, null);
     }
 
+    /**
+     * Rename this table
+     */
+    @Override
+    public EnumTable rename(Table<?> name) {
+        return new EnumTable(name.getQualifiedName(), null);
+    }
+
     // -------------------------------------------------------------------------
     // Row2 type methods
     // -------------------------------------------------------------------------
@@ -138,5 +136,20 @@ public class EnumTable extends TableImpl<EnumRecord> {
     @Override
     public Row2<String, String> fieldsRow() {
         return (Row2) super.fieldsRow();
+    }
+
+    /**
+     * Convenience mapping calling {@link SelectField#convertFrom(Function)}.
+     */
+    public <U> SelectField<U> mapping(Function2<? super String, ? super String, ? extends U> from) {
+        return convertFrom(Records.mapping(from));
+    }
+
+    /**
+     * Convenience mapping calling {@link SelectField#convertFrom(Class,
+     * Function)}.
+     */
+    public <U> SelectField<U> mapping(Class<U> toType, Function2<? super String, ? super String, ? extends U> from) {
+        return convertFrom(toType, Records.mapping(from));
     }
 }

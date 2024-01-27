@@ -23,7 +23,6 @@ import org.jooq.Catalog;
 import org.jooq.Configuration;
 import org.jooq.Field;
 import org.jooq.Result;
-import org.jooq.Sequence;
 import org.jooq.Table;
 import org.jooq.impl.SchemaImpl;
 
@@ -64,11 +63,13 @@ public class Core extends SchemaImpl {
         , LocalDate intervalsStart
         , LocalDate intervalsEnd
         , String step
+        , Boolean openEnd
     ) {
         return configuration.dsl().selectFrom(cz.quantumleap.core.tables.GenerateIntervalsTable.GENERATE_INTERVALS.call(
               intervalsStart
             , intervalsEnd
             , step
+            , openEnd
         )).fetch();
     }
 
@@ -79,11 +80,13 @@ public class Core extends SchemaImpl {
           LocalDate intervalsStart
         , LocalDate intervalsEnd
         , String step
+        , Boolean openEnd
     ) {
         return cz.quantumleap.core.tables.GenerateIntervalsTable.GENERATE_INTERVALS.call(
-              intervalsStart
-            , intervalsEnd
-            , step
+            intervalsStart,
+            intervalsEnd,
+            step,
+            openEnd
         );
     }
 
@@ -94,11 +97,13 @@ public class Core extends SchemaImpl {
           Field<LocalDate> intervalsStart
         , Field<LocalDate> intervalsEnd
         , Field<String> step
+        , Field<Boolean> openEnd
     ) {
         return cz.quantumleap.core.tables.GenerateIntervalsTable.GENERATE_INTERVALS.call(
-              intervalsStart
-            , intervalsEnd
-            , step
+            intervalsStart,
+            intervalsEnd,
+            step,
+            openEnd
         );
     }
 
@@ -146,19 +151,8 @@ public class Core extends SchemaImpl {
     }
 
     @Override
-    public final List<Sequence<?>> getSequences() {
-        return Arrays.<Sequence<?>>asList(
-            Sequences.INCREMENT_ID_SEQ,
-            Sequences.NOTIFICATION_ID_SEQ,
-            Sequences.PERSON_ID_SEQ,
-            Sequences.PERSON_ROLE_ID_SEQ,
-            Sequences.ROLE_ID_SEQ,
-            Sequences.SLICE_QUERY_ID_SEQ);
-    }
-
-    @Override
     public final List<Table<?>> getTables() {
-        return Arrays.<Table<?>>asList(
+        return Arrays.asList(
             EnumTable.ENUM,
             EnumValueTable.ENUM_VALUE,
             GenerateIntervalsTable.GENERATE_INTERVALS,
@@ -167,6 +161,7 @@ public class Core extends SchemaImpl {
             PersonTable.PERSON,
             PersonRoleTable.PERSON_ROLE,
             RoleTable.ROLE,
-            SliceQueryTable.SLICE_QUERY);
+            SliceQueryTable.SLICE_QUERY
+        );
     }
 }

@@ -4,11 +4,16 @@
 package cz.quantumleap.core;
 
 
+import cz.quantumleap.core.routines.First;
+import cz.quantumleap.core.routines.FirstAgg;
+import cz.quantumleap.core.routines.Last;
+import cz.quantumleap.core.routines.LastAgg;
 import cz.quantumleap.core.tables.GenerateIntervalsTable;
 import cz.quantumleap.core.tables.records.GenerateIntervalsRecord;
 
 import java.time.LocalDate;
 
+import org.jooq.AggregateFunction;
 import org.jooq.Configuration;
 import org.jooq.Field;
 import org.jooq.Result;
@@ -21,6 +26,202 @@ import org.jooq.Result;
 public class Routines {
 
     /**
+     * @deprecated Unknown data type. If this is a qualified, user-defined type,
+     * it may have been excluded from code generation. If this is a built-in
+     * type, you can define an explicit {@link org.jooq.Binding} to specify how
+     * this type should be handled. Deprecation can be turned off using
+     * {@literal <deprecationOnUnknownTypes/>} in your code generator
+     * configuration.
+     */
+    @Deprecated
+    public static AggregateFunction<Object> first(
+          Object __1
+    ) {
+        First f = new First();
+        f.set__1(__1);
+
+        return f.asAggregateFunction();
+    }
+
+    /**
+     * @deprecated Unknown data type. If this is a qualified, user-defined type,
+     * it may have been excluded from code generation. If this is a built-in
+     * type, you can define an explicit {@link org.jooq.Binding} to specify how
+     * this type should be handled. Deprecation can be turned off using
+     * {@literal <deprecationOnUnknownTypes/>} in your code generator
+     * configuration.
+     */
+    @Deprecated
+    public static AggregateFunction<Object> first(
+          Field<Object> __1
+    ) {
+        First f = new First();
+        f.set__1(__1);
+
+        return f.asAggregateFunction();
+    }
+
+    /**
+     * @deprecated Unknown data type. If this is a qualified, user-defined type,
+     * it may have been excluded from code generation. If this is a built-in
+     * type, you can define an explicit {@link org.jooq.Binding} to specify how
+     * this type should be handled. Deprecation can be turned off using
+     * {@literal <deprecationOnUnknownTypes/>} in your code generator
+     * configuration.
+     */
+    @Deprecated
+    public static Object firstAgg(
+          Configuration configuration
+        , Object __1
+        , Object __2
+    ) {
+        FirstAgg f = new FirstAgg();
+        f.set__1(__1);
+        f.set__2(__2);
+
+        f.execute(configuration);
+        return f.getReturnValue();
+    }
+
+    /**
+     * @deprecated Unknown data type. If this is a qualified, user-defined type,
+     * it may have been excluded from code generation. If this is a built-in
+     * type, you can define an explicit {@link org.jooq.Binding} to specify how
+     * this type should be handled. Deprecation can be turned off using
+     * {@literal <deprecationOnUnknownTypes/>} in your code generator
+     * configuration.
+     */
+    @Deprecated
+    public static Field<Object> firstAgg(
+          Object __1
+        , Object __2
+    ) {
+        FirstAgg f = new FirstAgg();
+        f.set__1(__1);
+        f.set__2(__2);
+
+        return f.asField();
+    }
+
+    /**
+     * @deprecated Unknown data type. If this is a qualified, user-defined type,
+     * it may have been excluded from code generation. If this is a built-in
+     * type, you can define an explicit {@link org.jooq.Binding} to specify how
+     * this type should be handled. Deprecation can be turned off using
+     * {@literal <deprecationOnUnknownTypes/>} in your code generator
+     * configuration.
+     */
+    @Deprecated
+    public static Field<Object> firstAgg(
+          Field<Object> __1
+        , Field<Object> __2
+    ) {
+        FirstAgg f = new FirstAgg();
+        f.set__1(__1);
+        f.set__2(__2);
+
+        return f.asField();
+    }
+
+    /**
+     * @deprecated Unknown data type. If this is a qualified, user-defined type,
+     * it may have been excluded from code generation. If this is a built-in
+     * type, you can define an explicit {@link org.jooq.Binding} to specify how
+     * this type should be handled. Deprecation can be turned off using
+     * {@literal <deprecationOnUnknownTypes/>} in your code generator
+     * configuration.
+     */
+    @Deprecated
+    public static AggregateFunction<Object> last(
+          Object __1
+    ) {
+        Last f = new Last();
+        f.set__1(__1);
+
+        return f.asAggregateFunction();
+    }
+
+    /**
+     * @deprecated Unknown data type. If this is a qualified, user-defined type,
+     * it may have been excluded from code generation. If this is a built-in
+     * type, you can define an explicit {@link org.jooq.Binding} to specify how
+     * this type should be handled. Deprecation can be turned off using
+     * {@literal <deprecationOnUnknownTypes/>} in your code generator
+     * configuration.
+     */
+    @Deprecated
+    public static AggregateFunction<Object> last(
+          Field<Object> __1
+    ) {
+        Last f = new Last();
+        f.set__1(__1);
+
+        return f.asAggregateFunction();
+    }
+
+    /**
+     * @deprecated Unknown data type. If this is a qualified, user-defined type,
+     * it may have been excluded from code generation. If this is a built-in
+     * type, you can define an explicit {@link org.jooq.Binding} to specify how
+     * this type should be handled. Deprecation can be turned off using
+     * {@literal <deprecationOnUnknownTypes/>} in your code generator
+     * configuration.
+     */
+    @Deprecated
+    public static Object lastAgg(
+          Configuration configuration
+        , Object __1
+        , Object __2
+    ) {
+        LastAgg f = new LastAgg();
+        f.set__1(__1);
+        f.set__2(__2);
+
+        f.execute(configuration);
+        return f.getReturnValue();
+    }
+
+    /**
+     * @deprecated Unknown data type. If this is a qualified, user-defined type,
+     * it may have been excluded from code generation. If this is a built-in
+     * type, you can define an explicit {@link org.jooq.Binding} to specify how
+     * this type should be handled. Deprecation can be turned off using
+     * {@literal <deprecationOnUnknownTypes/>} in your code generator
+     * configuration.
+     */
+    @Deprecated
+    public static Field<Object> lastAgg(
+          Object __1
+        , Object __2
+    ) {
+        LastAgg f = new LastAgg();
+        f.set__1(__1);
+        f.set__2(__2);
+
+        return f.asField();
+    }
+
+    /**
+     * @deprecated Unknown data type. If this is a qualified, user-defined type,
+     * it may have been excluded from code generation. If this is a built-in
+     * type, you can define an explicit {@link org.jooq.Binding} to specify how
+     * this type should be handled. Deprecation can be turned off using
+     * {@literal <deprecationOnUnknownTypes/>} in your code generator
+     * configuration.
+     */
+    @Deprecated
+    public static Field<Object> lastAgg(
+          Field<Object> __1
+        , Field<Object> __2
+    ) {
+        LastAgg f = new LastAgg();
+        f.set__1(__1);
+        f.set__2(__2);
+
+        return f.asField();
+    }
+
+    /**
      * Call <code>core.generate_intervals</code>.
      */
     public static Result<GenerateIntervalsRecord> generateIntervals(
@@ -28,11 +229,13 @@ public class Routines {
         , LocalDate intervalsStart
         , LocalDate intervalsEnd
         , String step
+        , Boolean openEnd
     ) {
         return configuration.dsl().selectFrom(cz.quantumleap.core.tables.GenerateIntervalsTable.GENERATE_INTERVALS.call(
               intervalsStart
             , intervalsEnd
             , step
+            , openEnd
         )).fetch();
     }
 
@@ -43,11 +246,13 @@ public class Routines {
           LocalDate intervalsStart
         , LocalDate intervalsEnd
         , String step
+        , Boolean openEnd
     ) {
         return cz.quantumleap.core.tables.GenerateIntervalsTable.GENERATE_INTERVALS.call(
-              intervalsStart
-            , intervalsEnd
-            , step
+            intervalsStart,
+            intervalsEnd,
+            step,
+            openEnd
         );
     }
 
@@ -58,11 +263,13 @@ public class Routines {
           Field<LocalDate> intervalsStart
         , Field<LocalDate> intervalsEnd
         , Field<String> step
+        , Field<Boolean> openEnd
     ) {
         return cz.quantumleap.core.tables.GenerateIntervalsTable.GENERATE_INTERVALS.call(
-              intervalsStart
-            , intervalsEnd
-            , step
+            intervalsStart,
+            intervalsEnd,
+            step,
+            openEnd
         );
     }
 }

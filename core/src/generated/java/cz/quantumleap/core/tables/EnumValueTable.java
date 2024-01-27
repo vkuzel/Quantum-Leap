@@ -10,13 +10,17 @@ import cz.quantumleap.core.tables.records.EnumValueRecord;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Function;
 
 import org.jooq.Field;
 import org.jooq.ForeignKey;
+import org.jooq.Function3;
 import org.jooq.Name;
 import org.jooq.Record;
+import org.jooq.Records;
 import org.jooq.Row3;
 import org.jooq.Schema;
+import org.jooq.SelectField;
 import org.jooq.Table;
 import org.jooq.TableField;
 import org.jooq.TableOptions;
@@ -97,7 +101,7 @@ public class EnumValueTable extends TableImpl<EnumValueRecord> {
 
     @Override
     public Schema getSchema() {
-        return Core.CORE;
+        return aliased() ? null : Core.CORE;
     }
 
     @Override
@@ -106,17 +110,15 @@ public class EnumValueTable extends TableImpl<EnumValueRecord> {
     }
 
     @Override
-    public List<UniqueKey<EnumValueRecord>> getKeys() {
-        return Arrays.<UniqueKey<EnumValueRecord>>asList(Keys.ENUM_VALUE_PKEY1);
-    }
-
-    @Override
     public List<ForeignKey<EnumValueRecord, ?>> getReferences() {
-        return Arrays.<ForeignKey<EnumValueRecord, ?>>asList(Keys.ENUM_VALUE__ENUM_VALUE_ENUM_ID_FKEY1);
+        return Arrays.asList(Keys.ENUM_VALUE__ENUM_VALUE_ENUM_ID_FKEY1);
     }
 
     private transient EnumTable _enum_;
 
+    /**
+     * Get the implicit join path to the <code>core.enum</code> table.
+     */
     public EnumTable enum_() {
         if (_enum_ == null)
             _enum_ = new EnumTable(this, Keys.ENUM_VALUE__ENUM_VALUE_ENUM_ID_FKEY1);
@@ -132,6 +134,11 @@ public class EnumValueTable extends TableImpl<EnumValueRecord> {
     @Override
     public EnumValueTable as(Name alias) {
         return new EnumValueTable(alias, this);
+    }
+
+    @Override
+    public EnumValueTable as(Table<?> alias) {
+        return new EnumValueTable(alias.getQualifiedName(), this);
     }
 
     /**
@@ -150,6 +157,14 @@ public class EnumValueTable extends TableImpl<EnumValueRecord> {
         return new EnumValueTable(name, null);
     }
 
+    /**
+     * Rename this table
+     */
+    @Override
+    public EnumValueTable rename(Table<?> name) {
+        return new EnumValueTable(name.getQualifiedName(), null);
+    }
+
     // -------------------------------------------------------------------------
     // Row3 type methods
     // -------------------------------------------------------------------------
@@ -157,5 +172,20 @@ public class EnumValueTable extends TableImpl<EnumValueRecord> {
     @Override
     public Row3<String, String, String> fieldsRow() {
         return (Row3) super.fieldsRow();
+    }
+
+    /**
+     * Convenience mapping calling {@link SelectField#convertFrom(Function)}.
+     */
+    public <U> SelectField<U> mapping(Function3<? super String, ? super String, ? super String, ? extends U> from) {
+        return convertFrom(Records.mapping(from));
+    }
+
+    /**
+     * Convenience mapping calling {@link SelectField#convertFrom(Class,
+     * Function)}.
+     */
+    public <U> SelectField<U> mapping(Class<U> toType, Function3<? super String, ? super String, ? super String, ? extends U> from) {
+        return convertFrom(toType, Records.mapping(from));
     }
 }

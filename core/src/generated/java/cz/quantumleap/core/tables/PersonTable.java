@@ -11,14 +11,18 @@ import cz.quantumleap.core.tables.records.PersonRecord;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Function;
 
 import org.jooq.Field;
 import org.jooq.ForeignKey;
+import org.jooq.Function4;
 import org.jooq.Identity;
 import org.jooq.Name;
 import org.jooq.Record;
+import org.jooq.Records;
 import org.jooq.Row4;
 import org.jooq.Schema;
+import org.jooq.SelectField;
 import org.jooq.Table;
 import org.jooq.TableField;
 import org.jooq.TableOptions;
@@ -104,7 +108,7 @@ public class PersonTable extends TableImpl<PersonRecord> {
 
     @Override
     public Schema getSchema() {
-        return Core.CORE;
+        return aliased() ? null : Core.CORE;
     }
 
     @Override
@@ -118,8 +122,8 @@ public class PersonTable extends TableImpl<PersonRecord> {
     }
 
     @Override
-    public List<UniqueKey<PersonRecord>> getKeys() {
-        return Arrays.<UniqueKey<PersonRecord>>asList(Keys.PERSON_PKEY, Keys.PERSON_EMAIL_KEY);
+    public List<UniqueKey<PersonRecord>> getUniqueKeys() {
+        return Arrays.asList(Keys.PERSON_EMAIL_KEY);
     }
 
     @Override
@@ -130,6 +134,11 @@ public class PersonTable extends TableImpl<PersonRecord> {
     @Override
     public PersonTable as(Name alias) {
         return new PersonTable(alias, this);
+    }
+
+    @Override
+    public PersonTable as(Table<?> alias) {
+        return new PersonTable(alias.getQualifiedName(), this);
     }
 
     /**
@@ -148,6 +157,14 @@ public class PersonTable extends TableImpl<PersonRecord> {
         return new PersonTable(name, null);
     }
 
+    /**
+     * Rename this table
+     */
+    @Override
+    public PersonTable rename(Table<?> name) {
+        return new PersonTable(name.getQualifiedName(), null);
+    }
+
     // -------------------------------------------------------------------------
     // Row4 type methods
     // -------------------------------------------------------------------------
@@ -155,5 +172,20 @@ public class PersonTable extends TableImpl<PersonRecord> {
     @Override
     public Row4<Long, String, String, LocalDateTime> fieldsRow() {
         return (Row4) super.fieldsRow();
+    }
+
+    /**
+     * Convenience mapping calling {@link SelectField#convertFrom(Function)}.
+     */
+    public <U> SelectField<U> mapping(Function4<? super Long, ? super String, ? super String, ? super LocalDateTime, ? extends U> from) {
+        return convertFrom(Records.mapping(from));
+    }
+
+    /**
+     * Convenience mapping calling {@link SelectField#convertFrom(Class,
+     * Function)}.
+     */
+    public <U> SelectField<U> mapping(Class<U> toType, Function4<? super Long, ? super String, ? super String, ? super LocalDateTime, ? extends U> from) {
+        return convertFrom(toType, Records.mapping(from));
     }
 }

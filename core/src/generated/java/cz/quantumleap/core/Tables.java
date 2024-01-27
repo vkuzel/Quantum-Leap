@@ -51,11 +51,13 @@ public class Tables {
         , LocalDate intervalsStart
         , LocalDate intervalsEnd
         , String step
+        , Boolean openEnd
     ) {
         return configuration.dsl().selectFrom(cz.quantumleap.core.tables.GenerateIntervalsTable.GENERATE_INTERVALS.call(
               intervalsStart
             , intervalsEnd
             , step
+            , openEnd
         )).fetch();
     }
 
@@ -66,11 +68,13 @@ public class Tables {
           LocalDate intervalsStart
         , LocalDate intervalsEnd
         , String step
+        , Boolean openEnd
     ) {
         return cz.quantumleap.core.tables.GenerateIntervalsTable.GENERATE_INTERVALS.call(
-              intervalsStart
-            , intervalsEnd
-            , step
+            intervalsStart,
+            intervalsEnd,
+            step,
+            openEnd
         );
     }
 
@@ -81,11 +85,13 @@ public class Tables {
           Field<LocalDate> intervalsStart
         , Field<LocalDate> intervalsEnd
         , Field<String> step
+        , Field<Boolean> openEnd
     ) {
         return cz.quantumleap.core.tables.GenerateIntervalsTable.GENERATE_INTERVALS.call(
-              intervalsStart
-            , intervalsEnd
-            , step
+            intervalsStart,
+            intervalsEnd,
+            step,
+            openEnd
         );
     }
 

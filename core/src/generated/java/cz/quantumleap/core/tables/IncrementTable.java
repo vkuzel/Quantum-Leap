@@ -9,16 +9,18 @@ import cz.quantumleap.core.Keys;
 import cz.quantumleap.core.tables.records.IncrementRecord;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
+import java.util.function.Function;
 
 import org.jooq.Field;
 import org.jooq.ForeignKey;
+import org.jooq.Function5;
 import org.jooq.Identity;
 import org.jooq.Name;
 import org.jooq.Record;
+import org.jooq.Records;
 import org.jooq.Row5;
 import org.jooq.Schema;
+import org.jooq.SelectField;
 import org.jooq.Table;
 import org.jooq.TableField;
 import org.jooq.TableOptions;
@@ -109,7 +111,7 @@ public class IncrementTable extends TableImpl<IncrementRecord> {
 
     @Override
     public Schema getSchema() {
-        return Core.CORE;
+        return aliased() ? null : Core.CORE;
     }
 
     @Override
@@ -123,11 +125,6 @@ public class IncrementTable extends TableImpl<IncrementRecord> {
     }
 
     @Override
-    public List<UniqueKey<IncrementRecord>> getKeys() {
-        return Arrays.<UniqueKey<IncrementRecord>>asList(Keys.INCREMENT_PKEY);
-    }
-
-    @Override
     public IncrementTable as(String alias) {
         return new IncrementTable(DSL.name(alias), this);
     }
@@ -135,6 +132,11 @@ public class IncrementTable extends TableImpl<IncrementRecord> {
     @Override
     public IncrementTable as(Name alias) {
         return new IncrementTable(alias, this);
+    }
+
+    @Override
+    public IncrementTable as(Table<?> alias) {
+        return new IncrementTable(alias.getQualifiedName(), this);
     }
 
     /**
@@ -153,6 +155,14 @@ public class IncrementTable extends TableImpl<IncrementRecord> {
         return new IncrementTable(name, null);
     }
 
+    /**
+     * Rename this table
+     */
+    @Override
+    public IncrementTable rename(Table<?> name) {
+        return new IncrementTable(name.getQualifiedName(), null);
+    }
+
     // -------------------------------------------------------------------------
     // Row5 type methods
     // -------------------------------------------------------------------------
@@ -160,5 +170,20 @@ public class IncrementTable extends TableImpl<IncrementRecord> {
     @Override
     public Row5<Long, String, Integer, String, LocalDateTime> fieldsRow() {
         return (Row5) super.fieldsRow();
+    }
+
+    /**
+     * Convenience mapping calling {@link SelectField#convertFrom(Function)}.
+     */
+    public <U> SelectField<U> mapping(Function5<? super Long, ? super String, ? super Integer, ? super String, ? super LocalDateTime, ? extends U> from) {
+        return convertFrom(Records.mapping(from));
+    }
+
+    /**
+     * Convenience mapping calling {@link SelectField#convertFrom(Class,
+     * Function)}.
+     */
+    public <U> SelectField<U> mapping(Class<U> toType, Function5<? super Long, ? super String, ? super Integer, ? super String, ? super LocalDateTime, ? extends U> from) {
+        return convertFrom(toType, Records.mapping(from));
     }
 }

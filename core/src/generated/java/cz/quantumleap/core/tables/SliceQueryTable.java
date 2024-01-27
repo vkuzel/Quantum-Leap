@@ -10,14 +10,18 @@ import cz.quantumleap.core.tables.records.SliceQueryRecord;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Function;
 
 import org.jooq.Field;
 import org.jooq.ForeignKey;
+import org.jooq.Function6;
 import org.jooq.Identity;
 import org.jooq.Name;
 import org.jooq.Record;
+import org.jooq.Records;
 import org.jooq.Row6;
 import org.jooq.Schema;
+import org.jooq.SelectField;
 import org.jooq.Table;
 import org.jooq.TableField;
 import org.jooq.TableOptions;
@@ -113,7 +117,7 @@ public class SliceQueryTable extends TableImpl<SliceQueryRecord> {
 
     @Override
     public Schema getSchema() {
-        return Core.CORE;
+        return aliased() ? null : Core.CORE;
     }
 
     @Override
@@ -127,17 +131,20 @@ public class SliceQueryTable extends TableImpl<SliceQueryRecord> {
     }
 
     @Override
-    public List<UniqueKey<SliceQueryRecord>> getKeys() {
-        return Arrays.<UniqueKey<SliceQueryRecord>>asList(Keys.SLICE_QUERY_PKEY, Keys.SLICE_QUERY_ENTITY_IDENTIFIER_PERSON_ID_IS_DEFAULT_KEY);
+    public List<UniqueKey<SliceQueryRecord>> getUniqueKeys() {
+        return Arrays.asList(Keys.SLICE_QUERY_ENTITY_IDENTIFIER_PERSON_ID_IS_DEFAULT_KEY);
     }
 
     @Override
     public List<ForeignKey<SliceQueryRecord, ?>> getReferences() {
-        return Arrays.<ForeignKey<SliceQueryRecord, ?>>asList(Keys.SLICE_QUERY__SLICE_QUERY_PERSON_ID_FKEY);
+        return Arrays.asList(Keys.SLICE_QUERY__SLICE_QUERY_PERSON_ID_FKEY);
     }
 
     private transient PersonTable _person;
 
+    /**
+     * Get the implicit join path to the <code>core.person</code> table.
+     */
     public PersonTable person() {
         if (_person == null)
             _person = new PersonTable(this, Keys.SLICE_QUERY__SLICE_QUERY_PERSON_ID_FKEY);
@@ -153,6 +160,11 @@ public class SliceQueryTable extends TableImpl<SliceQueryRecord> {
     @Override
     public SliceQueryTable as(Name alias) {
         return new SliceQueryTable(alias, this);
+    }
+
+    @Override
+    public SliceQueryTable as(Table<?> alias) {
+        return new SliceQueryTable(alias.getQualifiedName(), this);
     }
 
     /**
@@ -171,6 +183,14 @@ public class SliceQueryTable extends TableImpl<SliceQueryRecord> {
         return new SliceQueryTable(name, null);
     }
 
+    /**
+     * Rename this table
+     */
+    @Override
+    public SliceQueryTable rename(Table<?> name) {
+        return new SliceQueryTable(name.getQualifiedName(), null);
+    }
+
     // -------------------------------------------------------------------------
     // Row6 type methods
     // -------------------------------------------------------------------------
@@ -178,5 +198,20 @@ public class SliceQueryTable extends TableImpl<SliceQueryRecord> {
     @Override
     public Row6<Long, String, Long, Boolean, String, String> fieldsRow() {
         return (Row6) super.fieldsRow();
+    }
+
+    /**
+     * Convenience mapping calling {@link SelectField#convertFrom(Function)}.
+     */
+    public <U> SelectField<U> mapping(Function6<? super Long, ? super String, ? super Long, ? super Boolean, ? super String, ? super String, ? extends U> from) {
+        return convertFrom(Records.mapping(from));
+    }
+
+    /**
+     * Convenience mapping calling {@link SelectField#convertFrom(Class,
+     * Function)}.
+     */
+    public <U> SelectField<U> mapping(Class<U> toType, Function6<? super Long, ? super String, ? super Long, ? super Boolean, ? super String, ? super String, ? extends U> from) {
+        return convertFrom(toType, Records.mapping(from));
     }
 }

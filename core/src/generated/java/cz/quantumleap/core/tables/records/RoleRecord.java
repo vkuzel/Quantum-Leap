@@ -5,7 +5,6 @@ package cz.quantumleap.core.tables.records;
 
 
 import cz.quantumleap.core.tables.RoleTable;
-
 import org.jooq.Field;
 import org.jooq.Record1;
 import org.jooq.Record2;
@@ -140,5 +139,6 @@ public class RoleRecord extends UpdatableRecordImpl<RoleRecord> implements Recor
 
         setId(id);
         setName(name);
+        resetChangedOnNotNull();
     }
 }

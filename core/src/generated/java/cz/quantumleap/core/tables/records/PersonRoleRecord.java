@@ -5,7 +5,6 @@ package cz.quantumleap.core.tables.records;
 
 
 import cz.quantumleap.core.tables.PersonRoleTable;
-
 import org.jooq.Field;
 import org.jooq.Record1;
 import org.jooq.Record3;
@@ -177,5 +176,6 @@ public class PersonRoleRecord extends UpdatableRecordImpl<PersonRoleRecord> impl
         setId(id);
         setPersonId(personId);
         setRoleId(roleId);
+        resetChangedOnNotNull();
     }
 }

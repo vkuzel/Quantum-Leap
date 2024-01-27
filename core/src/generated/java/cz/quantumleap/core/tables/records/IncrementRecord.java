@@ -5,14 +5,13 @@ package cz.quantumleap.core.tables.records;
 
 
 import cz.quantumleap.core.tables.IncrementTable;
-
-import java.time.LocalDateTime;
-
 import org.jooq.Field;
 import org.jooq.Record1;
 import org.jooq.Record5;
 import org.jooq.Row5;
 import org.jooq.impl.UpdatableRecordImpl;
+
+import java.time.LocalDateTime;
 
 
 /**
@@ -253,5 +252,6 @@ public class IncrementRecord extends UpdatableRecordImpl<IncrementRecord> implem
         setVersion(version);
         setFileName(fileName);
         setCreatedAt(createdAt);
+        resetChangedOnNotNull();
     }
 }
