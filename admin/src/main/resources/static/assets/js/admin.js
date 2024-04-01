@@ -568,6 +568,42 @@ class TagsControl {
     }
 }
 
+class FormSubmitControl {
+
+    static _KEY_CODE_ENTER = 13
+
+    _form = null
+
+    constructor(formElement) {
+        this._form = Validate.ensureInstanceOf(formElement, HTMLFormElement)
+        this._bindListeners()
+    }
+
+    _bindListeners() {
+        const inputElements = this._form.querySelectorAll('input[type="text"],input[type="number"],' +
+            'input[type="date"],input[type="time"],input[type="datetime-local"]')
+        for (const inputElement of inputElements) {
+            this._bindInputElementListeners(inputElement)
+        }
+    }
+
+    _bindInputElementListeners(inputElement) {
+        inputElement.addEventListener('keypress', (event) => {
+            if (this._isCtrlEnterEvent(event)) {
+                const submitButton = this._form.querySelector('input[type="submit"][name="save"]')
+                if (submitButton != null) {
+                    event.preventDefault()
+                    submitButton.click()
+                }
+            }
+        })
+    }
+
+    _isCtrlEnterEvent(event) {
+        return event.ctrlKey && event.keyCode === FormSubmitControl._KEY_CODE_ENTER
+    }
+}
+
 class AsyncFormPartControl {
 
     static _CONTENT_REGEXP = new RegExp('^\\s*<[^>]+>(.*)</[^>]+>\\s*$', 'is')
@@ -775,6 +811,11 @@ class ModalFormControl {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+    const forms = document.getElementsByTagName('form')
+    for (let form of forms) {
+        new FormSubmitControl(form)
+    }
+
     const tables = document.querySelectorAll('table.data-table')
     for (let table of tables) {
         const bindOpenDetailListeners = (tBody) => {
