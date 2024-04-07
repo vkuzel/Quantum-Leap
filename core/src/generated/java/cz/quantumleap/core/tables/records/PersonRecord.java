@@ -5,13 +5,14 @@ package cz.quantumleap.core.tables.records;
 
 
 import cz.quantumleap.core.tables.PersonTable;
+
+import java.time.LocalDateTime;
+
 import org.jooq.Field;
 import org.jooq.Record1;
 import org.jooq.Record4;
 import org.jooq.Row4;
 import org.jooq.impl.UpdatableRecordImpl;
-
-import java.time.LocalDateTime;
 
 
 /**
