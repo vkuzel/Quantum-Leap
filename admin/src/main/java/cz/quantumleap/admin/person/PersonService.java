@@ -4,13 +4,14 @@ import cz.quantumleap.core.business.ServiceStub;
 import cz.quantumleap.core.person.PersonDao;
 import cz.quantumleap.core.person.domain.Person;
 import cz.quantumleap.core.security.Authenticator;
-import org.apache.commons.lang3.Validate;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.Errors;
 
 import java.util.Objects;
+
+import static java.util.Objects.requireNonNull;
 
 @Service
 public class PersonService extends ServiceStub<Person> {
@@ -25,7 +26,7 @@ public class PersonService extends ServiceStub<Person> {
 
     @Cacheable("personByAuthentication")
     public Person fetchByAuthentication(Authentication authentication) {
-        Validate.notNull(authentication);
+        requireNonNull(authentication);
         var email = authenticator.getAuthenticationEmail(authentication);
         return personDao.fetchByEmail(email);
     }
