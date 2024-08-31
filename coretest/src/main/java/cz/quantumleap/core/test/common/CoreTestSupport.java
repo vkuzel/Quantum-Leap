@@ -4,15 +4,19 @@ import cz.quantumleap.core.person.PersonDao;
 import cz.quantumleap.core.person.domain.Person;
 import cz.quantumleap.core.role.RoleDao;
 import cz.quantumleap.core.role.domain.Role;
-import org.apache.commons.lang3.Validate;
 import org.intellij.lang.annotations.Language;
-import org.jooq.*;
+import org.jooq.Constraint;
+import org.jooq.DSLContext;
+import org.jooq.Schema;
+import org.jooq.Table;
 import org.jooq.impl.DSL;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static java.util.Objects.requireNonNull;
 
 @Component
 public class CoreTestSupport {
@@ -77,7 +81,7 @@ public class CoreTestSupport {
         if (primaryKey != null) {
             constraints.add(DSL.primaryKey(primaryKey.getFieldsArray()));
         }
-        for (ForeignKey<?, ?> reference : table.getReferences()) {
+        for (var reference : table.getReferences()) {
             constraints.add(DSL.foreignKey(reference.getFieldsArray()).references(reference.getKey().getTable()));
         }
         dslContext
@@ -97,7 +101,8 @@ public class CoreTestSupport {
 
     @Transactional
     public void deleteFromTable(String tableName) {
-        dslContext.execute("DELETE FROM " + tableName);
+        var sql = "DELETE FROM %s".formatted(tableName);
+        dslContext.execute(sql);
     }
 
     public long countRowsInTable(String tableName) {
@@ -106,7 +111,7 @@ public class CoreTestSupport {
 
     public <T> T fetchFirst(@Language("SQL") String sql, Class<T> type) {
         var record = dslContext.fetchOne(sql);
-        Validate.notNull(record);
+        requireNonNull(record);
         return record.get(0, type);
     }
 }
