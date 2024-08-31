@@ -9,7 +9,6 @@ import io.spring.gradle.dependencymanagement.dsl.DependencyManagementExtension;
 import org.gradle.api.JavaVersion;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
-import org.gradle.api.Task;
 import org.gradle.api.plugins.JavaLibraryPlugin;
 import org.gradle.api.plugins.JavaPluginExtension;
 import org.gradle.api.tasks.testing.Test;
@@ -46,12 +45,6 @@ public class QuantumLeapPlugin implements Plugin<Project> {
         project.getPlugins().apply(DependencyManagementPlugin.class);
         project.getExtensions().getByType(DependencyManagementExtension.class)
                 .imports(importsHandler -> importsHandler.mavenBom(SPRING_BOOT_BOM));
-        project.getTasksByName("test", false).forEach(this::applyJUnitPlatform);
-    }
-
-    private void applyJUnitPlatform(Task task) {
-        if (task instanceof Test) {
-            ((Test) task).useJUnitPlatform();
-        }
+        project.getTasks().withType(Test.class, Test::useJUnitPlatform);
     }
 }
