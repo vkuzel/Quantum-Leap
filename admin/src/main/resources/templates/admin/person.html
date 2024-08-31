@@ -13,7 +13,7 @@
 <body>
 
 <main layout:fragment="content">
-    <form th:action="${#ctx.springRequestContext.requestUri}" th:object="${person}" method="post">
+    <form th:action="${#qlctx.requestUri()}" th:object="${person}" method="post">
         <div class="card mb-3">
             <div class="card-header">
                 <i class="fas fa-user"></i>

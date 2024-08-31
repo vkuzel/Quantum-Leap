@@ -12,7 +12,7 @@
         cellTemplate__column name__ ... Fragment to replace the default cell template.
 */-->
 <table th:fragment="table" th:assert="slice" class="table table-striped table-bordered table-hover data-table" th:data-qualifier="${qualifier}"
-       th:with="urlBuilder=${T(org.springframework.web.servlet.support.ServletUriComponentsBuilder)},templateTable=${T(cz.quantumleap.admin.web.TemplateHelper).createTemplateTable(qualifier,entityIdentifier,slice,detailUrl)}">
+       th:with="templateTable=${T(cz.quantumleap.admin.web.TemplateHelper).createTemplateTable(qualifier,entityIdentifier,slice,detailUrl)}">
     <thead>
     <tr>
         <th th:each="column : ${slice.getColumns()}"
@@ -20,7 +20,7 @@
             class="sorting"
             th:classappend="*{order} ? (*{order.direction.isAscending()} ? 'asc' : 'desc') : ''">
             <a th:with="sortValue=*{name} + (*{order} and *{order.direction.isAscending()} ? ';desc' : '')"
-               th:href="${urlBuilder.fromCurrentRequest().replaceQueryParam(templateTable.getSortParamName(), '__${sortValue}__').replaceQueryParam(templateTable.getOffsetParamName()).build()}"
+               th:href="${#qlctx.requestUriBuilder().replaceQueryParam(templateTable.getSortParamName(), '__${sortValue}__').replaceQueryParam(templateTable.getOffsetParamName()).build()}"
                th:assert="${entityIdentifier}"
                th:text="${column.primaryKey} ? '#' : #{|admin.table.${entityIdentifier}.*{name}|}">Column name</a>
         </th>
@@ -54,7 +54,7 @@
     <tfoot th:if="${slice.canExtend()}">
     <tr>
         <td class="text-center" th:colspan="${1 + slice.getColumns().size()}">
-            <a th:href="${urlBuilder.fromCurrentRequest().replaceQueryParam(templateTable.getSizeParamName(), '__${slice.extend().size}__').build()}"
+            <a th:href="${#qlctx.requestUriBuilder().replaceQueryParam(templateTable.getSizeParamName(), '__${slice.extend().size}__').build()}"
                class="btn btn-outline-secondary btn-sm btn-load-more">Load more</a>
         </td>
     </tr>
