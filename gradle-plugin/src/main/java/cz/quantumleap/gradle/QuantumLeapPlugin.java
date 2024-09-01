@@ -11,6 +11,7 @@ import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.plugins.JavaLibraryPlugin;
 import org.gradle.api.plugins.JavaPluginExtension;
+import org.gradle.api.tasks.compile.JavaCompile;
 import org.gradle.api.tasks.testing.Test;
 import org.springframework.boot.gradle.plugin.SpringBootPlugin;
 
@@ -45,6 +46,12 @@ public class QuantumLeapPlugin implements Plugin<Project> {
         project.getPlugins().apply(DependencyManagementPlugin.class);
         project.getExtensions().getByType(DependencyManagementExtension.class)
                 .imports(importsHandler -> importsHandler.mavenBom(SPRING_BOOT_BOM));
-        project.getTasks().withType(Test.class, Test::useJUnitPlatform);
+        var tasks = project.getTasks();
+        tasks.withType(Test.class, Test::useJUnitPlatform);
+        // Ensure parameter name retention
+        // https://github.com/spring-projects/spring-framework/wiki/Upgrading-to-Spring-Framework-6.x#parameter-name-retention
+        tasks.withType(JavaCompile.class, javaCompile ->
+                javaCompile.getOptions().getCompilerArgs().add("-parameters")
+        );
     }
 }
