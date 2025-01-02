@@ -25,7 +25,7 @@ import org.jooq.Result;
 /**
  * Convenience access to all tables in core.
  */
-@SuppressWarnings({ "all", "unchecked", "rawtypes" })
+@SuppressWarnings({ "all", "unchecked", "rawtypes", "this-escape" })
 public class Tables {
 
     /**

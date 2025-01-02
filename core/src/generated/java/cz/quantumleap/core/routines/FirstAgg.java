@@ -8,6 +8,7 @@ import cz.quantumleap.core.Core;
 import org.jooq.Field;
 import org.jooq.Parameter;
 import org.jooq.impl.AbstractRoutine;
+import org.jooq.impl.DefaultDataType;
 import org.jooq.impl.Internal;
 
 
@@ -20,7 +21,7 @@ import org.jooq.impl.Internal;
  * <deprecationOnUnknownTypes/>} in your code generator configuration.
  */
 @Deprecated
-@SuppressWarnings({ "all", "unchecked", "rawtypes" })
+@SuppressWarnings({ "all", "unchecked", "rawtypes", "this-escape" })
 public class FirstAgg extends AbstractRoutine<Object> {
 
     private static final long serialVersionUID = 1L;
@@ -34,7 +35,7 @@ public class FirstAgg extends AbstractRoutine<Object> {
      * configuration.
      */
     @Deprecated
-    public static final Parameter<Object> RETURN_VALUE = Internal.createParameter("RETURN_VALUE", org.jooq.impl.DefaultDataType.getDefaultDataType("\"pg_catalog\".\"anyelement\""), false, false);
+    public static final Parameter<Object> RETURN_VALUE = Internal.createParameter("RETURN_VALUE", DefaultDataType.getDefaultDataType("\"pg_catalog\".\"anyelement\""), false, false);
 
     /**
      * @deprecated Unknown data type. If this is a qualified, user-defined type,
@@ -45,7 +46,7 @@ public class FirstAgg extends AbstractRoutine<Object> {
      * configuration.
      */
     @Deprecated
-    public static final Parameter<Object> _1 = Internal.createParameter("_1", org.jooq.impl.DefaultDataType.getDefaultDataType("\"pg_catalog\".\"anyelement\""), false, true);
+    public static final Parameter<Object> _1 = Internal.createParameter("_1", DefaultDataType.getDefaultDataType("\"pg_catalog\".\"anyelement\""), false, true);
 
     /**
      * @deprecated Unknown data type. If this is a qualified, user-defined type,
@@ -56,13 +57,13 @@ public class FirstAgg extends AbstractRoutine<Object> {
      * configuration.
      */
     @Deprecated
-    public static final Parameter<Object> _2 = Internal.createParameter("_2", org.jooq.impl.DefaultDataType.getDefaultDataType("\"pg_catalog\".\"anyelement\""), false, true);
+    public static final Parameter<Object> _2 = Internal.createParameter("_2", DefaultDataType.getDefaultDataType("\"pg_catalog\".\"anyelement\""), false, true);
 
     /**
      * Create a new routine call instance
      */
     public FirstAgg() {
-        super("first_agg", Core.CORE, org.jooq.impl.DefaultDataType.getDefaultDataType("\"pg_catalog\".\"anyelement\""));
+        super("first_agg", Core.CORE, DefaultDataType.getDefaultDataType("\"pg_catalog\".\"anyelement\""));
 
         setReturnParameter(RETURN_VALUE);
         addInParameter(_1);
