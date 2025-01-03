@@ -123,16 +123,10 @@ public class ResizableImageTagProcessor extends AbstractAttributeTagProcessor {
             var width = newWidth != null ? newWidth : MAX_IMAGE_SIZE;
             var height = newHeight != null ? newHeight : MAX_IMAGE_SIZE;
 
-            switch (resizeStrategy) {
-                case LIMIT:
-                    image = new ResizeLimit(originalWidth, originalHeight, width, height).resize(originalImage);
-                    break;
-                case CROP:
-                    image = new ResizeCrop(originalWidth, originalHeight, width, height).resize(originalImage);
-                    break;
-                default:
-                    throw new IllegalArgumentException("Unknown resize strategy " + resizeStrategy);
-            }
+            image = switch (resizeStrategy) {
+                case LIMIT -> new ResizeLimit(originalWidth, originalHeight, width, height).resize(originalImage);
+                case CROP -> new ResizeCrop(originalWidth, originalHeight, width, height).resize(originalImage);
+            };
 
             log.debug("Resizing image {} from {}x{} to {}x{}", originalImagePath, originalWidth, originalHeight, width, height);
 
