@@ -19,6 +19,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.util.Objects.requireNonNull;
+
 @Service
 public class NotificationService {
 
@@ -60,7 +62,7 @@ public class NotificationService {
             var messageArguments = (Object[]) slice.getValue(messageArgumentsColumn, row);
 
             var definition = notificationManager.getNotificationDefinitionByCode(code);
-            Validate.notNull(definition, "Notification definition not found for notification code " + code);
+            requireNonNull(definition, "Notification definition not found for notification code " + code);
             var message = messageSource.getMessage(definition.getMessageCode(), messageArguments, locale);
             messages.add(message);
         }

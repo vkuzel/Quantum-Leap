@@ -4,7 +4,6 @@ import cz.quantumleap.core.person.PersonDao;
 import cz.quantumleap.core.person.domain.Person;
 import cz.quantumleap.core.role.RoleDao;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.Validate;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
@@ -18,6 +17,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * Loads authorities from database for an user authenticated usually by
@@ -65,7 +66,7 @@ public class DatabaseAuthoritiesLoader implements GrantedAuthoritiesMapper {
 
     private Person loadAndUpdatePerson(Map<String, Object> authorityAttributes) {
         String email = getAttribute(authorityAttributes, OAUTH_DETAILS_EMAIL);
-        Validate.notNull(email, "Email was not found in OAuth details! " + formatDetails(authorityAttributes));
+        requireNonNull(email, "Email was not found in OAuth details! " + formatDetails(authorityAttributes));
 
         var person = personDao.fetchByEmail(email);
         if (person == null) {

@@ -1,6 +1,5 @@
 package cz.quantumleap.core.database.entity;
 
-import org.apache.commons.lang3.Validate;
 import org.jooq.Record;
 import org.jooq.*;
 
@@ -13,6 +12,7 @@ import java.util.function.Function;
 import static cz.quantumleap.core.database.query.QueryUtils.createFieldMap;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
+import static java.util.Objects.requireNonNull;
 
 public final class Entity<TABLE extends Table<? extends Record>> {
 
@@ -109,7 +109,7 @@ public final class Entity<TABLE extends Table<? extends Record>> {
     }
 
     public Field<String> buildLookupLabelFieldForTable(Table<?> table) {
-        Validate.notNull(lookupLabelFieldBuilder);
+        requireNonNull(lookupLabelFieldBuilder);
         return lookupLabelFieldBuilder.apply(table);
     }
 
@@ -174,8 +174,8 @@ public final class Entity<TABLE extends Table<? extends Record>> {
         private String defaultSliceQuery = null;
 
         private Builder(EntityIdentifier<TABLE> entityIdentifier, Table<?> table) {
-            Validate.notNull(entityIdentifier);
-            Validate.notNull(table);
+            requireNonNull(entityIdentifier);
+            requireNonNull(table);
             this.entityIdentifier = entityIdentifier;
             this.table = table;
         }
@@ -214,7 +214,7 @@ public final class Entity<TABLE extends Table<? extends Record>> {
         }
 
         public Builder<TABLE> setPrimaryKeyField(Field<?> primaryKeyField) {
-            Validate.notNull(primaryKeyField);
+            requireNonNull(primaryKeyField);
             this.primaryKeyField = primaryKeyField;
             return this;
         }

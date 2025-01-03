@@ -1,7 +1,6 @@
 package cz.quantumleap.core.database.entity;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.Validate;
 import org.jooq.Record;
 import org.jooq.Table;
 import org.jooq.impl.DSL;
@@ -11,6 +10,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static cz.quantumleap.core.database.query.QueryUtils.resolveDatabaseTableNameWithSchema;
+import static java.util.Objects.requireNonNull;
 
 public class EntityIdentifier<TABLE extends Table<? extends Record>> {
 
@@ -18,7 +18,7 @@ public class EntityIdentifier<TABLE extends Table<? extends Record>> {
     private final String qualifier;
 
     public EntityIdentifier(TABLE table, String qualifier) {
-        Validate.notNull(table);
+        requireNonNull(table);
         this.table = table;
         this.qualifier = qualifier;
     }

@@ -23,6 +23,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Set;
 
+import static java.util.Objects.requireNonNull;
+
 public class ResizableImageTagProcessor extends AbstractAttributeTagProcessor {
 
     private enum ResizeStrategy {
@@ -61,8 +63,8 @@ public class ResizableImageTagProcessor extends AbstractAttributeTagProcessor {
                 Validate.isTrue(width != null || height != null, "At least one of the width or height must be specified!");
                 break;
             case CROP:
-                Validate.notNull(width, "Width attribute must be set!");
-                Validate.notNull(height, "Height attribute must be set!");
+                requireNonNull(width, "Width attribute must be set!");
+                requireNonNull(height, "Height attribute must be set!");
                 break;
             default:
                 throw new IllegalArgumentException("Unknown resize strategy " + resizeStrategy + "! Known strategies are \"limit\" or \"crop\".");

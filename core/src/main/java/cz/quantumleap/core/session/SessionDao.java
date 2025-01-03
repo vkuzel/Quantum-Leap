@@ -2,7 +2,6 @@ package cz.quantumleap.core.session;
 
 import cz.quantumleap.core.security.Authenticator;
 import cz.quantumleap.core.session.domain.SessionDetail;
-import org.apache.commons.lang3.Validate;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -15,6 +14,8 @@ import org.springframework.stereotype.Repository;
 
 import java.time.Duration;
 import java.util.*;
+
+import static java.util.Objects.requireNonNull;
 
 @Repository
 @EnableConfigurationProperties(ServerProperties.class)
@@ -76,7 +77,7 @@ public class SessionDao implements SessionRepository<MapSession> {
     }
 
     public List<SessionDetail> fetchListByEmail(String email) {
-        Validate.notNull(email);
+        requireNonNull(email);
         List<SessionDetail> sessions = new ArrayList<>();
         for (var session : sessionMap.values()) {
             if (email.equals(session.getAttribute(EMAIL_ATTRIBUTE))) {

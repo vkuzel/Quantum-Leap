@@ -1,6 +1,5 @@
 package cz.quantumleap.core.security;
 
-import org.apache.commons.lang3.Validate;
 import org.springframework.security.authentication.AuthenticationTrustResolver;
 import org.springframework.security.authentication.AuthenticationTrustResolverImpl;
 import org.springframework.security.core.Authentication;
@@ -8,6 +7,8 @@ import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
 
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import static java.util.Objects.requireNonNull;
 
 public class Authenticator {
 
@@ -33,7 +34,7 @@ public class Authenticator {
 
         var attributes = oidcUser.getAttributes();
         var email = (String) attributes.get(DatabaseAuthoritiesLoader.OAUTH_DETAILS_EMAIL);
-        Validate.notNull(email, "Email was not found in OidcUser details! " + formatDetails(attributes));
+        requireNonNull(email, "Email was not found in OidcUser details! " + formatDetails(attributes));
 
         return email;
     }

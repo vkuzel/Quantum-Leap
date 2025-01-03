@@ -1,6 +1,5 @@
 package cz.quantumleap.core.module;
 
-import org.apache.commons.lang3.Validate;
 import org.springframework.core.io.Resource;
 import org.springframework.util.ResourceUtils;
 
@@ -8,6 +7,8 @@ import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
 import java.util.List;
+
+import static java.util.Objects.requireNonNull;
 
 public class ModuleDependencies {
     private final String projectPath;
@@ -17,7 +18,7 @@ public class ModuleDependencies {
         this.moduleDependencies = moduleDependencies;
         var dependenciesFileName = dependenciesFile.getFilename();
         var dependenciesFilePath = resourceToStringPath(dependenciesFile);
-        Validate.notNull(dependenciesFileName);
+        requireNonNull(dependenciesFileName);
         projectPath = dependenciesFilePath.substring(0, dependenciesFilePath.lastIndexOf(dependenciesFileName));
     }
 

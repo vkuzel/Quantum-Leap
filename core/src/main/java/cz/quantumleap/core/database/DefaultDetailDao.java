@@ -1,11 +1,12 @@
 package cz.quantumleap.core.database;
 
 import cz.quantumleap.core.database.entity.Entity;
-import org.apache.commons.lang3.Validate;
 import org.jooq.Record;
 import org.jooq.*;
 
 import java.util.*;
+
+import static java.util.Objects.requireNonNull;
 
 public final class DefaultDetailDao<TABLE extends Table<? extends Record>> implements DetailDao<TABLE> {
 
@@ -38,7 +39,7 @@ public final class DefaultDetailDao<TABLE extends Table<? extends Record>> imple
 
     @Override
     public <T> T save(T detail) {
-        Validate.notNull(detail);
+        requireNonNull(detail);
         return saveAll(Collections.singletonList(detail)).get(0);
     }
 

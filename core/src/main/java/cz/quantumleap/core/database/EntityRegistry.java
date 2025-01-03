@@ -2,7 +2,6 @@ package cz.quantumleap.core.database;
 
 import cz.quantumleap.core.database.entity.Entity;
 import cz.quantumleap.core.database.entity.EntityIdentifier;
-import org.apache.commons.lang3.Validate;
 import org.jooq.Record;
 import org.jooq.Table;
 import org.slf4j.Logger;
@@ -15,6 +14,8 @@ import org.springframework.stereotype.Component;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
+
+import static java.util.Objects.requireNonNull;
 
 @Component
 public class EntityRegistry {
@@ -71,7 +72,7 @@ public class EntityRegistry {
             Entity<?> entity,
             Map<EntityIdentifier<?>, Entity<?>> entityMap
     ) {
-        Validate.notNull(entity, "Entity not specified!");
+        requireNonNull(entity, "Entity not specified!");
 
         var entityIdentifier = entity.getIdentifier();
         var originalEntity = entityMap.get(entityIdentifier);

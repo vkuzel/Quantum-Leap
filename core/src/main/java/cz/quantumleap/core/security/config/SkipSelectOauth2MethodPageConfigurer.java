@@ -1,6 +1,5 @@
 package cz.quantumleap.core.security.config;
 
-import org.apache.commons.lang3.Validate;
 import org.springframework.security.config.annotation.web.HttpSecurityBuilder;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.ExceptionHandlingConfigurer;
@@ -14,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static cz.quantumleap.core.utils.ReflectionUtils.getClassFieldValue;
+import static java.util.Objects.requireNonNull;
 import static org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestRedirectFilter.DEFAULT_AUTHORIZATION_REQUEST_BASE_URI;
 
 public class SkipSelectOauth2MethodPageConfigurer<H extends HttpSecurityBuilder<H>>
@@ -25,7 +25,7 @@ public class SkipSelectOauth2MethodPageConfigurer<H extends HttpSecurityBuilder<
         var singleAuthenticationUrl = getSingleAuthenticationUrl(builder);
         if (singleAuthenticationUrl != null) {
             ExceptionHandlingConfigurer<H> exceptionHandlingConfigurer = builder.getConfigurer(ExceptionHandlingConfigurer.class);
-            Validate.notNull(exceptionHandlingConfigurer);
+            requireNonNull(exceptionHandlingConfigurer);
 
             // There is only one authentication method (authentication url) so skip the login page and redirect user
             // directly to authentication URL.
