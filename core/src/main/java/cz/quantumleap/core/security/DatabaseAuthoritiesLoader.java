@@ -50,12 +50,11 @@ public class DatabaseAuthoritiesLoader implements GrantedAuthoritiesMapper {
     @Transactional
     @Override
     public Collection<? extends GrantedAuthority> mapAuthorities(Collection<? extends GrantedAuthority> authorities) {
-        for (GrantedAuthority authority : authorities) {
-            if (!(authority instanceof OAuth2UserAuthority)) {
+        for (var authority : authorities) {
+            if (!(authority instanceof OAuth2UserAuthority oAuth2UserAuthority)) {
                 continue;
             }
 
-            var oAuth2UserAuthority = (OAuth2UserAuthority) authority;
             var person = loadAndUpdatePerson(oAuth2UserAuthority.getAttributes());
             return loadGrantedAuthorities(person);
         }

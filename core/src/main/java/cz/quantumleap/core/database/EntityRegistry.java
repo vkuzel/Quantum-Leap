@@ -36,7 +36,6 @@ public class EntityRegistry {
         return getFromMap(entityIdentifier, lookupEntityMap);
     }
 
-    @SuppressWarnings("rawtypes")
     @EventListener(ContextRefreshedEvent.class)
     public void initializeEntityMap() {
         var detailDaoMap = applicationContext.getBeansOfType(DetailDao.class);

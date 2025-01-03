@@ -46,7 +46,7 @@ public class SkipSelectOauth2MethodPageConfigurer<H extends HttpSecurityBuilder<
             return null;
         }
 
-        return getAuthorizationRequestBaseUri(builder) + "/" + clientRegistrations.get(0).getRegistrationId();
+        return getAuthorizationRequestBaseUri(builder) + "/" + clientRegistrations.getFirst().getRegistrationId();
     }
 
     private List<ClientRegistration> getClientRegistrations(H builder) {

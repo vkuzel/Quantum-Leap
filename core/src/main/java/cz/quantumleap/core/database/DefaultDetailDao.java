@@ -40,7 +40,7 @@ public final class DefaultDetailDao<TABLE extends Table<? extends Record>> imple
     @Override
     public <T> T save(T detail) {
         requireNonNull(detail);
-        return saveAll(Collections.singletonList(detail)).get(0);
+        return saveAll(Collections.singletonList(detail)).getFirst();
     }
 
     @Override
@@ -49,9 +49,9 @@ public final class DefaultDetailDao<TABLE extends Table<? extends Record>> imple
             return Collections.emptyList();
         }
 
-        var detailType = getDetailClass(details.get(0));
+        var detailType = getDetailClass(details.getFirst());
         List<Record> records = new ArrayList<>(details.size());
-        var recordFactory = new RecordFactory<T>(dslContext, detailType, entity.getTable());
+        var recordFactory = new RecordFactory<>(dslContext, detailType, entity.getTable());
 
         for (var detail : details) {
             var record = recordFactory.createRecord(detail);
@@ -140,7 +140,7 @@ public final class DefaultDetailDao<TABLE extends Table<? extends Record>> imple
     public <T, F> List<T> saveDetailsAssociatedBy(TableField<?, F> foreignKey, F foreignId, Collection<T> details, Class<T> detailType) {
         var table = entity.getTable();
         var primaryKeyField = entity.getPrimaryKeyField();
-        var recordFactory = new RecordFactory<T>(dslContext, detailType, table);
+        var recordFactory = new RecordFactory<>(dslContext, detailType, table);
 
         List<Record> records = new ArrayList<>(details.size());
         Set<Object> ids = new HashSet<>(details.size());
