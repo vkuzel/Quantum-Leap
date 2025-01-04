@@ -23,6 +23,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Set;
 
+import static cz.quantumleap.core.utils.Utils.min;
 import static java.util.Objects.requireNonNull;
 
 public class ResizableImageTagProcessor extends AbstractAttributeTagProcessor {
@@ -119,11 +120,10 @@ public class ResizableImageTagProcessor extends AbstractAttributeTagProcessor {
             var originalWidth = originalImage.getWidth(null);
             var originalHeight = originalImage.getHeight(null);
 
-            Image image;
-            var width = newWidth != null ? newWidth : MAX_IMAGE_SIZE;
-            var height = newHeight != null ? newHeight : MAX_IMAGE_SIZE;
+            var width = min(newWidth, MAX_IMAGE_SIZE);
+            var height = min(newHeight, MAX_IMAGE_SIZE);
 
-            image = switch (resizeStrategy) {
+            var image = switch (resizeStrategy) {
                 case LIMIT -> new ResizeLimit(originalWidth, originalHeight, width, height).resize(originalImage);
                 case CROP -> new ResizeCrop(originalWidth, originalHeight, width, height).resize(originalImage);
             };
