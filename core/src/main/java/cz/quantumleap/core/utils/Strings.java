@@ -68,4 +68,8 @@ public final class Strings {
         }
         return null;
     }
+
+    public static String trim(String text) {
+        return text == null ? null : text.trim();
+    }
 }

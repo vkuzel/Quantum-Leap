@@ -123,4 +123,15 @@ class StringsTest {
 
         assertEquals("text", text);
     }
+
+    @ParameterizedTest
+    @CsvSource(value = {
+            "null, null",
+            "' a ', 'a'"
+    }, nullValues = "null")
+    void trim(String text, String expected) {
+        var result = Strings.trim(text);
+
+        assertEquals(expected, result);
+    }
 }
