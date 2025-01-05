@@ -52,6 +52,14 @@ public final class Strings {
         return String.join(", ", textItems);
     }
 
+    public static boolean isBlank(String text) {
+        return text == null || text.isBlank();
+    }
+
+    public static boolean isNotBlank(String text) {
+        return !isBlank(text);
+    }
+
     public static String firstNotBlank(String... texts) {
         for (var text : texts) {
             if (text != null && !text.isBlank()) {

@@ -86,6 +86,32 @@ class StringsTest {
         assertEquals("first, second, ...", abbreviation);
     }
 
+    @ParameterizedTest
+    @CsvSource(value = {
+            "null, true",
+            "'', true",
+            "'   ', true",
+            "test, false"
+    }, nullValues = "null")
+    void isBlank(String text, boolean expected) {
+        var result = Strings.isBlank(text);
+
+        assertEquals(expected, result);
+    }
+
+    @ParameterizedTest
+    @CsvSource(value = {
+            "null, false",
+            "'', false",
+            "'   ', false",
+            "test, true",
+    }, nullValues = "null")
+    void isNotBlank(String text, boolean expected) {
+        var result = Strings.isNotBlank(text);
+
+        assertEquals(expected, result);
+    }
+
     @Test
     void firstNotBlank() {
         String first = null;
