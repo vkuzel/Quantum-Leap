@@ -8,6 +8,8 @@ import org.jooq.impl.DSL;
 import java.util.*;
 import java.util.regex.Pattern;
 
+import static cz.quantumleap.core.utils.Strings.isBlank;
+
 public final class QueryUtils {
 
     public enum ConditionOperator {AND, OR}
@@ -66,7 +68,7 @@ public final class QueryUtils {
 
     @SafeVarargs
     public static Condition buildFindWordCondition(String word, Field<String>... fields) {
-        if (StringUtils.isBlank(word)) {
+        if (isBlank(word)) {
             return null;
         }
 
@@ -96,7 +98,7 @@ public final class QueryUtils {
     }
 
     public static Condition startsWithIgnoreCase(Field<String> field, String value) {
-        if (StringUtils.isBlank(value)) {
+        if (isBlank(value)) {
             return DSL.falseCondition();
         }
 
@@ -105,7 +107,7 @@ public final class QueryUtils {
     }
 
     public static String escapeSqlLikeBinding(String binding, char escapeChar) {
-        if (StringUtils.isBlank(binding)) {
+        if (isBlank(binding)) {
             return binding;
         }
 
@@ -117,7 +119,7 @@ public final class QueryUtils {
     }
 
     public static String escapeSqlRegexpBinding(String binding) {
-        if (StringUtils.isBlank(binding)) {
+        if (isBlank(binding)) {
             return binding;
         }
 

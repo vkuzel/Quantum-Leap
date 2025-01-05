@@ -5,7 +5,6 @@ import cz.quantumleap.core.database.domain.Slice;
 import cz.quantumleap.core.database.entity.Entity;
 import cz.quantumleap.core.database.query.QueryConditionFactory;
 import cz.quantumleap.core.database.query.QueryUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.Record2;
@@ -16,6 +15,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static cz.quantumleap.core.database.query.QueryUtils.ConditionOperator.AND;
+import static cz.quantumleap.core.utils.Strings.isBlank;
 
 public final class DefaultLookupDao<TABLE extends Table<? extends Record>> implements LookupDao<TABLE> {
 
@@ -68,7 +68,7 @@ public final class DefaultLookupDao<TABLE extends Table<? extends Record>> imple
 
     @Override
     public Map<Object, String> fetchLabelsByFilter(String query) {
-        if (StringUtils.isEmpty(query)) {
+        if (isBlank(query)) {
             return Collections.emptyMap();
         }
 

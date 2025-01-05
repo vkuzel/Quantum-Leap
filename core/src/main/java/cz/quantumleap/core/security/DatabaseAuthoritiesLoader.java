@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static cz.quantumleap.core.utils.Strings.isBlank;
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -73,7 +74,7 @@ public class DatabaseAuthoritiesLoader implements GrantedAuthoritiesMapper {
         }
 
         String name = getAttribute(authorityAttributes, OAUTH_DETAILS_NAME);
-        if (StringUtils.isBlank(person.getName()) && !StringUtils.isBlank(name)) {
+        if (isBlank(person.getName()) && !StringUtils.isBlank(name)) {
             person.setName(name);
             personDao.save(person);
         }

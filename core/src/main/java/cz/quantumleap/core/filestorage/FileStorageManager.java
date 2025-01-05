@@ -2,7 +2,6 @@ package cz.quantumleap.core.filestorage;
 
 import jakarta.annotation.PostConstruct;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +20,8 @@ import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.function.Consumer;
 import java.util.function.Function;
+
+import static cz.quantumleap.core.utils.Strings.isNotBlank;
 
 @Component
 public class FileStorageManager {
@@ -41,7 +42,7 @@ public class FileStorageManager {
     }
 
     public String saveMultipartFileAndBuildUrl(String directory, MultipartFile multipartFile) {
-        Validate.isTrue(StringUtils.isNotBlank(directory));
+        Validate.isTrue(isNotBlank(directory));
         Validate.isTrue(!multipartFile.isEmpty());
 
         var filePath = createFilePath(directory, multipartFile);
@@ -96,7 +97,7 @@ public class FileStorageManager {
     }
 
     public void deleteFileByUrl(String url) {
-        Validate.isTrue(StringUtils.isNotBlank(url));
+        Validate.isTrue(isNotBlank(url));
         var path = convertUrlToPath(url);
         deleteFile(path);
     }

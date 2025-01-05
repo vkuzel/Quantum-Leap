@@ -1,7 +1,6 @@
 package cz.quantumleap.core.database.query;
 
 import org.apache.commons.lang3.BooleanUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.jooq.Condition;
 import org.jooq.Field;
@@ -16,6 +15,7 @@ import static cz.quantumleap.core.database.query.QueryUtils.ConditionOperator.AN
 import static cz.quantumleap.core.database.query.QueryUtils.ConditionOperator.OR;
 import static cz.quantumleap.core.database.query.QueryUtils.joinConditions;
 import static cz.quantumleap.core.database.query.QueryUtils.normalizeFieldName;
+import static cz.quantumleap.core.utils.Strings.isNotBlank;
 
 public class QueryConditionFactory {
 
@@ -49,7 +49,7 @@ public class QueryConditionFactory {
      * @return Condition or null.
      */
     public Condition forQuery(String query) {
-        if (StringUtils.isNotBlank(query)) {
+        if (isNotBlank(query)) {
             var tokens = tokenize(query);
             return createCondition(fieldMap, tokens);
         } else {

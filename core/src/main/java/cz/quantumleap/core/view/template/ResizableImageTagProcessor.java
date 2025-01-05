@@ -2,7 +2,6 @@ package cz.quantumleap.core.view.template;
 
 import cz.quantumleap.core.filestorage.FileStorageManager;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +22,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Set;
 
+import static cz.quantumleap.core.utils.Strings.isBlank;
 import static cz.quantumleap.core.utils.Utils.min;
 import static java.util.Objects.requireNonNull;
 
@@ -49,12 +49,12 @@ public class ResizableImageTagProcessor extends AbstractAttributeTagProcessor {
 
     @Override
     protected void doProcess(ITemplateContext context, IProcessableElementTag tag, AttributeName attributeName, String attributeValue, IElementTagStructureHandler structureHandler) {
-        var resizeStrategy = StringUtils.isBlank(attributeValue) ? ResizeStrategy.LIMIT : ResizeStrategy.valueOf(attributeValue.toUpperCase());
+        var resizeStrategy = isBlank(attributeValue) ? ResizeStrategy.LIMIT : ResizeStrategy.valueOf(attributeValue.toUpperCase());
         var url = tag.getAttributeValue("src");
         var width = tag.hasAttribute("width") ? Integer.parseInt(tag.getAttributeValue("width")) : null;
         var height = tag.hasAttribute("height") ? Integer.parseInt(tag.getAttributeValue("height")) : null;
 
-        if (StringUtils.isBlank(url) || !SUPPORTED_FORMATS.contains(FilenameUtils.getExtension(url).toUpperCase())) {
+        if (isBlank(url) || !SUPPORTED_FORMATS.contains(FilenameUtils.getExtension(url).toUpperCase())) {
             return;
         }
 

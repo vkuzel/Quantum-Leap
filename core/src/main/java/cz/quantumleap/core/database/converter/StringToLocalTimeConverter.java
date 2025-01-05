@@ -1,6 +1,5 @@
 package cz.quantumleap.core.database.converter;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.convert.converter.Converter;
@@ -9,6 +8,8 @@ import org.springframework.stereotype.Component;
 import java.time.LocalTime;
 import java.time.format.DateTimeParseException;
 
+import static cz.quantumleap.core.utils.Strings.isBlank;
+
 @Component
 public class StringToLocalTimeConverter implements Converter<String, LocalTime> {
 
@@ -16,7 +17,7 @@ public class StringToLocalTimeConverter implements Converter<String, LocalTime> 
 
     @Override
     public LocalTime convert(String source) {
-        if (StringUtils.isBlank(source)) {
+        if (isBlank(source)) {
             return null;
         }
 

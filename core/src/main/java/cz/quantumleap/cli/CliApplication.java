@@ -5,7 +5,6 @@ import cz.quantumleap.core.autoincrement.IncrementDao;
 import cz.quantumleap.core.autoincrement.IncrementService;
 import cz.quantumleap.core.module.ModuleDependencyManager;
 import cz.quantumleap.core.resource.ResourceManager;
-import org.apache.commons.lang3.StringUtils;
 import org.jooq.DSLContext;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.WebApplicationType;
@@ -14,6 +13,8 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+
+import static cz.quantumleap.core.utils.Strings.isBlank;
 
 @SpringBootApplication
 @EnableTransactionManagement(proxyTargetClass = true)
@@ -35,7 +36,7 @@ public class CliApplication implements CommandLineRunner {
                 environmentBuilder.buildEnvironment();
                 break;
             default:
-                if (StringUtils.isBlank(firstArg)) {
+                if (isBlank(firstArg)) {
                     var msg = "No argument has been specified!\n" +
                             "\n" +
                             "    build - for creating new environment (database).\n" +
