@@ -70,6 +70,27 @@ public final class Strings {
     }
 
     public static String trim(String text) {
-        return text == null ? null : text.trim();
+        return trim(text, null);
+    }
+
+    public static String trim(String text, String trimChars) {
+        if (text == null) {
+            return null;
+        } else if (trimChars == null) {
+            return text.trim();
+        } else if (trimChars.isEmpty()) {
+            return text;
+        } else {
+            var length = text.length();
+            var start = 0;
+            while (start < length && trimChars.indexOf(text.charAt(start)) != -1) {
+                start++;
+            }
+            var end = length;
+            while (end > start && trimChars.indexOf(text.charAt(end - 1)) != -1) {
+                end--;
+            }
+            return text.substring(start, end);
+        }
     }
 }

@@ -134,4 +134,19 @@ class StringsTest {
 
         assertEquals(expected, result);
     }
+
+    @ParameterizedTest
+    @CsvSource(value = {
+            "null, '', null",
+            "'', '', ''",
+            "'  XXX  ', null, 'XXX'",
+            "'', 'abc', ''",
+            "'aaabbbccc', 'abc', ''",
+            "'aabbXXXabcYYYbbcc', 'abc', 'XXXabcYYY'",
+    }, nullValues = "null")
+    void trimWithChars(String text, String charsToTrim, String expected) {
+        var result = Strings.trim(text, charsToTrim);
+
+        assertEquals(expected, result);
+    }
 }
