@@ -1,6 +1,5 @@
 package cz.quantumleap.core.database.query;
 
-import org.apache.commons.lang3.StringUtils;
 import org.jooq.Record;
 import org.jooq.*;
 import org.jooq.impl.DSL;
@@ -32,7 +31,7 @@ public final class QueryUtils {
     public static String resolveLookupFieldName(Field<?> field) {
         var fieldName = field.getName();
         if (fieldName.endsWith("_id")) {
-            return StringUtils.removeEnd(fieldName, "_id");
+            return fieldName.substring(0, fieldName.length() - 3);
         } else {
             return fieldName + "_lookup";
         }
