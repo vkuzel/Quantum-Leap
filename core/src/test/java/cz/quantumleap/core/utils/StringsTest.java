@@ -149,4 +149,13 @@ class StringsTest {
 
         assertEquals(expected, result);
     }
+
+    @Test
+    void stripAccents() {
+        var text = "Příliš žluťoučký kůň úpěł ďábelské ódy.";
+
+        var result = Strings.stripAccents(text);
+
+        assertEquals("Prilis zlutoucky kun upel dabelske ody.", result);
+    }
 }

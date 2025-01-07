@@ -1,16 +1,20 @@
 package cz.quantumleap.core.utils;
 
+import java.text.Normalizer.Form;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 
+import static java.text.Normalizer.normalize;
+
 public final class Strings {
 
     private static final Pattern UPPER_CAMEL_PATTERN = Pattern.compile("([A-Z])");
     private static final Pattern LOWER_CAMEL_PATTERN = Pattern.compile("([A-Z])");
     private static final Pattern LOWER_UNDERSCORE_PATTERN = Pattern.compile("_([a-z])");
+    private static final Pattern STRIP_ACCENTS_PATTERN = Pattern.compile("\\p{InCombiningDiacriticalMarks}+"); //$NON-NLS-1$
 
     public static String upperUnderscoreToLowerHyphen(String text) {
         if (text == null || text.isEmpty()) return text;
@@ -92,5 +96,20 @@ public final class Strings {
             }
             return text.substring(start, end);
         }
+    }
+
+    // Copied from the Apache commons library
+    public static String stripAccents(String text) {
+        if (text == null || text.isEmpty()) return text;
+        var decomposed = new StringBuilder(normalize(text, Form.NFD));
+        // Convert remaining characters
+        for (var i = 0; i < decomposed.length(); i++) {
+            switch (decomposed.charAt(i)) {
+                case '\u0141' -> decomposed.setCharAt(i, 'L');
+                case '\u0142' -> decomposed.setCharAt(i, 'l');
+            }
+        }
+        // Note that this doesn't correctly remove ligatures...
+        return STRIP_ACCENTS_PATTERN.matcher(decomposed).replaceAll("");
     }
 }
