@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.random.RandomGenerator;
 import java.util.regex.Pattern;
 
 import static java.text.Normalizer.normalize;
@@ -111,5 +112,17 @@ public final class Strings {
         }
         // Note that this doesn't correctly remove ligatures...
         return STRIP_ACCENTS_PATTERN.matcher(decomposed).replaceAll("");
+    }
+
+    public static String randomAlphabetic(int length) {
+        if (length <= 0) throw new IllegalArgumentException("length must be positive");
+        var randomGenerator = RandomGenerator.getDefault();
+        var builder = new StringBuilder(length);
+        for (var i = 0; i < length; i++) {
+            var num = randomGenerator.nextInt(0, 52);
+            var ch = num < 26 ? num + 65 : num - 26 + 97;
+            builder.append((char) ch);
+        }
+        return builder.toString();
     }
 }

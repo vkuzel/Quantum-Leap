@@ -5,9 +5,11 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
 import static java.util.function.Function.identity;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class StringsTest {
 
@@ -157,5 +159,17 @@ class StringsTest {
         var result = Strings.stripAccents(text);
 
         assertEquals("Prilis zlutoucky kun upel dabelske ody.", result);
+    }
+
+    @Test
+    void randomAlphabetic() {
+        var expectedCharsPattern = Pattern.compile("^[a-zA-Z]{64}$");
+
+        var token = Strings.randomAlphabetic(64);
+
+        assertTrue(
+                expectedCharsPattern.matcher(token).matches(),
+                () -> "Text '%s' does not match pattern '%s'".formatted(token, expectedCharsPattern)
+        );
     }
 }
