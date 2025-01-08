@@ -172,4 +172,17 @@ class StringsTest {
                 () -> "Text '%s' does not match pattern '%s'".formatted(token, expectedCharsPattern)
         );
     }
+
+    @ParameterizedTest
+    @CsvSource(value = {
+            "null, null",
+            "'', ''",
+            "abc, abc",
+            "abcdefghi, abcdef..."
+    }, nullValues = "null")
+    void abbreviate(String text, String expected) {
+        var result = Strings.abbreviate(text, 6);
+
+        assertEquals(expected, result);
+    }
 }

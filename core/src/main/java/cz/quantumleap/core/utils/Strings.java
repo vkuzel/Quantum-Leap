@@ -115,7 +115,7 @@ public final class Strings {
     }
 
     public static String randomAlphabetic(int length) {
-        if (length <= 0) throw new IllegalArgumentException("length must be positive");
+        if (length <= 0) throw new IllegalArgumentException("Length must be positive, it is: " + length);
         var randomGenerator = RandomGenerator.getDefault();
         var builder = new StringBuilder(length);
         for (var i = 0; i < length; i++) {
@@ -124,5 +124,11 @@ public final class Strings {
             builder.append((char) ch);
         }
         return builder.toString();
+    }
+
+    public static String abbreviate(String text, int maxLength) {
+        if (maxLength < 4) throw new IllegalArgumentException("Max length must be more than 4, it is: " + maxLength);
+        if (text == null || text.length() < maxLength) return text;
+        return text.substring(0, maxLength) + "...";
     }
 }
