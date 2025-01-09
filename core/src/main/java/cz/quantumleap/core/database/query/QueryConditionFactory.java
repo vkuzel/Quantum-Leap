@@ -1,7 +1,6 @@
 package cz.quantumleap.core.database.query;
 
 import org.apache.commons.lang3.BooleanUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.impl.DSL;
@@ -15,7 +14,12 @@ import static cz.quantumleap.core.database.query.QueryUtils.ConditionOperator.AN
 import static cz.quantumleap.core.database.query.QueryUtils.ConditionOperator.OR;
 import static cz.quantumleap.core.database.query.QueryUtils.joinConditions;
 import static cz.quantumleap.core.database.query.QueryUtils.normalizeFieldName;
+import static cz.quantumleap.core.utils.Numbers.isParsable;
 import static cz.quantumleap.core.utils.Strings.isNotBlank;
+import static java.lang.Double.parseDouble;
+import static java.lang.Float.parseFloat;
+import static java.lang.Integer.parseInt;
+import static java.lang.Long.parseLong;
 
 public class QueryConditionFactory {
 
@@ -202,15 +206,15 @@ public class QueryConditionFactory {
         private Condition createCondition(Field<?> field, ComparisonOperator comparisonOperator, String word) {
             var type = field.getType();
 
-            if (Number.class.isAssignableFrom(type) && NumberUtils.isCreatable(word)) {
+            if (Number.class.isAssignableFrom(type) && isParsable(word)) {
                 if (type == Integer.class) {
-                    return createNumericFieldCondition(field.cast(Integer.class), comparisonOperator, NumberUtils.createInteger(word));
+                    return createNumericFieldCondition(field.cast(Integer.class), comparisonOperator, parseInt(word));
                 } else if (type == Long.class) {
-                    return createNumericFieldCondition(field.cast(Long.class), comparisonOperator, NumberUtils.createLong(word));
+                    return createNumericFieldCondition(field.cast(Long.class), comparisonOperator, parseLong(word));
                 } else if (type == Float.class) {
-                    return createNumericFieldCondition(field.cast(Float.class), comparisonOperator, NumberUtils.createFloat(word));
+                    return createNumericFieldCondition(field.cast(Float.class), comparisonOperator, parseFloat(word));
                 } else if (type == Double.class) {
-                    return createNumericFieldCondition(field.cast(Double.class), comparisonOperator, NumberUtils.createDouble(word));
+                    return createNumericFieldCondition(field.cast(Double.class), comparisonOperator, parseDouble(word));
                 }
             } else if (type == Boolean.class) {
                 if (comparisonOperator == ComparisonOperator.EQ) {
