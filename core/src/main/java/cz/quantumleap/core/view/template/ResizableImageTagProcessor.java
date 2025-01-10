@@ -2,7 +2,6 @@ package cz.quantumleap.core.view.template;
 
 import cz.quantumleap.core.filestorage.FileStorageManager;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.thymeleaf.context.ITemplateContext;
@@ -70,11 +69,11 @@ public class ResizableImageTagProcessor extends AbstractAttributeTagProcessor {
             }
         }
 
-        if (width != null) {
-            Validate.inclusiveBetween(1, MAX_IMAGE_SIZE, width, "Width can be between 1 and " + MAX_IMAGE_SIZE);
+        if (width != null && (width < 1 || width > MAX_IMAGE_SIZE)) {
+            throw new IllegalArgumentException("Width must be between 1 and " + MAX_IMAGE_SIZE);
         }
-        if (height != null) {
-            Validate.inclusiveBetween(1, MAX_IMAGE_SIZE, height, "Height can be between 1 and " + MAX_IMAGE_SIZE);
+        if (height != null && (height < 1 || height > MAX_IMAGE_SIZE)) {
+            throw new IllegalArgumentException("Height must be between 1 and " + MAX_IMAGE_SIZE);
         }
 
         var imagePath = fileStorageManager.convertUrlToPath(url);
