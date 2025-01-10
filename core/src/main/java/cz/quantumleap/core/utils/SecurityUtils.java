@@ -1,6 +1,5 @@
 package cz.quantumleap.core.utils;
 
-import org.apache.commons.lang3.Validate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.util.EncodingUtils;
 
@@ -51,7 +50,10 @@ public class SecurityUtils {
 
     public static String decryptMessageByPassword(String password, byte[] encryptedMessage) {
         try {
-            Validate.isTrue(encryptedMessage.length > PASSWORD_SALT_LENGTH_BYTES);
+            if (encryptedMessage.length <= PASSWORD_SALT_LENGTH_BYTES) {
+                var pattern = "Message %d bytes should be longer than salt %d bytes";
+                throw new IllegalArgumentException(pattern.formatted(encryptedMessage.length, PASSWORD_SALT_LENGTH_BYTES));
+            }
             var salt = Arrays.copyOfRange(encryptedMessage, 0, PASSWORD_SALT_LENGTH_BYTES);
             var iv = Arrays.copyOfRange(encryptedMessage, PASSWORD_SALT_LENGTH_BYTES, PASSWORD_SALT_LENGTH_BYTES + IV_LENGTH_BYTES);
             var encrypted = Arrays.copyOfRange(encryptedMessage, PASSWORD_SALT_LENGTH_BYTES + IV_LENGTH_BYTES, encryptedMessage.length);

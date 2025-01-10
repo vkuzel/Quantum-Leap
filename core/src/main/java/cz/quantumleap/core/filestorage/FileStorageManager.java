@@ -2,7 +2,6 @@ package cz.quantumleap.core.filestorage;
 
 import jakarta.annotation.PostConstruct;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,7 +20,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import static cz.quantumleap.core.utils.Strings.isNotBlank;
+import static cz.quantumleap.core.utils.Strings.isBlank;
 
 @Component
 public class FileStorageManager {
@@ -42,8 +41,8 @@ public class FileStorageManager {
     }
 
     public String saveMultipartFileAndBuildUrl(String directory, MultipartFile multipartFile) {
-        Validate.isTrue(isNotBlank(directory));
-        Validate.isTrue(!multipartFile.isEmpty());
+        if (isBlank(directory)) throw new IllegalArgumentException("directory cannot be empty");
+        if (multipartFile.isEmpty()) throw new IllegalArgumentException("multipartFile cannot be empty");
 
         var filePath = createFilePath(directory, multipartFile);
         ensureDirectoryExists(filePath.getParent());
@@ -97,7 +96,7 @@ public class FileStorageManager {
     }
 
     public void deleteFileByUrl(String url) {
-        Validate.isTrue(isNotBlank(url));
+        if (isBlank(url)) throw new IllegalArgumentException("url cannot be empty");
         var path = convertUrlToPath(url);
         deleteFile(path);
     }
@@ -115,13 +114,17 @@ public class FileStorageManager {
     }
 
     public String convertPathToUrl(Path path) {
-        Validate.isTrue(path.startsWith(fileStorageDirectory), "Path " + path + " is not storage path!");
+        if (!path.startsWith(fileStorageDirectory)) {
+            throw new IllegalArgumentException("Path " + path + " is not storage path!");
+        }
         var pathSuffix = path.toString().substring(fileStorageDirectory.length());
         return STORAGE_URL_PREFIX + pathSuffix;
     }
 
     public Path convertUrlToPath(String url) {
-        Validate.isTrue(url.startsWith(STORAGE_URL_PREFIX), "URL " + url + " is not storage URL!");
+        if (!url.startsWith(STORAGE_URL_PREFIX)) {
+            throw new IllegalArgumentException("Url " + url + " is not storage url!");
+        }
         var urlSuffix = url.substring(STORAGE_URL_PREFIX.length());
         return Paths.get(fileStorageDirectory, urlSuffix);
     }
@@ -133,7 +136,9 @@ public class FileStorageManager {
      * @return A storage path with TEMP_DIRECTORY.
      */
     public Path convertToTempDirectoryPath(Path path) {
-        Validate.isTrue(path.startsWith(fileStorageDirectory), "Path " + path + " is not storage path!");
+        if (!path.startsWith(fileStorageDirectory)) {
+            throw new IllegalArgumentException("Path " + path + " is not storage path!");
+        }
         var fileStoragePath = Paths.get(fileStorageDirectory);
         return Paths.get(fileStorageDirectory, TEMP_DIRECTORY, fileStoragePath.relativize(path).toString());
     }
@@ -180,7 +185,8 @@ public class FileStorageManager {
     private void ensureDirectoryExists(Path directory) {
         var directoryFile = directory.toFile();
         if (!directoryFile.exists()) {
-            Validate.isTrue(directoryFile.mkdirs(), "Directory " + directory + " cannot be created!");
+            var result = directoryFile.mkdirs();
+            if (!result) throw new IllegalStateException("Failed to create directory " + directory);
         }
     }
 

@@ -58,18 +58,18 @@ public class ResizableImageTagProcessor extends AbstractAttributeTagProcessor {
             return;
         }
 
-        Validate.isTrue(resizeStrategy == ResizeStrategy.LIMIT || resizeStrategy == ResizeStrategy.CROP, "Unknown resize strategy " + resizeStrategy + "! It must be \"limit\" or \"crop\".");
         switch (resizeStrategy) {
-            case LIMIT:
-                Validate.isTrue(width != null || height != null, "At least one of the width or height must be specified!");
-                break;
-            case CROP:
+            case LIMIT -> {
+                if (width == null && height == null) {
+                    throw new IllegalArgumentException("Width or height must be specified!");
+                }
+            }
+            case CROP -> {
                 requireNonNull(width, "Width attribute must be set!");
                 requireNonNull(height, "Height attribute must be set!");
-                break;
-            default:
-                throw new IllegalArgumentException("Unknown resize strategy " + resizeStrategy + "! Known strategies are \"limit\" or \"crop\".");
+            }
         }
+
         if (width != null) {
             Validate.inclusiveBetween(1, MAX_IMAGE_SIZE, width, "Width can be between 1 and " + MAX_IMAGE_SIZE);
         }

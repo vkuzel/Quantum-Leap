@@ -9,7 +9,6 @@ import cz.quantumleap.core.notification.NotificationDefinition;
 import cz.quantumleap.core.notification.NotificationManager;
 import cz.quantumleap.core.notification.domain.Notification;
 import cz.quantumleap.core.tables.NotificationTable;
-import org.apache.commons.lang3.Validate;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
@@ -87,7 +86,9 @@ public class NotificationService {
     @Transactional
     public void resolve(long personId, long id) {
         var notification = get(personId, id);
-        Validate.isTrue(notification.getResolvedAt() == null);
+        if (notification.getResolvedAt() != null) {
+            throw new IllegalStateException("Notification already resolved at " + notification.getResolvedAt());
+        }
         notification.setResolvedBy(personId);
         notification.setResolvedAt(LocalDateTime.now());
         notificationDao.save(notification);

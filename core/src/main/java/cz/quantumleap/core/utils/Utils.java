@@ -2,7 +2,6 @@ package cz.quantumleap.core.utils;
 
 import cz.quantumleap.core.database.entity.EntityIdentifier;
 import jakarta.servlet.http.HttpServletRequest;
-import org.apache.commons.lang3.Validate;
 import org.jooq.Record;
 import org.jooq.Table;
 import org.springframework.core.io.Resource;
@@ -73,7 +72,9 @@ final public class Utils {
         }
 
         var daysCount = Period.between(start, end).getDays();
-        Validate.isTrue(daysCount < 1000);
+        if (daysCount >= 1000) {
+            throw new IllegalArgumentException("Days must be less than 1000, its: %d".formatted(daysCount));
+        }
 
         var date = start;
         List<LocalDate> daysBetween = new ArrayList<>(daysCount);

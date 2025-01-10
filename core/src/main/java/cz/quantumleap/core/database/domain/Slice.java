@@ -2,7 +2,6 @@ package cz.quantumleap.core.database.domain;
 
 import cz.quantumleap.core.database.entity.EntityIdentifier;
 import cz.quantumleap.core.slicequery.domain.SliceQuery;
-import org.apache.commons.lang3.Validate;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.data.domain.Sort;
 
@@ -214,7 +213,9 @@ public class Slice implements Iterable<List<Object>> {
 
         public Builder removeColumn(Column column) {
             var index = columns.indexOf(column);
-            Validate.isTrue(index != -1);
+            if (index == -1) {
+                throw new IllegalArgumentException("Column " + column.getName() + " not found!");
+            }
             columns.remove(index);
             for (var row : rows) {
                 row.remove(index);
