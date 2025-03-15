@@ -8,11 +8,11 @@ repositories {
     mavenCentral()
 }
 
-val springBootVersion = "3.3.7"
+val springBootVersion = "3.4.3"
 val dependencyManagementVersion = "1.1.7"
-val jooqVersion = "3.19.16"
-val postgreSqlVersion = "42.7.4"
-val junitVersion = "5.10.3"
+val jooqVersion = "3.19.19"
+val postgreSqlVersion = "42.7.5"
+val junitVersion = "5.11.4"
 val mockitoVersion = "5.11.0"
 
 dependencies {
