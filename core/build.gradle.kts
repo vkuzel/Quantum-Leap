@@ -20,10 +20,10 @@ dependencies {
     api("org.springframework.session:spring-session-core")
     api("org.thymeleaf.extras:thymeleaf-extras-springsecurity6")
 
-    api("org.apache.commons:commons-lang3:3.12.0")
-    api("commons-io:commons-io:2.11.0")
-    api("com.ibm.icu:icu4j:72.1")
-    api("org.jetbrains:annotations:23.1.0")
+    api("org.apache.commons:commons-lang3:3.17.0")
+    api("commons-io:commons-io:2.19.0")
+    api("com.ibm.icu:icu4j:77.1")
+    api("org.jetbrains:annotations:26.0.2")
     api("eu.bitwalker:UserAgentUtils:1.21")
 
     runtimeOnly("org.postgresql:postgresql")

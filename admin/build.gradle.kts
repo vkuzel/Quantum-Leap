@@ -5,9 +5,9 @@ repositories {
 dependencies {
     implementation(project(":quantumleap:core"))
 
-    implementation("org.webjars:bootstrap:5.3.3")
-    implementation("org.webjars:font-awesome:5.8.1")
-    implementation("org.webjars.bower:chart.js:2.7.3")
+    implementation("org.webjars:bootstrap:5.3.5")
+    implementation("org.webjars:font-awesome:5.15.4")
+    implementation("org.webjars.bower:chart.js:2.9.4")
 
     testImplementation(project(":quantumleap:coretest"))
     testImplementation("org.springframework.boot:spring-boot-starter-test")
