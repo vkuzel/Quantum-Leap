@@ -9,6 +9,8 @@ dependencies {
     implementation("org.webjars:font-awesome:5.15.4")
     implementation("org.webjars.bower:chart.js:2.9.4")
 
+    implementation("org.webjars:webjars-locator-core")
+
     testImplementation(project(":quantumleap:coretest"))
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 
